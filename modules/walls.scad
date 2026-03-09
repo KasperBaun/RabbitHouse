@@ -62,6 +62,10 @@ module rabbit_left_mesh_frame() {
             translate([0, shed_width - wall_thickness - 0.01, base_height + shed_height - roof_drop_back - front_top_beam_h])
                 cube([wall_thickness, 0.01, front_top_beam_h]);
         }
+
+        // Bottom sill plate under left side mesh
+        translate([0, wall_thickness, base_height])
+            cube([wall_thickness, shed_width - 2*wall_thickness, wall_thickness]);
     }
 }
 
@@ -91,6 +95,14 @@ module front_posts_and_beam() {
 
         translate([front_post_w, 0, base_height + shed_height - front_top_beam_h])
             cube([shed_length - 2*front_post_w, wall_thickness, front_top_beam_h]);
+
+        // Bottom sill plate under rabbit front mesh
+        translate([front_post_w, 0, base_height])
+            cube([rabbit_x1 - front_post_w * 1.5, wall_thickness, wall_thickness]);
+
+        // Bottom sill plate under seating front (between divider and right post)
+        translate([rabbit_x1 + front_post_w/2, 0, base_height])
+            cube([shed_length - rabbit_x1 - front_post_w * 1.5, wall_thickness, wall_thickness]);
     }
 }
 
