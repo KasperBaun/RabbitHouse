@@ -122,20 +122,46 @@ module rabbit_seating_mesh_divider() {
     }
 }
 
-module right_side_upper_mesh() {
-    panel_y = front_post_w;
-    panel_w = shed_width - 2*front_post_w;
-    panel_z = right_side_mesh_z;
-    panel_h = right_side_mesh_h - roof_drop_back;
+module right_side_window() {
+    win_y = front_post_w;
+    win_w = shed_width - 2*front_post_w;
+    win_z = right_side_mesh_z;
+    win_h = right_side_mesh_h - roof_drop_back;
     x = shed_length;
 
-    mesh_panel_y(panel_y, panel_w, panel_z, panel_h, x);
+    // glass pane
+    color(col_glass)
+    translate([x, win_y, win_z])
+        cube([8, win_w, win_h]);
 
+    // window frame (trim around the glass)
+    color(col_trim) {
+        // sill
+        translate([x - 5, win_y - 20, win_z - 25])
+            cube([30, win_w + 40, 25]);
+        // header
+        translate([x - 5, win_y - 10, win_z + win_h])
+            cube([30, win_w + 20, 20]);
+        // left side
+        translate([x - 5, win_y - 10, win_z])
+            cube([30, 10, win_h]);
+        // right side
+        translate([x - 5, win_y + win_w, win_z])
+            cube([30, 10, win_h]);
+        // horizontal muntin (mid bar)
+        translate([x - 2, win_y, win_z + win_h/2 - 10])
+            cube([14, win_w, 20]);
+        // vertical muntin (mid bar)
+        translate([x - 2, win_y + win_w/2 - 10, win_z])
+            cube([14, 20, win_h]);
+    }
+
+    // spandrel wedge above window (fills triangle to roof slope)
     color(col_post)
     hull() {
-        translate([x, panel_y, panel_z + panel_h])
+        translate([x, win_y, win_z + win_h])
             cube([mesh_depth, 0.01, roof_drop_back]);
-        translate([x, panel_y + panel_w - 0.01, panel_z + panel_h])
+        translate([x, win_y + win_w - 0.01, win_z + win_h])
             cube([mesh_depth, 0.01, 0.01]);
     }
 }
