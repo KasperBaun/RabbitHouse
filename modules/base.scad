@@ -19,8 +19,18 @@ module interior_panels() {
     translate([wall_thickness, shed_width - wall_thickness, base_height + 20])
         cube([shed_length - 2*wall_thickness, panel_t, panel_h]);
 
-    // right wall interior panel
+    // right wall interior panel (with window cutout)
+    win_margin = 400;
+    win_y = win_margin;
+    win_w = shed_width - 2*win_margin;
+    win_z = right_side_mesh_z;
+    win_h = right_side_mesh_h - roof_drop_back - 80;
+
     color(col_wall)
-    translate([shed_length - wall_thickness - panel_t, wall_thickness, base_height + 20])
-        cube([panel_t, shed_width - 2*wall_thickness, panel_h]);
+    difference() {
+        translate([shed_length - wall_thickness - panel_t, wall_thickness, base_height + 20])
+            cube([panel_t, shed_width - 2*wall_thickness, panel_h]);
+        translate([shed_length - wall_thickness - panel_t - 1, win_y, win_z])
+            cube([panel_t + 2, win_w, win_h]);
+    }
 }
