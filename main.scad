@@ -14,6 +14,9 @@ $vpt = [shed_length/2, shed_width/2, shed_height/2];
 $vpr = [55, 0, 25];
 $vpd = 18000;
 
+// --- Landscaping & ground ---
+landscaping();
+
 // --- Foundation ---
 floor_slab();
 interior_floor();
@@ -39,13 +42,16 @@ rabbit_seating_mesh_divider();
 
 // --- Roof ---
 roof();
+roof_fascia_and_gutter();
+ceiling_rafters();
 
 // --- Interior panels (hide studs) ---
 interior_panels();
 
-// --- Cladding ---
+// --- Cladding & trim ---
 back_cladding();
 right_side_cladding();
+corner_trim();
 
 // --- Right side window ---
 right_side_window();
@@ -55,10 +61,15 @@ built_in_corner_bench();
 seating_table();
 wall_shelves();
 coffee_station();
+table_rug();
 
 // --- Lighting & electrical ---
 pendant_lamp();
 electrical_outlets();
+string_lights();
+
+// --- Entrance ---
+entrance_step();
 
 // --- Rabbit area ---
 rabbit_accessories();

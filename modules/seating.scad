@@ -1128,3 +1128,210 @@ module table_laptop() {
     }
 }
 
+// String / fairy lights along the ceiling rafters — warm cozy glow.
+module string_lights() {
+    bulb_r = 12;
+    wire_r = 2;
+    spacing = 200;
+    z_front = base_height + shed_height - 160;
+    z_back = base_height + shed_height - roof_drop_back - 160;
+
+    // Two runs of lights: one along each side of the seating area
+    for (offset_x = [seat_x0 + 300, shed_length - 300]) {
+        // Wire
+        color([0.15, 0.15, 0.12])
+        hull() {
+            translate([offset_x, wall_thickness, z_front])
+                sphere(r = wire_r);
+            translate([offset_x, shed_width - wall_thickness, z_back])
+                sphere(r = wire_r);
+        }
+
+        // Bulbs along the wire
+        n_bulbs = floor((shed_width - 2*wall_thickness) / spacing);
+        for (i = [0 : n_bulbs]) {
+            t = i / n_bulbs;
+            by = wall_thickness + t * (shed_width - 2*wall_thickness);
+            bz = z_front + t * (z_back - z_front);
+            // Warm bulb
+            color([1.0, 0.88, 0.55, 0.7])
+            translate([offset_x, by, bz - 20])
+                sphere(r = bulb_r);
+            // Bulb socket
+            color([0.20, 0.20, 0.18])
+            translate([offset_x, by, bz - 8])
+                cylinder(h = 12, r = 5);
+        }
+    }
+
+    // One run across the front (between the two side runs)
+    cross_z = z_front - 5;
+    color([0.15, 0.15, 0.12])
+    hull() {
+        translate([seat_x0 + 300, wall_thickness + 200, cross_z])
+            sphere(r = wire_r);
+        translate([shed_length - 300, wall_thickness + 200, cross_z])
+            sphere(r = wire_r);
+    }
+    n_cross = floor((shed_length - seat_x0 - 600) / spacing);
+    for (i = [0 : n_cross]) {
+        t = i / max(1, n_cross);
+        bx = seat_x0 + 300 + t * (shed_length - seat_x0 - 600);
+        color([1.0, 0.88, 0.55, 0.7])
+        translate([bx, wall_thickness + 200, cross_z - 20])
+            sphere(r = bulb_r);
+        color([0.20, 0.20, 0.18])
+        translate([bx, wall_thickness + 200, cross_z - 8])
+            cylinder(h = 12, r = 5);
+    }
+}
+
+// Woven rug under the table area.
+module table_rug() {
+    table_w = shed_length >= 8000 ? 2200 : 1800;
+    table_d = shed_width >= 4000 ? 900 : 800;
+    tx = seat_x0 + max(200, (seat_len - table_w) / 2);
+    ty = shed_width >= 4000 ? 1500 : 1250;
+    floor_z = base_height + 20;
+
+    rug_w = table_w + 500;
+    rug_d = table_d + 400;
+    rx = tx - 250;
+    ry = ty - 200;
+
+    // Main rug body
+    color([0.60, 0.35, 0.30])
+    translate([rx, ry, floor_z + 1])
+        cube([rug_w, rug_d, 6]);
+
+    // Border stripe
+    color([0.45, 0.28, 0.22])
+    translate([rx, ry, floor_z + 7]) {
+        cube([rug_w, 40, 2]);
+        cube([40, rug_d, 2]);
+        translate([0, rug_d - 40, 0]) cube([rug_w, 40, 2]);
+        translate([rug_w - 40, 0, 0]) cube([40, rug_d, 2]);
+    }
+
+    // Inner accent stripe
+    color([0.75, 0.55, 0.35])
+    translate([rx + 60, ry + 60, floor_z + 7]) {
+        cube([rug_w - 120, 15, 2]);
+        cube([15, rug_d - 120, 2]);
+        translate([0, rug_d - 120 - 15, 0]) cube([rug_w - 120, 15, 2]);
+        translate([rug_w - 120 - 15, 0, 0]) cube([15, rug_d - 120, 2]);
+    }
+
+    // Fringe on short ends
+    color([0.55, 0.32, 0.25])
+    for (i = [0 : 15]) {
+        fx = rx + 30 + i * (rug_w - 60) / 15;
+        // Front fringe
+        translate([fx, ry - 50, floor_z + 1])
+            cube([8, 55, 3]);
+        // Back fringe
+        translate([fx, ry + rug_d, floor_z + 1])
+            cube([8, 55, 3]);
+    }
+}
+
+// Entrance step and threshold at the seating area opening.
+module entrance_step() {
+    floor_z = base_height;
+    step_w = shed_length - rabbit_x1 - front_post_w * 1.5;
+    step_x = rabbit_x1 + front_post_w / 2;
+
+    // Stone step
+    color([0.70, 0.68, 0.64])
+    translate([step_x, -350, floor_z - 80])
+        cube([step_w, 400, 80]);
+
+    // Threshold board (wooden, at the doorway)
+    color(col_trim)
+    translate([step_x, -50, floor_z])
+        cube([step_w, 55, 25]);
+
+    // Welcome mat
+    color([0.45, 0.40, 0.30])
+    translate([step_x + step_w/2 - 300, -300, floor_z - 2])
+        cube([600, 400, 10]);
+    // Mat text area (lighter stripe)
+    color([0.55, 0.50, 0.40])
+    translate([step_x + step_w/2 - 200, -250, floor_z + 8])
+        cube([400, 300, 2]);
+}
+
+// Corner trim where back and right cladded walls meet.
+module corner_trim() {
+    trim_w = 50;
+    trim_t = 22;
+    back_h = shed_height - roof_drop_back;
+
+    color(col_trim) {
+        // Back-right corner L-trim
+        translate([shed_length + clad_thick - trim_t, shed_width + clad_thick - trim_t, base_height])
+            cube([trim_t, trim_t, back_h]);
+        translate([shed_length + clad_thick - trim_w, shed_width + clad_thick - trim_t, base_height])
+            cube([trim_w, trim_t, back_h]);
+        translate([shed_length + clad_thick - trim_t, shed_width + clad_thick - trim_w, base_height])
+            cube([trim_t, trim_w, back_h]);
+    }
+}
+
+// Wooden sign above the seating entrance.
+module entrance_sign() {
+    sign_w = 800;
+    sign_h = 160;
+    sign_t = 25;
+    sign_x = rabbit_x1 + (shed_length - rabbit_x1) / 2 - sign_w / 2;
+    sign_z = base_height + shed_height - front_top_beam_h - sign_h - 30;
+
+    // Sign board
+    color([0.50, 0.36, 0.18])
+    translate([sign_x, -sign_t + 5, sign_z])
+        cube([sign_w, sign_t, sign_h]);
+
+    // Routed/recessed text area
+    color([0.65, 0.50, 0.28])
+    translate([sign_x + 40, -sign_t + 2, sign_z + 30])
+        cube([sign_w - 80, 3, sign_h - 60]);
+
+    // Hanging chains/hooks
+    color([0.30, 0.30, 0.28])
+    for (dx = [80, sign_w - 80]) {
+        translate([sign_x + dx, -5, sign_z + sign_h])
+            cylinder(h = 50, r = 4);
+        translate([sign_x + dx - 8, -10, sign_z + sign_h + 45])
+            cube([16, 8, 8]);
+    }
+}
+
+// Ground plane, gravel path, and garden plants around the building.
+module landscaping() {
+    ground_size = 14000;
+    gx = shed_length / 2 - ground_size / 2;
+    gy = shed_width / 2 - ground_size / 2;
+
+    // Grass ground plane
+    color([0.40, 0.58, 0.30])
+    translate([gx, gy, -5])
+        cube([ground_size, ground_size, 5]);
+
+    // Gravel path to entrance
+    path_w = 1200;
+    seat_cx = rabbit_x1 + (shed_length - rabbit_x1) / 2;
+    color([0.72, 0.68, 0.60])
+    translate([seat_cx - path_w/2, -3500, -3])
+        cube([path_w, 3500, 8]);
+
+    // Path widens at the step
+    color([0.72, 0.68, 0.60])
+    hull() {
+        translate([seat_cx - path_w/2, -500, -3])
+            cube([path_w, 10, 8]);
+        translate([seat_cx - path_w/2 - 200, -100, -3])
+            cube([path_w + 400, 10, 8]);
+    }
+
+}
+
