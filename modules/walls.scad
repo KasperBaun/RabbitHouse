@@ -1,10 +1,29 @@
-module back_wall_core() {
+stud_w = 45;
+stud_d = 95;
+stud_spacing = 600;
 
+module back_wall_core() {
     back_wall_h = shed_height - roof_drop_back;
 
-    color(col_wall)
-    translate([0, shed_width - wall_thickness, base_height])
-        cube([shed_length, wall_thickness, back_wall_h]);
+    color(col_post) {
+        // bundrem (bottom plate)
+        translate([0, shed_width - stud_d, base_height])
+            cube([shed_length, stud_d, stud_w]);
+
+        // toprem (top plate)
+        translate([0, shed_width - stud_d, base_height + back_wall_h - stud_w])
+            cube([shed_length, stud_d, stud_w]);
+
+        // stolper (vertical studs)
+        stud_h = back_wall_h - 2 * stud_w;
+        for (x = [0 : stud_spacing : shed_length]) {
+            translate([x, shed_width - stud_d, base_height + stud_w])
+                cube([stud_w, stud_d, stud_h]);
+        }
+        // ensure a stud at the far end
+        translate([shed_length - stud_w, shed_width - stud_d, base_height + stud_w])
+            cube([stud_w, stud_d, stud_h]);
+    }
 }
 
 module seat_right_lower_wall() {
