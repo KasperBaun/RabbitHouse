@@ -16,10 +16,10 @@ module back_cladding() {
 cube([shed_length, clad_thick, 60]);
 
         translate([0, shed_width - clad_thick - clad_lip, base_height])
-            cube([40, clad_thick + clad_lip, shed_height]);
+            cube([40, clad_thick + clad_lip, shed_height - roof_drop_back]);
 
         translate([shed_length - 40, shed_width - clad_thick - clad_lip, base_height])
-            cube([40, clad_thick + clad_lip, shed_height]);
+            cube([40, clad_thick + clad_lip, shed_height - roof_drop_back]);
     }
 }
 

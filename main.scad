@@ -11,4 +11,8 @@ include <modules/walls.scad>
 include <modules/seating.scad>
 include <modules/build.scad>
 
+$vpt = [shed_length/2, shed_width/2, shed_height/2];
+$vpr = [55, 0, 25];
+$vpd = 18000;
+
 build_rabbit_house();
