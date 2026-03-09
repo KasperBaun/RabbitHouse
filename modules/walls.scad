@@ -1,7 +1,10 @@
 module back_wall_core() {
+
+    back_wall_h = shed_height - roof_drop_back;
+
     color(col_wall)
     translate([0, shed_width - wall_thickness, base_height])
-        cube([shed_length, wall_thickness, shed_height]);
+        cube([shed_length, wall_thickness, back_wall_h]);
 }
 
 module seat_right_lower_wall() {

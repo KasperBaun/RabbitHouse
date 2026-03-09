@@ -1,14 +1,10 @@
 module klink_board(len, col) {
     color(col)
-    union() {
         cube([len, clad_thick, clad_board_h]);
-        translate([0, -clad_lip, clad_board_h - 30])
-            cube([len, clad_thick + clad_lip, 30]);
-    }
 }
 
 module back_cladding() {
-    for (i = [0 : floor((shed_height - 1) / clad_step)]) {
+    for (i = [0 : floor((shed_height - roof_drop_back - 1) / clad_step)]) {
         z = i * clad_step;
         c = (i % 2 == 0) ? col_panel1 : col_panel2;
         translate([0, shed_width - clad_thick, base_height + z])
@@ -16,8 +12,8 @@ module back_cladding() {
     }
 
     color(col_trim) {
-        translate([0, shed_width - clad_thick - clad_lip, base_height + shed_height - 80])
-            cube([shed_length, clad_thick + clad_lip, 80]);
+        translate([0, shed_width - clad_thick, base_height + shed_height - roof_drop_back - 60])
+cube([shed_length, clad_thick, 60]);
 
         translate([0, shed_width - clad_thick - clad_lip, base_height])
             cube([40, clad_thick + clad_lip, shed_height]);
