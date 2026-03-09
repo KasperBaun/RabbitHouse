@@ -98,6 +98,85 @@ module built_in_corner_bench() {
         translate([shed_length - wall_thickness - br_t - 5, rt_y0,
                    floor_z + seat_h + 40 + b * (br_w + br_gap)])
             cube([br_t, rt_len + bench_d, br_w]);
+
+    // === SEAT CUSHIONS (soft puffy pillows) ===
+    cushion_h = 80;
+    cushion_margin = 30;
+    pillow_col = [0.75, 0.42, 0.38];    // warm terracotta
+    pillow_col2 = [0.40, 0.52, 0.58];   // muted teal
+
+    // Back bench seat cushion (full length)
+    color(pillow_col)
+    translate([bk_x0 + cushion_margin, bk_y + cushion_margin,
+               floor_z + seat_h])
+        hull() {
+            cube([bk_len - 2*cushion_margin, bench_d - 2*cushion_margin, 0.1]);
+            translate([10, 10, cushion_h])
+                cube([bk_len - 2*cushion_margin - 20, bench_d - 2*cushion_margin - 20, 0.1]);
+        }
+
+    // Right bench seat cushion
+    color(pillow_col)
+    translate([rt_x + cushion_margin, rt_y0 + cushion_margin,
+               floor_z + seat_h])
+        hull() {
+            cube([bench_d - 2*cushion_margin, rt_len - 2*cushion_margin, 0.1]);
+            translate([10, 10, cushion_h])
+                cube([bench_d - 2*cushion_margin - 20, rt_len - 2*cushion_margin - 20, 0.1]);
+        }
+
+    // Corner seat cushion
+    color(pillow_col)
+    translate([rt_x + cushion_margin, bk_y + cushion_margin,
+               floor_z + seat_h])
+        hull() {
+            cube([bench_d - 2*cushion_margin, bench_d - 2*cushion_margin, 0.1]);
+            translate([10, 10, cushion_h])
+                cube([bench_d - 2*cushion_margin - 20, bench_d - 2*cushion_margin - 20, 0.1]);
+        }
+
+    // === BACK PILLOWS (scattered along backrests) ===
+    pw = 400;  // pillow width
+    ph = 350;  // pillow height
+    pd = 120;  // pillow depth (puffy)
+    cushion_z = floor_z + seat_h + cushion_h;
+
+    // Back wall — 3 pillows, alternating colors
+    for (i = [0 : 2]) {
+        pc = (i % 2 == 0) ? pillow_col2 : pillow_col;
+        px = bk_x0 + 150 + i * (bk_len - 300 - pw) / 2;
+        color(pc)
+        translate([px, shed_width - wall_thickness - pd + 10, cushion_z])
+            hull() {
+                cube([pw, 0.1, ph]);
+                translate([20, pd - 20, 20])
+                    cube([pw - 40, 0.1, ph - 40]);
+            }
+    }
+
+    // Right wall — 2 pillows
+    for (i = [0 : 1]) {
+        pc = (i % 2 == 0) ? pillow_col : pillow_col2;
+        py = rt_y0 + 150 + i * (rt_len - 300 - pw) / 1;
+        color(pc)
+        translate([shed_length - wall_thickness - pd + 10, py, cushion_z])
+            hull() {
+                cube([0.1, pw, ph]);
+                translate([pd - 20, 20, 20])
+                    cube([0.1, pw - 40, ph - 40]);
+            }
+    }
+
+    // Corner — one accent pillow
+    color(pillow_col2)
+    translate([shed_length - wall_thickness - pd + 5,
+               shed_width - wall_thickness - pd + 5, cushion_z])
+        rotate([0, 0, -10])
+        hull() {
+            cube([pd, pd, 300]);
+            translate([15, 15, 15])
+                cube([pd - 30, pd - 30, 270]);
+        }
 }
 
 // Trestle-style dining table with solid end panels, stretcher bar, and thick top.
@@ -170,6 +249,270 @@ module wall_shelves() {
         translate([bk_x0, shed_width - wall_thickness - shelf_d, sz])
             cube([bk_len, shelf_d, shelf_t]);
     }
+
+    wy = shed_width - wall_thickness - shelf_d + 20;  // Y for items on shelf
+
+    // === LOWER SHELF ITEMS ===
+
+    // Group of books (leaning, different heights)
+    bx0 = bk_x0 + 60;
+    for (i = [0 : 5]) {
+        bk_h = 180 + i * 15;
+        bk_w = 25 + (i % 2) * 8;
+        bc = (i % 3 == 0) ? [0.65, 0.25, 0.22] :
+             (i % 3 == 1) ? [0.22, 0.38, 0.52] :
+                            [0.35, 0.50, 0.30];
+        color(bc)
+        translate([bx0 + i * 35, wy, shelf_z1 + shelf_t])
+            cube([bk_w, 140, bk_h]);
+    }
+
+    // Bookend (small L-bracket)
+    color(col_trim)
+    translate([bx0 + 6 * 35 + 5, wy + 20, shelf_z1 + shelf_t])
+        cube([8, 100, 120]);
+
+    // Two candles in holders (mid-shelf)
+    cx0 = bk_x0 + bk_len * 0.4;
+    for (ci = [0, 120]) {
+        // Holder
+        color(col_trim)
+        translate([cx0 + ci, wy + 70, shelf_z1 + shelf_t])
+            cylinder(h = 15, r = 30);
+        // Candle
+        color([0.95, 0.92, 0.85])
+        translate([cx0 + ci, wy + 70, shelf_z1 + shelf_t + 15])
+            cylinder(h = 100 - ci/3, r = 18);
+        // Tiny flame
+        color([1.0, 0.85, 0.3, 0.7])
+        translate([cx0 + ci, wy + 70, shelf_z1 + shelf_t + 115 - ci/3])
+            cylinder(h = 15, r1 = 6, r2 = 0);
+    }
+
+    // Small succulent in pot
+    sx = bk_x0 + bk_len * 0.65;
+    color([0.55, 0.35, 0.20])
+    translate([sx, wy + 80, shelf_z1 + shelf_t])
+        cylinder(h = 70, r1 = 35, r2 = 40);
+    color([0.35, 0.58, 0.32])
+    translate([sx, wy + 80, shelf_z1 + shelf_t + 70])
+        sphere(r = 45);
+
+    // A mug
+    mx = bk_x0 + bk_len * 0.85;
+    color([0.85, 0.82, 0.78])
+    translate([mx, wy + 80, shelf_z1 + shelf_t])
+        difference() {
+            cylinder(h = 90, r = 35);
+            translate([0, 0, 8])
+                cylinder(h = 90, r = 28);
+        }
+    // Mug handle
+    color([0.85, 0.82, 0.78])
+    translate([mx + 35, wy + 80, shelf_z1 + shelf_t + 25])
+        rotate([0, 90, 0])
+            difference() {
+                cylinder(h = 15, r = 25);
+                cylinder(h = 15, r = 15);
+            }
+
+    // === UPPER SHELF ITEMS ===
+
+    // Lantern
+    lnx = bk_x0 + 80;
+    color(col_lamp) {
+        // Base
+        translate([lnx, wy + 70, shelf_z2 + shelf_t])
+            cylinder(h = 8, r = 45);
+        // Frame posts (4 corners)
+        for (a = [45, 135, 225, 315])
+            translate([lnx + 30 * cos(a), wy + 70 + 30 * sin(a), shelf_z2 + shelf_t + 8])
+                cylinder(h = 140, r = 4);
+        // Top cap
+        translate([lnx, wy + 70, shelf_z2 + shelf_t + 148])
+            cylinder(h = 20, r1 = 45, r2 = 15);
+    }
+    // Lantern glass
+    color([1.0, 0.92, 0.6, 0.3])
+    translate([lnx, wy + 70, shelf_z2 + shelf_t + 15])
+        cylinder(h = 120, r = 35);
+
+    // Three glass jars (tea, sugar, etc.)
+    for (ji = [0 : 2]) {
+        jx = bk_x0 + bk_len * 0.35 + ji * 100;
+        jh = 110 + ji * 10;
+        // Jar
+        color([0.8, 0.85, 0.82, 0.4])
+        translate([jx, wy + 75, shelf_z2 + shelf_t])
+            cylinder(h = jh, r = 32);
+        // Lid
+        color(col_trim)
+        translate([jx, wy + 75, shelf_z2 + shelf_t + jh])
+            cylinder(h = 12, r = 34);
+        // Contents (different fill levels and colors)
+        jc = (ji == 0) ? [0.45, 0.30, 0.15] :   // coffee
+             (ji == 1) ? [0.70, 0.62, 0.35] :   // sugar
+                         [0.55, 0.70, 0.40];     // tea
+        color(jc)
+        translate([jx, wy + 75, shelf_z2 + shelf_t + 5])
+            cylinder(h = jh * 0.6, r = 30);
+    }
+
+    // Trailing plant in pot
+    px = bk_x0 + bk_len * 0.75;
+    color([0.50, 0.35, 0.22])
+    translate([px, wy + 75, shelf_z2 + shelf_t])
+        cylinder(h = 80, r1 = 40, r2 = 35);
+    color([0.30, 0.55, 0.28]) {
+        translate([px, wy + 75, shelf_z2 + shelf_t + 80])
+            sphere(r = 50);
+        // Trailing vine bits hanging over shelf edge
+        translate([px - 20, wy - 10, shelf_z2 + shelf_t])
+            sphere(r = 25);
+        translate([px + 15, wy + 5, shelf_z2 + shelf_t - 15])
+            sphere(r = 20);
+    }
+
+    // Small framed photo
+    fx = bk_x0 + bk_len - 100;
+    color(col_trim)
+    translate([fx, wy + 160, shelf_z2 + shelf_t])
+        cube([80, 12, 100]);
+    color([0.9, 0.88, 0.82])
+    translate([fx + 8, wy + 159, shelf_z2 + shelf_t + 8])
+        cube([64, 2, 84]);
+}
+
+// Coffee station — small counter with gas burner, mokka pot, and mini fridge.
+// Placed along the right wall, in front of where the bench starts.
+module coffee_station() {
+    floor_z = base_height + 20;
+    rt_y0 = shed_width >= 4000 ? 2000 : 1600;
+
+    // Counter position: against right wall, before the bench
+    counter_x = shed_length - wall_thickness - 500;
+    counter_y = 250;  // near the front of the right wall
+    counter_w = 450;           // depth from wall
+    counter_l = 900;           // length along wall
+    counter_h = 850;           // standard counter height
+    top_t = 30;
+
+    // === COUNTER UNIT ===
+    // Legs
+    leg = 45;
+    color(col_trim)
+    for (dx = [20, counter_w - leg - 20])
+        for (dy = [20, counter_l - leg - 20])
+            translate([counter_x + dx, counter_y + dy, floor_z])
+                cube([leg, leg, counter_h - top_t]);
+
+    // Side rails
+    color(col_trim) {
+        translate([counter_x + 20, counter_y + 20, floor_z + 200])
+            cube([leg, counter_l - 40 - leg, 22]);
+        translate([counter_x + counter_w - leg - 20, counter_y + 20, floor_z + 200])
+            cube([leg, counter_l - 40 - leg, 22]);
+    }
+
+    // Counter top
+    color(col_shelf)
+    translate([counter_x - 15, counter_y - 15, floor_z + counter_h - top_t])
+        cube([counter_w + 30, counter_l + 30, top_t]);
+
+    // Back splash (offset from interior panel to avoid z-fighting)
+    color(col_shelf)
+    translate([shed_length - wall_thickness - 25, counter_y - 15,
+               floor_z + counter_h])
+        cube([14, counter_l + 30, 200]);
+
+    ctz = floor_z + counter_h;  // counter top Z
+
+    // === GAS BURNER (camping style, 2 rings) ===
+    bx = counter_x + counter_w / 2 - 20;
+    by = counter_y + 120;
+
+    // Burner body
+    color([0.30, 0.30, 0.32])
+    translate([bx - 100, by - 60, ctz])
+        cube([200, 120, 25]);
+
+    // Grate rings (two burners)
+    for (dx = [-50, 50]) {
+        color([0.20, 0.20, 0.20])
+        translate([bx + dx, by, ctz + 25])
+            cylinder(h = 8, r = 45);
+        // Grate bars
+        color([0.25, 0.25, 0.25])
+        for (a = [0, 45, 90, 135])
+            translate([bx + dx + 40 * cos(a), by + 40 * sin(a), ctz + 33])
+                rotate([0, 0, a])
+                    cube([3, 80, 5], center = true);
+    }
+
+    // Gas knobs
+    color([0.15, 0.15, 0.15])
+    for (dx = [-50, 50])
+        translate([bx + dx, by - 65, ctz + 10])
+            rotate([90, 0, 0])
+                cylinder(h = 15, r = 10);
+
+    // === MOKKA POT (classic octagonal Bialetti shape) ===
+    mx = counter_x + counter_w / 2 + 130;
+    my = counter_y + 130;
+
+    // Bottom chamber
+    color([0.60, 0.60, 0.62])
+    translate([mx, my, ctz])
+        cylinder(h = 60, r1 = 35, r2 = 30, $fn = 8);
+    // Waist
+    color([0.55, 0.55, 0.58])
+    translate([mx, my, ctz + 60])
+        cylinder(h = 10, r = 25, $fn = 8);
+    // Top chamber
+    color([0.60, 0.60, 0.62])
+    translate([mx, my, ctz + 70])
+        cylinder(h = 55, r1 = 25, r2 = 32, $fn = 8);
+    // Lid knob
+    color([0.20, 0.20, 0.20])
+    translate([mx, my, ctz + 125])
+        sphere(r = 10);
+    // Handle
+    color([0.20, 0.20, 0.20])
+    translate([mx + 30, my, ctz + 40])
+        cube([8, 8, 70]);
+    translate([mx + 30, my, ctz + 110])
+        cube([20, 8, 8]);
+
+    // === SMALL CAR COOLER (on counter) ===
+    fx = counter_x + 40;
+    fy = counter_y + counter_l - 350;
+    fw = 280;
+    fd = 200;
+    fh = 220;
+
+    // Body
+    color([0.12, 0.12, 0.14])
+    translate([fx, fy, ctz])
+        cube([fw, fd, fh]);
+
+    // Lid (slightly lighter)
+    color([0.18, 0.18, 0.20])
+    translate([fx - 3, fy - 3, ctz + fh])
+        cube([fw + 6, fd + 6, 20]);
+
+    // Handle on lid
+    color([0.15, 0.15, 0.15])
+    translate([fx + fw/2 - 50, fy + fd/2 - 8, ctz + fh + 20])
+        hull() {
+            cube([100, 16, 5]);
+            translate([10, 3, 20])
+                cube([80, 10, 5]);
+        }
+
+    // Small logo
+    color([0.30, 0.55, 0.75])
+    translate([fx + fw/2 - 20, fy - 1, ctz + fh/2 - 10])
+        cube([40, 2, 20]);
 
 }
 
@@ -287,5 +630,21 @@ module table_laptop() {
         rotate([25, 0, 0])
             translate([0, lap_t, 10])
                 cube([lap_w - 20, 1, screen_h - 20]);
+
+    // Mugs on the table
+    for (mi = [0 : 2]) {
+        mmx = tx + 150 + mi * 550;
+        mmy = ty + table_d - 200;
+        mc = (mi == 0) ? [0.82, 0.78, 0.72] :
+             (mi == 1) ? [0.65, 0.30, 0.28] :
+                         [0.35, 0.50, 0.58];
+        color(mc)
+        translate([mmx, mmy, lz])
+            difference() {
+                cylinder(h = 85, r = 32);
+                translate([0, 0, 6])
+                    cylinder(h = 85, r = 25);
+            }
+    }
 }
 

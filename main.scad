@@ -53,6 +53,7 @@ right_side_window();
 built_in_corner_bench();
 seating_table();
 wall_shelves();
+coffee_station();
 
 // --- Lighting & electrical ---
 pendant_lamp();

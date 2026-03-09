@@ -109,16 +109,48 @@ module rabbit_seating_mesh_divider() {
     y = wall_thickness;
     w = shed_width - 2 * wall_thickness;
     z = mesh_bottom_z;
-    h = shed_height - front_top_beam_h - wall_thickness - roof_drop_back;
+    glass_split_z = base_height + 1200;  // mesh below, glass above
 
-    mesh_panel_y(y, w, z, h, x);
+    // Mesh height: from floor to split point
+    mesh_h = glass_split_z - z;
+    mesh_panel_y(y, w, z, mesh_h, x);
 
+    // Horizontal divider beam at split
     color(col_post)
+    translate([x, y, glass_split_z - 20])
+        cube([mesh_depth, w, 40]);
+
+    // Glass panel above the beam, up to the sloped roof line
+    // Front height (Y=0 side): shed_height - front_top_beam_h
+    // Back height (Y=shed_width side): shed_height - front_top_beam_h - roof_drop_back
+    glass_z0 = glass_split_z + 20;
+    front_top = base_height + shed_height - front_top_beam_h;
+    back_top = front_top - roof_drop_back;
+
+    color(col_glass)
     hull() {
-        translate([x, y, z + h])
-            cube([mesh_depth, 0.01, roof_drop_back]);
-        translate([x, y + w - 0.01, z + h])
-            cube([mesh_depth, 0.01, 0.01]);
+        translate([x + 2, y, glass_z0])
+            cube([6, 0.01, front_top - glass_z0]);
+        translate([x + 2, y + w, glass_z0])
+            cube([6, 0.01, back_top - glass_z0]);
+    }
+
+    // Wooden frame around the glass
+    color(col_post) {
+        // Bottom rail (already the divider beam above)
+        // Left post (front side)
+        translate([x, y, glass_z0])
+            cube([mesh_depth, wall_thickness, front_top - glass_z0]);
+        // Right post (back side)
+        translate([x, y + w - wall_thickness, glass_z0])
+            cube([mesh_depth, wall_thickness, back_top - glass_z0]);
+        // Sloped top rail
+        hull() {
+            translate([x, y, front_top - 40])
+                cube([mesh_depth, 0.01, 40]);
+            translate([x, y + w, back_top - 40])
+                cube([mesh_depth, 0.01, 40]);
+        }
     }
 }
 
