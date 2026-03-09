@@ -16,7 +16,7 @@ module back_cladding() {
     for (i = [0 : n]) {
         z = i * clad_step;
         c = (i % 2 == 0) ? col_panel1 : col_panel2;
-        translate([0, shed_width + i * clad_out, base_height + z])
+        translate([0, shed_width, base_height + z])
             klink_board(shed_length, c);
     }
 }
