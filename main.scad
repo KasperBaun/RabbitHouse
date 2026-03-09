@@ -17,6 +17,7 @@ $vpd = 18000;
 // --- Foundation ---
 floor_slab();
 interior_floor();
+rabbit_floor();
 
 // --- Back wall ---
 back_wall_core();
@@ -58,6 +59,9 @@ coffee_station();
 // --- Lighting & electrical ---
 pendant_lamp();
 electrical_outlets();
+
+// --- Rabbit area ---
+rabbit_accessories();
 
 // --- Props ---
 table_laptop();

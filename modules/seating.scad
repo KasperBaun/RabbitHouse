@@ -516,6 +516,133 @@ module coffee_station() {
 
 }
 
+// Grass floor covering the rabbit area.
+module rabbit_floor() {
+    floor_z = base_height + 20;
+    color([0.35, 0.55, 0.25])
+    translate([wall_thickness, wall_thickness, floor_z])
+        cube([rabbit_len - wall_thickness - 10, shed_width - 2*wall_thickness, 5]);
+}
+
+// Rabbit accessories: shelter, water bowl, food bowl, hay rack, tunnel.
+module rabbit_accessories() {
+    floor_z = base_height + 25;  // on top of grass
+
+    // === RABBIT SHELTER (small wooden house) ===
+    hx = 600;
+    hy = shed_width / 2 - 300;
+    hw = 700;
+    hd = 500;
+    hh = 350;
+    roof_h = 120;
+
+    // Walls (open front)
+    color([0.60, 0.45, 0.25]) {
+        // Back
+        translate([hx, hy + hd - 15, floor_z])
+            cube([hw, 15, hh]);
+        // Left side
+        translate([hx, hy, floor_z])
+            cube([15, hd, hh]);
+        // Right side
+        translate([hx + hw - 15, hy, floor_z])
+            cube([15, hd, hh]);
+        // Floor
+        translate([hx, hy, floor_z])
+            cube([hw, hd, 12]);
+    }
+
+    // Roof (pitched, overhangs slightly)
+    color([0.50, 0.38, 0.20])
+    hull() {
+        translate([hx - 30, hy - 30, floor_z + hh])
+            cube([hw + 60, hd + 60, 5]);
+        translate([hx + hw/2 - 20, hy - 20, floor_z + hh + roof_h])
+            cube([40, hd + 40, 5]);
+    }
+
+    // Hay inside the shelter
+    color([0.78, 0.72, 0.40])
+    translate([hx + 20, hy + 20, floor_z + 12])
+        cube([hw - 40, hd - 40, 60]);
+
+    // === WATER BOWL (ceramic, near center) ===
+    wx = 2200;
+    wy = 1200;
+
+    color([0.45, 0.55, 0.70])
+    translate([wx, wy, floor_z])
+        difference() {
+            cylinder(h = 60, r1 = 80, r2 = 90);
+            translate([0, 0, 8])
+                cylinder(h = 60, r1 = 65, r2 = 80);
+        }
+    // Water
+    color([0.55, 0.70, 0.82, 0.5])
+    translate([wx, wy, floor_z + 45])
+        cylinder(h = 5, r = 75);
+
+    // === FOOD BOWL (smaller, next to water) ===
+    color([0.70, 0.50, 0.30])
+    translate([wx + 250, wy + 50, floor_z])
+        difference() {
+            cylinder(h = 50, r1 = 60, r2 = 70);
+            translate([0, 0, 8])
+                cylinder(h = 50, r1 = 48, r2 = 60);
+        }
+    // Pellets
+    color([0.55, 0.42, 0.25])
+    translate([wx + 250, wy + 50, floor_z + 35])
+        cylinder(h = 8, r = 55);
+
+    // === HAY RACK (wall-mounted on back wall) ===
+    hrx = 1800;
+    hry = shed_width - wall_thickness;
+    hrz = floor_z + 200;
+
+    // Rack frame
+    color(col_trim) {
+        translate([hrx, hry - 5, hrz])
+            cube([400, 8, 300]);
+        // Bottom angled bars forming a V-shape holder
+        for (i = [0 : 5]) {
+            bx = hrx + 30 + i * 65;
+            translate([bx, hry - 120, hrz])
+                cube([8, 120, 8]);
+            translate([bx, hry - 80, hrz + 290])
+                cube([8, 80, 8]);
+        }
+        // Bottom rail
+        translate([hrx + 20, hry - 125, hrz])
+            cube([370, 8, 8]);
+    }
+
+    // Hay sticking out
+    color([0.78, 0.72, 0.40])
+    translate([hrx + 30, hry - 110, hrz + 10])
+        cube([350, 80, 250]);
+
+    // === PLAY TUNNEL (cylinder on its side) ===
+    tx = 3200;
+    ty = 2500;
+
+    color([0.50, 0.40, 0.22])
+    translate([tx, ty, floor_z + 120])
+        rotate([0, 90, 0])
+            difference() {
+                cylinder(h = 500, r = 120);
+                cylinder(h = 500, r = 100);
+            }
+
+    // === SMALL WOODEN PLATFORM / STEP ===
+    color([0.58, 0.44, 0.24])
+    translate([3500, 800, floor_z])
+        cube([500, 350, 80]);
+    color([0.55, 0.42, 0.22])
+    translate([3500, 800, floor_z + 80])
+        cube([500, 350, 15]);
+}
+
 // Pendant lamp hanging over the table.
 module pendant_lamp() {
     table_w = shed_length >= 8000 ? 1600 : 1400;
