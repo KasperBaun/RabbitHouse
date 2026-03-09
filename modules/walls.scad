@@ -123,45 +123,88 @@ module rabbit_seating_mesh_divider() {
 }
 
 module right_side_window() {
-    win_y = front_post_w;
-    win_w = shed_width - 2*front_post_w;
+    // window opening matches cladding cutout
+    win_margin = 400;
+    win_y = win_margin;
+    win_w = shed_width - 2*win_margin;
     win_z = right_side_mesh_z;
-    win_h = right_side_mesh_h - roof_drop_back;
+    win_h = right_side_mesh_h - roof_drop_back - 80;
     x = shed_length;
 
-    // glass pane
-    color(col_glass)
-    translate([x, win_y, win_z])
-        cube([8, win_w, win_h]);
+    // trim dimensions (like a real carpenter would do)
+    architrave_w = 70;    // width of side/head trim
+    architrave_t = 20;    // thickness
+    sill_depth = 45;      // how far sill projects from cladding face
+    sill_t = 55;          // sill thickness — extends down to cover gap with cladding
+    sill_drip = 8;        // drip edge overhang
+    muntin_w = 25;        // muntin bar width
+    muntin_t = 18;        // muntin depth
 
-    // window frame (trim around the glass)
-    color(col_trim) {
-        // sill
-        translate([x - 5, win_y - 20, win_z - 25])
-            cube([30, win_w + 40, 25]);
-        // header
-        translate([x - 5, win_y - 10, win_z + win_h])
-            cube([30, win_w + 20, 20]);
-        // left side
-        translate([x - 5, win_y - 10, win_z])
-            cube([30, 10, win_h]);
-        // right side
-        translate([x - 5, win_y + win_w, win_z])
-            cube([30, 10, win_h]);
-        // horizontal muntin (mid bar)
-        translate([x - 2, win_y, win_z + win_h/2 - 10])
-            cube([14, win_w, 20]);
-        // vertical muntin (mid bar)
-        translate([x - 2, win_y + win_w/2 - 10, win_z])
-            cube([14, 20, win_h]);
+    // glass pane (set behind the trim)
+    color(col_glass)
+    translate([x + architrave_t/2, win_y, win_z])
+        cube([6, win_w, win_h]);
+
+    // --- Window frame (karm) — the actual frame sitting in the opening ---
+    color(col_post) {
+        frame_t = 45;  // frame depth
+        frame_w = 30;  // frame face width
+        // bottom
+        translate([x - frame_t/2, win_y, win_z])
+            cube([frame_t, win_w, frame_w]);
+        // top
+        translate([x - frame_t/2, win_y, win_z + win_h - frame_w])
+            cube([frame_t, win_w, frame_w]);
+        // left
+        translate([x - frame_t/2, win_y, win_z])
+            cube([frame_t, frame_w, win_h]);
+        // right
+        translate([x - frame_t/2, win_y + win_w - frame_w, win_z])
+            cube([frame_t, frame_w, win_h]);
     }
 
-    // spandrel wedge above window (fills triangle to roof slope)
-    color(col_post)
+    // --- Muntins (sprosser) — cross bars dividing into 4 panes ---
+    color(col_post) {
+        // horizontal muntin
+        translate([x - muntin_t/2, win_y + 30, win_z + win_h/2 - muntin_w/2])
+            cube([muntin_t, win_w - 60, muntin_w]);
+        // vertical muntin
+        translate([x - muntin_t/2, win_y + win_w/2 - muntin_w/2, win_z + 30])
+            cube([muntin_t, muntin_w, win_h - 60]);
+    }
+
+    // --- Sill (bundstykke) — projects outward, angled for drainage ---
+    color(col_trim)
     hull() {
-        translate([x, win_y, win_z + win_h])
-            cube([mesh_depth, 0.01, roof_drop_back]);
-        translate([x, win_y + win_w - 0.01, win_z + win_h])
-            cube([mesh_depth, 0.01, 0.01]);
+        // back edge (flush with wall)
+        translate([x, win_y - sill_drip, win_z - sill_t])
+            cube([0.1, win_w + 2*sill_drip, sill_t]);
+        // front edge (projects out, slightly lower for drainage)
+        translate([x + sill_depth, win_y - sill_drip, win_z - sill_t - 5])
+            cube([0.1, win_w + 2*sill_drip, sill_t - 5]);
+    }
+
+    // --- Architrave / indfatning (trim around the outside) ---
+    color(col_trim) {
+        // head trim (overstykke) — slightly wider than sides
+        translate([x + clad_thick - 2, win_y - architrave_w + 10, win_z + win_h])
+            cube([architrave_t, win_w + 2*architrave_w - 20, architrave_w]);
+
+        // left side trim
+        translate([x + clad_thick - 2, win_y - architrave_w + 10, win_z])
+            cube([architrave_t, architrave_w, win_h]);
+
+        // right side trim
+        translate([x + clad_thick - 2, win_y + win_w - 10, win_z])
+            cube([architrave_t, architrave_w, win_h]);
+    }
+
+    // --- Drip cap (vandnæse) above head trim ---
+    color(col_trim)
+    hull() {
+        translate([x + clad_thick - 2, win_y - architrave_w, win_z + win_h + architrave_w])
+            cube([architrave_t + 8, win_w + 2*architrave_w, 3]);
+        translate([x + clad_thick + architrave_t + 5, win_y - architrave_w, win_z + win_h + architrave_w - 8])
+            cube([0.1, win_w + 2*architrave_w, 3]);
     }
 }

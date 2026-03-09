@@ -39,9 +39,12 @@ rabbit_seating_mesh_divider();
 // --- Roof ---
 roof();
 
+// --- Interior panels (hide studs) ---
+interior_panels();
+
 // --- Cladding ---
 back_cladding();
-right_side_lower_cladding();
+right_side_cladding();
 
 // --- Right side window ---
 right_side_window();
