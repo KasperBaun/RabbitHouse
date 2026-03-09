@@ -52,3 +52,11 @@ right_side_window();
 // --- Furniture ---
 built_in_corner_bench();
 seating_table();
+wall_shelves();
+
+// --- Lighting & electrical ---
+pendant_lamp();
+electrical_outlets();
+
+// --- Props ---
+table_laptop();

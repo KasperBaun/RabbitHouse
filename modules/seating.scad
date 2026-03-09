@@ -18,7 +18,7 @@ module built_in_corner_bench() {
     bk_y = shed_width - wall_thickness - bench_d;
 
     // Right bench: along right wall, stops where back bench starts
-    rt_y0 = shed_width >= 4000 ? 1100 : 900;
+    rt_y0 = shed_width >= 4000 ? 2000 : 1600;
     rt_x = shed_length - wall_thickness - bench_d;
     rt_len = bk_y - rt_y0;
 
@@ -102,9 +102,9 @@ module built_in_corner_bench() {
 
 // Trestle-style dining table with solid end panels, stretcher bar, and thick top.
 module seating_table() {
-    table_w = shed_length >= 8000 ? 1600 : 1400;
-    table_d = shed_width >= 4000 ? 800 : 700;
-    table_h = 730;
+    table_w = shed_length >= 8000 ? 2200 : 1800;
+    table_d = shed_width >= 4000 ? 900 : 800;
+    table_h = 680;
     top_t = 45;
     floor_z = base_height + 20;
 
@@ -145,3 +145,147 @@ module seating_table() {
     translate([str_x0, ty + table_d / 2 - str_d / 2, str_z])
         cube([str_x1 - str_x0, str_d, str_h]);
 }
+
+// Floating wall shelves above the backrests — for books, plants, supplies.
+module wall_shelves() {
+    shelf_t = 28;
+    shelf_d = 220;
+    bracket_w = 30;
+    bracket_t = 8;
+    floor_z = base_height + 20;
+    inset = 90;
+
+    // Shelf height: well above head when seated (~1.3m seat + head clearance)
+    // Seated eye height ≈ floor_z + 450 + 600 = floor_z + 1050
+    // Add clearance so nobody bumps their head
+    shelf_z1 = floor_z + 1300;   // lower shelf — above seated head
+    shelf_z2 = floor_z + 1650;   // upper shelf
+
+    bk_x0 = seat_x0 + inset;
+    bk_len = seat_len - inset - wall_thickness - 200;  // 200mm padding from right wall/window
+
+    // --- Back wall shelves (2 levels) ---
+    for (sz = [shelf_z1, shelf_z2]) {
+        color(col_shelf)
+        translate([bk_x0, shed_width - wall_thickness - shelf_d, sz])
+            cube([bk_len, shelf_d, shelf_t]);
+    }
+
+}
+
+// Pendant lamp hanging over the table.
+module pendant_lamp() {
+    table_w = shed_length >= 8000 ? 1600 : 1400;
+    table_d = shed_width >= 4000 ? 800 : 700;
+    tx = seat_x0 + max(200, (seat_len - table_w) / 2);
+    ty = shed_width >= 4000 ? 1500 : 1250;
+
+    // Lamp center over table
+    lx = tx + table_w / 2;
+    ly = ty + table_d / 2;
+
+    // Roof underside Z at this Y position
+    roof_z = base_height + shed_height - (ly / shed_width) * roof_drop_back;
+    shade_z = roof_z - 600;  // hang 600mm below roof
+
+    // Cord
+    color(col_lamp)
+    translate([lx - 3, ly - 3, shade_z + 150])
+        cube([6, 6, roof_z - shade_z - 150]);
+
+    // Ceiling rose (mounting plate)
+    color(col_lamp)
+    translate([lx - 30, ly - 30, roof_z - 15])
+        cube([60, 60, 15]);
+
+    // Shade — conical using hull()
+    color(col_lamp) {
+        hull() {
+            translate([lx - 60, ly - 60, shade_z + 150])
+                cube([120, 120, 3]);
+            translate([lx - 150, ly - 150, shade_z])
+                cube([300, 300, 3]);
+        }
+    }
+
+    // Warm glow disk (represents light)
+    color(col_glow)
+    translate([lx - 140, ly - 140, shade_z + 1])
+        cube([280, 280, 2]);
+}
+
+
+// Electrical outlet boxes on the back wall.
+module electrical_outlets() {
+    floor_z = base_height + 20;
+    wall_y = shed_width - wall_thickness;
+    outlet_z = floor_z + 450 + 300;  // above seat height, reachable
+
+    // Double outlet near the middle of the back bench
+    ox1 = seat_x0 + seat_len * 0.35;
+    ox2 = seat_x0 + seat_len * 0.7;
+
+    for (ox = [ox1, ox2]) {
+        // Outlet face plate
+        color(col_elec)
+        translate([ox - 40, wall_y - 3, outlet_z - 55])
+            cube([80, 6, 110]);
+
+        // Socket holes (two per plate)
+        color(col_lamp)
+        for (dz = [-22, 22])
+            translate([ox - 15, wall_y + 2, outlet_z + dz - 15])
+                cube([30, 3, 30]);
+    }
+
+    // One outlet on the right wall (near window, for lamp/charger)
+    rx = shed_length - wall_thickness;
+    ry = shed_width >= 4000 ? 2000 : 1600;
+    color(col_elec)
+    translate([rx - 3, ry - 40, outlet_z - 55])
+        cube([6, 80, 110]);
+    color(col_lamp)
+    for (dz = [-22, 22])
+        translate([rx + 2, ry - 15, outlet_z + dz - 15])
+            cube([3, 30, 30]);
+}
+
+// Laptop on the table — open, screen angled back.
+module table_laptop() {
+    table_w = shed_length >= 8000 ? 2200 : 1800;
+    table_d = shed_width >= 4000 ? 900 : 800;
+    table_h = 680;
+    top_t = 45;
+    floor_z = base_height + 20;
+    tx = seat_x0 + max(200, (seat_len - table_w) / 2);
+    ty = shed_width >= 4000 ? 1500 : 1250;
+
+    // Laptop position on table (offset from center toward the front bench side)
+    lx = tx + table_w / 2 - 170;
+    ly = ty + 100;
+    lz = floor_z + table_h + top_t;
+
+    lap_w = 340;
+    lap_d = 230;
+    lap_t = 8;
+    screen_h = 220;
+
+    // Base (keyboard half)
+    color(col_laptop)
+    translate([lx, ly, lz])
+        cube([lap_w, lap_d, lap_t]);
+
+    // Screen (angled back ~70 degrees from horizontal)
+    color(col_laptop)
+    translate([lx, ly + lap_d, lz + lap_t])
+        rotate([25, 0, 0])
+            cube([lap_w, lap_t, screen_h]);
+
+    // Screen face (bright panel)
+    color(col_screen)
+    translate([lx + 10, ly + lap_d + 1, lz + lap_t])
+        rotate([25, 0, 0])
+            translate([0, lap_t, 10])
+                cube([lap_w - 20, 1, screen_h - 20]);
+}
+
