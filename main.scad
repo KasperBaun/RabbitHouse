@@ -8,7 +8,10 @@ include <helpers/roof.scad>
 
 include <modules/base.scad>
 include <modules/walls.scad>
-include <modules/seating.scad>
+include <modules/furniture.scad>
+include <modules/lighting.scad>
+include <modules/rabbit.scad>
+include <modules/decor.scad>
 
 $vpt = [shed_length/2, shed_width/2, shed_height/2];
 $vpr = [55, 0, 25];
@@ -69,7 +72,7 @@ electrical_outlets();
 string_lights();
 
 // --- Entrance ---
-entrance_step();
+//entrance_step();
 
 // --- Rabbit area ---
 rabbit_accessories();
