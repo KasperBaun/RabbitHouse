@@ -291,7 +291,7 @@ module rabbit_floor() {
     floor_z = base_height + 20;
     color([0.35, 0.55, 0.25])
     translate([wall_thickness, wall_thickness, floor_z])
-        cube([rabbit_len - wall_thickness - 10, shed_width - 2*wall_thickness, 5]);
+        cube([shed_length - 2*wall_thickness, shed_width - 2*wall_thickness, 5]);
 }
 
 // Rabbit accessories: shelter, water bowl, food bowl, hay rack, tunnel.

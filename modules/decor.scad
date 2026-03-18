@@ -135,20 +135,19 @@ module landscaping() {
     translate([gx, gy, -5])
         cube([ground_size, ground_size, 5]);
 
-    // Gravel path to entrance
+    // Gravel path to gate
     path_w = 1200;
-    seat_cx = rabbit_x1 + (shed_length - rabbit_x1) / 2;
+    gate_cx = shed_length / 2;
     color([0.72, 0.68, 0.60])
-    translate([seat_cx - path_w/2, -3500, -3])
+    translate([gate_cx - path_w/2, -3500, -3])
         cube([path_w, 3500, 8]);
 
-    // Path widens at the step
+    // Path widens at the gate
     color([0.72, 0.68, 0.60])
     hull() {
-        translate([seat_cx - path_w/2, -500, -3])
+        translate([gate_cx - path_w/2, -500, -3])
             cube([path_w, 10, 8]);
-        translate([seat_cx - path_w/2 - 200, -100, -3])
+        translate([gate_cx - path_w/2 - 200, -100, -3])
             cube([path_w + 400, 10, 8]);
     }
-
 }
