@@ -74,6 +74,19 @@ The original Section H covered a human seating area included in the v1
 design. That scope was removed in the v2 redesign. IDs `REQ-039` through
 `REQ-042` remain reserved and will not be reused.
 
+## H2. House-yard v2 (gabled shelter + polycarbonate run)
+
+Added 2026-04-29 alongside the introduction of the `house_yard_v2` design.
+The v2 right-side zone is no longer a human area — it is a 4 m × 3 m
+mesh-walled rabbit run with a translucent roof, attached to a 2 m × 3 m
+solid gabled rabbit shelter on the left.
+
+- **REQ-049** — The airlock vestibule must double as bedding/hay storage and provide ≥ 0.5 m³ usable storage volume.
+- **REQ-050** — The transparent run roof must be ≥ 10 mm twin-wall polycarbonate, UV-stable, and fixed with chew/pry-resistant fasteners that defeat the same predator load as REQ-008/REQ-012.
+- **REQ-051** — The pet door in the house↔run partition must remain permanently passable; it is not a sluice and must not be lockable in service. The combined house+run is the rabbit zone of REQ-001.
+- **REQ-052** — The house roof ridge runs along the X axis at Y=`width`/2; gable end walls are at X=0 and X=2000, both cladded as triangles. The X=2000 partition gable is the wind-bracing wall the run roof leans against. Eaves run along X at Y=0 (front) and Y=`width` (back).
+- **REQ-053** — The run roof must drain to a gutter on the back (Y=`width`) edge; no water may discharge against the partition at X=2000.
+
 ## I. Safety
 
 - **REQ-043** — No element reachable by rabbits or humans may have a sharp edge, exposed nail, splinter, or pinch point.

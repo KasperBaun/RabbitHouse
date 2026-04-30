@@ -1,81 +1,19 @@
-include <presets.scad>
-include <config.scad>
+// Rabbit-house — top-level dispatcher.
+//
+// Pick a design by name; the matching `build_<design>` module is called below.
+// Available designs:
+//   "house_yard_v2" — gabled solid house + polycarb-roofed mesh run (current).
+//   "lean_to_v1"    — original mono-pitch shed with rabbit zone + human seating.
+//
+// For lean_to_v1, also pick a preset: "6x3", "7x3", or "8x4".
 
-include <helpers/colors.scad>
-include <helpers/mesh.scad>
-include <helpers/cladding.scad>
-include <helpers/roof.scad>
+design = "house_yard_v2";
+v1_preset = "7x3";
 
-include <modules/base.scad>
-include <modules/walls.scad>
-include <modules/furniture.scad>
-include <modules/lighting.scad>
-include <modules/rabbit.scad>
-include <modules/decor.scad>
+$fn = 48;
 
-$vpt = [shed_length/2, shed_width/2, shed_height/2];
-$vpr = [55, 0, 25];
-$vpd = 18000;
+use <designs/lean_to_v1/build.scad>
+use <designs/house_yard_v2/build.scad>
 
-// --- Landscaping & ground ---
-landscaping();
-
-// --- Foundation ---
-floor_slab();
-interior_floor();
-rabbit_floor();
-
-// --- Back wall ---
-back_wall_core();
-
-// --- Right side wall ---
-seat_right_lower_wall();
-seat_right_side_frame();
-
-// --- Front wall ---
-front_posts_and_beam();
-front_rabbit_mesh();
-
-// --- Left side wall (rabbit mesh) ---
-rabbit_left_mesh_frame();
-rabbit_left_mesh();
-
-// --- Divider wall ---
-rabbit_seating_mesh_divider();
-
-// --- Roof ---
-roof();
-roof_fascia_and_gutter();
-ceiling_rafters();
-
-// --- Interior panels (hide studs) ---
-interior_panels();
-
-// --- Cladding & trim ---
-back_cladding();
-right_side_cladding();
-corner_trim();
-
-// --- Right side window ---
-right_side_window();
-
-// --- Furniture ---
-built_in_corner_bench();
-seating_table();
-wall_shelves();
-coffee_station();
-table_rug();
-
-// --- Lighting & electrical ---
-pendant_lamp();
-electrical_outlets();
-string_lights();
-
-// --- Entrance ---
-//entrance_step();
-
-// --- Rabbit area ---
-rabbit_accessories();
-
-// --- Props ---
-table_laptop();
+if (design == "lean_to_v1")    build_lean_to_v1(v1_preset);
+if (design == "house_yard_v2") build_house_yard_v2();

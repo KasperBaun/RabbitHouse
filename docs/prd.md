@@ -32,8 +32,7 @@ items, cited from this document.
 - A hutch that only gets opened for "exercise time" — RWAF guidance is
   explicit that this is no longer acceptable.
 - A human seating, lounge, or co-occupied space sharing the structure. That
-  was v1 scope and has been removed; the right-side zone's v2 purpose will
-  be defined separately.
+  was v1 scope and has been removed; the v2 right-side zone is a rabbit run.
 
 ## 4. Users
 
@@ -59,22 +58,39 @@ clearance for standing upright (REQ-002).
 
 ## 6. Layout principles
 
-The model fixes a few directional decisions that everything else hangs off:
+Two designs now coexist in the model — `lean_to_v1` (the original) and
+`house_yard_v2` (the gabled-house + polycarb-run redesign). Both share these
+directional decisions, with design-specific zoning overlaid on top.
 
-- **Front** (`Y = 0`) is the open mesh face onto the garden.
-- **Back** (`Y = shed_width`) is the solid cladded wall and the low edge of
-  the mono-pitch roof. It carries the prevailing-wind / driving-rain duty
-  (REQ-016).
-- **Left** (`X = 0`) is the rabbit mesh side; the rabbit zone runs from
-  `X = 0` to `X = rabbit_len`.
-- **Right** (`X = shed_length`) is the non-rabbit zone. In v1 this housed a
-  human seating area; in v2 its purpose is **TBD** and will be defined in a
-  separate document. The OpenSCAD model still draws the v1 shell (lower
-  cladding + upper mesh, mono roof) — whether v2 keeps that shape is
-  undecided.
-- The **sluice** sits on the divider between the rabbit zone and the
-  right-side zone and acts as the airlock (REQ-011) — never a direct door
-  from outside straight into the rabbit zone.
+- **Front** (`Y = 0`) is the open mesh face onto the garden / human entry.
+- **Back** (`Y = width`) is the solid cladded wall, taking prevailing-wind
+  and driving-rain duty (REQ-016).
+- **Left** (`X = 0`), **Right** (`X = length`).
+
+### `lean_to_v1` zoning
+
+- Mono-pitch roof; left side X=0..`rabbit_len` is the rabbit zone, right
+  side is a human seating area. Sluice sits on the divider between rabbit
+  zone and seating zone.
+
+### `house_yard_v2` zoning
+
+- Left X=0..2000 is a solid gabled rabbit shelter:
+  - Front-left corner (X=0..1000, Y=0..1000) is the airlock + bedding
+    storage cell, with the only outside human door on its Y=0 face.
+  - Insulated nest box against the back wall in the rest-of-house space.
+  - High gable louver vent (X=0 face) + low back vent for cross-ventilation.
+- Right X=2000..6000 is a mesh-walled rabbit run with a translucent
+  polycarbonate roof:
+  - Mesh on front (Y=0) and right (X=length) walls; back wall solid clad
+    with a high vent strip; left wall is the partition gable.
+  - Run roof slopes front-high to back-low, draining to the back gutter.
+  - Buried apron skirt 500 mm wide on the three exterior sides for dig
+    defeat.
+- House↔run rabbit pet door at X=2000, low at Y≈1500 — permanently passable
+  so the combined enclosure satisfies REQ-001.
+- The two-stage human airlock (outer door on the front, inner door at
+  Y=`airlock_d`) is the only human entry into the rabbit zone (REQ-011).
 
 ## 7. Constraints
 
@@ -120,9 +136,10 @@ The build is "done" — by the standards this PRD cares about — when:
   plot? That decides which side stays solid-cladded vs. meshed.
 - **Headcount growth:** is the long-term plan one bonded pair, or two? If
   two, the `8x4` preset is the safer default.
-- **Right-zone purpose (v2):** what replaces the v1 human seating area?
-  Until decided, layout, ventilation, and material requirements for that
-  zone are paused.
+- ~~**Right-zone purpose (v2):** what replaces the v1 human seating area?~~
+  Resolved 2026-04-29 — the v2 right-side zone is a 4 m × 3 m mesh-walled
+  rabbit run with a translucent polycarbonate roof, attached to a 2 m × 3 m
+  gabled solid shelter. See `docs/superpowers/specs/2026-04-29-multi-design-refactor-and-house-yard-v2.md`.
 - **Power:** is mains routed to the structure, or is lighting on a solar /
   battery loop? Affects routing in `modules/lighting.scad`.
 - **Foundation:** slab, piers, or paver-on-gravel? Drives REQ-021 and
