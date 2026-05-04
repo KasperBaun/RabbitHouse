@@ -24,6 +24,7 @@ lib/
 designs/
   lean_to_v1/{config,build}.scad       # original mono-pitch shed (v1)
   house_yard_v2/{config,build}.scad    # gabled house + mesh run with polycarb roof
+  house_yard_v3/{config,build}.scad    # unified mono-pitch over slab-house + grass-yard on plugs
 docs/
   prd.md                               # product requirements
   requirements.md                      # atomic REQ-NNN list
@@ -57,6 +58,7 @@ A design build file (e.g. `designs/house_yard_v2/build.scad`) constructs ctx vec
 
 - **lean_to_v1** — mono-pitch roof, rabbit zone X=0..rabbit_len, human seating zone after that. Roof drops `v1_roof_drop_back(width)` mm front-to-back. Back posts shorter; top beams use `hull()` between two thin cubes at the front and back heights. Mesh panels span up to the back (lowest) beam, with a wedge-shaped wood spandrel filling the triangle above.
 - **house_yard_v2** — gabled solid house (X=0..2000) + polycarb-roofed mesh run (X=2000..6000). Gable ridge runs along Y at X=1000. Polycarb tucks just under the gable eave at the partition wall (X=2000) for clean flashing. Run perimeter has a 500 mm horizontal mesh apron on the three exterior sides for predator dig defence.
+- **house_yard_v3** — ONE continuous mono-pitch roof over the entire 6 m × 3 m footprint, sloping front-to-back (eh_front=2600, eh_back=2200, drop=400). Foundation is a slab UNDER THE HOUSE ONLY (X=0..2000); the yard (X=2000..6000) sits on grass at grade with concrete ground plugs supporting four corner/intermediate posts. House side and partition walls are mono-pitch cladded with a sloped top beam below the roof. Yard back wall has a low solid-clad strip (driving-rain skirt) topped by a mesh ventilation band. No play-things in the yard — minimalist grass + bowls + 2 rabbits.
 
 ## Conventions
 

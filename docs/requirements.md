@@ -87,6 +87,49 @@ solid gabled rabbit shelter on the left.
 - **REQ-052** — The house roof ridge runs along the X axis at Y=`width`/2; gable end walls are at X=0 and X=2000, both cladded as triangles. The X=2000 partition gable is the wind-bracing wall the run roof leans against. Eaves run along X at Y=0 (front) and Y=`width` (back).
 - **REQ-053** — The run roof must drain to a gutter on the back (Y=`width`) edge; no water may discharge against the partition at X=2000.
 
+## H3. House-yard v3 (unified mono-pitch + ground-plug yard)
+
+Added 2026-05-03 alongside the introduction of the `house_yard_v3` design.
+v3 keeps the v2 zoning (2 m × 3 m solid house + 4 m × 3 m mesh yard) but
+replaces the gabled shelter and translucent run roof with **one continuous
+mono-pitch roof** spanning the entire footprint, and replaces the v2 full
+slab with a **slab-under-house-only + ground-plug-yard** foundation.
+
+Updated 2026-05-04: human entry was rerouted through the yard (REQ-059..062),
+and yard exterior siding was specified as mesh-only (no clad strip).
+
+- **REQ-054** — A single mono-pitch roof must span the entire 6 m × 3 m
+  footprint (house + yard) with no break at the partition. Drop runs
+  front-to-back; the drainage gutter sits on the back (Y=`width`) eave.
+- **REQ-055** — The concrete slab must extend ONLY under the house
+  (X=0..`house_len`); the yard floor must remain natural ground.
+- **REQ-056** — Yard corner posts must transfer load through concrete
+  ground plugs (not the slab); each plug sits at least 40 mm below
+  grade and 100 mm proud, with a steel post-base bracket isolating
+  wood from soil moisture.
+- **REQ-057** — The yard interior must be live grass at grade, with
+  predator-proofing achieved by the perimeter buried apron skirt
+  (REQ-009) — no buried mesh layer is required under the yard floor.
+- **REQ-058** — Reserved (former back-wall driving-rain clad strip;
+  removed in 2026-05-04 revision in favour of full-height mesh).
+- **REQ-059** — The exterior of all three yard walls (front, back,
+  right) must be welded-wire mesh only, with no klink-board cladding
+  on any yard exterior face. Mesh must meet REQ-008 aperture/wire
+  requirements (≤ 25 × 13 mm aperture, ≥ 1 mm wire).
+- **REQ-060** — Vertical wood stiles (≈ 60 × 60 mm) must divide the
+  mesh walls into approximately 1 m panels for structural rigidity
+  and constructible mesh-stretching. The yard mesh door's own L/R
+  frame stiles count toward this 1 m rhythm on the front wall.
+- **REQ-061** — Human entry to the house must be through the yard:
+  an exterior mesh door in the yard front (Y=0) leads into the yard,
+  and a separate solid human door in the partition (X=`house_len`)
+  leads from the yard into the house. The house has no door on its
+  outside face (Y=0).
+- **REQ-062** — REQ-011 (airlock semantics) is satisfied by the
+  yard-as-vestibule: the yard mesh door is the "outer" stage and the
+  partition human door is the "inner" stage, and they must not be
+  open simultaneously when rabbits are unconfined in the yard.
+
 ## I. Safety
 
 - **REQ-043** — No element reachable by rabbits or humans may have a sharp edge, exposed nail, splinter, or pinch point.
