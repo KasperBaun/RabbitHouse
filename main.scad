@@ -13,6 +13,14 @@ v1_preset = "7x3";
 
 $fn = 48;
 
+// Initial GUI viewport. OpenSCAD reads these special variables on file
+// open and uses them as the starting camera, so the 6 m structure frames
+// correctly instead of appearing as a tiny dot in the corner.
+// (CLI `--camera=...` flags override these for batch renders.)
+$vpt = [3000, 1500, 1300];   // focal point ~ centre of all three designs
+$vpr = [55, 0, 25];          // default 3/4 angle (degrees)
+$vpd = 16000;                // camera distance — fits a 6 m × 3 m model
+
 use <designs/lean_to_v1/build.scad>
 use <designs/house_yard_v2/build.scad>
 use <designs/house_yard_v3/build.scad>
