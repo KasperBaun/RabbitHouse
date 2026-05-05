@@ -11,6 +11,12 @@
 design = "v3";
 v1_preset = "7x3";
 
+// Toggle wall cladding/door/window trim on or off. With cladding off, all
+// stud walls, posts, plates, and beams are visible — useful for auditing the
+// frame against TIMBER-FRAMING.md and counting timber for a shopping list.
+// (Currently honoured by v3 only.)
+show_cladding = false;
+
 $fn = 48;
 
 // Initial GUI viewport. OpenSCAD reads these special variables on file
@@ -27,4 +33,4 @@ use <designs/v3/build.scad>
 
 if (design == "v1") build_v1(v1_preset);
 if (design == "v2") build_v2();
-if (design == "v3") build_v3();
+if (design == "v3") build_v3(show_cladding=show_cladding);

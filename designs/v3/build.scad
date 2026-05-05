@@ -31,7 +31,10 @@ function v3_roof_oz() =
 function v3_roof_under(y) =
     v3_roof_oz() - (V3_OH_FRONT + y) * v3_total_drop() / v3_span_total();
 
-module build_v3() {
+// `show_cladding=false` hides the wall cladding, doors, and window trim so the
+// structural frame (studs, plates, beams, posts) is visible — useful for
+// auditing framing against TIMBER-FRAMING.md and counting timber.
+module build_v3(show_cladding=true) {
     pal  = DEFAULT_PALETTE;
     clad = DEFAULT_CLAD;
     mesh = mesh_spec(spacing = V3_MESH_SPACING,
@@ -71,22 +74,25 @@ module build_v3() {
     v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal);
 
     // --- House cladding (front, back, left, partition) ----------------
-    v3_house_cladding(hl, ww, ehf, ehb, bh, ct, pal, clad);
+    if (show_cladding) {
+        v3_house_cladding(hl, ww, ehf, ehb, bh, ct, pal, clad);
+        v3_house_corner_trims(hl, ww, ehf, ehb, bh, ct, pal);
 
-    // --- Partition: human door + rabbit pet door ----------------------
-    v3_partition_door(hl, ct, V3_HOUSE_DOOR_Y, V3_HOUSE_DOOR_W,
-                      V3_HOUSE_DOOR_H, bh, pal);
-    rabbit_pet_door_yz(hl - wt, V3_PET_DOOR_Y, bh + 60,
-                       V3_PET_DOOR_W, V3_PET_DOOR_H, wt, pal);
-    // Stone threshold inside the yard at the partition human door
-    color([0.55, 0.50, 0.40])
-    translate([hl + ct + 20, V3_HOUSE_DOOR_Y - 50,
-               V3_PLUG_H + 18 + 80])
-        cube([200, V3_HOUSE_DOOR_W + 100, 12]);
+        // --- Partition: human door + rabbit pet door ------------------
+        v3_partition_door(hl, ct, V3_HOUSE_DOOR_Y, V3_HOUSE_DOOR_W,
+                          V3_HOUSE_DOOR_H, bh, pal);
+        rabbit_pet_door_yz(hl - wt, V3_PET_DOOR_Y, bh + 60,
+                           V3_PET_DOOR_W, V3_PET_DOOR_H, wt, pal);
+        // Stone threshold inside the yard at the partition human door
+        color([0.55, 0.50, 0.40])
+        translate([hl + ct + 20, V3_HOUSE_DOOR_Y - 50,
+                   V3_PLUG_H + 18 + 80])
+            cube([200, V3_HOUSE_DOOR_W + 100, 12]);
 
-    // --- Side window with trim on left exterior wall (faces -X) -------
-    window_with_trim_xneg(0, V3_SIDE_WIN_Y, bh + V3_SIDE_WIN_Z,
-                          V3_SIDE_WIN_W, V3_SIDE_WIN_H, ct, pal, true);
+        // --- Side window with trim on left exterior wall (faces -X) ---
+        window_with_trim_xneg(0, V3_SIDE_WIN_Y, bh + V3_SIDE_WIN_Z,
+                              V3_SIDE_WIN_W, V3_SIDE_WIN_H, ct, pal, true);
+    }
 
     // --- Insulated nest box --------------------------------------------
     nest_box_insulated([V3_NEST_X, V3_NEST_Y, bh + 20],
@@ -121,7 +127,7 @@ module build_v3() {
                     V3_OH_FRONT, V3_OH_BACK, V3_OH_SIDE, pal);
     fascia_and_gutter_mono([0, 0, roof_oz], ll, ww, drop_full,
                            150, 22, V3_OH_FRONT, V3_OH_BACK, V3_OH_SIDE,
-                           110, 65, pal);
+                           110, 65, 0, pal);
     rafter_eave_h = v3_roof_under(wt);
     rafter_drop = v3_roof_under(wt) - v3_roof_under(ww - wt);
     ceiling_rafters_mono([0, 0, 0], ll, ww, rafter_drop, rafter_eave_h,
@@ -180,6 +186,20 @@ module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
             cube([80, 0.01, 180]);
         translate([hl/2 - 40, ww - 0.01, bh + ehb - 180])
             cube([80, 0.01, 180]);
+    }
+}
+
+// External corner trim posts (45×45 vertical) at the four house cladding
+// corners. Each post overlaps both cladding faces at the corner so the raw
+// klink board end-grain is covered, matching standard Danish carpentry.
+// Heights follow the wall: back corners use ehb, front corners use ehf.
+module v3_house_corner_trims(hl, ww, ehf, ehb, bh, ct, pal) {
+    tw = 45;
+    color(pal_trim(pal)) {
+        translate([-ct,           -ct,            bh]) cube([tw, tw, ehf]);
+        translate([hl + ct - tw,  -ct,            bh]) cube([tw, tw, ehf]);
+        translate([-ct,           ww + ct - tw,   bh]) cube([tw, tw, ehb]);
+        translate([hl + ct - tw,  ww + ct - tw,   bh]) cube([tw, tw, ehb]);
     }
 }
 

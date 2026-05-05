@@ -177,7 +177,7 @@ module fascia_and_gutter_mono(origin, length, width, drop,
                               fascia_h=140, fascia_t=22,
                               overhang_front=180, overhang_back=100,
                               overhang_side=120, gutter_w=100, gutter_h=60,
-                              palette=DEFAULT_PALETTE) {
+                              base_h=0, palette=DEFAULT_PALETTE) {
     ox = origin[0]; oy = origin[1]; oz = origin[2];
     x0 = ox - overhang_side;
     x1 = ox + length + overhang_side;
@@ -214,9 +214,9 @@ module fascia_and_gutter_mono(origin, length, width, drop,
             cube([x1 - x0 - 40, gt, gutter_h]);
         translate([x0 + 20, y1 + gutter_w - gt, gutter_z])
             cube([x1 - x0 - 40, gt, gutter_h * 0.7]);
-        // Downspout on the right
-        translate([x1 - 80, y1 + gutter_w / 2 - 25, oz - drop - fascia_h - 1500])
-            cube([50, 50, 1500]);
+        // Downspout on the right — runs from gutter outflow down to grade
+        translate([x1 - 80, y1 + gutter_w / 2 - 25, base_h])
+            cube([50, 50, gutter_z - base_h]);
         translate([x1 - 80, y1 + gutter_w / 2 - 25, gutter_z - 5])
             cube([50, 50, 15]);
     }
