@@ -249,17 +249,18 @@ module v3_yard_door(door_x, door_w, door_h, sill_top, pal, mesh) {
     z0  = sill_top;
     z1  = sill_top + door_h;
 
+    z_mid = z0 + V3_MID_RAIL_Z_OFFSET;
     color(pal_post(pal)) {
         translate([door_x, -md, z0])               cube([door_w, md, fr]);
         translate([door_x, -md, z1 - fr])          cube([door_w, md, fr]);
         translate([door_x, -md, z0])               cube([fr, md, door_h]);
         translate([door_x + door_w - fr, -md, z0]) cube([fr, md, door_h]);
-        translate([door_x, -md, (z0 + z1)/2 - fr/2]) cube([door_w, md, fr]);
+        translate([door_x, -md, z_mid - fr/2])     cube([door_w, md, fr]);
     }
 
     color(pal_mesh(pal)) {
-        for (band_z = [[z0 + fr, (z0+z1)/2 - fr/2],
-                       [(z0+z1)/2 + fr/2, z1 - fr]]) {
+        for (band_z = [[z0 + fr, z_mid - fr/2],
+                       [z_mid + fr/2, z1 - fr]]) {
             zlo = band_z[0]; zhi = band_z[1];
             for (xx = [door_x + fr + sp/2 : sp : door_x + door_w - fr - sp/2])
                 translate([xx - mb/2, -md + (md-mb)/2, zlo])
@@ -387,20 +388,41 @@ module v3_yard_stiles(hl, rl, ww, fpw, pal) {
     }
 }
 
+// Horizontal mid-rail in a mesh panel oriented along X (front/back walls).
+module v3_mesh_midrail_x(panel_x, panel_w, y_pos, z_center, mesh, pal) {
+    md = ms_depth(mesh);
+    color(pal_trim(pal))
+    translate([panel_x, y_pos, z_center - V3_MID_RAIL_H/2])
+        cube([panel_w, md, V3_MID_RAIL_H]);
+}
+
+// Horizontal mid-rail in a mesh panel oriented along Y (right end).
+module v3_mesh_midrail_y(panel_y, panel_w, x_pos, z_center, mesh, pal) {
+    md = ms_depth(mesh);
+    color(pal_trim(pal))
+    translate([x_pos, panel_y, z_center - V3_MID_RAIL_H/2])
+        cube([md, panel_w, V3_MID_RAIL_H]);
+}
+
 // Front mesh — three rectangular panels (left of door, between door and
-// stile at hl+3000, between stile and right corner).
+// stile at hl+3000, between stile and right corner). Each panel gets a
+// horizontal mid-rail at sill_top + V3_MID_RAIL_Z_OFFSET so the wood line
+// lines up across the whole front wall (door's mid-rail uses the same z).
 module v3_yard_mesh_front(hl, rl, ww, fpw, pal, mesh) {
     md = ms_depth(mesh);
     sill_top = V3_PLUG_H + 18 + 80;
     h = (v3_roof_under(0) - 180) - sill_top;
+    z_rail = sill_top + V3_MID_RAIL_Z_OFFSET;
     seg_xs = [
         [hl + fpw,                         V3_YARD_DOOR_X],
         [V3_YARD_DOOR_X + V3_YARD_DOOR_W,  hl + 3000],
         [hl + 3000,                        hl + rl - fpw]
     ];
     for (s = seg_xs)
-        if (s[1] - s[0] > 100)
+        if (s[1] - s[0] > 100) {
             mesh_panel_x(s[0], s[1] - s[0], sill_top, h, -md, pal, mesh);
+            v3_mesh_midrail_x(s[0], s[1] - s[0], -md, z_rail, mesh, pal);
+        }
 }
 
 // Back mesh — four rectangular panels broken by stiles every 1 m.
@@ -408,22 +430,29 @@ module v3_yard_mesh_back(hl, rl, ww, fpw, pal, mesh) {
     md = ms_depth(mesh);
     sill_top = V3_PLUG_H + 18 + 80;
     h = (v3_roof_under(ww) - 180) - sill_top;
+    z_rail = sill_top + V3_MID_RAIL_Z_OFFSET;
     breaks = [hl + fpw, hl + 1000, hl + 2000, hl + 3000, hl + rl - fpw];
     for (i = [0 : len(breaks) - 2]) {
         x0 = breaks[i]; x1 = breaks[i + 1];
-        if (x1 - x0 > 100)
+        if (x1 - x0 > 100) {
             mesh_panel_x(x0, x1 - x0, sill_top, h, ww - md, pal, mesh);
+            v3_mesh_midrail_x(x0, x1 - x0, ww - md, z_rail, mesh, pal);
+        }
     }
 }
 
 // Right end mesh — sloped top via difference() against a sloped wedge,
-// broken into three rectangular full-height panels by stiles.
+// broken into three rectangular full-height panels by stiles. Mid-rails
+// are inside the union so the wedge clips them too — but at z=sill+1000
+// the rail is well below the slope (lowest slope point is at the back-low
+// corner ~1900 mm above sill_top), so it's never actually clipped.
 module v3_yard_mesh_right(hl, rl, ww, fpw, pal, mesh) {
     md = ms_depth(mesh);
     sill_top = V3_PLUG_H + 18 + 80;
     z_top_max = v3_roof_under(0) - 180;
     z_top_y0 = v3_roof_under(0) - 180;
     z_top_y1 = v3_roof_under(ww) - 180;
+    z_rail = sill_top + V3_MID_RAIL_Z_OFFSET;
     x_pos = hl + rl;
     breaks = [fpw, fpw + 1000, fpw + 2000, ww - fpw];
 
@@ -431,9 +460,11 @@ module v3_yard_mesh_right(hl, rl, ww, fpw, pal, mesh) {
         union() {
             for (i = [0 : len(breaks) - 2]) {
                 y0 = breaks[i]; y1 = breaks[i + 1];
-                if (y1 - y0 > 100)
+                if (y1 - y0 > 100) {
                     mesh_panel_y(y0, y1 - y0, sill_top, z_top_max - sill_top,
                                  x_pos, pal, mesh);
+                    v3_mesh_midrail_y(y0, y1 - y0, x_pos, z_rail, mesh, pal);
+                }
             }
         }
         hull() {

@@ -79,3 +79,10 @@ V3_MESH_DEPTH   = 20;
 // Vertical wood stiles every ~1 m along yard mesh walls.
 V3_STILE_W      = 60;
 V3_STILE_SPACING = 1000;
+
+// Horizontal mid-rail across yard mesh panels — divides each panel into
+// stacked ~1 m × 1 m mesh sections for a fence-panel look. The yard door's
+// internal mid-rail uses the same Z so the rail line is continuous across
+// the whole front wall.
+V3_MID_RAIL_Z_OFFSET = 1000;       // above sill top
+V3_MID_RAIL_H        = 40;         // matches mesh frame thickness
