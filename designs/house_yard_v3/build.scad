@@ -101,13 +101,13 @@ module build_house_yard_v3() {
         cube([400, 600, 900]);
 
     // --- Yard structure: ground plugs + corner posts + sloped beams ----
-    v3_yard_plugs_and_posts(hl, rl, ww, bh, fpw, pal);
-    v3_yard_top_beams(hl, rl, ww, fpw, pal);
+    v3_yard_plugs_and_posts(hl, rl, ww, bh, fpw, ct, pal);
+    v3_yard_top_beams(hl, rl, ww, fpw, ct, pal);
     v3_yard_stiles(hl, rl, ww, fpw, pal);
 
     // --- Yard mesh on three exterior sides ---------------------------
-    v3_yard_mesh_front(hl, rl, ww, fpw, pal, mesh);
-    v3_yard_mesh_back(hl, rl, ww, fpw, pal, mesh);
+    v3_yard_mesh_front(hl, rl, ww, fpw, ct, pal, mesh);
+    v3_yard_mesh_back(hl, rl, ww, fpw, ct, pal, mesh);
     v3_yard_mesh_right(hl, rl, ww, fpw, pal, mesh);
 
     // --- Yard mesh-and-frame entry door (front, Y=0) -----------------
@@ -285,9 +285,14 @@ module v3_yard_door(door_x, door_w, door_h, sill_top, pal, mesh) {
             cube([15, 8, 100]);
 }
 
-// Yard plugs + corner posts + partition pseudo-posts + sill plates
-// (sills broken around the yard mesh door at Y=0).
-module v3_yard_plugs_and_posts(hl, rl, ww, bh, fpw, pal) {
+// Yard plugs + right-end corner posts + sill plates.
+//   The yard's LEFT corners (at the partition X=hl) are NOT separate posts —
+//   the partition wall and its cladding (X=hl..hl+ct) already provide the
+//   structural corner, and putting wood posts at X=hl..hl+fpw would either
+//   poke through the partition cladding or leave a visible gap behind it.
+//   Sills/beams/mesh on the yard side start just east of the partition
+//   cladding's outer face, at X = hl + ct.
+module v3_yard_plugs_and_posts(hl, rl, ww, bh, fpw, ct, pal) {
     plug_posts = [
         [hl + rl - fpw, 0,        v3_roof_under(0)],
         [hl + rl - fpw, ww - fpw, v3_roof_under(ww - fpw)]
@@ -310,44 +315,45 @@ module v3_yard_plugs_and_posts(hl, rl, ww, bh, fpw, pal) {
         translate([p[0], p[1], z0])
             cube([fpw, fpw, p[2] - z0]);
     }
-    color(pal_post(pal)) {
-        translate([hl, 0, bh])
-            cube([fpw, fpw, v3_roof_under(0) - bh]);
-        translate([hl, ww - fpw, bh])
-            cube([fpw, fpw, v3_roof_under(ww - fpw) - bh]);
-    }
 
     sill_z = V3_PLUG_H + 18;
     color(pal_post(pal)) {
-        if (V3_YARD_DOOR_X > hl + fpw)
-            translate([hl + fpw, 0, sill_z])
-                cube([V3_YARD_DOOR_X - (hl + fpw), fpw, 80]);
+        // Front sill, segment LEFT of the yard door
+        if (V3_YARD_DOOR_X > hl + ct)
+            translate([hl + ct, 0, sill_z])
+                cube([V3_YARD_DOOR_X - (hl + ct), fpw, 80]);
+        // Front sill, segment RIGHT of the yard door
         if (V3_YARD_DOOR_X + V3_YARD_DOOR_W < hl + rl - fpw)
             translate([V3_YARD_DOOR_X + V3_YARD_DOOR_W, 0, sill_z])
                 cube([(hl + rl - fpw) - (V3_YARD_DOOR_X + V3_YARD_DOOR_W),
                       fpw, 80]);
-        translate([hl + fpw, ww - fpw, sill_z])
-            cube([rl - 2*fpw, fpw, 80]);
+        // Back sill — continuous from partition cladding's outer face to
+        // the right-end corner post.
+        translate([hl + ct, ww - fpw, sill_z])
+            cube([rl - ct - fpw, fpw, 80]);
+        // Right end sill
         translate([hl + rl - fpw, fpw, sill_z])
             cube([fpw, ww - 2*fpw, 80]);
     }
 }
 
 // Sloped front and back top beams (top face follows the roof underside).
-module v3_yard_top_beams(hl, rl, ww, fpw, pal) {
+// Beams start at hl+ct so they don't pass through the partition cladding;
+// their left ends rest on top of the partition wall.
+module v3_yard_top_beams(hl, rl, ww, fpw, ct, pal) {
     color(pal_post(pal))
     hull() {
-        translate([hl, 0, v3_roof_under(0) - 180])
-            cube([rl, 0.01, 180]);
-        translate([hl, fpw - 0.01, v3_roof_under(fpw) - 180])
-            cube([rl, 0.01, 180]);
+        translate([hl + ct, 0, v3_roof_under(0) - 180])
+            cube([rl - ct, 0.01, 180]);
+        translate([hl + ct, fpw - 0.01, v3_roof_under(fpw) - 180])
+            cube([rl - ct, 0.01, 180]);
     }
     color(pal_post(pal))
     hull() {
-        translate([hl, ww - fpw, v3_roof_under(ww - fpw) - 180])
-            cube([rl, 0.01, 180]);
-        translate([hl, ww - 0.01, v3_roof_under(ww) - 180])
-            cube([rl, 0.01, 180]);
+        translate([hl + ct, ww - fpw, v3_roof_under(ww - fpw) - 180])
+            cube([rl - ct, 0.01, 180]);
+        translate([hl + ct, ww - 0.01, v3_roof_under(ww) - 180])
+            cube([rl - ct, 0.01, 180]);
     }
     top_beam_sloped_y(hl + rl - fpw, fpw, ww - 2*fpw,
                       v3_roof_under(0), v3_roof_under(ww),
@@ -405,16 +411,17 @@ module v3_mesh_midrail_y(panel_y, panel_w, x_pos, z_center, mesh, pal) {
 }
 
 // Front mesh — three rectangular panels (left of door, between door and
-// stile at hl+3000, between stile and right corner). Each panel gets a
-// horizontal mid-rail at sill_top + V3_MID_RAIL_Z_OFFSET so the wood line
-// lines up across the whole front wall (door's mid-rail uses the same z).
-module v3_yard_mesh_front(hl, rl, ww, fpw, pal, mesh) {
+// stile at hl+3000, between stile and right corner) PLUS a transom mesh
+// panel above the yard door so the predator perimeter stays unbroken.
+// Each panel gets a horizontal mid-rail at sill_top + V3_MID_RAIL_Z_OFFSET
+// so the wood line is continuous across the whole front wall.
+module v3_yard_mesh_front(hl, rl, ww, fpw, ct, pal, mesh) {
     md = ms_depth(mesh);
     sill_top = V3_PLUG_H + 18 + 80;
     h = (v3_roof_under(0) - 180) - sill_top;
     z_rail = sill_top + V3_MID_RAIL_Z_OFFSET;
     seg_xs = [
-        [hl + fpw,                         V3_YARD_DOOR_X],
+        [hl + ct,                          V3_YARD_DOOR_X],
         [V3_YARD_DOOR_X + V3_YARD_DOOR_W,  hl + 3000],
         [hl + 3000,                        hl + rl - fpw]
     ];
@@ -423,15 +430,23 @@ module v3_yard_mesh_front(hl, rl, ww, fpw, pal, mesh) {
             mesh_panel_x(s[0], s[1] - s[0], sill_top, h, -md, pal, mesh);
             v3_mesh_midrail_x(s[0], s[1] - s[0], -md, z_rail, mesh, pal);
         }
+
+    // Transom mesh above the yard door
+    door_top_z = sill_top + V3_YARD_DOOR_H;
+    transom_h = (sill_top + h) - door_top_z;
+    if (transom_h > 50)
+        mesh_panel_x(V3_YARD_DOOR_X, V3_YARD_DOOR_W, door_top_z, transom_h,
+                     -md, pal, mesh);
 }
 
-// Back mesh — four rectangular panels broken by stiles every 1 m.
-module v3_yard_mesh_back(hl, rl, ww, fpw, pal, mesh) {
+// Back mesh — four rectangular panels broken by stiles every 1 m, starting
+// at hl+ct so the panels meet the partition cladding flush.
+module v3_yard_mesh_back(hl, rl, ww, fpw, ct, pal, mesh) {
     md = ms_depth(mesh);
     sill_top = V3_PLUG_H + 18 + 80;
     h = (v3_roof_under(ww) - 180) - sill_top;
     z_rail = sill_top + V3_MID_RAIL_Z_OFFSET;
-    breaks = [hl + fpw, hl + 1000, hl + 2000, hl + 3000, hl + rl - fpw];
+    breaks = [hl + ct, hl + 1000, hl + 2000, hl + 3000, hl + rl - fpw];
     for (i = [0 : len(breaks) - 2]) {
         x0 = breaks[i]; x1 = breaks[i + 1];
         if (x1 - x0 > 100) {
