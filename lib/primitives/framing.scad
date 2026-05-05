@@ -23,9 +23,10 @@ module stud_wall(origin, length, height, axis="X",
             // Top plate
             translate([ox, oy, oz + height - sw])
                 cube([length, sd, sw]);
-            // Studs
+            // Studs (loop bound `length - sw` so a length divisible by sp
+            // doesn't spawn an extra stud past the wall end).
             stud_h = height - 2 * sw;
-            for (x = [0 : sp : length])
+            for (x = [0 : sp : length - sw])
                 translate([ox + x, oy, oz + sw])
                     cube([sw, sd, stud_h]);
             // End stud
@@ -37,7 +38,7 @@ module stud_wall(origin, length, height, axis="X",
             translate([ox, oy, oz + height - sw])
                 cube([sd, length, sw]);
             stud_h = height - 2 * sw;
-            for (y = [0 : sp : length])
+            for (y = [0 : sp : length - sw])
                 translate([ox, oy + y, oz + sw])
                     cube([sd, sw, stud_h]);
             translate([ox, oy + length - sw, oz + sw])
