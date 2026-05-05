@@ -1,6 +1,6 @@
-// House-yard v3 build — solid mono-pitch house on a slab + mesh-only yard
+// v3 build — solid mono-pitch house on a slab + mesh-only yard
 // on ground plugs, all under one continuous mono-pitch roof.
-// Entry point: build_house_yard_v3()
+// Entry point: build_v3()
 //
 // Spatial layout (see config.scad). Human entry: garden → yard front
 // mesh door (Y=0) → yard → partition human door (X=hl) → house.
@@ -31,7 +31,7 @@ function v3_roof_oz() =
 function v3_roof_under(y) =
     v3_roof_oz() - (V3_OH_FRONT + y) * v3_total_drop() / v3_span_total();
 
-module build_house_yard_v3() {
+module build_v3() {
     pal  = DEFAULT_PALETTE;
     clad = DEFAULT_CLAD;
     mesh = mesh_spec(spacing = V3_MESH_SPACING,
@@ -498,22 +498,4 @@ module v3_outdoor_dressing(ll, ww, bh) {
         translate([V3_YARD_DOOR_X + V3_YARD_DOOR_W/2 + 200*sin(i*60),
                    -2200 - i*420, -3])
             cylinder(h = 14, r = 230, $fn = 8);
-
-    for (s = [[-220, 400], [-260, 1700], [-240, 2600]]) {
-        color([0.30, 0.45, 0.22])
-        translate([s[0], s[1], 0])
-            scale([1.1, 1, 0.8]) sphere(r = 220);
-        color([0.36, 0.52, 0.28])
-        translate([s[0] - 30, s[1] + 80, 100])
-            scale([0.9, 0.9, 0.7]) sphere(r = 170);
-    }
-    for (s = [[ll + 280, ww + 360], [ll + 460, ww + 700]]) {
-        color([0.34, 0.48, 0.24])
-        translate([s[0], s[1], 0])
-            scale([1, 1.1, 0.9]) sphere(r = 280);
-    }
-    color([0.62, 0.60, 0.56])
-    for (c = [[-380, 1100, 0], [-420, 1350, 0], [-500, 1250, 0],
-              [-460, 1480, 0], [-380, 1550, 0]])
-        translate(c) sphere(r = 90 + (c[1] % 60));
 }

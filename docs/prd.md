@@ -58,8 +58,9 @@ clearance for standing upright (REQ-002).
 
 ## 6. Layout principles
 
-Two designs now coexist in the model — `lean_to_v1` (the original) and
-`house_yard_v2` (the gabled-house + polycarb-run redesign). Both share these
+Multiple designs coexist in the model — `v1` (the original lean-to),
+`v2` (the gabled-house + polycarb-run redesign), and `v3` (unified
+mono-pitch over slab-house + grass-yard on plugs). All share these
 directional decisions, with design-specific zoning overlaid on top.
 
 - **Front** (`Y = 0`) is the open mesh face onto the garden / human entry.
@@ -67,13 +68,13 @@ directional decisions, with design-specific zoning overlaid on top.
   and driving-rain duty (REQ-016).
 - **Left** (`X = 0`), **Right** (`X = length`).
 
-### `lean_to_v1` zoning
+### `v1` zoning
 
 - Mono-pitch roof; left side X=0..`rabbit_len` is the rabbit zone, right
   side is a human seating area. Sluice sits on the divider between rabbit
   zone and seating zone.
 
-### `house_yard_v2` zoning
+### `v2` zoning
 
 - Left X=0..2000 is a solid gabled rabbit shelter:
   - Front-left corner (X=0..1000, Y=0..1000) is the airlock + bedding

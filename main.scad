@@ -2,13 +2,13 @@
 //
 // Pick a design by name; the matching `build_<design>` module is called below.
 // Available designs:
-//   "house_yard_v3" — unified mono-pitch roof over slab-on-house + grass-on-plugs yard (current).
-//   "house_yard_v2" — gabled solid house + polycarb-roofed mesh run.
-//   "lean_to_v1"    — original mono-pitch shed with rabbit zone + human seating.
+//   "v3" — unified mono-pitch roof over slab-on-house + grass-on-plugs yard (current).
+//   "v2" — gabled solid house + polycarb-roofed mesh run.
+//   "v1" — original mono-pitch shed with rabbit zone + human seating.
 //
-// For lean_to_v1, also pick a preset: "6x3", "7x3", or "8x4".
+// For v1, also pick a preset: "6x3", "7x3", or "8x4".
 
-design = "house_yard_v3";
+design = "v3";
 v1_preset = "7x3";
 
 $fn = 48;
@@ -21,10 +21,10 @@ $vpt = [3000, 1500, 1300];   // focal point ~ centre of all three designs
 $vpr = [55, 0, 25];          // default 3/4 angle (degrees)
 $vpd = 16000;                // camera distance — fits a 6 m × 3 m model
 
-use <designs/lean_to_v1/build.scad>
-use <designs/house_yard_v2/build.scad>
-use <designs/house_yard_v3/build.scad>
+use <designs/v1/build.scad>
+use <designs/v2/build.scad>
+use <designs/v3/build.scad>
 
-if (design == "lean_to_v1")    build_lean_to_v1(v1_preset);
-if (design == "house_yard_v2") build_house_yard_v2();
-if (design == "house_yard_v3") build_house_yard_v3();
+if (design == "v1") build_v1(v1_preset);
+if (design == "v2") build_v2();
+if (design == "v3") build_v3();

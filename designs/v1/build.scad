@@ -1,7 +1,7 @@
-// Lean-to v1 build — composes the original mono-pitch shed with rabbit zone
+// v1 build — composes the original mono-pitch shed with rabbit zone
 // (left/front mesh) and human seating zone (right, lower clad + upper mesh).
 //
-// Entry point: build_lean_to_v1(preset)
+// Entry point: build_v1(preset)
 
 include <../../lib/defaults.scad>
 include <config.scad>
@@ -21,7 +21,7 @@ use <../../lib/decor/rabbit.scad>
 // Top-level build
 // ---------------------------------------------------------------------------
 
-module build_lean_to_v1(preset="7x3") {
+module build_v1(preset="7x3") {
     d          = v1_dims_for(preset);
     rabbit_len = v1_rabbit_len_for(preset);
     pal        = DEFAULT_PALETTE;

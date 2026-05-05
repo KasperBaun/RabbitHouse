@@ -1,5 +1,5 @@
-// House-yard v2 build — gabled solid house on the left + mesh-walled run with
-// polycarbonate roof on the right. Entry point: build_house_yard_v2()
+// v2 build — gabled solid house on the left + mesh-walled run with
+// polycarbonate roof on the right. Entry point: build_v2()
 
 include <../../lib/defaults.scad>
 include <config.scad>
@@ -14,7 +14,7 @@ use <../../lib/decor/landscape.scad>
 use <../../lib/decor/lighting.scad>
 use <../../lib/decor/rabbit.scad>
 
-module build_house_yard_v2() {
+module build_v2() {
     pal  = DEFAULT_PALETTE;
     clad = DEFAULT_CLAD;
     mesh = DEFAULT_MESH;

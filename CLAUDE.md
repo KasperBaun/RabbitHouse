@@ -8,7 +8,7 @@ OpenSCAD model of a rabbit house — an outdoor structure for a bonded pair of p
 
 ## Opening / Previewing
 
-Open `main.scad` in OpenSCAD. Change the `design` string near the top to switch between designs. For `lean_to_v1` you can also change `v1_preset` to `"6x3"`, `"7x3"`, or `"8x4"`.
+Open `main.scad` in OpenSCAD. Change the `design` string near the top to switch between designs (`"v1"`, `"v2"`, `"v3"`). For `v1` you can also change `v1_preset` to `"6x3"`, `"7x3"`, or `"8x4"`.
 
 ## Architecture
 
@@ -22,9 +22,9 @@ lib/
   primitives/                          # cladding, mesh, roof, framing, foundation, openings
   decor/                               # rabbit, landscape, lighting, furniture
 designs/
-  lean_to_v1/{config,build}.scad       # original mono-pitch shed (v1)
-  house_yard_v2/{config,build}.scad    # gabled house + mesh run with polycarb roof
-  house_yard_v3/{config,build}.scad    # unified mono-pitch over slab-house + grass-yard on plugs
+  v1/{config,build}.scad               # original mono-pitch shed
+  v2/{config,build}.scad               # gabled house + mesh run with polycarb roof
+  v3/{config,build}.scad               # unified mono-pitch over slab-house + grass-yard on plugs
 docs/
   prd.md                               # product requirements
   requirements.md                      # atomic REQ-NNN list
@@ -45,7 +45,7 @@ Every library module takes **named arguments with sensible defaults**. Things th
 | `mesh_spec` | spacing, bar, frame, depth | `ms_spacing`, `ms_bar`, ... |
 | `stud_spec` | stud_w, stud_d, spacing | `ss_w`, `ss_d`, `ss_spacing` |
 
-A design build file (e.g. `designs/house_yard_v2/build.scad`) constructs ctx vectors near the top of its build module and threads them into library calls. No library module reads file-global variables.
+A design build file (e.g. `designs/v2/build.scad`) constructs ctx vectors near the top of its build module and threads them into library calls. No library module reads file-global variables.
 
 ### Spatial layout (shared across designs)
 
@@ -56,9 +56,9 @@ A design build file (e.g. `designs/house_yard_v2/build.scad`) constructs ctx vec
 
 ### Design-specific structural notes
 
-- **lean_to_v1** — mono-pitch roof, rabbit zone X=0..rabbit_len, human seating zone after that. Roof drops `v1_roof_drop_back(width)` mm front-to-back. Back posts shorter; top beams use `hull()` between two thin cubes at the front and back heights. Mesh panels span up to the back (lowest) beam, with a wedge-shaped wood spandrel filling the triangle above.
-- **house_yard_v2** — gabled solid house (X=0..2000) + polycarb-roofed mesh run (X=2000..6000). Gable ridge runs along Y at X=1000. Polycarb tucks just under the gable eave at the partition wall (X=2000) for clean flashing. Run perimeter has a 500 mm horizontal mesh apron on the three exterior sides for predator dig defence.
-- **house_yard_v3** — ONE continuous mono-pitch roof over the entire 6 m × 3 m footprint, sloping front-to-back (eh_front=2600, eh_back=2200, drop=400). Foundation is a slab UNDER THE HOUSE ONLY (X=0..2000); the yard (X=2000..6000) sits on grass at grade with concrete ground plugs supporting four corner/intermediate posts. House side and partition walls are mono-pitch cladded with a sloped top beam below the roof. Yard back wall has a low solid-clad strip (driving-rain skirt) topped by a mesh ventilation band. No play-things in the yard — minimalist grass + bowls + 2 rabbits.
+- **v1** — mono-pitch roof, rabbit zone X=0..rabbit_len, human seating zone after that. Roof drops `v1_roof_drop_back(width)` mm front-to-back. Back posts shorter; top beams use `hull()` between two thin cubes at the front and back heights. Mesh panels span up to the back (lowest) beam, with a wedge-shaped wood spandrel filling the triangle above.
+- **v2** — gabled solid house (X=0..2000) + polycarb-roofed mesh run (X=2000..6000). Gable ridge runs along Y at X=1000. Polycarb tucks just under the gable eave at the partition wall (X=2000) for clean flashing. Run perimeter has a 500 mm horizontal mesh apron on the three exterior sides for predator dig defence.
+- **v3** — ONE continuous mono-pitch roof over the entire 6 m × 3 m footprint, sloping front-to-back (eh_front=2600, eh_back=2200, drop=400). Foundation is a slab UNDER THE HOUSE ONLY (X=0..2000); the yard (X=2000..6000) sits on grass at grade with concrete ground plugs supporting four corner/intermediate posts. House side and partition walls are mono-pitch cladded with a sloped top beam below the roof. Yard back wall has a low solid-clad strip (driving-rain skirt) topped by a mesh ventilation band. No play-things in the yard — minimalist grass + bowls + 2 rabbits.
 
 ## Conventions
 
@@ -75,6 +75,6 @@ A design build file (e.g. `designs/house_yard_v2/build.scad`) constructs ctx vec
 3. Add `use <designs/<name>/build.scad>` and a dispatch `if` line to `main.scad`.
 4. Update this file under "Design-specific structural notes" with anything non-obvious.
 
-## When changing v1 (`lean_to_v1`)
+## When changing v1
 
-Test renders before and after via `openscad --viewall --autocenter -o out.png main.scad` (with `design = "lean_to_v1"`). v1 is a working historical design — keep it rendering identically unless explicitly fixing a bug.
+Test renders before and after via `openscad --viewall --autocenter -o out.png main.scad` (with `design = "v1"`). v1 is a working historical design — keep it rendering identically unless explicitly fixing a bug.

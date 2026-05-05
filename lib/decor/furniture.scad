@@ -1,4 +1,4 @@
-// Built-in seating furniture. Currently consumed only by the lean_to_v1
+// Built-in seating furniture. Currently consumed only by the v1
 // design — kept here so future designs with a human zone can reuse them.
 
 include <../defaults.scad>
