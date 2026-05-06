@@ -393,7 +393,7 @@ module v3_yard_stiles(hl, rl, ww, fpw, pal) {
     color(pal_post(pal))
     for (xs = front_xs) {
         beam_top = v3_roof_under(0) - 180;
-        translate([xs - sw/2, -sw/2, sill_top])
+        translate([xs - sw/2, 0, sill_top])
             cube([sw, sw, beam_top - sill_top]);
     }
 
@@ -401,7 +401,7 @@ module v3_yard_stiles(hl, rl, ww, fpw, pal) {
     color(pal_post(pal))
     for (xs = back_xs) {
         beam_top = v3_roof_under(ww) - 180;
-        translate([xs - sw/2, ww - sw/2, sill_top])
+        translate([xs - sw/2, ww - sw, sill_top])
             cube([sw, sw, beam_top - sill_top]);
     }
 
@@ -409,7 +409,7 @@ module v3_yard_stiles(hl, rl, ww, fpw, pal) {
     color(pal_post(pal))
     for (ys = right_ys) {
         beam_top = v3_roof_under(ys) - 180;
-        translate([hl + rl - sw/2, ys - sw/2, sill_top])
+        translate([hl + rl - sw, ys - sw/2, sill_top])
             cube([sw, sw, beam_top - sill_top]);
     }
 }
