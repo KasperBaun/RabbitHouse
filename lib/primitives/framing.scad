@@ -1,6 +1,7 @@
 // Stud-wall framing primitives: stud walls, posts, sill/top plates.
 
 include <../defaults.scad>
+use <../bom.scad>
 
 // True if the stud centred at `c` falls inside any [lo, hi] range.
 function _in_skip(c, ranges) =
@@ -9,29 +10,56 @@ function _in_skip(c, ranges) =
 // Stud wall — bottom plate, top plate, and vertical studs at `spacing`.
 // `axis` = "X" (wall runs along +X) or "Y" (wall runs along +Y).
 // `origin` = [x, y, z] of the lower outside corner of the wall.
+// `height` = wall height at the OUTER face (y=oy for axis="X", x=ox for "Y").
+// `h_inner` (optional) = wall height at the INNER face. When set, the top
+//             plate slopes across the wall thickness to follow a sloped roof
+//             above — common detail when a flat-top wall sits perpendicular
+//             to a mono-pitch slope. Default `undef` keeps the flat top.
+//             Studs run flat to the lower of (height, h_inner) - 2*sw, so a
+//             real wood stud (flat-topped) fits cleanly under the sloped
+//             top plate with a small wedge of air at the high edge.
 // `skip_ranges` = list of [lo, hi] along the wall's run-axis (relative to
 //             the wall start). Studs whose centre falls inside any range
 //             are omitted — used so jamb studs added separately don't
 //             duplicate the regular grid. End stud is always emitted.
 module stud_wall(origin, length, height, axis="X",
                  stud=DEFAULT_STUD, palette=DEFAULT_PALETTE,
-                 skip_ranges=[]) {
+                 skip_ranges=[], h_inner=undef) {
     sw = ss_w(stud);
     sd = ss_d(stud);
     sp = ss_spacing(stud);
     ox = origin[0]; oy = origin[1]; oz = origin[2];
+    h_in    = is_undef(h_inner) ? height : h_inner;
+    flat    = (h_in == height);
+    stud_h  = min(height, h_in) - 2 * sw;
+
+    // BOM (no-op when $bom_mode != true)
+    bom_member("bundrem", "pt-pine", sd, sw, length, "stud_wall");
+    bom_member("toprem", "spruce", sd, sw, length, "stud_wall");
+    for (p = [0 : sp : length - sw])
+        if (!_in_skip(p + sw/2, skip_ranges))
+            bom_member("stud", "spruce", sw, sd, stud_h, "stud_wall");
+    bom_member("stud", "spruce", sw, sd, stud_h, "stud_wall_end");
 
     color(pal_post(palette)) {
         if (axis == "X") {
-            // Bottom plate
+            // Bottom plate (flat)
             translate([ox, oy, oz])
                 cube([length, sd, sw]);
-            // Top plate
-            translate([ox, oy, oz + height - sw])
-                cube([length, sd, sw]);
+            // Top plate — flat (height == h_in) or sloped across thickness
+            if (flat) {
+                translate([ox, oy, oz + height - sw])
+                    cube([length, sd, sw]);
+            } else {
+                hull() {
+                    translate([ox, oy, oz + height - sw])
+                        cube([length, 0.01, sw]);
+                    translate([ox, oy + sd - 0.01, oz + h_in - sw])
+                        cube([length, 0.01, sw]);
+                }
+            }
             // Studs (loop bound `length - sw` so a length divisible by sp
             // doesn't spawn an extra stud past the wall end).
-            stud_h = height - 2 * sw;
             for (x = [0 : sp : length - sw])
                 if (!_in_skip(x + sw/2, skip_ranges))
                     translate([ox + x, oy, oz + sw])
@@ -42,9 +70,17 @@ module stud_wall(origin, length, height, axis="X",
         } else {
             translate([ox, oy, oz])
                 cube([sd, length, sw]);
-            translate([ox, oy, oz + height - sw])
-                cube([sd, length, sw]);
-            stud_h = height - 2 * sw;
+            if (flat) {
+                translate([ox, oy, oz + height - sw])
+                    cube([sd, length, sw]);
+            } else {
+                hull() {
+                    translate([ox, oy, oz + height - sw])
+                        cube([0.01, length, sw]);
+                    translate([ox + sd - 0.01, oy, oz + h_in - sw])
+                        cube([0.01, length, sw]);
+                }
+            }
             for (y = [0 : sp : length - sw])
                 if (!_in_skip(y + sw/2, skip_ranges))
                     translate([ox, oy + y, oz + sw])
@@ -74,6 +110,17 @@ module stud_wall_sloped(origin, length, h_start, h_end, axis="Y",
     sd = ss_d(stud);
     sp = ss_spacing(stud);
     ox = origin[0]; oy = origin[1]; oz = origin[2];
+
+    // BOM
+    bom_member("bundrem", "pt-pine", sd, sw, length, "stud_wall_sloped");
+    bom_member("toprem", "spruce", sd, sw, length, "stud_wall_sloped");
+    for (p = [0 : sp : length - sw])
+        if (!_in_skip(p + sw/2, skip_ranges)) {
+            sh_p = _slope_h(h_start, h_end, length, p + sw/2) - 2*sw;
+            bom_member("stud", "spruce", sw, sd, sh_p, "stud_wall_sloped");
+        }
+    end_h = _slope_h(h_start, h_end, length, length - sw/2) - 2*sw;
+    bom_member("stud", "spruce", sw, sd, end_h, "stud_wall_sloped_end");
 
     color(pal_post(palette)) {
         if (axis == "Y") {
@@ -148,6 +195,29 @@ module framed_opening_y(wall_origin, length, h_start, h_end,
 
     crp_z0 = opening_z + opening_h + header_h;
 
+    // BOM
+    bom_member("jamb", "spruce", sd, sw, tp_j1 - (oz + sw),
+               "framed_opening_y_jamb1");
+    bom_member("jamb", "spruce", sd, sw, tp_j2 - (oz + sw),
+               "framed_opening_y_jamb2");
+    bom_member("header", "spruce", sd, header_h, j2 + sw - j1,
+               "framed_opening_y_header");
+    for (y = [j1 + sp/2 : sp : j2 - sp/2]) {
+        crp_top_y = oz + _slope_h(h_start, h_end, length, y + sw/2) - sw;
+        if (crp_top_y - crp_z0 > 20)
+            bom_member("cripple", "spruce", sd, sw, crp_top_y - crp_z0,
+                       "framed_opening_y_cripple_above");
+    }
+    if (has_sill) {
+        bom_member("sill", "spruce", sd, sill_h, j2 + sw - j1,
+                   "framed_opening_y_sill");
+        for (y = [j1 + sp/2 : sp : j2 - sp/2])
+            if ((opening_z - sill_h) - (oz + sw) > 20)
+                bom_member("cripple", "spruce", sd, sw,
+                           (opening_z - sill_h) - (oz + sw),
+                           "framed_opening_y_cripple_below");
+    }
+
     color(pal_post(palette)) {
         // Jamb studs (full bottom-plate-top to top-plate-underside)
         translate([ox, oy + j1, oz + sw])
@@ -182,7 +252,8 @@ module framed_opening_y(wall_origin, length, h_start, h_end,
 }
 
 // A single solid wood post.
-module post(origin, size, height, palette=DEFAULT_PALETTE) {
+module post(origin, size, height, palette=DEFAULT_PALETTE, name="post") {
+    bom_member("post", "pt-pine", size[0], size[1], height, name);
     color(pal_post(palette))
     translate([origin[0], origin[1], origin[2]])
         cube([size[0], size[1], height]);
@@ -203,7 +274,8 @@ module beam_hull(p1, p2, section, palette=DEFAULT_PALETTE) {
 // The beam lives at x..x+thick (X), spans Y from y0 to y0+len, and slopes from
 // h_start at y0 to h_end at y0+len. Section [thick, 0.01, beam_h].
 module top_beam_sloped_y(x, y0, len, h_start, h_end, thick=100, beam_h=180,
-                         palette=DEFAULT_PALETTE) {
+                         palette=DEFAULT_PALETTE, name="top_beam_sloped_y") {
+    bom_member("beam", "limtree", thick, beam_h, len, name);
     color(pal_post(palette))
     hull() {
         translate([x, y0, h_start - beam_h])

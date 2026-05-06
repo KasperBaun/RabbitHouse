@@ -1,6 +1,10 @@
 // Foundation primitives: concrete slab, interior floor, predator dig-defeat.
 
 include <../defaults.scad>
+use <../bom.scad>
+
+function _has_side(s, sides) = len([for (x = sides) if (x == s) 1]) > 0;
+
 
 // Concrete slab covering the full footprint.
 //   edge_thicken_h   = how much the perimeter edge beam drops below z=0.
@@ -13,6 +17,25 @@ module slab(origin, size, base_h=120, palette=DEFAULT_PALETTE,
             edge_sides=["front","back","left","right"]) {
     ox = origin[0]; oy = origin[1];
     sx = size[0];   sy = size[1];
+
+    // BOM
+    bom_member("slab", "concrete", sx, sy, base_h, "slab_main");
+    if (edge_thicken_h > 0) {
+        ew = edge_thicken_w;
+        if (_has_side("front", edge_sides))
+            bom_member("edge_beam", "concrete", sx, ew, edge_thicken_h,
+                       "slab_edge_front");
+        if (_has_side("back", edge_sides))
+            bom_member("edge_beam", "concrete", sx, ew, edge_thicken_h,
+                       "slab_edge_back");
+        if (_has_side("left", edge_sides))
+            bom_member("edge_beam", "concrete", ew, sy, edge_thicken_h,
+                       "slab_edge_left");
+        if (_has_side("right", edge_sides))
+            bom_member("edge_beam", "concrete", ew, sy, edge_thicken_h,
+                       "slab_edge_right");
+    }
+
     color(pal_base(palette)) {
         translate([ox, oy, 0])
             cube([sx, sy, base_h]);
@@ -43,6 +66,7 @@ module slab(origin, size, base_h=120, palette=DEFAULT_PALETTE,
 module dpc_strip(origin, length, axis="X", width=120, thickness=2,
                  col=[0.15, 0.15, 0.18]) {
     ox = origin[0]; oy = origin[1]; oz = origin[2];
+    bom_member("dpc", "bitumen", width, thickness, length, "dpc_strip");
     color(col)
     translate([ox, oy, oz])
         cube(axis == "X" ? [length, width, thickness]
@@ -70,8 +94,6 @@ module floor_patch(origin, size, base_h=120, thickness=5,
 //   rect = [x0, y0, x1, y1] of the structure footprint
 //   sides = list of "front", "back", "left", "right" — apron only on those
 //           edges (e.g. omit a side that sits against a wall).
-function _has_side(s, sides) = len([for (x = sides) if (x == s) 1]) > 0;
-
 module apron_skirt(rect, width=500, sides=["front","back","left","right"],
                    palette=DEFAULT_PALETTE) {
     x0 = rect[0]; y0 = rect[1]; x1 = rect[2]; y1 = rect[3];

@@ -2,6 +2,7 @@
 // Plus fascia, gutter, and visible ceiling rafters.
 
 include <../defaults.scad>
+use <../bom.scad>
 
 // Mono-pitched roof slab. High edge at Y=y0, drops to (h - drop) at Y=y1.
 //   origin = [x0, y0, eave_h]  (lower-front-high corner of the structure)
@@ -428,6 +429,14 @@ module ceiling_rafters_mono(origin, length, width, drop, eave_h,
     xi = is_undef(x_inset) ? wall_t : x_inset;
     z_front = eave_h;
     z_back  = eave_h - drop;
+
+    // BOM — each rafter is sloped: actual length is hypotenuse of horizontal
+    // span (width - 2*wall_t) and vertical drop.
+    rafter_len = sqrt(pow(width - 2*wall_t, 2) + pow(drop, 2));
+    for (x = [ox + xi : spacing : ox + length - xi])
+        bom_member("rafter", "spruce", rafter_w, rafter_h, rafter_len,
+                   "ceiling_rafter");
+
     color(pal_post(palette))
     for (x = [ox + xi : spacing : ox + length - xi]) {
         hull() {

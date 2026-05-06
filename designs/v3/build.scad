@@ -17,6 +17,7 @@ use <../../lib/primitives/openings.scad>
 use <../../lib/decor/landscape.scad>
 use <../../lib/decor/lighting.scad>
 use <../../lib/decor/rabbit.scad>
+use <../../lib/bom.scad>
 
 // roof_mono_pitch interprets eave_h/drop across the FULL overhang span.
 // These helpers convert "wall-face eave heights" into the parameters that
@@ -35,6 +36,7 @@ function v3_roof_under(y) =
 // structural frame (studs, plates, beams, posts) is visible — useful for
 // auditing framing against TIMBER-FRAMING.md and counting timber.
 module build_v3(show_cladding=true) {
+    bom_header();
     pal  = DEFAULT_PALETTE;
     clad = DEFAULT_CLAD;
     mesh = mesh_spec(spacing = V3_MESH_SPACING,
@@ -92,7 +94,7 @@ module build_v3(show_cladding=true) {
         // Stone threshold inside the yard at the partition human door
         color([0.55, 0.50, 0.40])
         translate([hl + ct + 20, V3_HOUSE_DOOR_Y - 50,
-                   V3_PLUG_H + 18 + 80])
+                   V3_PLUG_H + 18 + V3_SILL_H])
             cube([200, V3_HOUSE_DOOR_W + 100, 12]);
 
         // --- Side window with trim on left exterior wall (faces -X) ---
@@ -100,17 +102,18 @@ module build_v3(show_cladding=true) {
                               V3_SIDE_WIN_W, V3_SIDE_WIN_H, ct, pal, true);
     }
 
-    // --- Insulated nest box --------------------------------------------
-    nest_box_insulated([V3_NEST_X, V3_NEST_Y, bh + 20],
-                       V3_NEST_W, V3_NEST_D, V3_NEST_H, pal);
-
-    // --- Hay/bedding storage cubes inside the house (front-left) ------
-    color([0.78, 0.72, 0.40])
-    translate([wt + 50, wt + 30, bh + 20])
-        cube([400, 600, 700]);
-    color(pal_panel1(pal))
-    translate([wt + 500, wt + 30, bh + 20])
-        cube([400, 600, 900]);
+    // --- House interior decor (only with cladding shown) ---------------
+    if (show_cladding) {
+        nest_box_insulated([V3_NEST_X, V3_NEST_Y, bh + 20],
+                           V3_NEST_W, V3_NEST_D, V3_NEST_H, pal);
+        // Hay/bedding storage cubes (front-left)
+        color([0.78, 0.72, 0.40])
+        translate([wt + 50, wt + 30, bh + 20])
+            cube([400, 600, 700]);
+        color(pal_panel1(pal))
+        translate([wt + 500, wt + 30, bh + 20])
+            cube([400, 600, 900]);
+    }
 
     // --- Yard structure: ground plugs + corner posts + sloped beams ----
     v3_yard_plugs_and_posts(hl, rl, ww, bh, fpw, ct, pal);
@@ -124,9 +127,7 @@ module build_v3(show_cladding=true) {
 
     // --- Yard mesh-and-frame entry door (front, Y=0) -----------------
     v3_yard_door(V3_YARD_DOOR_X, V3_YARD_DOOR_W, V3_YARD_DOOR_H,
-                 V3_PLUG_H + 18 + 80, pal, mesh);
-    entrance_step(V3_YARD_DOOR_X, 0, V3_YARD_DOOR_W,
-                  V3_PLUG_H + 18 + 80, pal);
+                 V3_PLUG_H + 18 + V3_SILL_H, pal, mesh);
 
     // --- Unified mono-pitch roof (corrected origin so wall tops align)
     roof_mono_pitch([0, 0, roof_oz], ll, ww, drop_full, V3_ROOF_THICK,
@@ -146,8 +147,9 @@ module build_v3(show_cladding=true) {
     apron_skirt([hl, 0, ll, ww], V3_APRON_W,
                 ["front", "back", "right"], pal);
 
-    // --- Hay rack on house back wall (interior) ----------------------
-    hay_rack(400, ww - wt, bh + 250, 500, 400, pal);
+    // --- Hay rack on house back wall (interior, cladding-mode only) --
+    if (show_cladding)
+        hay_rack(400, ww - wt, bh + 250, 500, 400, pal);
 
     // --- Yard amenities: bowls only --------------------------------
     water_bowl(hl + 600, 1500, 8);
@@ -191,9 +193,16 @@ module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
     dpc_strip([0, 0, bh], ww, "Y", sd);
     dpc_strip([hl - sd, 0, bh], ww, "Y", sd);
 
-    // Front and back walls — flat top plates (perpendicular to the slope).
-    stud_wall([0, 0, z_sill], hl, ehf - air_gap, "X", stud, pal);
-    stud_wall([0, ww - sd, z_sill], hl, ehb - air_gap, "X", stud, pal);
+    // Front and back walls — top plate slopes across the wall thickness so
+    // the toprem follows the roof underside instead of clipping it. Both
+    // ends use v3_roof_under(y) to derive heights at the outer (oy) and
+    // inner (oy+sd) wall faces.
+    stud_wall([0, 0, z_sill], hl,
+              v3_roof_under(0)      - z_sill, "X", stud, pal,
+              h_inner = v3_roof_under(sd)        - z_sill);
+    stud_wall([0, ww - sd, z_sill], hl,
+              v3_roof_under(ww - sd) - z_sill, "X", stud, pal,
+              h_inner = v3_roof_under(ww)        - z_sill);
 
     // Side and partition walls — sloped top plates that bear directly on
     // rafters; the top plate underside follows the roof line. No separate
@@ -227,13 +236,21 @@ module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
                      bh + 60, V3_PET_DOOR_H,
                      has_sill = false, stud = stud, palette = pal);
 
-    // Interior collar tie at hl/2 — slope-matched.
+    // Interior collar tie at hl/2 — 45×195 reglar tying the front-back
+    // rafters across the centre. Y span is sd..ww-sd so the tie ends at
+    // the inner faces of front and back walls (bearing on each toprem)
+    // instead of passing through them. Top z follows the roof underside
+    // at each end so the tie sits flush under the rafters.
+    bom_member("collar_tie", "spruce", V3_COLLAR_TIE_W, V3_COLLAR_TIE_H,
+               ww - 2*sd, "interior_collar_tie");
     color(pal_post(pal))
     hull() {
-        translate([hl/2 - 40, 0, bh + ehf - 180])
-            cube([80, 0.01, 180]);
-        translate([hl/2 - 40, ww - 0.01, bh + ehb - 180])
-            cube([80, 0.01, 180]);
+        translate([hl/2 - V3_COLLAR_TIE_W/2, sd,
+                   v3_roof_under(sd) - V3_COLLAR_TIE_H])
+            cube([V3_COLLAR_TIE_W, 0.01, V3_COLLAR_TIE_H]);
+        translate([hl/2 - V3_COLLAR_TIE_W/2, ww - sd - 0.01,
+                   v3_roof_under(ww - sd) - V3_COLLAR_TIE_H])
+            cube([V3_COLLAR_TIE_W, 0.01, V3_COLLAR_TIE_H]);
     }
 }
 
@@ -260,12 +277,30 @@ module v3_house_cladding(hl, ww, ehf, ehb, bh, ct, pal, clad) {
         pal, clad,
         [V3_SIDE_WIN_Y, V3_SIDE_WIN_Y + V3_SIDE_WIN_W,
          V3_SIDE_WIN_Z, V3_SIDE_WIN_Z + V3_SIDE_WIN_H]);
+    fpw = V3_POST_W;
     difference() {
         clad_wall_mono_pitch([hl, 0, bh], ww, ehf, ehb, "Y", pal, clad);
         translate([hl - 10, V3_PET_DOOR_Y, bh + 60])
             cube([ct + 20, V3_PET_DOOR_W, V3_PET_DOOR_H]);
         translate([hl - 10, V3_HOUSE_DOOR_Y, bh])
             cube([ct + 20, V3_HOUSE_DOOR_W, V3_HOUSE_DOOR_H]);
+        // Yard front beam pass-through (sloped notch matching the beam).
+        hull() {
+            translate([hl - 10, 0, v3_roof_under(0) - V3_BEAM_H])
+                cube([ct + 20, 0.01, V3_BEAM_H]);
+            translate([hl - 10, fpw - 0.01,
+                       v3_roof_under(fpw) - V3_BEAM_H])
+                cube([ct + 20, 0.01, V3_BEAM_H]);
+        }
+        // Yard back beam pass-through.
+        hull() {
+            translate([hl - 10, ww - fpw,
+                       v3_roof_under(ww - fpw) - V3_BEAM_H])
+                cube([ct + 20, 0.01, V3_BEAM_H]);
+            translate([hl - 10, ww - 0.01,
+                       v3_roof_under(ww) - V3_BEAM_H])
+                cube([ct + 20, 0.01, V3_BEAM_H]);
+        }
     }
 }
 
@@ -366,6 +401,14 @@ module v3_yard_plugs_and_posts(hl, rl, ww, bh, fpw, ct, pal) {
         [hl + rl - fpw, ww - fpw, v3_roof_under(ww - fpw)]
     ];
 
+    // BOM — concrete plugs (one per corner) and steel post-base brackets
+    for (p = plug_posts) {
+        bom_member("plug", "concrete", V3_PLUG_W, V3_PLUG_W,
+                   V3_PLUG_H + V3_PLUG_BURY, "yard_plug");
+        bom_member("bracket", "steel-galv", fpw + 16, fpw + 16, 18,
+                   "yard_post_base");
+    }
+
     color([0.74, 0.72, 0.69])
     for (p = plug_posts)
         translate([p[0] - (V3_PLUG_W - fpw)/2,
@@ -377,31 +420,49 @@ module v3_yard_plugs_and_posts(hl, rl, ww, bh, fpw, ct, pal) {
         translate([p[0] - 8, p[1] - 8, V3_PLUG_H])
             cube([fpw + 16, fpw + 16, 18]);
 
+    // BOM — yard corner posts (length to roof underside)
+    z0 = V3_PLUG_H + 18;
+    for (p = plug_posts)
+        bom_member("post", "pt-pine", fpw, fpw, p[2] - z0, "yard_corner_post");
+
     color(pal_post(pal))
     for (p = plug_posts) {
-        z0 = V3_PLUG_H + 18;
         translate([p[0], p[1], z0])
             cube([fpw, fpw, p[2] - z0]);
     }
 
     sill_z = V3_PLUG_H + 18;
+
+    // BOM — yard sills (4 segments)
+    front_left_len  = V3_YARD_DOOR_X - (hl + ct);
+    front_right_len = (hl + rl - fpw) - (V3_YARD_DOOR_X + V3_YARD_DOOR_W);
+    if (front_left_len > 0)
+        bom_member("sill", "pt-pine", fpw, V3_SILL_H, front_left_len,
+                   "yard_front_sill_left");
+    if (front_right_len > 0)
+        bom_member("sill", "pt-pine", fpw, V3_SILL_H, front_right_len,
+                   "yard_front_sill_right");
+    bom_member("sill", "pt-pine", fpw, V3_SILL_H, rl - ct - fpw,
+               "yard_back_sill");
+    bom_member("sill", "pt-pine", fpw, V3_SILL_H, ww - 2*fpw,
+               "yard_right_sill");
+
     color(pal_post(pal)) {
         // Front sill, segment LEFT of the yard door
         if (V3_YARD_DOOR_X > hl + ct)
             translate([hl + ct, 0, sill_z])
-                cube([V3_YARD_DOOR_X - (hl + ct), fpw, 80]);
+                cube([front_left_len, fpw, V3_SILL_H]);
         // Front sill, segment RIGHT of the yard door
         if (V3_YARD_DOOR_X + V3_YARD_DOOR_W < hl + rl - fpw)
             translate([V3_YARD_DOOR_X + V3_YARD_DOOR_W, 0, sill_z])
-                cube([(hl + rl - fpw) - (V3_YARD_DOOR_X + V3_YARD_DOOR_W),
-                      fpw, 80]);
+                cube([front_right_len, fpw, V3_SILL_H]);
         // Back sill — continuous from partition cladding's outer face to
         // the right-end corner post.
         translate([hl + ct, ww - fpw, sill_z])
-            cube([rl - ct - fpw, fpw, 80]);
+            cube([rl - ct - fpw, fpw, V3_SILL_H]);
         // Right end sill
         translate([hl + rl - fpw, fpw, sill_z])
-            cube([fpw, ww - 2*fpw, 80]);
+            cube([fpw, ww - 2*fpw, V3_SILL_H]);
     }
 }
 
@@ -413,23 +474,27 @@ module v3_yard_plugs_and_posts(hl, rl, ww, bh, fpw, ct, pal) {
 module v3_yard_top_beams(hl, rl, ww, fpw, ct, pal) {
     bx0 = hl - fpw;            // beam west end
     blen = rl + fpw;           // beam length
+
+    bom_member("beam", "limtree", fpw, V3_BEAM_H, blen, "yard_front_beam");
+    bom_member("beam", "limtree", fpw, V3_BEAM_H, blen, "yard_back_beam");
+
     color(pal_post(pal))
     hull() {
-        translate([bx0, 0, v3_roof_under(0) - 180])
-            cube([blen, 0.01, 180]);
-        translate([bx0, fpw - 0.01, v3_roof_under(fpw) - 180])
-            cube([blen, 0.01, 180]);
+        translate([bx0, 0, v3_roof_under(0) - V3_BEAM_H])
+            cube([blen, 0.01, V3_BEAM_H]);
+        translate([bx0, fpw - 0.01, v3_roof_under(fpw) - V3_BEAM_H])
+            cube([blen, 0.01, V3_BEAM_H]);
     }
     color(pal_post(pal))
     hull() {
-        translate([bx0, ww - fpw, v3_roof_under(ww - fpw) - 180])
-            cube([blen, 0.01, 180]);
-        translate([bx0, ww - 0.01, v3_roof_under(ww) - 180])
-            cube([blen, 0.01, 180]);
+        translate([bx0, ww - fpw, v3_roof_under(ww - fpw) - V3_BEAM_H])
+            cube([blen, 0.01, V3_BEAM_H]);
+        translate([bx0, ww - 0.01, v3_roof_under(ww) - V3_BEAM_H])
+            cube([blen, 0.01, V3_BEAM_H]);
     }
     top_beam_sloped_y(hl + rl - fpw, fpw, ww - 2*fpw,
                       v3_roof_under(fpw), v3_roof_under(ww - fpw),
-                      fpw, 180, pal);
+                      fpw, V3_BEAM_H, pal);
 }
 
 // 1 m wood vertical stiles along yard mesh walls.
@@ -439,28 +504,34 @@ module v3_yard_top_beams(hl, rl, ww, fpw, ct, pal) {
 //   Right: every 1 m from the front corner.
 module v3_yard_stiles(hl, rl, ww, fpw, pal) {
     sw = V3_STILE_W;
-    sill_top = V3_PLUG_H + 18 + 80;
+    sill_top = V3_PLUG_H + 18 + V3_SILL_H;
 
     front_xs = [hl + 3000];
+    front_beam_top = v3_roof_under(0) - V3_BEAM_H;
+    for (xs = front_xs)
+        bom_member("stile", "spruce", sw, sw,
+                   front_beam_top - sill_top, "yard_front_stile");
     color(pal_post(pal))
-    for (xs = front_xs) {
-        beam_top = v3_roof_under(0) - 180;
+    for (xs = front_xs)
         translate([xs - sw/2, 0, sill_top])
-            cube([sw, sw, beam_top - sill_top]);
-    }
+            cube([sw, sw, front_beam_top - sill_top]);
 
     back_xs = [hl + 1000, hl + 2000, hl + 3000];
+    back_beam_top = v3_roof_under(ww) - V3_BEAM_H;
+    for (xs = back_xs)
+        bom_member("stile", "spruce", sw, sw,
+                   back_beam_top - sill_top, "yard_back_stile");
     color(pal_post(pal))
-    for (xs = back_xs) {
-        beam_top = v3_roof_under(ww) - 180;
+    for (xs = back_xs)
         translate([xs - sw/2, ww - sw, sill_top])
-            cube([sw, sw, beam_top - sill_top]);
-    }
+            cube([sw, sw, back_beam_top - sill_top]);
 
     right_ys = [fpw + 1000, fpw + 2000];
     color(pal_post(pal))
     for (ys = right_ys) {
-        beam_top = v3_roof_under(ys) - 180;
+        beam_top = v3_roof_under(ys) - V3_BEAM_H;
+        bom_member("stile", "spruce", sw, sw,
+                   beam_top - sill_top, "yard_right_stile");
         translate([hl + rl - sw, ys - sw/2, sill_top])
             cube([sw, sw, beam_top - sill_top]);
     }
@@ -489,8 +560,8 @@ module v3_mesh_midrail_y(panel_y, panel_w, x_pos, z_center, mesh, pal) {
 // so the wood line is continuous across the whole front wall.
 module v3_yard_mesh_front(hl, rl, ww, fpw, ct, pal, mesh) {
     md = ms_depth(mesh);
-    sill_top = V3_PLUG_H + 18 + 80;
-    h = (v3_roof_under(0) - 180) - sill_top;
+    sill_top = V3_PLUG_H + 18 + V3_SILL_H;
+    h = (v3_roof_under(0) - V3_BEAM_H) - sill_top;
     z_rail = sill_top + V3_MID_RAIL_Z_OFFSET;
     seg_xs = [
         [hl + ct,                          V3_YARD_DOOR_X],
@@ -515,8 +586,8 @@ module v3_yard_mesh_front(hl, rl, ww, fpw, ct, pal, mesh) {
 // at hl+ct so the panels meet the partition cladding flush.
 module v3_yard_mesh_back(hl, rl, ww, fpw, ct, pal, mesh) {
     md = ms_depth(mesh);
-    sill_top = V3_PLUG_H + 18 + 80;
-    h = (v3_roof_under(ww) - 180) - sill_top;
+    sill_top = V3_PLUG_H + 18 + V3_SILL_H;
+    h = (v3_roof_under(ww) - V3_BEAM_H) - sill_top;
     z_rail = sill_top + V3_MID_RAIL_Z_OFFSET;
     breaks = [hl + ct, hl + 1000, hl + 2000, hl + 3000, hl + rl - fpw];
     for (i = [0 : len(breaks) - 2]) {
@@ -535,10 +606,10 @@ module v3_yard_mesh_back(hl, rl, ww, fpw, ct, pal, mesh) {
 // corner ~1900 mm above sill_top), so it's never actually clipped.
 module v3_yard_mesh_right(hl, rl, ww, fpw, pal, mesh) {
     md = ms_depth(mesh);
-    sill_top = V3_PLUG_H + 18 + 80;
-    z_top_max = v3_roof_under(0) - 180;
-    z_top_y0 = v3_roof_under(0) - 180;
-    z_top_y1 = v3_roof_under(ww) - 180;
+    sill_top = V3_PLUG_H + 18 + V3_SILL_H;
+    z_top_max = v3_roof_under(0) - V3_BEAM_H;
+    z_top_y0 = v3_roof_under(0) - V3_BEAM_H;
+    z_top_y1 = v3_roof_under(ww) - V3_BEAM_H;
     z_rail = sill_top + V3_MID_RAIL_Z_OFFSET;
     x_pos = hl + rl;
     breaks = [fpw, fpw + 1000, fpw + 2000, ww - fpw];

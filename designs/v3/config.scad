@@ -69,7 +69,17 @@ V3_PLUG_BURY    = 800;
 // Buried mesh apron around yard exterior (predator dig defence).
 V3_APRON_W      = 500;
 
-V3_POST_W       = 100;
+// Standard Danish timber sizes used by the yard structure.
+//   95×95 stolpe       — corner posts, plug posts (V3_POST_W)
+//   95×180 limtræ      — yard top beams, sloping under roof (V3_BEAM_H)
+//   45×195 reglar      — interior collar tie (V3_COLLAR_TIE_H)
+//   70×70 KOMPAKT      — mesh-wall stiles (V3_STILE_W)
+//   45×95 reglar flat  — yard sill plate, 95 wide × 45 tall (V3_SILL_H)
+V3_POST_W       = 95;
+V3_BEAM_H       = 180;
+V3_COLLAR_TIE_W = 45;        // 45×195 reglar laid on edge
+V3_COLLAR_TIE_H = 195;
+V3_SILL_H       = 45;
 
 // Mesh spec for the yard — fine welded wire (predator-proof per REQ-008).
 //   13 mm aperture × 1 mm wire (≈ gauge 19 GAW)
@@ -79,7 +89,7 @@ V3_MESH_FRAME   = 40;
 V3_MESH_DEPTH   = 20;
 
 // Vertical wood stiles every ~1 m along yard mesh walls.
-V3_STILE_W      = 60;
+V3_STILE_W      = 70;
 V3_STILE_SPACING = 1000;
 
 // Horizontal mid-rail across yard mesh panels — divides each panel into
