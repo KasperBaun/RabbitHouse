@@ -3,10 +3,50 @@
 include <../defaults.scad>
 
 // Concrete slab covering the full footprint.
-module slab(origin, size, base_h=120, palette=DEFAULT_PALETTE) {
-    color(pal_base(palette))
-    translate([origin[0], origin[1], 0])
-        cube([size[0], size[1], base_h]);
+//   edge_thicken_h   = how much the perimeter edge beam drops below z=0.
+//                      0 (default) means flat slab — v1/v2 unaffected.
+//   edge_thicken_w   = inboard width of the edge beam, measured from the
+//                      outer face of the slab.
+//   edge_sides       = which sides of the slab get the edge beam.
+module slab(origin, size, base_h=120, palette=DEFAULT_PALETTE,
+            edge_thicken_h=0, edge_thicken_w=200,
+            edge_sides=["front","back","left","right"]) {
+    ox = origin[0]; oy = origin[1];
+    sx = size[0];   sy = size[1];
+    color(pal_base(palette)) {
+        translate([ox, oy, 0])
+            cube([sx, sy, base_h]);
+        if (edge_thicken_h > 0) {
+            ew = edge_thicken_w;
+            ez = -edge_thicken_h;
+            if (_has_side("front", edge_sides))
+                translate([ox, oy, ez])
+                    cube([sx, ew, edge_thicken_h]);
+            if (_has_side("back", edge_sides))
+                translate([ox, oy + sy - ew, ez])
+                    cube([sx, ew, edge_thicken_h]);
+            if (_has_side("left", edge_sides))
+                translate([ox, oy, ez])
+                    cube([ew, sy, edge_thicken_h]);
+            if (_has_side("right", edge_sides))
+                translate([ox + sx - ew, oy, ez])
+                    cube([ew, sy, edge_thicken_h]);
+        }
+    }
+}
+
+// Damp-proof course (fugtspærre) strip — thin dark membrane between the
+// concrete slab top and the timber bundrem. Visualised as a flat strip;
+// in real construction this is bitumen tape or EPDM, ~1–2 mm.
+//   origin = [x, y, z] — bottom-front corner of the strip
+//   axis   = "X" (strip runs along +X, width into +Y) or "Y"
+module dpc_strip(origin, length, axis="X", width=120, thickness=2,
+                 col=[0.15, 0.15, 0.18]) {
+    ox = origin[0]; oy = origin[1]; oz = origin[2];
+    color(col)
+    translate([ox, oy, oz])
+        cube(axis == "X" ? [length, width, thickness]
+                         : [width, length, thickness]);
 }
 
 // Interior floor plank surface, sitting on top of the slab.

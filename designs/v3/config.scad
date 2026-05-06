@@ -59,10 +59,12 @@ V3_SIDE_WIN_H   = 600;
 V3_SIDE_WIN_Y   = 1300;
 V3_SIDE_WIN_Z   = 1100;
 
-// Yard ground plugs.
+// Yard ground plugs. Total concrete length = V3_PLUG_H + V3_PLUG_BURY.
+// V3_PLUG_BURY is set to 800 mm to satisfy DK frostfri dybde (~700–900 mm)
+// so the plug sits below the frost line and doesn't heave.
 V3_PLUG_W       = 280;
 V3_PLUG_H       = 100;
-V3_PLUG_BURY    = 40;
+V3_PLUG_BURY    = 800;
 
 // Buried mesh apron around yard exterior (predator dig defence).
 V3_APRON_W      = 500;

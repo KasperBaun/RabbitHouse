@@ -63,12 +63,18 @@ module build_v3(show_cladding=true) {
     v3_outdoor_dressing(ll, ww, bh);
 
     // --- Foundation: house only ----------------------------------------
-    slab([0, 0], [hl, ww], bh, pal);
+    // Slab extends ct mm past every house cladding face so cladding never
+    // overhangs grass; 200×250 perimeter edge beam (kantbjelke) carries
+    // bearing-wall line load down to a stiff edge.
+    slab([-ct, -ct], [hl + 2*ct, ww + 2*ct], bh, pal,
+         edge_thicken_h = 200, edge_thicken_w = 250);
     interior_floor([wt, wt], [hl - 2*wt, ww - 2*wt], bh, 20, pal);
     rabbit_floor_grass([wt, wt], [hl - 2*wt, ww - 2*wt], bh);
 
     // --- Yard interior: lush grass at grade ---------------------------
-    v3_yard_grass(hl, rl, ww);
+    // Yard grass starts at the slab's east edge (hl+ct) so it doesn't
+    // overlap the partition slab strip.
+    v3_yard_grass(hl + ct, rl - ct, ww);
 
     // --- House structural framing -------------------------------------
     v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal);
@@ -130,8 +136,11 @@ module build_v3(show_cladding=true) {
                            110, 65, 0, pal);
     rafter_eave_h = v3_roof_under(wt);
     rafter_drop = v3_roof_under(wt) - v3_roof_under(ww - wt);
+    // x_inset shifts the rafter line east of the partition stud wall
+    // (x=hl-sd..hl) so no rafter clips the wall — first rafter at x=155,
+    // partition rafter lands at x=1955.
     ceiling_rafters_mono([0, 0, 0], ll, ww, rafter_drop, rafter_eave_h,
-                         900, 45, 140, wt, pal);
+                         900, 45, 140, wt, pal, x_inset = wt + 55);
 
     // --- Predator-proof buried apron skirt around yard ---------------
     apron_skirt([hl, 0, ll, ww], V3_APRON_W,
@@ -153,31 +162,70 @@ module build_v3(show_cladding=true) {
 // Helpers
 // ---------------------------------------------------------------------------
 
-module v3_yard_grass(hl, rl, ww) {
+module v3_yard_grass(yard_x0, yard_len, ww) {
     color([0.32, 0.58, 0.22])
-    translate([hl, 0, 0])
-        cube([rl, ww, 8]);
+    translate([yard_x0, 0, 0])
+        cube([yard_len, ww, 8]);
     color([0.40, 0.62, 0.28])
-    for (cx = [hl + 350, hl + 1100, hl + 1900, hl + 2700, hl + 3400])
+    for (cx = [yard_x0 + 350, yard_x0 + 1100, yard_x0 + 1900,
+               yard_x0 + 2700, yard_x0 + 3400])
         for (cy = [350, 1050, 1700, 2350])
             translate([cx, cy, 8])
                 cube([280 + (cx % 90), 220 + (cy % 70), 4]);
     color([0.30, 0.50, 0.20])
-    for (cx = [hl + 200, hl + 600])
+    for (cx = [yard_x0 + 200, yard_x0 + 600])
         translate([cx, 1800 + cx % 200, 8])
             cube([180, 160, 3]);
 }
 
 module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
-    stud_wall([0, 0, bh], hl, ehf, "X", stud, pal);
-    stud_wall([0, ww - ss_d(stud), bh], hl, ehb, "X", stud, pal);
-    stud_wall([0, 0, bh], ww, ehb, "Y", stud, pal);
-    stud_wall([hl - ss_d(stud), 0, bh], ww, ehb, "Y", stud, pal);
+    sd       = ss_d(stud);
+    sw       = ss_w(stud);
+    air_gap  = 10;                   // 5–10 mm air gap per TIMBER-FRAMING.md
+    z_sill   = bh + air_gap;         // bundrem bottom
+    z_bp_top = z_sill + sw;          // bundrem top — door rough-opening floor
 
-    // Sloped top beams on side and partition (top edge follows the roof
-    // underside line on the wall plane).
-    top_beam_sloped_y(0,        0, ww, bh + ehf, bh + ehb, fpw, 180, pal);
-    top_beam_sloped_y(hl - fpw, 0, ww, bh + ehf, bh + ehb, fpw, 180, pal);
+    // Damp-proof course (fugtspærre) directly on slab top, under each bundrem
+    dpc_strip([0, 0, bh], hl, "X", sd);
+    dpc_strip([0, ww - sd, bh], hl, "X", sd);
+    dpc_strip([0, 0, bh], ww, "Y", sd);
+    dpc_strip([hl - sd, 0, bh], ww, "Y", sd);
+
+    // Front and back walls — flat top plates (perpendicular to the slope).
+    stud_wall([0, 0, z_sill], hl, ehf - air_gap, "X", stud, pal);
+    stud_wall([0, ww - sd, z_sill], hl, ehb - air_gap, "X", stud, pal);
+
+    // Side and partition walls — sloped top plates that bear directly on
+    // rafters; the top plate underside follows the roof line. No separate
+    // top beam (the sloped top plate is the sole top member; 3 m span is
+    // within single-plate capacity for the rabbit-house load).
+    // skip_ranges removes regular studs that would land inside an opening
+    // — jambs are emitted by framed_opening_y just below.
+    left_skip      = [[V3_SIDE_WIN_Y, V3_SIDE_WIN_Y + V3_SIDE_WIN_W]];
+    partition_skip = [
+        [V3_HOUSE_DOOR_Y, V3_HOUSE_DOOR_Y + V3_HOUSE_DOOR_W],
+        [V3_PET_DOOR_Y,   V3_PET_DOOR_Y   + V3_PET_DOOR_W]
+    ];
+    stud_wall_sloped([0, 0, z_sill], ww, ehf - air_gap, ehb - air_gap,
+                     "Y", stud, pal, left_skip);
+    stud_wall_sloped([hl - sd, 0, z_sill], ww, ehf - air_gap, ehb - air_gap,
+                     "Y", stud, pal, partition_skip);
+
+    // Framed openings — jamb studs, header, cripples (and rough sill for
+    // the window). Wall heights mirror the parent stud_wall_sloped so the
+    // top-plate slope interpolation matches.
+    framed_opening_y([0, 0, z_sill], ww, ehf - air_gap, ehb - air_gap,
+                     V3_SIDE_WIN_Y, V3_SIDE_WIN_W,
+                     bh + V3_SIDE_WIN_Z, V3_SIDE_WIN_H,
+                     has_sill = true, stud = stud, palette = pal);
+    framed_opening_y([hl - sd, 0, z_sill], ww, ehf - air_gap, ehb - air_gap,
+                     V3_HOUSE_DOOR_Y, V3_HOUSE_DOOR_W,
+                     z_bp_top, V3_HOUSE_DOOR_H - air_gap - sw,
+                     has_sill = false, stud = stud, palette = pal);
+    framed_opening_y([hl - sd, 0, z_sill], ww, ehf - air_gap, ehb - air_gap,
+                     V3_PET_DOOR_Y, V3_PET_DOOR_W,
+                     bh + 60, V3_PET_DOOR_H,
+                     has_sill = false, stud = stud, palette = pal);
 
     // Interior collar tie at hl/2 — slope-matched.
     color(pal_post(pal))
@@ -358,25 +406,29 @@ module v3_yard_plugs_and_posts(hl, rl, ww, bh, fpw, ct, pal) {
 }
 
 // Sloped front and back top beams (top face follows the roof underside).
-// Beams start at hl+ct so they don't pass through the partition cladding;
-// their left ends rest on top of the partition wall.
+// Beams extend west to x=hl-fpw so they overlap the partition wall (its
+// stud_wall_sloped's top plate at x=hl-sd..hl) — providing direct bearing
+// onto the partition wall studs at the yard's left corners. The geometry
+// represents a doubled top plate / notched-header detail at the corner.
 module v3_yard_top_beams(hl, rl, ww, fpw, ct, pal) {
+    bx0 = hl - fpw;            // beam west end
+    blen = rl + fpw;           // beam length
     color(pal_post(pal))
     hull() {
-        translate([hl + ct, 0, v3_roof_under(0) - 180])
-            cube([rl - ct, 0.01, 180]);
-        translate([hl + ct, fpw - 0.01, v3_roof_under(fpw) - 180])
-            cube([rl - ct, 0.01, 180]);
+        translate([bx0, 0, v3_roof_under(0) - 180])
+            cube([blen, 0.01, 180]);
+        translate([bx0, fpw - 0.01, v3_roof_under(fpw) - 180])
+            cube([blen, 0.01, 180]);
     }
     color(pal_post(pal))
     hull() {
-        translate([hl + ct, ww - fpw, v3_roof_under(ww - fpw) - 180])
-            cube([rl - ct, 0.01, 180]);
-        translate([hl + ct, ww - 0.01, v3_roof_under(ww) - 180])
-            cube([rl - ct, 0.01, 180]);
+        translate([bx0, ww - fpw, v3_roof_under(ww - fpw) - 180])
+            cube([blen, 0.01, 180]);
+        translate([bx0, ww - 0.01, v3_roof_under(ww) - 180])
+            cube([blen, 0.01, 180]);
     }
     top_beam_sloped_y(hl + rl - fpw, fpw, ww - 2*fpw,
-                      v3_roof_under(0), v3_roof_under(ww),
+                      v3_roof_under(fpw), v3_roof_under(ww - fpw),
                       fpw, 180, pal);
 }
 

@@ -415,14 +415,21 @@ module ridge_cap_x(origin, length, width, ridge_h,
 }
 
 // Visible ceiling rafters under a mono-pitch roof.
+//   wall_t  = front/back toprem inset; rafter ends bear above the toprem.
+//   x_inset = where the first rafter starts in X (and the last must fit
+//             before length - x_inset). Defaults to wall_t when undef so
+//             existing callers (v1) are unaffected. v3 sets it to wall_t+55
+//             to slide the rafter line off the partition wall.
 module ceiling_rafters_mono(origin, length, width, drop, eave_h,
                             spacing=800, rafter_w=45, rafter_h=140,
-                            wall_t=100, palette=DEFAULT_PALETTE) {
+                            wall_t=100, palette=DEFAULT_PALETTE,
+                            x_inset=undef) {
     ox = origin[0]; oy = origin[1];
+    xi = is_undef(x_inset) ? wall_t : x_inset;
     z_front = eave_h;
     z_back  = eave_h - drop;
     color(pal_post(palette))
-    for (x = [ox + wall_t : spacing : ox + length - wall_t]) {
+    for (x = [ox + xi : spacing : ox + length - xi]) {
         hull() {
             translate([x, oy + wall_t, z_front - rafter_h])
                 cube([rafter_w, 0.01, rafter_h]);
