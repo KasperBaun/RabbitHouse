@@ -13,6 +13,7 @@ use <../../lib/primitives/mesh.scad>
 use <../../lib/primitives/roof.scad>
 use <../../lib/primitives/framing.scad>
 use <../../lib/primitives/foundation.scad>
+use <../../lib/primitives/fundablok.scad>
 use <../../lib/primitives/openings.scad>
 use <../../lib/decor/landscape.scad>
 use <../../lib/decor/lighting.scad>
@@ -35,7 +36,9 @@ function v3_roof_under(y) =
 // `show_cladding=false` hides the wall cladding, doors, and window trim so the
 // structural frame (studs, plates, beams, posts) is visible — useful for
 // auditing framing against TIMBER-FRAMING.md and counting timber.
-module build_v3(show_cladding=true) {
+// `show_ground=false` hides the grass / gravel path / outdoor dressing so
+// the buried fundablok strip foundation (Z<0) is visible from above.
+module build_v3(show_cladding=true, show_ground=true) {
     bom_header();
     pal  = DEFAULT_PALETTE;
     clad = DEFAULT_CLAD;
@@ -59,12 +62,21 @@ module build_v3(show_cladding=true) {
     roof_oz = v3_roof_oz();
     drop_full = v3_total_drop();
 
-    // --- Outdoor ground & path ------------------------------------------
-    ground_grass([ll/2, ww/2]);
-    gravel_path_y([V3_YARD_DOOR_X + V3_YARD_DOOR_W/2, 0]);
-    v3_outdoor_dressing(ll, ww, bh);
+    // --- Outdoor ground & path (gated so foundation is visible) -------
+    if (show_ground) {
+        ground_grass([ll/2, ww/2]);
+        gravel_path_y([V3_YARD_DOOR_X + V3_YARD_DOOR_W/2, 0]);
+        v3_outdoor_dressing(ll, ww, bh);
+    }
 
-    // --- Foundation: house only ----------------------------------------
+    // --- Fundablok strip foundation under all walls --------------------
+    // Continuous ring around the 6,0 × 2,5 m footprint + cross-wall under
+    // the partition at X=hl. 3 courses in halvstensforbandt = 60 cm tall.
+    // BOM (see docs/version 3/materialeliste.csv): 117 blocks total
+    // (102 perimeter + 15 partition). Top at Z=0; depth = 600 mm.
+    fundablok_ring(ll, ww, 3, [hl]);
+
+    // --- Floor slab inside the house (sits on top of fundablok ring) ---
     // Slab extends ct mm past every house cladding face so cladding never
     // overhangs grass; 200×250 perimeter edge beam (kantbjelke) carries
     // bearing-wall line load down to a stiff edge.
@@ -75,8 +87,9 @@ module build_v3(show_cladding=true) {
 
     // --- Yard interior: lush grass at grade ---------------------------
     // Yard grass starts at the slab's east edge (hl+ct) so it doesn't
-    // overlap the partition slab strip.
-    v3_yard_grass(hl + ct, rl - ct, ww);
+    // overlap the partition slab strip. Gated on show_ground.
+    if (show_ground)
+        v3_yard_grass(hl + ct, rl - ct, ww);
 
     // --- House structural framing -------------------------------------
     v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal);
@@ -94,7 +107,7 @@ module build_v3(show_cladding=true) {
         // Stone threshold inside the yard at the partition human door
         color([0.55, 0.50, 0.40])
         translate([hl + ct + 20, V3_HOUSE_DOOR_Y - 50,
-                   V3_PLUG_H + 18 + V3_SILL_H])
+                   V3_SILL_H + 18])
             cube([200, V3_HOUSE_DOOR_W + 100, 12]);
 
         // --- Side window with trim on left exterior wall (faces -X) ---
@@ -116,7 +129,7 @@ module build_v3(show_cladding=true) {
     }
 
     // --- Yard structure: ground plugs + corner posts + sloped beams ----
-    v3_yard_plugs_and_posts(hl, rl, ww, bh, fpw, ct, pal);
+    v3_yard_posts_and_sills(hl, rl, ww, bh, fpw, ct, pal);
     v3_yard_top_beams(hl, rl, ww, fpw, ct, pal);
     v3_yard_stiles(hl, rl, ww, fpw, pal);
 
@@ -127,7 +140,7 @@ module build_v3(show_cladding=true) {
 
     // --- Yard mesh-and-frame entry door (front, Y=0) -----------------
     v3_yard_door(V3_YARD_DOOR_X, V3_YARD_DOOR_W, V3_YARD_DOOR_H,
-                 V3_PLUG_H + 18 + V3_SILL_H, pal, mesh);
+                 V3_SILL_H + 18, pal, mesh);
 
     // --- Unified mono-pitch roof (corrected origin so wall tops align)
     roof_mono_pitch([0, 0, roof_oz], ll, ww, drop_full, V3_ROOF_THICK,
@@ -171,12 +184,12 @@ module v3_yard_grass(yard_x0, yard_len, ww) {
     color([0.40, 0.62, 0.28])
     for (cx = [yard_x0 + 350, yard_x0 + 1100, yard_x0 + 1900,
                yard_x0 + 2700, yard_x0 + 3400])
-        for (cy = [350, 1050, 1700, 2350])
+        for (cy = [350, 950, 1500, 2050])
             translate([cx, cy, 8])
                 cube([280 + (cx % 90), 220 + (cy % 70), 4]);
     color([0.30, 0.50, 0.20])
     for (cx = [yard_x0 + 200, yard_x0 + 600])
-        translate([cx, 1800 + cx % 200, 8])
+        translate([cx, 1500 + cx % 200, 8])
             cube([180, 160, 3]);
 }
 
@@ -388,50 +401,44 @@ module v3_yard_door(door_x, door_w, door_h, sill_top, pal, mesh) {
             cube([15, 8, 100]);
 }
 
-// Yard plugs + right-end corner posts + sill plates.
+// Yard right-end corner posts + sill plates.
 //   The yard's LEFT corners (at the partition X=hl) are NOT separate posts —
 //   the partition wall and its cladding (X=hl..hl+ct) already provide the
 //   structural corner, and putting wood posts at X=hl..hl+fpw would either
 //   poke through the partition cladding or leave a visible gap behind it.
 //   Sills/beams/mesh on the yard side start just east of the partition
-//   cladding's outer face, at X = hl + ct.
-module v3_yard_plugs_and_posts(hl, rl, ww, bh, fpw, ct, pal) {
-    plug_posts = [
+//   cladding's outer face, at X = hl + ct. Right-end corner posts now sit
+//   on a steel post-base bracket (18 mm) directly on the fundablok ring
+//   top (Z=0); the previous buried concrete ground plugs are gone since
+//   the continuous fundablok strip foundation carries that load line.
+module v3_yard_posts_and_sills(hl, rl, ww, bh, fpw, ct, pal) {
+    corner_posts = [
         [hl + rl - fpw, 0,        v3_roof_under(0)],
         [hl + rl - fpw, ww - fpw, v3_roof_under(ww - fpw)]
     ];
 
-    // BOM — concrete plugs (one per corner) and steel post-base brackets
-    for (p = plug_posts) {
-        bom_member("plug", "concrete", V3_PLUG_W, V3_PLUG_W,
-                   V3_PLUG_H + V3_PLUG_BURY, "yard_plug");
+    // Steel post-base brackets sitting directly on the fundablok ring top.
+    for (p = corner_posts)
         bom_member("bracket", "steel-galv", fpw + 16, fpw + 16, 18,
                    "yard_post_base");
-    }
 
-    color([0.74, 0.72, 0.69])
-    for (p = plug_posts)
-        translate([p[0] - (V3_PLUG_W - fpw)/2,
-                   p[1] - (V3_PLUG_W - fpw)/2,
-                   -V3_PLUG_BURY])
-            cube([V3_PLUG_W, V3_PLUG_W, V3_PLUG_H + V3_PLUG_BURY]);
     color([0.30, 0.30, 0.32])
-    for (p = plug_posts)
-        translate([p[0] - 8, p[1] - 8, V3_PLUG_H])
+    for (p = corner_posts)
+        translate([p[0] - 8, p[1] - 8, 0])
             cube([fpw + 16, fpw + 16, 18]);
 
-    // BOM — yard corner posts (length to roof underside)
-    z0 = V3_PLUG_H + 18;
-    for (p = plug_posts)
+    // Yard corner posts (bracket top → roof underside).
+    z0 = 18;
+    for (p = corner_posts)
         bom_member("post", "pt-pine", fpw, fpw, p[2] - z0, "yard_corner_post");
 
     color(pal_post(pal))
-    for (p = plug_posts) {
+    for (p = corner_posts) {
         translate([p[0], p[1], z0])
             cube([fpw, fpw, p[2] - z0]);
     }
 
-    sill_z = V3_PLUG_H + 18;
+    sill_z = 18;
 
     // BOM — yard sills (4 segments)
     front_left_len  = V3_YARD_DOOR_X - (hl + ct);
@@ -504,7 +511,7 @@ module v3_yard_top_beams(hl, rl, ww, fpw, ct, pal) {
 //   Right: every 1 m from the front corner.
 module v3_yard_stiles(hl, rl, ww, fpw, pal) {
     sw = V3_STILE_W;
-    sill_top = V3_PLUG_H + 18 + V3_SILL_H;
+    sill_top = V3_SILL_H + 18;
 
     front_xs = [hl + 3000];
     front_beam_top = v3_roof_under(0) - V3_BEAM_H;
@@ -560,7 +567,7 @@ module v3_mesh_midrail_y(panel_y, panel_w, x_pos, z_center, mesh, pal) {
 // so the wood line is continuous across the whole front wall.
 module v3_yard_mesh_front(hl, rl, ww, fpw, ct, pal, mesh) {
     md = ms_depth(mesh);
-    sill_top = V3_PLUG_H + 18 + V3_SILL_H;
+    sill_top = V3_SILL_H + 18;
     h = (v3_roof_under(0) - V3_BEAM_H) - sill_top;
     z_rail = sill_top + V3_MID_RAIL_Z_OFFSET;
     seg_xs = [
@@ -586,7 +593,7 @@ module v3_yard_mesh_front(hl, rl, ww, fpw, ct, pal, mesh) {
 // at hl+ct so the panels meet the partition cladding flush.
 module v3_yard_mesh_back(hl, rl, ww, fpw, ct, pal, mesh) {
     md = ms_depth(mesh);
-    sill_top = V3_PLUG_H + 18 + V3_SILL_H;
+    sill_top = V3_SILL_H + 18;
     h = (v3_roof_under(ww) - V3_BEAM_H) - sill_top;
     z_rail = sill_top + V3_MID_RAIL_Z_OFFSET;
     breaks = [hl + ct, hl + 1000, hl + 2000, hl + 3000, hl + rl - fpw];
@@ -606,7 +613,7 @@ module v3_yard_mesh_back(hl, rl, ww, fpw, ct, pal, mesh) {
 // corner ~1900 mm above sill_top), so it's never actually clipped.
 module v3_yard_mesh_right(hl, rl, ww, fpw, pal, mesh) {
     md = ms_depth(mesh);
-    sill_top = V3_PLUG_H + 18 + V3_SILL_H;
+    sill_top = V3_SILL_H + 18;
     z_top_max = v3_roof_under(0) - V3_BEAM_H;
     z_top_y0 = v3_roof_under(0) - V3_BEAM_H;
     z_top_y1 = v3_roof_under(ww) - V3_BEAM_H;

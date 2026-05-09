@@ -17,6 +17,11 @@ v1_preset = "7x3";
 // (Currently honoured by v3 only.)
 show_cladding = false;
 
+// Toggle outdoor grass / gravel path / yard grass. With ground off, the
+// buried fundablok strip foundation (Z<0) becomes visible from above.
+// (Honoured by v3 only.)
+show_ground = true;
+
 $fn = 48;
 
 // Initial GUI viewport. OpenSCAD reads these special variables on file
@@ -33,4 +38,4 @@ use <designs/v3/build.scad>
 
 if (design == "v1") build_v1(v1_preset);
 if (design == "v2") build_v2();
-if (design == "v3") build_v3(show_cladding=show_cladding);
+if (design == "v3") build_v3(show_cladding=show_cladding, show_ground=show_ground);
