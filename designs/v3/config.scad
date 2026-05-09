@@ -62,18 +62,11 @@ V3_SIDE_WIN_H   = 600;
 V3_SIDE_WIN_Y   = 1300;
 V3_SIDE_WIN_Z   = 1100;
 
-// Yard ground plugs. Total concrete length = V3_PLUG_H + V3_PLUG_BURY.
-// V3_PLUG_BURY is set to 800 mm to satisfy DK frostfri dybde (~700–900 mm)
-// so the plug sits below the frost line and doesn't heave.
-V3_PLUG_W       = 280;
-V3_PLUG_H       = 100;
-V3_PLUG_BURY    = 800;
-
 // Buried mesh apron around yard exterior (predator dig defence).
 V3_APRON_W      = 500;
 
 // Standard Danish timber sizes used by the yard structure.
-//   95×95 stolpe       — corner posts, plug posts (V3_POST_W)
+//   95×95 stolpe       — right-end corner posts on fundablok (V3_POST_W)
 //   95×180 limtræ      — yard top beams, sloping under roof (V3_BEAM_H)
 //   45×195 reglar      — interior collar tie (V3_COLLAR_TIE_H)
 //   70×70 KOMPAKT      — mesh-wall stiles (V3_STILE_W)
