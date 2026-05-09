@@ -401,41 +401,49 @@ module v3_yard_door(door_x, door_w, door_h, sill_top, pal, mesh) {
             cube([15, 8, 100]);
 }
 
-// Yard right-end corner posts + sill plates.
-//   The yard's LEFT corners (at the partition X=hl) are NOT separate posts —
-//   the partition wall and its cladding (X=hl..hl+ct) already provide the
-//   structural corner, and putting wood posts at X=hl..hl+fpw would either
-//   poke through the partition cladding or leave a visible gap behind it.
-//   Sills/beams/mesh on the yard side start just east of the partition
-//   cladding's outer face, at X = hl + ct. Right-end corner posts now sit
-//   on a steel post-base bracket (18 mm) directly on the fundablok ring
-//   top (Z=0); the previous buried concrete ground plugs are gone since
-//   the continuous fundablok strip foundation carries that load line.
+// Yard right-end corner reglar + sill plates.
+//   The yard's LEFT corners (at the partition X=hl) are NOT separate
+//   members — the partition wall and its cladding (X=hl..hl+ct) already
+//   provide the structural corner, and putting wood at X=hl..hl+fpw would
+//   either poke through the partition cladding or leave a visible gap
+//   behind it. Sills/beams/mesh on the yard side start just east of the
+//   partition cladding's outer face, at X = hl + ct.
+//
+//   Right-end corners are 45×95 reglar (was 95×95 stolper before the
+//   continuous fundablok ring carried the load line — a thinner corner
+//   reglar is sufficient). The reglar sits 45 mm thin along X with its
+//   outer face flush at X=hl+rl, and 95 mm wide along Y matching the
+//   adjacent sill / beam Y-envelope. It rests on a steel post-base
+//   bracket (18 mm) directly on the fundablok ring top (Z=0).
 module v3_yard_posts_and_sills(hl, rl, ww, bh, fpw, ct, pal) {
-    corner_posts = [
-        [hl + rl - fpw, 0,        v3_roof_under(0)],
-        [hl + rl - fpw, ww - fpw, v3_roof_under(ww - fpw)]
+    reglar_t = 45;          // thin dimension along X (the "45" of 45×95)
+
+    corner_reglar = [
+        [hl + rl - reglar_t, 0,        v3_roof_under(0)],
+        [hl + rl - reglar_t, ww - fpw, v3_roof_under(ww - fpw)]
     ];
 
-    // Steel post-base brackets sitting directly on the fundablok ring top.
-    for (p = corner_posts)
-        bom_member("bracket", "steel-galv", fpw + 16, fpw + 16, 18,
-                   "yard_post_base");
+    // Steel post-base brackets sized to the 45×95 reglar, sitting on the
+    // fundablok ring top.
+    for (p = corner_reglar)
+        bom_member("bracket", "steel-galv", reglar_t + 16, fpw + 16, 18,
+                   "yard_corner_post_base");
 
     color([0.30, 0.30, 0.32])
-    for (p = corner_posts)
+    for (p = corner_reglar)
         translate([p[0] - 8, p[1] - 8, 0])
-            cube([fpw + 16, fpw + 16, 18]);
+            cube([reglar_t + 16, fpw + 16, 18]);
 
-    // Yard corner posts (bracket top → roof underside).
+    // Yard corner reglar (bracket top → roof underside).
     z0 = 18;
-    for (p = corner_posts)
-        bom_member("post", "pt-pine", fpw, fpw, p[2] - z0, "yard_corner_post");
+    for (p = corner_reglar)
+        bom_member("reglar", "pt-pine", reglar_t, fpw, p[2] - z0,
+                   "yard_corner_reglar");
 
     color(pal_post(pal))
-    for (p = corner_posts) {
+    for (p = corner_reglar) {
         translate([p[0], p[1], z0])
-            cube([fpw, fpw, p[2] - z0]);
+            cube([reglar_t, fpw, p[2] - z0]);
     }
 
     sill_z = 18;

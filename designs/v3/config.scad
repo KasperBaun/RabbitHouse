@@ -66,11 +66,16 @@ V3_SIDE_WIN_Z   = 1100;
 V3_APRON_W      = 500;
 
 // Standard Danish timber sizes used by the yard structure.
-//   95×95 stolpe       — right-end corner posts on fundablok (V3_POST_W)
 //   95×180 limtræ      — yard top beams, sloping under roof (V3_BEAM_H)
 //   45×195 reglar      — interior collar tie (V3_COLLAR_TIE_H)
 //   70×70 KOMPAKT      — mesh-wall stiles (V3_STILE_W)
+//   45×95 reglar       — right-end corner reglar (cross-section 45×95,
+//                        outer face flush at X=ll); replaced 95×95 stolper
+//                        once the fundablok ring carried the load line
 //   45×95 reglar flat  — yard sill plate, 95 wide × 45 tall (V3_SILL_H)
+// V3_POST_W is the SHARED 95 mm "wide" dimension used by sills, beams,
+// and the corner reglar's wide axis — kept as a single constant so wall
+// envelope dimensions stay consistent.
 V3_POST_W       = 95;
 V3_BEAM_H       = 180;
 V3_COLLAR_TIE_W = 45;        // 45×195 reglar laid on edge
