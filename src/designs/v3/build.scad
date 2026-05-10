@@ -44,9 +44,10 @@ module build_v3() {
     // som de er rettet til. Lige nu ser vi KUN fundamentet.
     v3_fundament(show_ground, pal);
 
+    // todo.md #2: konstruktions-skelet (DPC + sill plate + studs + top plate)
+    v3_konstruktions_skelet(pal);
+
     // === Inaktivt — slå til når de er rettet til (uncomment) ===
-    // todo.md #2: konstruktions-skelet (murpap, bundrem, reglar, toprem, strøer)
-    // v3_konstruktions_skelet(pal);
     //
     // todo.md #3: aabninger (døre + vinduer)
     // if (show_cladding) v3_aabninger(_default_mesh(), pal);

@@ -23,8 +23,12 @@ V3_WALL_T       = 100;
 V3_HOUSE_LEN    = 1500;
 V3_RUN_LEN      = 4500;
 
-V3_EH_FRONT     = 2600;
-V3_EH_BACK      = 2200;
+// Wall heights, measured from sokkel-top (Z=V3_BASE_H) to roof underside
+// at the wall face. EH_FRONT > EH_BACK gives a mono-pitch slope front→back.
+// Drop 500 over 2500 = 11.3° (20 % fald) — comfortable for tagpap, stål
+// and eternit_10 (with extended overlap).
+V3_EH_FRONT     = 2500;
+V3_EH_BACK      = 2000;
 
 // Roof overhangs
 V3_OH_FRONT     = 220;

@@ -2,50 +2,65 @@
 
 > Implementeret i `src/designs/v3/konstruktions-skelet.scad`.
 
-Træ-skelettet der sidder OVENPÅ fundamentet — alt det struktur-træ der binder bygningen sammen. Aktuelt indeholder filen bundrem + murpap (DPC) som ligger på sokkel-toppen. Over tid flytter vi resten herover (stolper, toprem, losholter, vindkryds, bjælker) så `konstruktions-skelet.md` bliver det samlede billede af bygningens træ-skelet.
+Træ-skelettet der sidder ovenpå fundamentet. Indeholder kun de fire grundlæggende elementer: DPC (murpap), sill plate (bundrem), studs (reglar), top plate (toprem). Trekant-gavlfyld over sidemæg, losholter, vindkryds, taghane, bjælker, gulvstrøer m.m. kommer i andre filer eller senere iterationer.
 
-## Mål (aktuelt indhold)
+## Mål
 
 | Egenskab | Værdi |
 |---|---|
-| Bundrem-niveau (top) | 16,7 cm over jord (sokkel + 2 mm murpap + 4,5 cm bundrem) |
-| Bundrem omkreds | ~17 m perimeter + 2,35 m partition cross-wall = ~19,35 m |
-| Murpap | 100 mm bred bitumen-tape under hele bundrem-strækningen |
+| Front-væg højde (fra sokkel-top) | 2,5 m (HØJ — den høje side i mono-pitch) |
+| Bag-væg højde | 2,0 m (LAV) |
+| Sidemæg + partition højde | 2,0 m (LAV — flugter med bag-væg) |
+| Top af front top plate | z = 2,62 m over jord |
+| Top af bag/side/partition top plate | z = 2,12 m over jord |
+| Stud-spacing | 600 mm c/c |
 
 ## Konstruktion
 
-**Murpap (fugtspærre).** 2 mm bitumen-tape, 100 mm bred, lægges ovenpå sokkel-toppen i hele bundrem-tracéet (perimeter + partition cross-wall). Holder fugt fra betonen ude af træet. Skåret 5 mm over på hver side for at vand løber af i stedet for op i træ-fibre.
+```
+1. DPC (murpap)         2 mm bitumen-tape oven på sokkel-ring
+2. Sill plate (bundrem) 45×95 PT, kontinuert hele perimeteren + cross-wall
+3. Studs (reglar)       45×95 lodrette c/c 600, alle vægge
+                         skip-ranges: dør- og vindues-åbninger holdes fri
+4. Top plate (toprem)   45×95 vandret oven på studs
+                         Front: HØJ (z=2620) — flugter med tagets underside
+                         Bag/side/partition: LAV (z=2120) — flugter med bagsiden
+```
 
-**Bundrem.** Kontinuert 45 × 95 PT-bundrem (NTR-AB klasse for udendørs jord-kontakt) skrue-fastgjort til topskiftet i sokkelringen via M10 ankerskruerne (selve ankerskruerne er listet under `fundament.md`). Bundremmen går hele vejen rundt — også under yard-mesh og over yard-dør (door-tærskel) samt på tværs af partition. Standard 4,8 m planker samles ende-til-ende med 30 mm overlap; samlinger ligger ALDRIG på et hjørne.
+Trekanten mellem den vandrette top plate på sidemæg og det skrå tag (over front-end) er **ikke** modelleret her — det er gavlfyld der kommer senere.
+
+## Modul-struktur
+
+| Modul | Funktion |
+|---|---|
+| `v3_dpc()` | Bitumen-tape oven på sokkel-ring, hele vejen rundt + cross-wall |
+| `v3_sill_plate(palette)` | 45×95 PT bundrem, kontinuert |
+| `v3_studs(palette)` | Stud-grid på alle 5 vægge med skip_ranges fra config |
+| `v3_top_plate(palette)` | Vandret toprem, front HØJ, andre LAV |
+| `v3_konstruktions_skelet(palette)` | Wrapper — kalder de 4 ovenstående |
 
 ## Materialeliste
 
+Priser tilføjes senere.
+
 | # | Vare | Beskrivelse | Antal | Enhed | Pris/enh | I alt |
 |---|---|---|---|---|---|---|
-| 1 | Bundrem 45 × 95 PT (NTR-AB) | Kontinuert ~19,5 m | 5 | stk à 4,8 m | | |
-| 2 | Murpap (bitumen-tape 100 mm) | DPC mellem sokkel og bundrem | 1 | rulle 25 m | | |
+| 1 | Bitumen-tape (murpap) 100 mm | DPC mellem sokkel og bundrem, ~19,5 m + cross-wall 2,35 m | 1 | rulle 25 m | | |
+| 2 | Bundrem 45 × 95 PT NTR-AB | Kontinuert ~21,9 m | 5 | stk à 4,8 m | | |
+| 3 | Reglar 45 × 95 (gran C24) | Stud, ca. 35 stk samlet (front 9 + bag 9 + venstre 4 + højre 4 + partition 4 + ende-studs) | 35 | stk à varierende længde | | |
+| 4 | Toprem 45 × 95 (gran C24) | Vandret toprem, ~21,9 m total | 5 | stk à 4,8 m | | |
 | | | | | | **Total** | **kr.** |
 
-## Bygge-rækkefølge
-
-1. Sørg for fundamentets ankerskruer er på plads i topskiftet (se `fundament.md`)
-2. Læg murpap-tape ovenpå sokkel hele vejen rundt + på cross-wall
-3. Bor 11 mm gennemføringshuller i bundrem-plankerne der matcher ankerskruerne
-4. Læg bundremmen på murpappet, spænd møtrikkerne, kontroller niveau
-
-## Kommer senere (når vi flytter stolper/toprem/etc. herover)
-
-- 45 × 95 stolper c/c 600 (i dag i `vaegge.scad`)
-- Toprem (skrå mod tag-hældning)
-- Losholter (45 × 95 vandret midt på væggen)
-- Vindkryds 22 × 95 (X-bracing)
-- Yard top-bjælker (95 × 180 limtræ) og collar tie
-- Spær og lægter (i dag i `tagkonstruktion.scad` — overvej om de hører hjemme her)
+Reglar-længder afhænger af vægposition:
+- Front-væg studs: 2,41 m hver
+- Bag-, side- og partition-væg studs: 1,91 m hver
 
 ## Hvad er IKKE i denne fil
 
-- Beton, ringen, ankerskruer → `fundament.md`
-- Klink-beklædning + vindpapir + afstandsliste → `beklaedning.md`
-- Døre, vindue → `aabninger.md`
-- Tag-dækning og lægter → `tagkonstruktion.md`
-- Inventar → `inventar.md`
+- Sokkel og ankerskruer → `fundament.md`
+- Gavlfyld (trekant over sidemæg) → kommer senere (eget modul eller del af tagkonstruktion)
+- Losholter, vindkryds, taghane, yard-bjælker → kommer senere
+- Strøer-gulv (floor joists inde i huset) → kommer senere (egen fil eller del af nyt gulv-system)
+- Klink, vindpapir, voliernet → `beklaedning.md` (todo.md #4)
+- Døre, vinduer, jamb/header/cripple-indramning → `aabninger.md` (todo.md #3)
+- Tag, spær, dækning → `tagkonstruktion.md` (todo.md #5)
