@@ -5,6 +5,7 @@ include <../../lib/defaults.scad>
 include <config.scad>
 use <../../lib/primitives/fundablok.scad>
 use <../../lib/primitives/foundation.scad>
+use <../../lib/primitives/beslag.scad>
 use <../../lib/decor/landscape.scad>
 use <../../lib/decor/rabbit.scad>
 use <../../lib/bom.scad>
@@ -73,6 +74,18 @@ module v3_fundament(show_ground = true, palette = DEFAULT_PALETTE) {
     // visible around the yard — without `top_z`, the whole ring sits
     // at/below grade and the surrounding grass plane buries it.
     fundablok_ring(ll, ww, 3, [hl], top_z = bh);
+
+    // Ankerskruer M10 c/c 1000 mm along the perimeter ring + partition cross-wall.
+    // Head sits at Z=bh (top of ring = sokkel level); shaft sinks 120 mm into ring.
+    for (x = [500 : 1000 : ll - 500]) {
+        ankerskrue_m10([x, 0]);    // front sill line
+        ankerskrue_m10([x, ww]);   // back sill line
+    }
+    for (y = [500 : 1000 : ww - 500]) {
+        ankerskrue_m10([0, y]);    // left sill line
+        ankerskrue_m10([ll, y]);   // right sill line
+        ankerskrue_m10([hl, y]);   // partition cross-wall
+    }
 
     v3_stroer_floor(palette);
     rabbit_floor_grass([wt, wt], [hl - 2*wt, ww - 2*wt], bh);
