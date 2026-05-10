@@ -36,6 +36,42 @@ module v3_spaer(eh_back, palette = DEFAULT_PALETTE) {
     }
 }
 
+// Tagpap cover: 22 mm forskalling (raw planks) + 2-lag tagpap on top of
+// the spær. Min slope 2°. Standard for v3's 9° pitch.
+module v3_cover_tagpap(eh_back, palette = DEFAULT_PALETTE) {
+    ll = V3_LENGTH; ww = V3_WIDTH;
+    drop_full = v3_total_drop_for(eh_back);
+    roof_oz = v3_roof_oz_for(eh_back);
+    span_y = ww + V3_OH_FRONT + V3_OH_BACK;
+    span_x = ll + V3_OH_SIDE * 2;
+    area = span_x * sqrt(span_y * span_y + drop_full * drop_full) / 1e6;
+
+    // 22 mm forskalling deck (sloped polyhedron — replaces the old solid roof)
+    bom_member("forskalling", "spruce", 22, span_x, span_y,
+               str("tagpap_deck_", area, "_m2"), system="tagkonstruktion");
+    color([0.74, 0.62, 0.40])
+    polyhedron(
+        points = [
+            [-V3_OH_SIDE, -V3_OH_FRONT, roof_oz - 22],
+            [ll + V3_OH_SIDE, -V3_OH_FRONT, roof_oz - 22],
+            [ll + V3_OH_SIDE, ww + V3_OH_BACK, roof_oz - drop_full - 22],
+            [-V3_OH_SIDE, ww + V3_OH_BACK, roof_oz - drop_full - 22],
+            [-V3_OH_SIDE, -V3_OH_FRONT, roof_oz],
+            [ll + V3_OH_SIDE, -V3_OH_FRONT, roof_oz],
+            [ll + V3_OH_SIDE, ww + V3_OH_BACK, roof_oz - drop_full],
+            [-V3_OH_SIDE, ww + V3_OH_BACK, roof_oz - drop_full]
+        ],
+        faces = [[0,1,2,3], [4,7,6,5], [0,4,5,1], [1,5,6,2], [2,6,7,3], [3,7,4,0]]
+    );
+
+    // Tagpap (2-lag) — represented as the existing roof_mono_pitch black slab.
+    bom_member("tagpap", "bitumen", 0, 0, 0,
+               str("2lag_underpap_svejsepap_", area, "_m2"),
+               system="tagkonstruktion");
+    roof_mono_pitch([0, 0, roof_oz], ll, ww, drop_full, V3_ROOF_THICK,
+                    V3_OH_FRONT, V3_OH_BACK, V3_OH_SIDE, palette);
+}
+
 module v3_tagkonstruktion(roof_cover = "tagpap", palette = DEFAULT_PALETTE) {
     ll = V3_LENGTH; ww = V3_WIDTH; wt = V3_WALL_T;
     roof_oz = v3_roof_oz();
