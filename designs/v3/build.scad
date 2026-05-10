@@ -21,6 +21,7 @@ use <../../lib/decor/rabbit.scad>
 use <../../lib/bom.scad>
 use <fundament.scad>
 use <vaegge.scad>
+use <tagkonstruktion.scad>
 
 // Roof-geometry helpers (v3_span_total, v3_total_drop, v3_roof_oz,
 // v3_roof_under) live in config.scad so per-system files like vaegge.scad
@@ -112,18 +113,7 @@ module build_v3(show_cladding=true, show_ground=true) {
                  bh + V3_SILL_H + 18, pal, mesh);
 
     // --- Unified mono-pitch roof (corrected origin so wall tops align)
-    roof_mono_pitch([0, 0, roof_oz], ll, ww, drop_full, V3_ROOF_THICK,
-                    V3_OH_FRONT, V3_OH_BACK, V3_OH_SIDE, pal);
-    fascia_and_gutter_mono([0, 0, roof_oz], ll, ww, drop_full,
-                           150, 22, V3_OH_FRONT, V3_OH_BACK, V3_OH_SIDE,
-                           110, 65, 0, pal);
-    rafter_eave_h = v3_roof_under(wt);
-    rafter_drop = v3_roof_under(wt) - v3_roof_under(ww - wt);
-    // x_inset shifts the rafter line east of the partition stud wall
-    // (x=hl-sd..hl) so no rafter clips the wall — first rafter at x=155,
-    // partition rafter lands at x=1955.
-    ceiling_rafters_mono([0, 0, 0], ll, ww, rafter_drop, rafter_eave_h,
-                         900, 45, 140, wt, pal, x_inset = wt + 55);
+    v3_tagkonstruktion(pal);
 
     // --- Hay rack on house back wall (interior, cladding-mode only) --
     if (show_cladding)
