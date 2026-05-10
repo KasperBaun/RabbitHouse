@@ -1,11 +1,4 @@
-// v3 build — composes the per-system modules + toggles + the call.
-// Open this file (or include from main.scad) to render the v3 model.
-//
-// File layout: see README.md. Each per-system file (fundament,
-// konstruktions-skelet, vaegge, tagkonstruktion, beklaedning, aabninger,
-// inventar) covers ONE building system. Toggles live here at the top of
-// build.scad — flip them, save, re-render.
-
+// v3 build 
 include <../../lib/defaults.scad>
 include <config.scad>
 
@@ -17,34 +10,15 @@ use <beklaedning.scad>
 use <aabninger.scad>
 use <inventar.scad>
 
-// ============================================================================
-// Toggles — edit these, save, re-render.
-// CLI override via `-D show_cladding=false` etc.
-// ============================================================================
-
-// Hide klink/doors/window so the wood frame, bats, vindkryds are visible.
 show_cladding = true;
-
-// Hide grass / gravel path / yard fill so the buried fundablok ring is
-// visible from above. The 12 cm sokkel above grade stays visible regardless.
 show_ground = true;
-
-// Tag-dækning: "tagpap" | "stål" (eller ASCII "staal") | "eternit_10" | "eternit_14".
-// "tagpap" og "stål" virker på v3's nuværende hældning (9°); eternit-varianterne
-// sænker eh_back automatisk så hældningen overholder Cembrit B6's profil.
 roof_cover = "tagpap";
-
-// ============================================================================
 
 module build_v3() {
     pal = DEFAULT_PALETTE;
 
     // === Aktivt indhold ===
-    // Vi nedbryder modellen pr. todo.md — slå systemer til efterhånden
-    // som de er rettet til. Lige nu ser vi KUN fundamentet.
     v3_fundament(show_ground, pal);
-
-    // todo.md #2: konstruktions-skelet (DPC + sill plate + studs + top plate)
     v3_konstruktions_skelet(pal);
 
     // === Inaktivt — slå til når de er rettet til (uncomment) ===
