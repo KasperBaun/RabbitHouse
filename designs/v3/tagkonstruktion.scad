@@ -200,12 +200,4 @@ module v3_tagkonstruktion(roof_cover = "tagpap", palette = DEFAULT_PALETTE) {
                            150, 22, V3_OH_FRONT, V3_OH_BACK, V3_OH_SIDE,
                            110, 65, 0, palette);
 
-    // Loftspær (visible inside the house).
-    rafter_eave_h = v3_roof_under_for(eh_back, V3_WALL_T);
-    rafter_drop = v3_roof_under_for(eh_back, V3_WALL_T)
-                - v3_roof_under_for(eh_back, V3_WIDTH - V3_WALL_T);
-    ceiling_rafters_mono([0, 0, 0], V3_LENGTH, V3_WIDTH,
-                         rafter_drop, rafter_eave_h,
-                         900, 45, 140, V3_WALL_T, palette,
-                         x_inset = V3_WALL_T + 55);
 }
