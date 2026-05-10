@@ -32,18 +32,22 @@ WALL_TOP_LOW  = V3_BASE_H + V3_EH_BACK;    // 120 + 2000 = 2120
 STUD_BOTTOM_Z = V3_BASE_H + DPC_T + PLATE_HEIGHT;   // 167
 
 // ----------------------------------------------------------------------------
-// 1. DPC — continuous bitumen tape on top of the sokkel ring.
+// 1. DPC — bitumen tape on top of the sokkel ring.
+// Front + back run full length. Left/right/partition BUTT against the inner
+// face of front+back (no overlap — like real carpentry).
 // ----------------------------------------------------------------------------
 
 module v3_dpc() {
     ll = V3_LENGTH; ww = V3_WIDTH; hl = V3_HOUSE_LEN;
     z = V3_BASE_H;
+    butt_y0 = DPC_W;            // = 100, inner face of front DPC
+    butt_len = ww - 2 * DPC_W;  // = 2300
     color(DPC_COLOR) {
-        translate([0, 0, z])             cube([ll, DPC_W, DPC_T]);  // front
-        translate([0, ww - DPC_W, z])    cube([ll, DPC_W, DPC_T]);  // back
-        translate([0, 0, z])             cube([DPC_W, ww, DPC_T]);  // left
-        translate([ll - DPC_W, 0, z])    cube([DPC_W, ww, DPC_T]);  // right
-        translate([hl - DPC_W/2, 0, z])  cube([DPC_W, ww, DPC_T]);  // partition
+        translate([0, 0, z])              cube([ll, DPC_W, DPC_T]);  // front (full)
+        translate([0, ww - DPC_W, z])     cube([ll, DPC_W, DPC_T]);  // back (full)
+        translate([0, butt_y0, z])        cube([DPC_W, butt_len, DPC_T]);  // left (butted)
+        translate([ll - DPC_W, butt_y0, z]) cube([DPC_W, butt_len, DPC_T]);  // right (butted)
+        translate([hl - DPC_W/2, butt_y0, z]) cube([DPC_W, butt_len, DPC_T]);  // partition (butted)
     }
 }
 
@@ -56,12 +60,14 @@ module v3_sill_plate(palette = DEFAULT_PALETTE) {
     ll = V3_LENGTH; ww = V3_WIDTH; hl = V3_HOUSE_LEN;
     sd = PLATE_DEPTH; sw = PLATE_HEIGHT;
     z = V3_BASE_H + DPC_T;   // 122 — sits on top of DPC
+    butt_y0 = sd;            // = 95, inner face of front sill plate
+    butt_len = ww - 2 * sd;  // = 2310
     color(pal_post(palette)) {
-        translate([0, 0, z])           cube([ll, sd, sw]);   // front
-        translate([0, ww - sd, z])     cube([ll, sd, sw]);   // back
-        translate([0, 0, z])           cube([sd, ww, sw]);   // left
-        translate([ll - sd, 0, z])     cube([sd, ww, sw]);   // right
-        translate([hl - sd/2, 0, z])   cube([sd, ww, sw]);   // partition
+        translate([0, 0, z])              cube([ll, sd, sw]);          // front (full)
+        translate([0, ww - sd, z])        cube([ll, sd, sw]);          // back (full)
+        translate([0, butt_y0, z])        cube([sd, butt_len, sw]);    // left (butted)
+        translate([ll - sd, butt_y0, z])  cube([sd, butt_len, sw]);    // right (butted)
+        translate([hl - sd/2, butt_y0, z]) cube([sd, butt_len, sw]);   // partition (butted)
     }
 }
 
@@ -94,10 +100,13 @@ module _v3_studs_one_wall(origin, length, axis, stud_height,
     last_loop_right = last_loop_x + STUD_THICK;
     emit_end_stud   = (end_stud_x - last_loop_right) >= 100;
 
+    // Skip ranges are in ABSOLUTE coordinates (e.g., V3_HOUSE_DOOR_Y = 200);
+    // we add origin's axis-coordinate so the check works for walls whose
+    // origin isn't at 0 (e.g., butted partition starting at Y=95).
     color(pal_post(palette))
     if (axis == "X") {
         for (x = [0 : STUD_C2C : end_stud_x])
-            if (!_in_any_skip(x + STUD_THICK/2, skip_ranges))
+            if (!_in_any_skip(origin[0] + x + STUD_THICK/2, skip_ranges))
                 translate([origin[0] + x, origin[1], z])
                     cube([STUD_THICK, STUD_DEPTH, stud_height]);
         if (emit_end_stud)
@@ -105,7 +114,7 @@ module _v3_studs_one_wall(origin, length, axis, stud_height,
                 cube([STUD_THICK, STUD_DEPTH, stud_height]);
     } else {
         for (y = [0 : STUD_C2C : end_stud_x])
-            if (!_in_any_skip(y + STUD_THICK/2, skip_ranges))
+            if (!_in_any_skip(origin[1] + y + STUD_THICK/2, skip_ranges))
                 translate([origin[0], origin[1] + y, z])
                     cube([STUD_DEPTH, STUD_THICK, stud_height]);
         if (emit_end_stud)
@@ -131,16 +140,21 @@ module v3_studs(palette = DEFAULT_PALETTE) {
     ];
 
     // --- Regular grid studs (c/c 600) ---
-    _v3_studs_one_wall([0, 0, 0],                 ll, "X", h_high,
-                       skip_ranges=front_skip,     palette=palette);  // front
-    _v3_studs_one_wall([0, ww - STUD_DEPTH, 0],   ll, "X", h_low,
-                       palette=palette);                                // back
-    _v3_studs_one_wall([0, 0, 0],                 ww, "Y", h_low,
-                       skip_ranges=left_skip,      palette=palette);   // left
-    _v3_studs_one_wall([ll - STUD_DEPTH, 0, 0],   ww, "Y", h_low,
-                       palette=palette);                                // right
-    _v3_studs_one_wall([hl - STUD_DEPTH/2, 0, 0], ww, "Y", h_low,
-                       skip_ranges=partition_skip, palette=palette);   // partition
+    // Front + back run full length. Left/right/partition BUTT against the
+    // inner faces of front+back at Y=STUD_DEPTH (= 95) and Y=ww-STUD_DEPTH.
+    butt_y0  = STUD_DEPTH;            // 95
+    butt_len = ww - 2 * STUD_DEPTH;   // 2310
+
+    _v3_studs_one_wall([0, 0, 0],                       ll, "X", h_high,
+                       skip_ranges=front_skip,           palette=palette);  // front
+    _v3_studs_one_wall([0, ww - STUD_DEPTH, 0],         ll, "X", h_low,
+                       palette=palette);                                     // back
+    _v3_studs_one_wall([0, butt_y0, 0],                 butt_len, "Y", h_low,
+                       skip_ranges=left_skip,            palette=palette);  // left (butted)
+    _v3_studs_one_wall([ll - STUD_DEPTH, butt_y0, 0],   butt_len, "Y", h_low,
+                       palette=palette);                                     // right (butted)
+    _v3_studs_one_wall([hl - STUD_DEPTH/2, butt_y0, 0], butt_len, "Y", h_low,
+                       skip_ranges=partition_skip,       palette=palette);  // partition (butted)
 
     // --- Jamb studs (= reglar der binder hver opnings kanter) ---
     // Indersiden af jamb-stud flugter med åbningens kant; selve åbningen er
@@ -188,6 +202,117 @@ module v3_studs(palette = DEFAULT_PALETTE) {
 }
 
 // ----------------------------------------------------------------------------
+// 3b. Framed openings — header + cripples above + (windows only) rough sill
+//     + cripples below. Header is a 45×95 reglar laid flat above the opening
+//     (carrying the load from above). Cripples are short studs filling the
+//     vertical gap. Rough sill is the horizontal 45×95 the window frame sits on.
+// ----------------------------------------------------------------------------
+
+module _v3_cripple(p, axis, height, palette) {
+    color(pal_post(palette))
+    translate(p)
+    if (axis == "X")
+        cube([STUD_THICK, STUD_DEPTH, height]);
+    else
+        cube([STUD_DEPTH, STUD_THICK, height]);
+}
+
+// One opening's framing: header above + cripples above + (optional) rough
+// sill below + cripples below.
+module v3_framed_opening(wall_origin, axis,
+                         opening_pos, opening_w,
+                         opening_z, opening_h,
+                         has_sill, wall_top,
+                         palette = DEFAULT_PALETTE) {
+    z_header_bot     = opening_z + opening_h;
+    z_header_top     = z_header_bot + PLATE_HEIGHT;
+    z_top_plate_bot  = wall_top - PLATE_HEIGHT;
+    crip_above_h     = z_top_plate_bot - z_header_top;
+
+    z_sill_top       = opening_z;
+    z_sill_bot       = z_sill_top - PLATE_HEIGHT;
+    crip_below_h     = z_sill_bot - STUD_BOTTOM_Z;
+
+    color(pal_post(palette))
+    if (axis == "X") {
+        // Header — 45×95 flat (95 wide along Y wall depth, 45 tall, opening_w along X)
+        translate([wall_origin[0] + opening_pos, wall_origin[1], z_header_bot])
+            cube([opening_w, STUD_DEPTH, PLATE_HEIGHT]);
+        // Cripples above header at ~600 mm c/c
+        if (crip_above_h > 50)
+            for (cx = [STUD_C2C/2 : STUD_C2C : opening_w - STUD_THICK/2])
+                translate([wall_origin[0] + opening_pos + cx - STUD_THICK/2,
+                           wall_origin[1], z_header_top])
+                    cube([STUD_THICK, STUD_DEPTH, crip_above_h]);
+        if (has_sill) {
+            // Rough sill below opening
+            translate([wall_origin[0] + opening_pos, wall_origin[1], z_sill_bot])
+                cube([opening_w, STUD_DEPTH, PLATE_HEIGHT]);
+            // Cripples below sill
+            if (crip_below_h > 50)
+                for (cx = [STUD_C2C/2 : STUD_C2C : opening_w - STUD_THICK/2])
+                    translate([wall_origin[0] + opening_pos + cx - STUD_THICK/2,
+                               wall_origin[1], STUD_BOTTOM_Z])
+                        cube([STUD_THICK, STUD_DEPTH, crip_below_h]);
+        }
+    } else {
+        // axis "Y"
+        translate([wall_origin[0], wall_origin[1] + opening_pos, z_header_bot])
+            cube([STUD_DEPTH, opening_w, PLATE_HEIGHT]);
+        if (crip_above_h > 50)
+            for (cy = [STUD_C2C/2 : STUD_C2C : opening_w - STUD_THICK/2])
+                translate([wall_origin[0],
+                           wall_origin[1] + opening_pos + cy - STUD_THICK/2,
+                           z_header_top])
+                    cube([STUD_DEPTH, STUD_THICK, crip_above_h]);
+        if (has_sill) {
+            translate([wall_origin[0], wall_origin[1] + opening_pos, z_sill_bot])
+                cube([STUD_DEPTH, opening_w, PLATE_HEIGHT]);
+            if (crip_below_h > 50)
+                for (cy = [STUD_C2C/2 : STUD_C2C : opening_w - STUD_THICK/2])
+                    translate([wall_origin[0],
+                               wall_origin[1] + opening_pos + cy - STUD_THICK/2,
+                               STUD_BOTTOM_Z])
+                        cube([STUD_DEPTH, STUD_THICK, crip_below_h]);
+        }
+    }
+}
+
+module v3_framed_openings(palette = DEFAULT_PALETTE) {
+    hl = V3_HOUSE_LEN; ww = V3_WIDTH; ll = V3_LENGTH;
+
+    // Yard door — front wall (axis X), no sill, full HIGH wall
+    v3_framed_opening(wall_origin = [0, 0, 0], axis = "X",
+                      opening_pos = V3_YARD_DOOR_X, opening_w = V3_YARD_DOOR_W,
+                      opening_z = STUD_BOTTOM_Z, opening_h = V3_YARD_DOOR_H,
+                      has_sill = false, wall_top = WALL_TOP_HIGH,
+                      palette = palette);
+
+    // Side window — left wall (axis Y), HAS sill, LOW wall
+    v3_framed_opening(wall_origin = [0, 0, 0], axis = "Y",
+                      opening_pos = V3_SIDE_WIN_Y, opening_w = V3_SIDE_WIN_W,
+                      opening_z = STUD_BOTTOM_Z + V3_SIDE_WIN_Z,
+                      opening_h = V3_SIDE_WIN_H,
+                      has_sill = true, wall_top = WALL_TOP_LOW,
+                      palette = palette);
+
+    // Human door — partition (axis Y), no sill, LOW wall
+    v3_framed_opening(wall_origin = [hl - STUD_DEPTH/2, 0, 0], axis = "Y",
+                      opening_pos = V3_HOUSE_DOOR_Y, opening_w = V3_HOUSE_DOOR_W,
+                      opening_z = STUD_BOTTOM_Z, opening_h = V3_HOUSE_DOOR_H,
+                      has_sill = false, wall_top = WALL_TOP_LOW,
+                      palette = palette);
+
+    // Pet door — partition (axis Y), no sill (it's above floor but too small
+    // for proper sill framing — bundrem covers the small gap below), LOW wall
+    v3_framed_opening(wall_origin = [hl - STUD_DEPTH/2, 0, 0], axis = "Y",
+                      opening_pos = V3_PET_DOOR_Y, opening_w = V3_PET_DOOR_W,
+                      opening_z = V3_FLOOR_TOP + 15, opening_h = V3_PET_DOOR_H,
+                      has_sill = false, wall_top = WALL_TOP_LOW,
+                      palette = palette);
+}
+
+// ----------------------------------------------------------------------------
 // 4. Top plate — horizontal 45×95 on top of studs. Front wall HIGH,
 //    back/sides/partition LOW. Sloped tops are not used — the gap above
 //    side walls is closed later by a separate gable infill element.
@@ -198,17 +323,19 @@ module v3_top_plate(palette = DEFAULT_PALETTE) {
     sd = PLATE_DEPTH; sw = PLATE_HEIGHT;
     z_high_bot = WALL_TOP_HIGH - sw;   // top plate's bottom Z
     z_low_bot  = WALL_TOP_LOW  - sw;
+    butt_y0 = sd;
+    butt_len = ww - 2 * sd;
     color(pal_post(palette)) {
-        // Front (HIGH)
-        translate([0, 0, z_high_bot])         cube([ll, sd, sw]);
-        // Back (LOW)
-        translate([0, ww - sd, z_low_bot])    cube([ll, sd, sw]);
-        // Left (LOW)
-        translate([0, 0, z_low_bot])          cube([sd, ww, sw]);
-        // Right (LOW)
-        translate([ll - sd, 0, z_low_bot])    cube([sd, ww, sw]);
-        // Partition (LOW)
-        translate([hl - sd/2, 0, z_low_bot])  cube([sd, ww, sw]);
+        // Front (HIGH, full)
+        translate([0, 0, z_high_bot])               cube([ll, sd, sw]);
+        // Back (LOW, full)
+        translate([0, ww - sd, z_low_bot])          cube([ll, sd, sw]);
+        // Left (LOW, butted)
+        translate([0, butt_y0, z_low_bot])          cube([sd, butt_len, sw]);
+        // Right (LOW, butted)
+        translate([ll - sd, butt_y0, z_low_bot])    cube([sd, butt_len, sw]);
+        // Partition (LOW, butted)
+        translate([hl - sd/2, butt_y0, z_low_bot])  cube([sd, butt_len, sw]);
     }
 }
 
@@ -220,5 +347,6 @@ module v3_konstruktions_skelet(palette = DEFAULT_PALETTE) {
     v3_dpc();
     v3_sill_plate(palette);
     v3_studs(palette);
+    v3_framed_openings(palette);
     v3_top_plate(palette);
 }
