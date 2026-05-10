@@ -133,15 +133,22 @@ function v3_roof_oz_for(eh_back) =
 function v3_roof_under_for(eh_back, y) =
     v3_roof_oz_for(eh_back) - (V3_OH_FRONT + y) * v3_total_drop_for(eh_back) / v3_span_total();
 
+// Floor finish (krydsfiner top) — flush with bundrem top so doors land
+// at floor level, not at slab top. Bundrem sits directly on ring (DPC
+// implicit; no air gap), so floor top = ring top + bundrem height.
+V3_FLOOR_TOP = V3_BASE_H + V3_SILL_H;   // = 120 + 45 = 165
+
 // Top of the yard sill plate (sill sits directly on ring at Z=V3_BASE_H).
-V3_YARD_SILL_TOP = V3_BASE_H + V3_SILL_H;  // = 165
+V3_YARD_SILL_TOP = V3_BASE_H + V3_SILL_H;  // = 165 (unchanged numeric, but consistent)
 
 // House floor (strøer + krydsfiner inside the fundablok ring).
-V3_FLOOR_LEDGER_W   = 95;     // ledger bjælke wide along Y/X (face of ring)
-V3_FLOOR_LEDGER_H   = 45;     // ledger bjælke height (Z)
-V3_FLOOR_LEDGER_Z   = -45;    // top of ledger (= bottom of strøer)
+V3_FLOOR_LEDGER_W   = 95;
+V3_FLOOR_LEDGER_H   = 45;
+V3_FLOOR_DECK_T     = 18;
 V3_FLOOR_JOIST_W    = 45;
 V3_FLOOR_JOIST_H    = 95;
 V3_FLOOR_JOIST_C2C  = 600;
-V3_FLOOR_DECK_T     = 18;     // krydsfiner thickness
-V3_FLOOR_DECK_Z     = V3_FLOOR_LEDGER_Z + V3_FLOOR_JOIST_H;  // top of krydsfiner = +50
+// Top of krydsfiner = floor finish = bundrem top (V3_FLOOR_TOP=165).
+V3_FLOOR_DECK_Z     = V3_FLOOR_TOP - V3_FLOOR_DECK_T;  // = 147 (top of strøer)
+// Ledger top = bottom of strøer.
+V3_FLOOR_LEDGER_Z   = V3_FLOOR_DECK_Z - V3_FLOOR_JOIST_H;  // = 52
