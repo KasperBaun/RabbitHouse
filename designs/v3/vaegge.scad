@@ -74,6 +74,12 @@ module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
                      bh + 60, V3_PET_DOOR_H,
                      has_sill = false, stud = stud, palette = pal);
 
+    // Vindkryds (X-bracing) on front, back, and left walls.
+    // Skip the partition wall — too many openings for effective bracing.
+    v3_vindkryds([0, 0, z_sill], hl, v3_roof_under(0) - z_sill, "X");
+    v3_vindkryds([0, ww - sd, z_sill], hl, v3_roof_under(ww - sd) - z_sill, "X");
+    v3_vindkryds([0, 0, z_sill], ww, min(ehf - air_gap, ehb - air_gap), "Y");
+
     // Interior collar tie at hl/2 — 45×195 reglar tying the front-back
     // rafters across the centre. Y span is sd..ww-sd so the tie ends at
     // the inner faces of front and back walls (bearing on each toprem)
@@ -359,6 +365,31 @@ module v3_vaegge(stud = DEFAULT_STUD, mesh = DEFAULT_MESH,
     v3_yard_mesh_front(hl, rl, ww, fpw, ct, palette, mesh);
     v3_yard_mesh_back(hl, rl, ww, fpw, ct, palette, mesh);
     v3_yard_mesh_right(hl, rl, ww, fpw, palette, mesh);
+}
+
+// ---------------------------------------------------------------------------
+// Vindkryds (E5) — 22×95 X-bracing per house wall
+// ---------------------------------------------------------------------------
+
+module v3_vindkryds(origin, length, height, axis, t=22, w=95) {
+    diag_len = sqrt(length*length + height*height);
+    bom_member("vindkryds", "spruce", t, w, diag_len,
+               "x_brace", system="vaegge", count=2);
+    color([0.65, 0.55, 0.40])
+    translate(origin)
+    if (axis == "X") {
+        rotate([0, atan2(height, length), 0])
+            cube([sqrt(length*length + height*height), t, w]);
+        translate([length, 0, 0])
+        rotate([0, 180 - atan2(height, length), 0])
+            cube([sqrt(length*length + height*height), t, w]);
+    } else {
+        rotate([atan2(height, length), 0, 0])
+            cube([t, sqrt(length*length + height*height), w]);
+        translate([0, length, 0])
+        rotate([180 - atan2(height, length), 0, 0])
+            cube([t, sqrt(length*length + height*height), w]);
+    }
 }
 
 // ---------------------------------------------------------------------------
