@@ -16,7 +16,7 @@ Skæreliste pr. væg. Mål er millimeter; positioner er i bygningens koordinatsy
 
 | Vare                       | Antal | Brug                                            |
 | -------------------------- | ----- | ----------------------------------------------- |
-| Reglar 45×95×3600 mm gran  | 2     | Toprem på V1 + V2 (splejset)                    |
+| Reglar 45×95×3600 mm gran  | 4     | Toprem V1+V2 forlænget til 6440 mm (splejset af 2 stk pr. væg) |
 | Reglar 45×95×2400 mm gran  | 42    | Studs (37) + skrå toprem V3/V4/V5 (5)           |
 | Reglar 45×95×3600 mm PT    | 2     | Bundrem på V1 + V2 (splejset)                   |
 | Reglar 45×95×2400 mm PT    | 5     | Bundrem V3/V4/V5 + splejs på V1+V2              |
@@ -39,8 +39,10 @@ Yderste front-væg, hele 6 m. Indeholder yard-dør (rough opening 1070×2120 mm)
 | Stud — yard-jamb    | 2     | 2308 flad   | x = 2955 og 4070 (begge sider af yard-dør)        |
 | Header — yard-dør   | 1     | 1070 flad   | x=3000..4070, z=2287..2332                        |
 | Cripple over header | 2     | 143 flad    | over yard-dør, c/c 300 i åbningen                 |
-| Toprem (gran)       | 1     | 3600 flad   | flat z=2520, x=0..3600 (splejs ved 3600)          |
-| Toprem (gran)       | 1     | 2400 flad   | flat z=2520, x=3600..6000                         |
+| Toprem (gran)       | 1     | 3600 flad   | flat z=2520, x=-220..3380 (forlænget 220 mm forbi V3, splejs ved 3380) |
+| Toprem (gran)       | 1     | 3600 flad   | flat z=2520, x=3380..6220 (forlænget 220 mm forbi V4) |
+
+V1 toprem er forlænget V3_OH_SIDE=220 mm i hver ende → 6440 mm total. Forlængelsen kantilevrer forbi V3 og V4 og bærer side-overhangets barge rafters.
 
 ---
 
@@ -54,8 +56,10 @@ Yderste bag-væg, hele 6 m. Ingen åbninger.
 | Bundrem (PT)       | 1     | 2400 flad   | x=3600..6000                                                          |
 | Stud — grid+end    | 11    | 2108 flad   | x = 0, 600, 1200, 1800, 2400, 3000, 3600, 4200, 4800, 5400, 5955      |
 | Stud — junction    | 1     | 2108 flad   | x = 1477,5 (V5 lander her)                                            |
-| Toprem (gran)      | 1     | 3600 flad   | flat z=2320, x=0..3600 (splejs)                                       |
-| Toprem (gran)      | 1     | 2400 flad   | flat z=2320, x=3600..6000                                             |
+| Toprem (gran)      | 1     | 3600 flad   | flat z=2320, x=-220..3380 (forlænget 220 mm forbi V3, splejs ved 3380) |
+| Toprem (gran)      | 1     | 3600 flad   | flat z=2320, x=3380..6220 (forlænget 220 mm forbi V4)                 |
+
+V2 toprem er forlænget V3_OH_SIDE=220 mm i hver ende → 6440 mm total — som V1.
 
 ---
 

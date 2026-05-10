@@ -60,7 +60,7 @@ Bygningen har 5 vægge.
 
 ## Konstruktion
 
-V1 (front) og V2 (bag) løber kontinuert hele bygningens 6 m længde.  
+V1 (front) og V2 (bag) løber kontinuert hele bygningens 6 m længde. Toprem (men ikke bundrem) forlænges yderligere 220 mm i hver ende = 6440 mm total — kantilevrer forbi V3/V4 for at bære side-overhangets barge rafters (se [tagkonstruktion.md](tagkonstruktion.md)).  
 V3, V4 (sidemæg) og V5 (partition) BUTTER mod V1/V2's inderflade.  
 Reglar 45 × 95 mm c/c 600 mm med jamb-reglar ved hver dør/vindue og junction-reglar i V1+V2 hvor V5 møder dem.  
 Header (vandret 45 × 95) over hver dør/vindue. V3-vinduet har også rough sill under sig.
@@ -69,18 +69,18 @@ V3, V4 og V5 løber parallelt med tagets hældning. Deres toprem skrår fra HØJ
 
 ## Materialeliste
 
-Maks længde 3600 mm — V1 og V2 (6 m hver) splejses af ét 3600 + ét 2400 stykke. Stykkevis skæreliste pr. væg: [skaereliste-skelet.md](skaereliste-skelet.md).
+Maks længde 3600 mm. V1+V2 *bundrem* (6 m hver) splejses af 1× 3600 + 1× 2400. V1+V2 *toprem* er forlænget til 6440 mm (= 6000 + 2× V3_OH_SIDE) for at bære side-overhangets barge rafters — splejses af 2× 3600 stykker (3220+3220, eller 3600+2840). Stykkevis skæreliste pr. væg: [skaereliste-skelet.md](skaereliste-skelet.md).
 
-| #   | Vare                     | Beskrivelse                                                              | Antal | Enhed      | Pris/enh  | I alt   |
-| --- | ------------------------ | ------------------------------------------------------------------------ | ----- | ---------- | --------- | ------- |
+| #   | Vare                     | Beskrivelse                                                                   | Antal | Enhed      | Pris/enh  | I alt   |
+| --- | ------------------------ | ----------------------------------------------------------------------------- | ----- | ---------- | --------- | ------- |
 | 1   | Reglar 45 × 95 × 2400 mm | Gran C24 — studs (37 stk, skæres 2108-2308 mm) + skrå toprem til V3/V4/V5 (5) | 42    | stk        |           |         |
-| 2   | Reglar 45 × 95 × 3600 mm | Gran C24 — toprem til V1 + V2 (splejses med 2400-stykker fra #1)         | 2     | stk        |           |         |
-| 3   | Reglar 45 × 95 × 2400 mm | PT NTR-AB — bundrem til V3/V4/V5 + splejs-stykker på V1+V2               | 5     | stk        |           |         |
-| 4   | Reglar 45 × 95 × 3600 mm | PT NTR-AB — bundrem til V1 + V2 (splejses med 2400-stykker fra #3)       | 2     | stk        |           |         |
-| 5   | Bitumen-tape 100 mm bred | Murpap mellem sokkel og bundrem                                          | 1     | rulle 25 m |           |         |
-|     |                          |                                                                          |       |            | **Total** | **kr.** |
+| 2   | Reglar 45 × 95 × 3600 mm | Gran C24 — toprem til V1 + V2 (forlænget 6440 mm hver, splejses af 2 stykker) | 4     | stk        |           |         |
+| 3   | Reglar 45 × 95 × 2400 mm | PT NTR-AB — bundrem til V3/V4/V5 + splejs-stykker på V1+V2                    | 5     | stk        |           |         |
+| 4   | Reglar 45 × 95 × 3600 mm | PT NTR-AB — bundrem til V1 + V2 (splejses med 2400-stykker fra #3)            | 2     | stk        |           |         |
+| 5   | Bitumen-tape 100 mm bred | Murpap mellem sokkel og bundrem                                               | 1     | rulle 25 m |           |         |
+|     |                          |                                                                               |       |            | **Total** | **kr.** |
 
-Header, cripples og rough sill (~5,6 m i alt) skæres af spild fra studs (~7,2 m fra 2400-stokken).
+Header, cripples og rough sill (~5,6 m i alt) skæres af spild fra studs (~7,2 m fra 2400-stokken). Toprem-spild ~720 mm pr. væg går også til spild-pulje.
 
 ## Bygge-rækkefølge
 

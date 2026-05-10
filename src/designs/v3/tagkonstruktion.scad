@@ -35,22 +35,35 @@ module v3_spaer(eh_back, palette = DEFAULT_PALETTE) {
     z_start = v3_roof_under_for(eh_back, y_start) - SPAER_H;
     z_end   = v3_roof_under_for(eh_back, y_end)   - SPAER_H;
 
-    // Vinkelbeslag (90×90×2 mm, 50 mm flange-bredde) — én på hver side af
-    // spæret hvor det møder V1 og V2 toprem. Inside-corner ligger på toprem-
-    // toppen ved bæringens midte (V1: y=sd/2=47.5, V2: y=ww-sd/2=2452.5).
-    // V1 toprem er flat HIGH (z=2520), V2 flat LOW (z=2320) — uafhængigt af
-    // tagets hældning.
+    // Bracket-konstanter (vinkelbeslag på hver side af spæret ved V1 og V2)
     z_v1_top = V3_BASE_H + V3_EH_FRONT;     // 2520
     z_v2_top = V3_BASE_H + V3_EH_BACK;      // 2320
     y_brk_f  = sd / 2;                      // 47.5 — V1 bearing midte
     y_brk_b  = ww - sd / 2;                 // 2452.5 — V2 bearing midte
-    BRK_W    = 50;                          // flange-bredde
-    BRK_LEG  = 90;
-    BRK_T    = 2;
+    BRK_W    = 50; BRK_LEG = 90; BRK_T = 2;
 
-    n = floor((ll - 2 * 100) / SPAER_C2C) + 1;
-    for (i = [0 : n-1]) {
-        x = 100 + i * SPAER_C2C;
+    // Spær-X-positioner. V1+V2 toprem er forlænget V3_OH_SIDE i hver ende
+    // (i konstruktions-skelet.scad), så barge raftren bærer direkte på den
+    // forlængede toprem — præcis som de regulære spær. Ingen lookouts behøves.
+    //
+    //   Barge venstre (X=-220) — bracket kun på +X side (yderside er i luften)
+    //   Gable V3       (X=0)    — 2 brackets, plus hviler på V3 toprem
+    //   Indre regulære (X=600, 1200, ..., 5400) — 2 brackets pr. bearing
+    //   Gable V4       (X=5955) — 2 brackets, plus hviler på V4 toprem
+    //   Barge højre    (X=6175) — bracket kun på -X side
+    spaer_xs = concat(
+        [-V3_OH_SIDE],                          // venstre barge
+        [for (i = [0 : 9]) i * SPAER_C2C],      // 0, 600, ..., 5400
+        [ll - SPAER_W],                          // V4 gable
+        [ll + V3_OH_SIDE - SPAER_W]              // højre barge
+    );
+    n_spaer = len(spaer_xs);
+
+    for (i = [0 : n_spaer-1]) {
+        x = spaer_xs[i];
+        is_left_barge  = (i == 0);
+        is_right_barge = (i == n_spaer - 1);
+
         color(pal_post(palette))
         hull() {
             translate([x, y_start, z_start])
@@ -58,16 +71,22 @@ module v3_spaer(eh_back, palette = DEFAULT_PALETTE) {
             translate([x, y_end - 0.01, z_end])
                 cube([SPAER_W, 0.01, SPAER_H]);
         }
-        // V1 bearing — vinkelbeslag på begge sider af spæret
-        vinkelbeslag([x,             y_brk_f - BRK_W/2, z_v1_top],
-                     leg=BRK_LEG, thick=BRK_T, width=BRK_W, orientation="-x+z");
-        vinkelbeslag([x + SPAER_W,   y_brk_f - BRK_W/2, z_v1_top],
-                     leg=BRK_LEG, thick=BRK_T, width=BRK_W, orientation="+x+z");
-        // V2 bearing
-        vinkelbeslag([x,             y_brk_b - BRK_W/2, z_v2_top],
-                     leg=BRK_LEG, thick=BRK_T, width=BRK_W, orientation="-x+z");
-        vinkelbeslag([x + SPAER_W,   y_brk_b - BRK_W/2, z_v2_top],
-                     leg=BRK_LEG, thick=BRK_T, width=BRK_W, orientation="+x+z");
+
+        // Venstre side af spæret (bracket peger -X) — droppes for venstre barge
+        // hvor toprem-forlængelsen ender ved spærets venstre kant.
+        if (!is_left_barge) {
+            vinkelbeslag([x, y_brk_f - BRK_W/2, z_v1_top],
+                         leg=BRK_LEG, thick=BRK_T, width=BRK_W, orientation="-x+z");
+            vinkelbeslag([x, y_brk_b - BRK_W/2, z_v2_top],
+                         leg=BRK_LEG, thick=BRK_T, width=BRK_W, orientation="-x+z");
+        }
+        // Højre side af spæret (bracket peger +X) — droppes for højre barge.
+        if (!is_right_barge) {
+            vinkelbeslag([x + SPAER_W, y_brk_f - BRK_W/2, z_v1_top],
+                         leg=BRK_LEG, thick=BRK_T, width=BRK_W, orientation="+x+z");
+            vinkelbeslag([x + SPAER_W, y_brk_b - BRK_W/2, z_v2_top],
+                         leg=BRK_LEG, thick=BRK_T, width=BRK_W, orientation="+x+z");
+        }
     }
 }
 

@@ -389,14 +389,19 @@ module v3_top_plate(palette = DEFAULT_PALETTE) {
     z_low_bot  = WALL_TOP_LOW  - sw;
     butt_y0 = sd;
     butt_y1 = ww - sd;
+    // V1 og V2 toprem forlænges V3_OH_SIDE i hver ende. Forlængelsen
+    // kantilevrer forbi V3/V4 og bærer barge raftren ved side-overhang —
+    // erstatter behovet for lookouts.
+    extended_x0  = -V3_OH_SIDE;
+    extended_len = ll + 2 * V3_OH_SIDE;
     color(pal_post(palette)) {
-        // V1 — front, flat HIGH, full length
-        translate([0, 0, z_high_bot])         cube([ll, sd, sw]);
-        // V2 — back, flat LOW, full length
-        translate([0, ww - sd, z_low_bot])    cube([ll, sd, sw]);
-        // V3 — left, sloped, butted
+        // V1 — front, flat HIGH, forlænget med OH_SIDE i hver ende
+        translate([extended_x0, 0, z_high_bot])      cube([extended_len, sd, sw]);
+        // V2 — back, flat LOW, forlænget med OH_SIDE i hver ende
+        translate([extended_x0, ww - sd, z_low_bot]) cube([extended_len, sd, sw]);
+        // V3 — left, sloped, butted (urørt — sidder mellem V1+V2 indersider)
         _v3_sloped_toprem(0,                butt_y0, butt_y1);
-        // V4 — right, sloped, butted
+        // V4 — right, sloped, butted (urørt)
         _v3_sloped_toprem(ll - sd,          butt_y0, butt_y1);
         // V5 — partition, sloped, butted
         _v3_sloped_toprem(hl - sd/2,        butt_y0, butt_y1);

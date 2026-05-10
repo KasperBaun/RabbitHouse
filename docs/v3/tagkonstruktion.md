@@ -2,11 +2,20 @@
 
 > Implementeret i `src/designs/v3/tagkonstruktion.scad`. Vælg cover-system via `roof_cover` i `src/designs/v3/build.scad`.
 
-V3's tag er en monopitch der hælder 4,6° (drop 200 mm over 2500 mm bygnings-bredde, 8 % fald). Bærelaget er 10 stk 45×95 spær c/c 600 mm der spænder fra front-eave (y=-220) til bag-eave (y=2680) — i alt ca. 2,9 m langs slopen.
+V3's tag er en monopitch der hælder 4,6° (drop 200 mm over 2500 mm bygnings-bredde, 8 % fald). Bærelaget består af:
 
-Spær-bunden ligger på V1's og V2's toprem (= z = wall_top); spær-toppen er SPAER_H=95 mm højere og er hvor cover-laget begynder. I konstruktionen indskæres bird's-mouth ved hver bæreflade (i SCAD-modellen vises dette som CSG-overlap mellem spær og toprem). Det betyder at v3_roof_oz_for nu ligger SPAER_H højere end wall-plate-toppen — derfor er total bygningshøjde også SPAER_H højere end før.
+- **11 regulære spær** 45×95 c/c 600 mm langs X = 0, 600, 1200, …, 5400, 5955. Gable-spæret ved X=0 hviler på V3's skrå toprem langs hele dens længde, gable-spæret ved X=5955 tilsvarende på V4. Alle hviler dels på V3/V4 dels på V1+V2 ved enderne. Spændviden y=-220..2680 (~2,9 m).
+- **2 barge rafters (vindskede-spær)** ved X=-220 og X=6175 — hviler direkte på V1+V2's *forlængede toprem*, der kantilevrer V3_OH_SIDE=220 mm forbi V3 og V4 i hver ende. Barge raftren bærer side-fascian.
 
-Spær-til-toprem-samlingen sikres med **2 vinkelbeslag (90×90×2 mm, 50 mm flange)** pr. bæreflade — én på hver side af spæret. I alt 4 vinkelbeslag pr. spær = 40 stk for de 10 spær. Brackets ligger med deres horisontale flange fladt på toprem-toppen og deres vertikale flange opad mod spærets sideflade.
+V1 og V2 toprem er forlænget i konstruktions-skelet til at spænde fra X=-V3_OH_SIDE til X=ll+V3_OH_SIDE (i alt 6440 mm). Forlængelsen kantilevrer fra wall-strukturen (studs ved X=0 og X=ll giver det nærmeste støttepunkt) og gør at barge raftren bærer på toprem akkurat som de regulære spær — ingen separat lookouts behøves.
+
+Spær-bunden ligger på toprem-toppen (= z = wall_top); spær-toppen er SPAER_H=95 mm højere. I konstruktionen indskæres bird's-mouth ved hver bæreflade (CSG-overlap i modellen).
+
+Spær-til-toprem-samlingen sikres med **vinkelbeslag (90×90×2 mm, 50 mm flange)**:
+
+- De 11 regulære spær får 2 brackets pr. bæreflade (én på hver side af spæret) × 2 bæreflader = 4 brackets/spær = **44 stk**.
+- De 2 barge rafters får 1 bracket pr. bæreflade på indersiden (ydersiden ville være i luften past forlængelsens ende) × 2 bæreflader = 2 brackets/spær = **4 stk**.
+- I alt **48 vinkelbeslag**.
 
 To cover-systemer kan vælges. Begge bruger samme spær-bærelag.
 
@@ -58,14 +67,14 @@ Sternbræt 22×150 og tagrende 110×65 monteres på begge systemer (front HØJ +
 
 | #   | Vare                              | Beskrivelse                                            | Antal | Enhed       | Pris/enh | I alt |
 | --- | --------------------------------- | ------------------------------------------------------ | ----- | ----------- | -------- | ----- |
-| 1   | Spær 45×95×3000 mm gran C24       | 10 spær c/c 600, ~2,91 m langs slope                   | 10    | stk         |          |       |
+| 1   | Spær 45×95×3000 mm gran C24       | 11 regulære c/c 600 + 2 barge rafters i overhang-kant  | 13    | stk         |          |       |
 | 2   | OSB plader 18 mm 244×125 cm       | Tagdæk (~18,7 m² roof area + spild)                    | 7     | stk         |          |       |
 | 3   | Underpap 1-lag (rulle ~15 m²)     | Mekanisk fastgjort til OSB                             | 2     | rulle       |          |       |
 | 4   | Tagpap 1-lag (rulle ~10 m²)       | Svejses til underpap                                   | 2     | rulle       |          |       |
 | 5   | Aluinddækning L-profil 80×60 mm   | Alle 4 sider: front 6,4 m + bag 6,4 m + 2 × side 2,9 m | 19    | m           |          |       |
 | 6   | Sternbræt 22×150 mm gran          | Front 6,4 m + bag 6,4 m + sider 2 × 2,9 m              | 18    | m           |          |       |
 | 7   | Tagrende 110 mm m. nedløb 65 mm   | Bag-eave (LAV side, hvor vandet løber)                 | 6,5   | m           |          |       |
-| 8   | Vinkelbeslag 90×90×2 mm (50 mm flange) | 2 pr. bæreflade × 2 bæreflader × 10 spær          | 40    | stk         |          |       |
+| 8   | Vinkelbeslag 90×90×2 mm (50 mm flange) | 44 på regulære + 4 på barge = 48 stk             | 48    | stk         |          |       |
 | 9   | Tagpap-søm + underpap-søm + skruer | Forbrugsstof                                           | 1     | sæt         |          |       |
 |     |                                   |                                                        |       |             | **Total** | **kr.** |
 
@@ -73,7 +82,7 @@ Sternbræt 22×150 og tagrende 110×65 monteres på begge systemer (front HØJ +
 
 | #   | Vare                              | Beskrivelse                                                       | Antal | Enhed | Pris/enh | I alt |
 | --- | --------------------------------- | ----------------------------------------------------------------- | ----- | ----- | -------- | ----- |
-| 1   | Spær 45×95×3000 mm gran C24       | Som tagpap                                                        | 10    | stk   |          |       |
+| 1   | Spær 45×95×3000 mm gran C24       | 11 regulære + 2 barge rafters (som tagpap)                        | 13    | stk   |          |       |
 | 2   | Undertag-membran rulle 1,5×50 m   | 75 m² dækker hele tagfladen                                       | 1     | rulle |          |       |
 | 3   | Afstandsliste 25×50×3000 mm       | 1 pr. spær × 10                                                   | 10    | stk   |          |       |
 | 4   | Lægter 38×73×3600 mm gran C24     | 6 lægter langs X (à ~6,4 m), splejset af 2 stykker hver           | 12    | stk   |          |       |
@@ -82,19 +91,20 @@ Sternbræt 22×150 og tagrende 110×65 monteres på begge systemer (front HØJ +
 | 7   | Sternbræt 22×150 mm gran          | Som tagpap                                                        | 18    | m     |          |       |
 | 8   | Tagrende 110 mm m. nedløb 65 mm   | Som tagpap                                                        | 6,5   | m     |          |       |
 | 9   | Aluinddækning L-profil 80×60 mm   | Alle 4 sider: front 6,4 m + bag 6,4 m + 2 × side 2,9 m            | 19    | m     |          |       |
-| 10  | Vinkelbeslag 90×90×2 mm (50 mm flange) | 2 pr. bæreflade × 2 bæreflader × 10 spær                     | 40    | stk   |          |       |
+| 10  | Vinkelbeslag 90×90×2 mm (50 mm flange) | 44 på regulære + 4 på barge = 48 stk                         | 48    | stk   |          |       |
 |     |                                   |                                                                   |       |       | **Total** | **kr.** |
 
 ## Bygge-rækkefølge
 
-1. Skær 10 spær 45×95 til længde (~2910 mm), indsav bird's-mouth ved hver ende
-2. Læg spærene op c/c 600 mm med bird's-mouth-sæde hvilende på V1's og V2's toprem-top; ende-spær flugter med V3/V4
-3. Skru hver spær fast med 2 vinkelbeslag pr. bæreflade (én på hver side af spæret) — horisontal flange skrues i toprem, vertikal flange skrues i spær-siden
-4. **Hvis tagpap_osb:** Søm OSB-plader på spær med samlinger over spær-centerlinier → udrul underpap → svejs tagpap
-5. **Hvis eternit_b7:** Læg undertag-membran → søm afstandsliste på hver spær → søm lægter perpendikulært c/c 500 mm → skru B7-plader fast med min 200 mm overlap mod hældning
-6. Monter sternbrædder rundt om hele tagets perimeter (4 sider)
-7. Monter aluinddækning ovenpå cover-kanten ved alle 4 tagskæg (front, bag, venstre, højre — dryp-kant 60 mm hænger ned forbi sternbrædet)
-8. Monter tagrende på bag-eave (LAV side) med nedløb i højre side til faldsten / regnvandsfaskine
+1. Skær 11 regulære spær + 2 barge rafters 45×95 til længde (~2910 mm), indsav bird's-mouth ved hver ende
+2. Læg de 11 regulære spær op c/c 600 mm: gable-spær ved X=0 og X=5955 hviler både på V1+V2 (ender) og på V3/V4 toprem (langs hele længden); 9 indre spær hviler kun på V1+V2
+3. Sæt barge rafters direkte på V1+V2's forlængede toprem ved X=-220 og X=ll+OH_SIDE-45=6175 — toprem-forlængelsen kantilevrer 220 mm forbi V3/V4 og bærer barge raftren
+4. Skru regulære spær fast med 2 vinkelbeslag pr. bæreflade (én på hver side af spæret) og barge raftren med 1 vinkelbeslag pr. bæreflade på indersiden — horisontal flange skrues i toprem, vertikal flange skrues i spær-siden
+5. **Hvis tagpap_osb:** Søm OSB-plader på spær (incl. barge rafters) med samlinger over spær-centerlinier → udrul underpap → svejs tagpap
+6. **Hvis eternit_b7:** Læg undertag-membran → søm afstandsliste på hver spær → søm lægter perpendikulært c/c 500 mm → skru B7-plader fast med min 200 mm overlap mod hældning
+7. Monter sternbrædder rundt om hele tagets perimeter (4 sider) — side-fascian sømmes fast i barge raftren
+8. Monter aluinddækning ovenpå cover-kanten ved alle 4 tagskæg (front, bag, venstre, højre — dryp-kant 60 mm hænger ned forbi sternbrædet)
+9. Monter tagrende på bag-eave (LAV side) med nedløb i højre side til faldsten / regnvandsfaskine
 
 ## Rendering / verificering
 
