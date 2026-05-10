@@ -141,6 +141,10 @@ V3_FLOOR_TOP = V3_BASE_H + V3_SILL_H;   // = 120 + 45 = 165
 // Top of the yard sill plate (sill sits directly on ring at Z=V3_BASE_H).
 V3_YARD_SILL_TOP = V3_BASE_H + V3_SILL_H;  // = 165 (unchanged numeric, but consistent)
 
+// Yard back wall: low solid-clad skirt at the bottom (driving-rain
+// defence), mesh ventilation band above.
+V3_BACK_SKIRT_H = 600;   // mm above sill_top
+
 // House floor (strøer + krydsfiner inside the fundablok ring).
 V3_FLOOR_LEDGER_W   = 95;
 V3_FLOOR_LEDGER_H   = 45;

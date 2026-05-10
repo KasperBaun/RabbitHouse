@@ -291,17 +291,36 @@ module v3_yard_mesh_front(hl, rl, ww, fpw, ct, pal, mesh) {
 
 // Back mesh — four rectangular panels broken by stiles every 1 m, starting
 // at hl+ct so the panels meet the partition cladding flush.
+// The bottom V3_BACK_SKIRT_H mm is a solid-clad skirt (driving-rain defence
+// per CLAUDE.md); mesh panels run above the skirt only.
 module v3_yard_mesh_back(hl, rl, ww, fpw, ct, pal, mesh) {
     md = ms_depth(mesh);
-    sill_top = V3_YARD_SILL_TOP;
-    h = (v3_roof_under(ww) - V3_BEAM_H) - sill_top;
-    z_rail = sill_top + V3_MID_RAIL_Z_OFFSET;
+    sill_top  = V3_YARD_SILL_TOP;
+    skirt_top = sill_top + V3_BACK_SKIRT_H;
+    beam_bottom = v3_roof_under(ww) - V3_BEAM_H;
+    z_rail    = sill_top + V3_MID_RAIL_Z_OFFSET;
+
+    // Solid clad skirt at the bottom (driving-rain defence).
+    // Continuous from partition cladding outer face (X=hl+ct) to
+    // right corner post inner face (X=hl+rl-fpw).
+    skirt_x0 = hl + ct;
+    skirt_x1 = hl + rl - fpw;
+    bom_member("klink_skirt", "spruce", 22, V3_BACK_SKIRT_H,
+               skirt_x1 - skirt_x0, "yard_back_clad_skirt", system="vaegge");
+    color(pal_panel1(pal))
+    translate([skirt_x0, ww - md, sill_top])
+        cube([skirt_x1 - skirt_x0, md, V3_BACK_SKIRT_H]);
+
+    // Mesh panels ABOVE the skirt, broken by stiles every 1 m.
+    mesh_h = beam_bottom - skirt_top;
     breaks = [hl + ct, hl + 1000, hl + 2000, hl + 3000, hl + rl - fpw];
     for (i = [0 : len(breaks) - 2]) {
         x0 = breaks[i]; x1 = breaks[i + 1];
         if (x1 - x0 > 100) {
-            mesh_panel_x(x0, x1 - x0, sill_top, h, ww - md, pal, mesh);
-            v3_mesh_midrail_x(x0, x1 - x0, ww - md, z_rail, mesh, pal);
+            mesh_panel_x(x0, x1 - x0, skirt_top, mesh_h, ww - md, pal, mesh);
+            // Mid-rail only if it falls above the skirt top
+            if (z_rail > skirt_top + 50)
+                v3_mesh_midrail_x(x0, x1 - x0, ww - md, z_rail, mesh, pal);
         }
     }
 }
