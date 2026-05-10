@@ -105,6 +105,7 @@ module _v3_studs_one_wall(origin, length, axis, stud_height,
 
 module v3_studs(palette = DEFAULT_PALETTE) {
     ll = V3_LENGTH; ww = V3_WIDTH; hl = V3_HOUSE_LEN;
+    z = STUD_BOTTOM_Z;
 
     // Stud heights — top plate sits ABOVE the stud, so subtract PLATE_HEIGHT.
     h_high = WALL_TOP_HIGH - STUD_BOTTOM_Z - PLATE_HEIGHT;
@@ -118,6 +119,7 @@ module v3_studs(palette = DEFAULT_PALETTE) {
         [V3_PET_DOOR_Y,   V3_PET_DOOR_Y   + V3_PET_DOOR_W]
     ];
 
+    // --- Regular grid studs (c/c 600) ---
     _v3_studs_one_wall([0, 0, 0],                 ll, "X", h_high,
                        skip_ranges=front_skip,     palette=palette);  // front
     _v3_studs_one_wall([0, ww - STUD_DEPTH, 0],   ll, "X", h_low,
@@ -128,6 +130,36 @@ module v3_studs(palette = DEFAULT_PALETTE) {
                        palette=palette);                                // right
     _v3_studs_one_wall([hl - STUD_DEPTH/2, 0, 0], ww, "Y", h_low,
                        skip_ranges=partition_skip, palette=palette);   // partition
+
+    // --- Jamb studs (= reglar der binder hver opnings kanter) ---
+    // Indersiden af jamb-stud flugter med åbningens kant; selve åbningen er
+    // mellem jamb-studs' inderfladser. Header, cripples og rough sill ligger
+    // i aabninger.scad (todo.md #3).
+    color(pal_post(palette)) {
+        // Front wall — yard door
+        translate([V3_YARD_DOOR_X - STUD_THICK, 0, z])
+            cube([STUD_THICK, STUD_DEPTH, h_high]);
+        translate([V3_YARD_DOOR_X + V3_YARD_DOOR_W, 0, z])
+            cube([STUD_THICK, STUD_DEPTH, h_high]);
+
+        // Left wall — side window
+        translate([0, V3_SIDE_WIN_Y - STUD_THICK, z])
+            cube([STUD_DEPTH, STUD_THICK, h_low]);
+        translate([0, V3_SIDE_WIN_Y + V3_SIDE_WIN_W, z])
+            cube([STUD_DEPTH, STUD_THICK, h_low]);
+
+        // Partition wall — human door
+        translate([hl - STUD_DEPTH/2, V3_HOUSE_DOOR_Y - STUD_THICK, z])
+            cube([STUD_DEPTH, STUD_THICK, h_low]);
+        translate([hl - STUD_DEPTH/2, V3_HOUSE_DOOR_Y + V3_HOUSE_DOOR_W, z])
+            cube([STUD_DEPTH, STUD_THICK, h_low]);
+
+        // Partition wall — pet door
+        translate([hl - STUD_DEPTH/2, V3_PET_DOOR_Y - STUD_THICK, z])
+            cube([STUD_DEPTH, STUD_THICK, h_low]);
+        translate([hl - STUD_DEPTH/2, V3_PET_DOOR_Y + V3_PET_DOOR_W, z])
+            cube([STUD_DEPTH, STUD_THICK, h_low]);
+    }
 }
 
 // ----------------------------------------------------------------------------
