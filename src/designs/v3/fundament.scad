@@ -1,9 +1,5 @@
 // fundament.scad — Foundation: kun beton-baseret underlag.
 // Part of the v3 build pipeline; included from build.scad.
-//
-// Fundamentet er udelukkende fundablok-ringen + cross-wall + ankerskruer.
-// Træ-skelet (bundrem, murpap, strøer-gulv) ligger i konstruktions-skelet.scad.
-// Mesh apron, beklædning, etc. ligger i deres egne filer.
 
 include <../../lib/defaults.scad>
 include <config.scad>
@@ -11,8 +7,6 @@ use <../../lib/primitives/fundablok.scad>
 use <../../lib/primitives/beslag.scad>
 use <../../lib/decor/landscape.scad>
 
-// `show_ground=false` skjuler græs/grus så fundamentringen er synlig
-// hele vejen rundt (12 cm sokkel over jord, 48 cm under jord).
 module v3_fundament(show_ground = true, palette = DEFAULT_PALETTE) {
     ll = V3_LENGTH; ww = V3_WIDTH; bh = V3_BASE_H;
     hl = V3_HOUSE_LEN;

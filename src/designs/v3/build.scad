@@ -9,7 +9,7 @@ use <beklaedning.scad>
 use <aabninger.scad>
 use <inventar.scad>
 
-show_cladding = true;
+show_cladding = false;
 show_ground = true;
 show_cover = true;           // false = vis kun spær (uden cover-lag)
 roof_cover = "tagpap_osb";   // "tagpap_osb" | "eternit_b7"
@@ -28,11 +28,10 @@ module build_v3() {
     else
         v3_spaer(v3_eh_back_for(roof_cover), pal);
 
-    // === Inaktivt — slå til når de er rettet til (uncomment) ===
-    //
-    // todo.md #4: beklaedning (vindpap, klemmelister, klink, voliernet)
-    // if (show_cladding) v3_beklaedning(DEFAULT_CLAD, pal);
-    //
+    // todo.md #4: beklaedning (vindpap, afstandsliste, klink, voliernet)
+    if (show_cladding) v3_beklaedning(DEFAULT_CLAD, pal);
+
+    // === Inaktivt — slå til når den er rettet til ===
     // v3_inventar(show_cladding, show_ground, pal);
 }
 

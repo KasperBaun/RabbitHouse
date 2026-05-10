@@ -1,116 +1,128 @@
 # Tagkonstruktion
 
-> Implementeret i `src/designs/v3/tagkonstruktion.scad`. Vælg cover-system via `roof_cover` i `src/designs/v3/build.scad`.
+> Implementeret i `src/designs/v3/tagkonstruktion.scad`
 
-V3's tag er en monopitch der hælder 4,6° (drop 200 mm over 2500 mm bygnings-bredde, 8 % fald). Bærelaget består af:
+Taget er en ensidet tagflade der hælder 4,6° (8 % fald) fra HØJ front til LAV bag. Den består af 4 lag.
 
-- **11 regulære spær** 45×95 c/c 600 mm langs X = 0, 600, 1200, …, 5400, 5955. Gable-spæret ved X=0 hviler på V3's skrå toprem langs hele dens længde, gable-spæret ved X=5955 tilsvarende på V4. Alle hviler dels på V3/V4 dels på V1+V2 ved enderne. Spændviden y=-220..2680 (~2,9 m).
-- **2 barge rafters (vindskede-spær)** ved X=-220 og X=6175 — hviler direkte på V1+V2's *forlængede toprem*, der kantilevrer V3_OH_SIDE=220 mm forbi V3 og V4 i hver ende. Barge raftren bærer side-fascian.
+1. Spær
+2. OSB-tagdæk
+3. Selvbyggerpap (selvklæbende, DIY-venlig)
+4. Aluinddækning + sternbræt + tagrende
 
-V1 og V2 toprem er forlænget i konstruktions-skelet til at spænde fra X=-V3_OH_SIDE til X=ll+V3_OH_SIDE (i alt 6440 mm). Forlængelsen kantilevrer fra wall-strukturen (studs ved X=0 og X=ll giver det nærmeste støttepunkt) og gør at barge raftren bærer på toprem akkurat som de regulære spær — ingen separat lookouts behøves.
-
-Spær-bunden ligger på toprem-toppen (= z = wall_top); spær-toppen er SPAER_H=95 mm højere. I konstruktionen indskæres bird's-mouth ved hver bæreflade (CSG-overlap i modellen).
-
-Spær-til-toprem-samlingen sikres med **vinkelbeslag (90×90×2 mm, 50 mm flange)**:
-
-- De 11 regulære spær får 2 brackets pr. bæreflade (én på hver side af spæret) × 2 bæreflader = 4 brackets/spær = **44 stk**.
-- De 2 barge rafters får 1 bracket pr. bæreflade på indersiden (ydersiden ville være i luften past forlængelsens ende) × 2 bæreflader = 2 brackets/spær = **4 stk**.
-- I alt **48 vinkelbeslag**.
-
-To cover-systemer kan vælges. Begge bruger samme spær-bærelag.
-
-## Sammenligning
-
-| Egenskab                      | `tagpap_osb` (default)                    | `eternit_b7`                                    |
-| ----------------------------- | ----------------------------------------- | ----------------------------------------------- |
-| Status ved v3's 4,6° hældning | ✓ Inden for spec (min 2,5°)               | ⚠ FOR FLAD — kræver min 10°/14° iht. Cembrit B7 |
-| Cover-tykkelse over spær      | 25 mm                                     | 72 mm                                           |
-| Vægt pr. m²                   | ~6 kg                                     | ~22 kg                                          |
-| Lag                           | OSB → underpap → tagpap → aluinddækning (4 sider) | undertag → afstandsliste → lægter → B7-plader → aluinddækning (4 sider) |
-| Forventet levetid             | 20-30 år                                  | 50+ år                                          |
-| Pris-niveau (estimat)         | billigere                                 | dyrere                                          |
-
-For v3 anbefales `tagpap_osb`. `eternit_b7` er implementeret til layout-sammenligning men kræver i realiteten større hældning end vores wall-konfiguration tillader.
+Spær spænder hele bygningens bredde og hviler på V1's og V2's toprem. Toprem er forlænget 220 mm forbi V3 og V4 i hver ende, så vindskede-spær ved overhang-kanten hviler på den forlængede toprem akkurat som de øvrige spær.
 
 ```
-ASCII lag-stak — tagpap_osb (default, set fra siden):
-
-         ─── 4 mm overpap ─────────────────────────  z = roof_oz + 25 (svejset til underpap)
-         ─── 3 mm underpap ────────────────────────  z = roof_oz + 21 (mekanisk fastgjort)
-         ─── 18 mm OSB plader ─────────────────────  z = roof_oz + 18 (sømmes på spær)
-         ════ spær 45×95 c/c 600 ══════════════════  z = roof_oz (= tagets underside)
-                                                     spær spænder y = -220..2680
-         + 2 mm aluinddækning ved alle 4 tagskæg (front, bag, venstre, højre — dryp-kant 60 mm)
+        ┌─────────────────── bag-overhang 180 ─────────────────┐
+        │   ┌──────────────────────────────────────────┐       │
+        │   │                                          │       │
+   side │   │                                          │       │ side
+   220  │   │   13 spær 45×95 c/c 600 langs Y          │       │ 220
+        │   │   (11 regulære + 2 vindskede ved kant)   │       │
+        │   │                                          │       │
+        │   └──────────────────────────────────────────┘       │
+        └─────────────────── front-overhang 220 ───────────────┘
+        ←─────────────────────── 6440 mm ─────────────────────→
+                              (set ovenfra)
 ```
 
 ```
-ASCII lag-stak — eternit_b7 (alternativ):
+        ▓▓▓ selvbyggerpap 5 mm ▓▓▓▓  z = wall-top + 118 mm
+        ═══ OSB-dæk 18 mm ═════════
+        │                          │
+        │  spær 45×95 c/c 600 mm   │  z = wall-top + 95 mm (= cover-bund)
+        │                          │
+        ├──── V1/V2 toprem ────────┤  z = 2,52 m (V1) / 2,32 m (V2)
+                                    (lag-stak set fra siden)
 
-         ──── 8 mm Cembrit B7 bølgeplade ──────────  z = roof_oz + 72
-         ──── 38×73 lægter c/c 500 mm langs X ─────  z = roof_oz + 26..64
-         ──── 25×50 afstandsliste på hver spær ────  z = roof_oz + 1..26
-         ──── 1 mm undertag-membran ───────────────  z = roof_oz..1
-         ════ spær 45×95 c/c 600 ══════════════════  z = roof_oz
+        + aluinddækning ved alle 4 tagskæg:
+            • Tagfod 55×80 på front + bag
+            • Vindskede 70×23×80 på venstre + højre (skrå)
 ```
+
+## Mål
+
+| Egenskab              | Værdi                                                   |
+| --------------------- | ------------------------------------------------------- |
+| Tagflade              | 6,44 × 2,9 m (~19 m² incl. overhangs)                    |
+| Hældning              | 4,6° / 8 % fald (drop 200 mm over 2500 mm)              |
+| Spær                  | 13 stk 47×100 c/c 600 (11 regulære + 2 vindskede)       |
+| Overhæng              | 220 mm front + 180 mm bag + 220 mm i hver side          |
+| Lag over spær         | 23 mm (OSB 18 + selvbyggerpap 5)                        |
+| Total højde over jord | 2,66 m ved højeste punkt (front-overhang)               |
 
 ## Konstruktion
 
-Spær (10 stk 45×95) sættes i spaersko-beslag på V1's og V2's toprem med ende-spær flugtende med V3/V4. Bird's-mouth indskæres ved hver bæreflade (i SCAD vises dette som CSG-overlap mellem spær og toprem). Spær-toppen flugter med tagets underside; alle cover-lag stables over.
+Spær 47×100 skæres til ~2910 mm med fugleudskæring ved hver ende (95 mm langs × 7,6 mm dyb trekantet kile i spær-bunden — se [tagkonstruktion-skaereliste.md](tagkonstruktion-skaereliste.md)). Læg 11 spær c/c 600 mm fra X=0 til X=5955; vindskede-spær ved X=-220 og X=6175 hviler på den forlængede V1+V2 toprem. Hvert regulært spær fastgøres med 2 vinkelbeslag pr. bæreflade (én på hver side); vindskede-spær får 1 på indersiden.
 
-På tagpap_osb sømmes 18 mm OSB-plader på spæret med samlinger ved spær-centerlinier. Underpap rulles ud og sømmes mekanisk; tagpap svejses derover med to-punkts overlap. Aluinddækning monteres til sidst ved tagskæg-fronten og -bagen (dryp-kant ~60 mm).
+OSB-plader 18 mm TG4 (tand-og-not på alle 4 sider) lægges med deres lange side (2397 mm) PÅ TVÆRS af spær. Pladens 600 mm bredde matcher spær c/c 600 EXACT — kanterne lander automatisk på spær-centerlinier. 3 plader pr. række (2×fulde + 1×cut til 1646 mm) × 5 rækker = 15 plader. Skrues fast med 5×80 skruer c/c 150 mm langs alle kanter og c/c 300 mm i pladens midte. Selvbyggerpap rulles ud fra LAV (bag) mod HØJ (front) så den øverste bane laps OVER den underste i vand-strømmens retning. Sømmes mekanisk c/c 150 mm langs alle kanter; selvklæbende strenge danner overlap (~100 mm) mellem baner. Ingen flamme eller varmluft nødvendig.
 
-På eternit_b7 lægges undertag-membranen først hen over spæret. Afstandsliste 25×50 sømmes på langs hver spær (skaber ventilations-spalte). Lægter 38×73 monteres perpendikulært c/c 500 mm. Cembrit B7-plader skrues fast med distance-skiver gennem bølgekam.
+Aluinddækning monteres rundt om alle 4 tagskæg: **tagfod-profil** på front + bag (vandret afslutning), **vindskede-profil** på venstre + højre (skrå med taget). Skrues fast med rustfri tagskruer m. EPDM-pakning gennem topflangen ind i OSB c/c ~300 mm. Læg en stribe **TagSealer** (bitumen-fugemasse) UNDER topflangen som tætningslag mellem selvbyggerpap og alu — **ikke silikone-fuge** (silikone holder ikke til alus temperatur-udvidelse).
 
-Sternbræt 22×150 og tagrende 110×65 monteres på begge systemer (front HØJ + bag LAV med nedløb).
+Sternbræt 21×120 langs hele perimeteren skrues fast i spær-ender og vindskede-spæret. Tagrende 110 mm med nedløb Ø75 mm i højre side på bag-eaven; nedløbet føres via bøjninger til faldsten eller regnvandsfaskine for at lede vandet væk fra fundamentet.
 
-## Materialeliste — tagpap_osb
+## Materialeliste
 
-| #   | Vare                              | Beskrivelse                                            | Antal | Enhed       | Pris/enh | I alt |
-| --- | --------------------------------- | ------------------------------------------------------ | ----- | ----------- | -------- | ----- |
-| 1   | Spær 45×95×3000 mm gran C24       | 11 regulære c/c 600 + 2 barge rafters i overhang-kant  | 13    | stk         |          |       |
-| 2   | OSB plader 18 mm 244×125 cm       | Tagdæk (~18,7 m² roof area + spild)                    | 7     | stk         |          |       |
-| 3   | Underpap 1-lag (rulle ~15 m²)     | Mekanisk fastgjort til OSB                             | 2     | rulle       |          |       |
-| 4   | Tagpap 1-lag (rulle ~10 m²)       | Svejses til underpap                                   | 2     | rulle       |          |       |
-| 5   | Aluinddækning L-profil 80×60 mm   | Alle 4 sider: front 6,4 m + bag 6,4 m + 2 × side 2,9 m | 19    | m           |          |       |
-| 6   | Sternbræt 22×150 mm gran          | Front 6,4 m + bag 6,4 m + sider 2 × 2,9 m              | 18    | m           |          |       |
-| 7   | Tagrende 110 mm m. nedløb 65 mm   | Bag-eave (LAV side, hvor vandet løber)                 | 6,5   | m           |          |       |
-| 8   | Vinkelbeslag 90×90×2 mm (50 mm flange) | 44 på regulære + 4 på barge = 48 stk             | 48    | stk         |          |       |
-| 9   | Tagpap-søm + underpap-søm + skruer | Forbrugsstof                                           | 1     | sæt         |          |       |
-|     |                                   |                                                        |       |             | **Total** | **kr.** |
+Stykkevis skæreliste (positioner, fugleudskæring-mål, vinkelbeslag-fordeling): [tagkonstruktion-skaereliste.md](tagkonstruktion-skaereliste.md).
 
-## Materialeliste — eternit_b7
+| #   | Vare                                            | Beskrivelse                                                       | Antal | Enhed     | Pris/enh  | I alt   |
+| --- | ----------------------------------------------- | ----------------------------------------------------------------- | ----- | --------- | --------- | ------- |
+|     | **Træværk**                                     |                                                                   |       |           |           |         |
+| 1   | Reglar 47×100×3000 mm gran C24                  | Spær — 11 regulære c/c 600 + 2 vindskede                          | 13    | stk       |           |         |
+| 2   | OSB-3 plade TG4 18 mm 2397×600 mm               | Tagdæk ~19 m². 600 mm bredde matcher spær c/c — samlinger lander på spær-centerlinier automatisk | 15    | stk       |           |         |
+| 3   | Imp. stern 21×120×3600 mm gran                  | Sternbræt — hele perimeter (19 m fordelt over 4 sider)            | 6     | stk       |           |         |
+|     | **Tagdækning**                                  |                                                                   |       |           |           |         |
+| 4   | Phønix Selvbyggerpap 1×5 m                      | Selvklæbende, dækker ~5 m² pr. rulle (~19 m² + overlap)           | 5     | rulle     |           |         |
+| 5   | TagSealer 300 ml Phønix                         | Bitumen-fugemasse til alu/pap-overgang (IKKE silikone)            | 3     | tube      |           |         |
+|     | **Aluinddækning**                               |                                                                   |       |           |           |         |
+| 6   | Tagfod aluminium 55×80×1000 mm                  | Front + bag eaves (13 m i alt, 1 m pr. stk)                       | 13    | stk       |           |         |
+| 7   | Vindskede aluminium 70×23×80×1000 mm            | Venstre + højre sider (skrå, 6 m i alt)                           | 6     | stk       |           |         |
+|     | **Vandhåndtering**                              |                                                                   |       |           |           |         |
+| 8   | Tagrende 110 mm stål eller plast (sæt)          | Bag-eave, 6,5 m incl. tilbehør                                    | 1     | sæt       |           |         |
+| 9   | Tagrende-beslag                                 | c/c 550 mm langs bag-eave                                         | 12    | stk       |           |         |
+| 10  | Endebund tagrende 110 mm                        | Lukker tagrendens to ender                                        | 2     | stk       |           |         |
+| 11  | Bladsamler 75-82 mm                             | Filter ved nedløbsudgang                                          | 1     | stk       |           |         |
+| 12  | Nedløbsrør Ø75 mm × 3 m                         | Fra tagrende ned til faldsten                                     | 1     | stk       |           |         |
+| 13  | Nedløbsbøjning Ø75 mm                           | Knæ-stykker (top + bund)                                          | 2     | stk       |           |         |
+|     | **Beslag og fastgørelse**                       |                                                                   |       |           |           |         |
+| 14  | Vinkelbeslag 90×90×40 mm 20-pak                 | 48 nødvendige → 3 pak (60 stk)                                    | 3     | pak       |           |         |
+| 15  | OSB/spær-skruer 5×80 mm                         | OSB på spær (~80 stk) + vinkelbeslag-skruer (~150 stk)            | 250   | stk       |           |         |
+| 16  | Rustfri tagskruer m. EPDM-pakning               | Alu-profiler på OSB (~50 stk)                                     | 1     | pakke     |           |         |
+| 17  | Galvaniseret tagpapsøm                          | Selvbyggerpap på OSB (~150 stk)                                   | 1     | æske      |           |         |
+|     |                                                 |                                                                   |       |           | **Total** | **kr.** |
 
-| #   | Vare                              | Beskrivelse                                                       | Antal | Enhed | Pris/enh | I alt |
-| --- | --------------------------------- | ----------------------------------------------------------------- | ----- | ----- | -------- | ----- |
-| 1   | Spær 45×95×3000 mm gran C24       | 11 regulære + 2 barge rafters (som tagpap)                        | 13    | stk   |          |       |
-| 2   | Undertag-membran rulle 1,5×50 m   | 75 m² dækker hele tagfladen                                       | 1     | rulle |          |       |
-| 3   | Afstandsliste 25×50×3000 mm       | 1 pr. spær × 10                                                   | 10    | stk   |          |       |
-| 4   | Lægter 38×73×3600 mm gran C24     | 6 lægter langs X (à ~6,4 m), splejset af 2 stykker hver           | 12    | stk   |          |       |
-| 5   | Cembrit B7 1090×625 mm bølgeplade | ~40-50 plader afhængigt af overlap                                | 45    | stk   |          |       |
-| 6   | B7-skruer m. distancering         | ~3 pr. plade                                                      | 150   | stk   |          |       |
-| 7   | Sternbræt 22×150 mm gran          | Som tagpap                                                        | 18    | m     |          |       |
-| 8   | Tagrende 110 mm m. nedløb 65 mm   | Som tagpap                                                        | 6,5   | m     |          |       |
-| 9   | Aluinddækning L-profil 80×60 mm   | Alle 4 sider: front 6,4 m + bag 6,4 m + 2 × side 2,9 m            | 19    | m     |          |       |
-| 10  | Vinkelbeslag 90×90×2 mm (50 mm flange) | 44 på regulære + 4 på barge = 48 stk                         | 48    | stk   |          |       |
-|     |                                   |                                                                   |       |       | **Total** | **kr.** |
+Eksterne (ikke fra jemogfix): faldsten eller regnvandsfaskine til at lede tagvandet væk fra fundamentet.
 
 ## Bygge-rækkefølge
 
-1. Skær 11 regulære spær + 2 barge rafters 45×95 til længde (~2910 mm), indsav bird's-mouth ved hver ende
-2. Læg de 11 regulære spær op c/c 600 mm: gable-spær ved X=0 og X=5955 hviler både på V1+V2 (ender) og på V3/V4 toprem (langs hele længden); 9 indre spær hviler kun på V1+V2
-3. Sæt barge rafters direkte på V1+V2's forlængede toprem ved X=-220 og X=ll+OH_SIDE-45=6175 — toprem-forlængelsen kantilevrer 220 mm forbi V3/V4 og bærer barge raftren
-4. Skru regulære spær fast med 2 vinkelbeslag pr. bæreflade (én på hver side af spæret) og barge raftren med 1 vinkelbeslag pr. bæreflade på indersiden — horisontal flange skrues i toprem, vertikal flange skrues i spær-siden
-5. **Hvis tagpap_osb:** Søm OSB-plader på spær (incl. barge rafters) med samlinger over spær-centerlinier → udrul underpap → svejs tagpap
-6. **Hvis eternit_b7:** Læg undertag-membran → søm afstandsliste på hver spær → søm lægter perpendikulært c/c 500 mm → skru B7-plader fast med min 200 mm overlap mod hældning
-7. Monter sternbrædder rundt om hele tagets perimeter (4 sider) — side-fascian sømmes fast i barge raftren
-8. Monter aluinddækning ovenpå cover-kanten ved alle 4 tagskæg (front, bag, venstre, højre — dryp-kant 60 mm hænger ned forbi sternbrædet)
-9. Monter tagrende på bag-eave (LAV side) med nedløb i højre side til faldsten / regnvandsfaskine
+1. Skær 11 regulære + 2 vindskede spær til ~2910 mm; indsav fugleudskæring ved hver ende
+2. Læg spær c/c 600 mm: regulære på V1+V2 toprem, vindskede på toprem-forlængelsen ved X=-220 og X=6175
+3. Skru fast med vinkelbeslag — 2 pr. bæreflade på regulære, 1 på indersiden af vindskede
+4. Skru OSB-plader på spær med 5×80 skruer — plade-samlinger over spær-centerlinier (~80 skruer i alt)
+5. Rul selvbyggerpap fra LAV mod HØJ side, så øverste bane laps OVER nederste i vand-retningen. Søm fast med tagpapsøm c/c 150 mm langs alle kanter. Selvklæbende strenge danner overlap mellem baner
+6. Monter sternbrædder rundt om hele perimeteren (front + bag + 2 sider) — side-fascian skrues fast i vindskede-spæret
+7. Læg en stribe TagSealer langs hver tagskæg-kant ovenpå selvbyggerpap. Monter aluinddækning: tagfod på front + bag eaver, vindskede på venstre + højre sider. Skrues fast med rustfri tagskruer m. EPDM gennem topflangen ind i OSB c/c ~300 mm. Overlap mellem to alu-stykker: ~50-100 mm med øvre-stykke OVENPÅ nedre i vand-retningen
+8. Monter tagrende-beslag på bag-sternbrædet c/c 550 mm. Klik tagrende på, sæt endebund i hver ende
+9. Monter nedløb: bladsamler ved tagrende-udgang (højre ende) → nedløbsbøjning → 3 m nedløbsrør → bøjning ved bunden → ud til faldsten/faskine
+
+## Vigtigt om alu-fastgørelse
+
+**Aluminium fastgøres ALDRIG med silikone-fuge.** Alu udvider/sammentrækker betydeligt med temperatur (2-3 mm pr. meter ved 40°C ΔT), og silikone holder ikke til den bevægelse — den brydes inden for 1-2 år og lukker derefter vand ind.
+
+Den rigtige fremgangsmåde er **mekanisk fastgørelse + bitumen-tætning**:
+
+1. Rustfri tagskruer m. EPDM-pakning gennem alu-topflangen ind i OSB c/c ~300 mm. EPDM-pakningen lukker skrue-hullet vandtæt.
+2. **TagSealer** (Phønix tag-fugemasse, bitumen-baseret) lægges UNDER topflangen som elastisk tætning mellem selvbyggerpap og alu. Bitumenmassen følger med alus bevægelse og forbliver elastisk i 15-20 år.
+3. Overlap mellem to alu-stykker: 50-100 mm. Top-stykket lægges OVENPÅ bund-stykket i vand-strømmens retning (mod LAV side). Skrues fast gennem overlappet. Evt. en stribe TagSealer i overlappet.
+
+Silikone bruges i køkken/bad — IKKE i tagpap-systemer. Bitumenmasse er det korrekte materiale.
+
+## Alternativ tagdækning
+
+Tagets bærelag kan i stedet dækkes med Cembrit B7 eternit-bølgeplader (vælg via `roof_cover = "eternit_b7"` i build.scad). Lag-stakken bliver da undertag-membran → afstandsliste 25×50 langs hver spær → lægter 38×73 c/c 500 → B7-plader 8 mm. Eternit kræver dog ≥10° hældning (extended overlap) eller ≥14° (standard) iht. Cembrit's spec — vores 4,6° opfylder ikke kravet, så denne variant er kun implementeret til layout-sammenligning.
 
 ## Rendering / verificering
 
 ```powershell
 pwsh src/scripts/audit_renders.ps1
-# Render begge cover-systemer:
-openscad -D 'roof_cover="tagpap_osb"' -o _renders/v3_tag_pap.png src/main.scad
-openscad -D 'roof_cover="eternit_b7"' -o _renders/v3_tag_eternit.png src/main.scad
+# → _renders/v3/audit/05_tagkonstruktion.png
 ```
