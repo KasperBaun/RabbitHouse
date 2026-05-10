@@ -1,9 +1,5 @@
 // konstruktions-skelet.scad — Wall skeleton: dpc + sill plate + studs + top plate.
 // Part of the v3 build pipeline; included from build.scad.
-//
-// Scope: ONLY the four basic skeleton elements — nothing else.
-// Losholter, vindkryds, gable infill, collar tie, beams, floor joists,
-// framed openings — all live in other files (or come later).
 
 include <../../lib/defaults.scad>
 include <config.scad>
@@ -131,12 +127,19 @@ module v3_studs(palette = DEFAULT_PALETTE) {
     h_high = WALL_TOP_HIGH - STUD_BOTTOM_Z - PLATE_HEIGHT;
     h_low  = WALL_TOP_LOW  - STUD_BOTTOM_Z - PLATE_HEIGHT;
 
-    // Skip ranges driven by opening positions in config.
-    front_skip     = [[V3_YARD_DOOR_X, V3_YARD_DOOR_X + V3_YARD_DOOR_W]];
-    left_skip      = [[V3_SIDE_WIN_Y,  V3_SIDE_WIN_Y  + V3_SIDE_WIN_W]];
+    // Skip ranges udvides med STUD_THICK (= jamb-bredde) + JAMB_BUFFER på hver
+    // side af åbningen. Det betyder at grid-stolper der ville lande tættere
+    // end JAMB_BUFFER på en jamb's yderkant droppes — pro-tømrer-praksis,
+    // da jamb'en allerede er strukturel og en grid-stolpe 100-300mm fra den
+    // bare ville være redundant tømmer.
+    JAMB_BUFFER = 300;
+    bx          = STUD_THICK + JAMB_BUFFER;   // = 345
+
+    front_skip     = [[V3_YARD_DOOR_X - bx, V3_YARD_DOOR_X + V3_YARD_DOOR_W + bx]];
+    left_skip      = [[V3_SIDE_WIN_Y  - bx, V3_SIDE_WIN_Y  + V3_SIDE_WIN_W  + bx]];
     partition_skip = [
-        [V3_HOUSE_DOOR_Y, V3_HOUSE_DOOR_Y + V3_HOUSE_DOOR_W],
-        [V3_PET_DOOR_Y,   V3_PET_DOOR_Y   + V3_PET_DOOR_W]
+        [V3_HOUSE_DOOR_Y - bx, V3_HOUSE_DOOR_Y + V3_HOUSE_DOOR_W + bx],
+        [V3_PET_DOOR_Y   - bx, V3_PET_DOOR_Y   + V3_PET_DOOR_W   + bx]
     ];
 
     // --- Regular grid studs (c/c 600) ---

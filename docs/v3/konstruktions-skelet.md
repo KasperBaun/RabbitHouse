@@ -66,12 +66,12 @@ Hvad du **køber** hos byggemarkedet (Bauhaus, Stark, XL-BYG). Priser tilføjes 
 
 | # | Vare | Antal | Specifikation | Note |
 |---|---|---|---|---|
-| 1 | Reglar 45 × 95 × 2400 mm | 43 stk | Gran C24 | Til alle studs (1 stud pr. stik, skæres til 2108 eller 1908 mm) |
+| 1 | Reglar 45 × 95 × 2400 mm | 37 stk | Gran C24 | Til alle studs (1 stud pr. stik, skæres til 2308 eller 2108 mm) |
 | 2 | Reglar 45 × 95 × 4800 mm | 5 stk | Trykimprægneret NTR-AB | Til bundrem (~19,5 m hele vejen rundt + partition) |
 | 3 | Reglar 45 × 95 × 4800 mm | 5 stk | Gran C24 | Til toprem (~19,5 m) |
 | 4 | Bitumen-tape (murpap) 100 mm bred | 1 rulle | 25 m rulle | DPC mellem sokkel og bundrem |
 
-Total stik-antal: **53 reglar** (43 á 2,4 m gran + 5 á 4,8 m PT + 5 á 4,8 m gran) + **1 rulle murpap**.
+Total stik-antal: **47 reglar** (37 á 2,4 m gran + 5 á 4,8 m PT + 5 á 4,8 m gran) + **1 rulle murpap**.
 
 **Hvorfor blandet længde?** 2,4 m er det mest typiske at købe og passer perfekt til én stud (uden at skulle splejse). Bundrem og toprem løber over 6 m langs front+bag, så 4,8 m sticks gør det muligt at lave front/bag i to stik (én lang + et 1200 mm endestykke) i stedet for 3 stik á 2,4 m. Færre samlinger = stærkere væg.
 
@@ -79,12 +79,12 @@ Total stik-antal: **53 reglar** (43 á 2,4 m gran + 5 á 4,8 m PT + 5 á 4,8 m g
 
 Hvad du **skærer** ud af det du har købt.
 
-### Reglar 45×95×2400 mm (43 stk)
+### Reglar 45×95×2400 mm (37 stk)
 
 | Cut længde | Antal | Hvor | Spild pr. stik |
 |---|---|---|---|
-| 2108 mm | 12 stk | V1 (8 grid + 1 end + 2 jambs ved yard-dør + 1 junction til V5) | 292 mm |
-| 1908 mm | 31 stk | V2 (12: 10 grid + 1 end + 1 junction) + V3 (6: 3 grid + 1 end + 2 jambs til vindue) + V4 (5: 4 grid + 1 end) + V5 (8: 3 grid + 1 end + 4 jambs) | 492 mm |
+| 2308 mm | 11 stk | V1 (7 grid + 1 end + 2 jambs ved yard-dør + 1 junction til V5) | 92 mm |
+| 2108 mm | 26 stk | V2 (12: 10 grid + 1 end + 1 junction) + V3 (4: 1 grid + 1 end + 2 jambs til vindue) + V4 (5: 4 grid + 1 end) + V5 (5: 0 grid + 1 end + 4 jambs) | 292 mm |
 
 Total spild: ~16 m off-cuts (kan bruges som klodser, mellemstykker, evt. losholter når de kommer). 1 stud pr. stik — enkel skæring.
 
