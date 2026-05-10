@@ -23,7 +23,10 @@ show_cladding = false;
 // grade. (Honoured by v3 only.)
 show_ground = true;
 
-// Tag-dækning. "tagpap" og "stål" virker på v3's nuværende hældning (9°);
+// Tag-dækning. Værdier: "tagpap", "stål" (eller ASCII-alias "staal" hvis
+// du vil sætte det fra CLI på Windows hvor PowerShell mangler UTF-8 i
+// `-D` parametre), "eternit_10", "eternit_14".
+// "tagpap" og "stål"/"staal" virker på v3's nuværende hældning (9°);
 // "eternit_10" og "eternit_14" sænker eh_back automatisk så hældningen
 // overholder Cembrit B6's profil.
 roof_cover = "tagpap";

@@ -188,7 +188,8 @@ module v3_tagkonstruktion(roof_cover = "tagpap", palette = DEFAULT_PALETTE) {
 
     // Cover layers.
     if (roof_cover == "tagpap")           v3_cover_tagpap(eh_back, palette);
-    else if (roof_cover == "stål")        v3_cover_staal(eh_back, palette);
+    else if (roof_cover == "stål" || roof_cover == "staal")
+                                          v3_cover_staal(eh_back, palette);
     else if (roof_cover == "eternit_10")  v3_cover_eternit(eh_back, palette);
     else if (roof_cover == "eternit_14")  v3_cover_eternit(eh_back, palette);
     else assert(false, str("unknown roof_cover: ", roof_cover));
