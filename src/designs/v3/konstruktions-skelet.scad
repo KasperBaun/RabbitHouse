@@ -19,10 +19,10 @@ STUD_C2C     = 600;        // standard centre-to-centre spacing
 // === Wall top heights ===
 // Front wall is HIGH (eh_front); back, sides and partition are LOW (eh_back).
 // The triangular gap above side walls (between low top plate and sloping
-// roof) is NOT part of this file — it'll be a separate "gable infill"
-// element added later.
-WALL_TOP_HIGH = V3_BASE_H + V3_EH_FRONT;   // 120 + 2500 = 2620
-WALL_TOP_LOW  = V3_BASE_H + V3_EH_BACK;    // 120 + 2000 = 2120
+// roof) is filled by v3_gable_infill below — short vertical gable studs
+// at c/c 600 with sloped tops following the roof underside.
+WALL_TOP_HIGH = V3_BASE_H + V3_EH_FRONT;   // 120 + 2400 = 2520
+WALL_TOP_LOW  = V3_BASE_H + V3_EH_BACK;    // 120 + 2200 = 2320
 
 // Z of the bottom of the studs (= top of sill plate, which sits on top of DPC).
 STUD_BOTTOM_Z = V3_BASE_H + DPC_T + PLATE_HEIGHT;   // 167
@@ -343,7 +343,50 @@ module v3_top_plate(palette = DEFAULT_PALETTE) {
 }
 
 // ----------------------------------------------------------------------------
-// Wrapper — composes the 4 skeleton elements.
+// 4b. Gable infill — gavlfyld i den smalle trekant over V3 og V4 mellem
+//     den vandrette LAV-toprem og det skrå tag. Korte vertikale gable-
+//     reglar c/c 600 med skrå top der matcher tagets underside. Stykker
+//     under 75 mm springes over (det er kun blocking, sømmes på toprem).
+//
+//     Højden er afledt lineært mellem WALL_TOP_HIGH og WALL_TOP_LOW over
+//     V3_WIDTH. Det matcher tagets underside ved standard eh_back=2200;
+//     hvis cover-typen ændrer eh_back (eternit_10/14), bliver gavlfyldet
+//     for højt — det adresseres når tagkonstruktion.scad er færdig.
+// ----------------------------------------------------------------------------
+
+function _v3_gable_top_dz(y) =
+    (WALL_TOP_HIGH - WALL_TOP_LOW) * (1 - y / V3_WIDTH);
+
+module _v3_gable_stud(x, y, h_front, h_back) {
+    hull() {
+        translate([x, y, WALL_TOP_LOW])
+            cube([STUD_DEPTH, STUD_THICK, 0.1]);
+        translate([x, y, WALL_TOP_LOW + h_front - 0.1])
+            cube([STUD_DEPTH, 0.1, 0.1]);
+        translate([x, y + STUD_THICK - 0.1, WALL_TOP_LOW + h_back - 0.1])
+            cube([STUD_DEPTH, 0.1, 0.1]);
+    }
+}
+
+module v3_gable_infill(palette = DEFAULT_PALETTE) {
+    ll = V3_LENGTH; ww = V3_WIDTH;
+    butt_y0 = STUD_DEPTH;            // 95
+    butt_y1 = ww - STUD_DEPTH;       // 2405
+    end_y   = butt_y1 - STUD_THICK;  // 2360 — last stud start position
+
+    color(pal_post(palette))
+    for (y = [butt_y0 : STUD_C2C : end_y]) {
+        h_front = _v3_gable_top_dz(y);
+        h_back  = _v3_gable_top_dz(y + STUD_THICK);
+        if (h_front > 75) {
+            _v3_gable_stud(0,                 y, h_front, h_back);   // V3 (left)
+            _v3_gable_stud(ll - STUD_DEPTH,   y, h_front, h_back);   // V4 (right)
+        }
+    }
+}
+
+// ----------------------------------------------------------------------------
+// Wrapper — composes the 5 skeleton elements.
 // ----------------------------------------------------------------------------
 
 module v3_konstruktions_skelet(palette = DEFAULT_PALETTE) {
@@ -352,4 +395,5 @@ module v3_konstruktions_skelet(palette = DEFAULT_PALETTE) {
     v3_studs(palette);
     v3_framed_openings(palette);
     v3_top_plate(palette);
+    v3_gable_infill(palette);
 }

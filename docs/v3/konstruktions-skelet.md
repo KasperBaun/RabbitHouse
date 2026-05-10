@@ -10,12 +10,13 @@ Træ-skelettet sidder oven på fundamentet og består af 4 lag.
 4. Toprem  
 
 Bygningen har 5 vægge.
+
 - Front (V1)
 - Bag(V2)
 - Venstre(V3)
 - Højre(V4)
 - Tværgående(V5).  
-Tag-hældning er 4,6° (8 % fald).
+  Tag-hældning er 4,6° (8 % fald).
 
 ```
                     V2 (bag, LAV — 2,2 m)
@@ -49,17 +50,17 @@ Tag-hældning er 4,6° (8 % fald).
 
 ## Mål
 
-| Egenskab                                     | Værdi                                   |
-| -------------------------------------------- | --------------------------------------- |
-| V1 højde (HØJ — front, mono-pitch høje side) | 2,4 m (rummer std 95×205 udhusdør)      |
-| V2-V5 højde (LAV — bag + sider + partition)  | 2,2 m (rummer std 80×200 indvendig dør) |
-| Tag-hældning                                 | 4,6° / 8 % fald (drop 200 over 2500 mm) |
-| Reglar-spacing                               | 600 mm c/c                              |
+| Egenskab       | Værdi                                   |
+| -------------- | --------------------------------------- |
+| V1             | 2,4 m (rummer std 95×205 udhusdør)      |
+| V2-V5          | 2,2 m (rummer std 80×200 indvendig dør) |
+| Tag-hældning   | 4,6° / 8 % fald (drop 200 over 2500 mm) |
+| Reglar-afstand | 600 mm c/c                              |
 
 ## Konstruktion
 
 V1 (front) og V2 (bag) løber kontinuert hele bygningens 6 m længde.  
-V3, V4 (sidemæg) og V5 (partition) BUTTER mod V1/V2's inderflade — de overlapper ikke i den fysiske verden.  
+V3, V4 (sidemæg) og V5 (partition) BUTTER mod V1/V2's inderflade  
 Reglar 45 × 95 mm c/c 600 mm med jamb-reglar ved hver dør/vindue og junction-reglar i V1+V2 hvor V5 møder dem.  
 Header (vandret 45 × 95) over hver dør/vindue. V3-vinduet har også rough sill under sig.
 
@@ -69,14 +70,14 @@ Trekanten over V3/V4 — mellem den vandrette toprem og det skrå tag — er IKK
 
 Maks længde 3600 mm — V1 og V2 (6 m hver) splejses af ét 3600 + ét 2400 stykke.
 
-| #   | Vare                     | Beskrivelse                                                             | Antal | Enhed      | Pris/enh  | I alt   |
-| --- | ------------------------ | ----------------------------------------------------------------------- | ----- | ---------- | --------- | ------- |
+| #   | Vare                     | Beskrivelse                                                              | Antal | Enhed      | Pris/enh  | I alt   |
+| --- | ------------------------ | ------------------------------------------------------------------------ | ----- | ---------- | --------- | ------- |
 | 1   | Reglar 45 × 95 × 2400 mm | Gran C24 — studs (37 stk, skæres 2108/1908 mm) + toprem til V3/V4/V5 (5) | 42    | stk        |           |         |
-| 2   | Reglar 45 × 95 × 3600 mm | Gran C24 — toprem til V1 + V2 (splejses med 2400-stykker fra #1)        | 2     | stk        |           |         |
-| 3   | Reglar 45 × 95 × 2400 mm | PT NTR-AB — bundrem til V3/V4/V5 + splejs-stykker på V1+V2              | 5     | stk        |           |         |
-| 4   | Reglar 45 × 95 × 3600 mm | PT NTR-AB — bundrem til V1 + V2 (splejses med 2400-stykker fra #3)      | 2     | stk        |           |         |
-| 5   | Bitumen-tape 100 mm bred | Murpap mellem sokkel og bundrem                                         | 1     | rulle 25 m |           |         |
-|     |                          |                                                                         |       |            | **Total** | **kr.** |
+| 2   | Reglar 45 × 95 × 3600 mm | Gran C24 — toprem til V1 + V2 (splejses med 2400-stykker fra #1)         | 2     | stk        |           |         |
+| 3   | Reglar 45 × 95 × 2400 mm | PT NTR-AB — bundrem til V3/V4/V5 + splejs-stykker på V1+V2               | 5     | stk        |           |         |
+| 4   | Reglar 45 × 95 × 3600 mm | PT NTR-AB — bundrem til V1 + V2 (splejses med 2400-stykker fra #3)       | 2     | stk        |           |         |
+| 5   | Bitumen-tape 100 mm bred | Murpap mellem sokkel og bundrem                                          | 1     | rulle 25 m |           |         |
+|     |                          |                                                                          |       |            | **Total** | **kr.** |
 
 Header, cripples og rough sill (~5 m i alt) skæres af spild fra studs (~12 m i alt fra 2400-stokken).
 
