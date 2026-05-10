@@ -21,16 +21,21 @@ FUNDABLOK_COLOR  = [0.78, 0.76, 0.72];
 // on the building outer line; cross-walls are centred on their X line
 // and span between the perimeter ring's inner faces.
 //
-// Top of foundation is Z=0 (grade); total depth = courses × FUNDABLOK_H.
+// `top_z` sets the top-of-ring Z (= sokkel-niveau per the Phase 1 spec —
+// "Top af ring = sokkel-niveau (= base h), bundrem af alle vægge sidder
+// her"). Default 0 keeps the legacy "top at grade" behaviour. Total
+// depth = courses × FUNDABLOK_H, so the ring extends `total_h` below
+// `top_z` (most of which is buried in the frostfri grøft).
 //
 //   ll, ww        — footprint length (X), width (Y)
 //   courses       — number of vertical courses (default 3 for halvstensforbandt)
 //   partitions_x  — list of X coordinates for interior cross-walls
-module fundablok_ring(ll, ww, courses = 3, partitions_x = []) {
+//   top_z         — Z of the top course's top face (sokkel level)
+module fundablok_ring(ll, ww, courses = 3, partitions_x = [], top_z = 0) {
     bw      = FUNDABLOK_W;
     h_per   = FUNDABLOK_H;
     total_h = courses * h_per;
-    z_bot   = -total_h;
+    z_bot   = top_z - total_h;
 
     color(FUNDABLOK_COLOR) {
         // Outer perimeter ring: solid rectangle minus inner cavity
