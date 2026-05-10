@@ -19,6 +19,7 @@ use <../../lib/decor/landscape.scad>
 use <../../lib/decor/lighting.scad>
 use <../../lib/decor/rabbit.scad>
 use <../../lib/bom.scad>
+use <fundament.scad>
 
 // roof_mono_pitch interprets eave_h/drop across the FULL overhang span.
 // These helpers convert "wall-face eave heights" into the parameters that
@@ -62,34 +63,16 @@ module build_v3(show_cladding=true, show_ground=true) {
     roof_oz = v3_roof_oz();
     drop_full = v3_total_drop();
 
-    // --- Outdoor ground & path (gated so foundation is visible) -------
-    if (show_ground) {
-        ground_grass([ll/2, ww/2]);
-        gravel_path_y([V3_YARD_DOOR_X + V3_YARD_DOOR_W/2, 0]);
-        v3_outdoor_dressing(ll, ww, bh);
-    }
-
-    // --- Fundablok strip foundation under all walls --------------------
-    // Continuous ring around the 6,0 × 2,5 m footprint + cross-wall under
-    // the partition at X=hl. 3 courses in halvstensforbandt = 60 cm tall.
-    // BOM (see docs/version 3/materialeliste.csv): 117 blocks total
-    // (102 perimeter + 15 partition). Top at Z=0; depth = 600 mm.
-    fundablok_ring(ll, ww, 3, [hl]);
-
-    // --- Floor slab inside the house (sits on top of fundablok ring) ---
-    // Slab extends ct mm past every house cladding face so cladding never
-    // overhangs grass; 200×250 perimeter edge beam (kantbjelke) carries
-    // bearing-wall line load down to a stiff edge.
-    slab([-ct, -ct], [hl + 2*ct, ww + 2*ct], bh, pal,
-         edge_thicken_h = 200, edge_thicken_w = 250);
-    interior_floor([wt, wt], [hl - 2*wt, ww - 2*wt], bh, 20, pal);
-    rabbit_floor_grass([wt, wt], [hl - 2*wt, ww - 2*wt], bh);
+    // --- Foundation: ring + floor + apron + ground/path ---------------
+    v3_fundament(show_ground, pal);
 
     // --- Yard interior: lush grass at grade ---------------------------
     // Yard grass starts at the slab's east edge (hl+ct) so it doesn't
     // overlap the partition slab strip. Gated on show_ground.
-    if (show_ground)
+    if (show_ground) {
         v3_yard_grass(hl + ct, rl - ct, ww);
+        v3_outdoor_dressing(ll, ww, bh);
+    }
 
     // --- House structural framing -------------------------------------
     v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal);
@@ -155,10 +138,6 @@ module build_v3(show_cladding=true, show_ground=true) {
     // partition rafter lands at x=1955.
     ceiling_rafters_mono([0, 0, 0], ll, ww, rafter_drop, rafter_eave_h,
                          900, 45, 140, wt, pal, x_inset = wt + 55);
-
-    // --- Predator-proof buried apron skirt around yard ---------------
-    apron_skirt([hl, 0, ll, ww], V3_APRON_W,
-                ["front", "back", "right"], pal);
 
     // --- Hay rack on house back wall (interior, cladding-mode only) --
     if (show_cladding)
