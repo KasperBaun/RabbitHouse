@@ -59,7 +59,7 @@ module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
     // top-plate slope interpolation matches.
     framed_opening_y([0, 0, z_sill], ww, ehf - air_gap, ehb - air_gap,
                      V3_SIDE_WIN_Y, V3_SIDE_WIN_W,
-                     bh + V3_SIDE_WIN_Z, V3_SIDE_WIN_H,
+                     z_bp_top + V3_SIDE_WIN_Z, V3_SIDE_WIN_H,
                      has_sill = true, stud = stud, palette = pal);
     framed_opening_y([hl - sd, 0, z_sill], ww, ehf - air_gap, ehb - air_gap,
                      V3_HOUSE_DOOR_Y, V3_HOUSE_DOOR_W,
@@ -67,7 +67,7 @@ module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
                      has_sill = false, stud = stud, palette = pal);
     framed_opening_y([hl - sd, 0, z_sill], ww, ehf - air_gap, ehb - air_gap,
                      V3_PET_DOOR_Y, V3_PET_DOOR_W,
-                     bh + 60, V3_PET_DOOR_H,
+                     z_bp_top + 60, V3_PET_DOOR_H,
                      has_sill = false, stud = stud, palette = pal);
 
     // Vindkryds (X-bracing) on front, back, and left walls.
