@@ -9,7 +9,9 @@ use <../../lib/decor/rabbit.scad>
 use <../../lib/bom.scad>
 
 // Human door in the partition (X=hl outer face, faces +X into yard).
-module v3_partition_door(hl, ct, door_y, door_w, door_h, bh, pal) {
+// `floor_z` is the Z of the finished floor (= V3_FLOOR_TOP = 165); the
+// door leaf and all architraves sit on / start from floor level.
+module v3_partition_door(hl, ct, door_y, door_w, door_h, floor_z, pal) {
     leaf_t = 40;
     leaf_x = hl + ct/2 - leaf_t/2;
     architrave_w = 70;
@@ -17,32 +19,32 @@ module v3_partition_door(hl, ct, door_y, door_w, door_h, bh, pal) {
     arch_x = hl + ct + 2;
 
     color(pal_door(pal))
-    translate([leaf_x, door_y, bh])
+    translate([leaf_x, door_y, floor_z])
         cube([leaf_t, door_w, door_h]);
     color(pal_trim(pal))
     for (i = [0 : 3])
-        translate([leaf_x + leaf_t - 1, door_y + 50, bh + 200 + i * 400])
+        translate([leaf_x + leaf_t - 1, door_y + 50, floor_z + 200 + i * 400])
             cube([2, door_w - 100, 30]);
 
     color(pal_trim(pal)) {
-        translate([arch_x, door_y - architrave_w + 10, bh + door_h])
+        translate([arch_x, door_y - architrave_w + 10, floor_z + door_h])
             cube([architrave_t, door_w + 2*architrave_w - 20, architrave_w]);
-        translate([arch_x, door_y - architrave_w + 10, bh])
+        translate([arch_x, door_y - architrave_w + 10, floor_z])
             cube([architrave_t, architrave_w, door_h]);
-        translate([arch_x, door_y + door_w - 10, bh])
+        translate([arch_x, door_y + door_w - 10, floor_z])
             cube([architrave_t, architrave_w, door_h]);
     }
 
     color([0.85, 0.85, 0.88]) {
-        translate([arch_x + architrave_t, door_y + door_w - 100, bh + 1050])
+        translate([arch_x + architrave_t, door_y + door_w - 100, floor_z + 1050])
             cube([25, 60, 25]);
-        translate([arch_x + architrave_t + 3, door_y + door_w - 110, bh + 1000])
+        translate([arch_x + architrave_t + 3, door_y + door_w - 110, floor_z + 1000])
             cube([8, 80, 110]);
-        translate([arch_x + architrave_t + 10, door_y + door_w - 90, bh + 1700])
+        translate([arch_x + architrave_t + 10, door_y + door_w - 90, floor_z + 1700])
             cube([15, 70, 22]);
     }
     color([0.30, 0.30, 0.32])
-    for (zh = [bh + 200, bh + door_h - 300])
+    for (zh = [floor_z + 200, floor_z + door_h - 300])
         translate([arch_x + architrave_t + 3, door_y - 5, zh])
             cube([8, 15, 100]);
 }
@@ -98,14 +100,14 @@ module v3_aabninger(mesh = DEFAULT_MESH, palette = DEFAULT_PALETTE) {
     ct = 22;
 
     v3_partition_door(hl, ct, V3_HOUSE_DOOR_Y, V3_HOUSE_DOOR_W,
-                      V3_HOUSE_DOOR_H, bh, palette);
-    rabbit_pet_door_yz(hl - wt, V3_PET_DOOR_Y, bh + 60,
+                      V3_HOUSE_DOOR_H, V3_FLOOR_TOP, palette);
+    rabbit_pet_door_yz(hl - wt, V3_PET_DOOR_Y, V3_FLOOR_TOP + 60,
                        V3_PET_DOOR_W, V3_PET_DOOR_H, wt, palette);
     color([0.55, 0.50, 0.40])
-    translate([hl + ct + 20, V3_HOUSE_DOOR_Y - 50, bh + V3_YARD_SILL_TOP])
+    translate([hl + ct + 20, V3_HOUSE_DOOR_Y - 50, V3_FLOOR_TOP])
         cube([200, V3_HOUSE_DOOR_W + 100, 12]);
-    window_with_trim_xneg(0, V3_SIDE_WIN_Y, bh + V3_SIDE_WIN_Z,
+    window_with_trim_xneg(0, V3_SIDE_WIN_Y, V3_FLOOR_TOP + V3_SIDE_WIN_Z,
                           V3_SIDE_WIN_W, V3_SIDE_WIN_H, ct, palette, true);
     v3_yard_door(V3_YARD_DOOR_X, V3_YARD_DOOR_W, V3_YARD_DOOR_H,
-                 bh + V3_YARD_SILL_TOP, palette, mesh);
+                 V3_YARD_SILL_TOP, palette, mesh);
 }
