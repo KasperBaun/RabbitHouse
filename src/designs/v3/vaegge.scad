@@ -6,7 +6,6 @@ include <config.scad>
 use <../../lib/primitives/framing.scad>
 use <../../lib/primitives/mesh.scad>
 use <../../lib/primitives/beslag.scad>
-use <../../lib/bom.scad>
 
 module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
     sd       = ss_d(stud);
@@ -88,8 +87,6 @@ module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
     // the inner faces of front and back walls (bearing on each toprem)
     // instead of passing through them. Top z follows the roof underside
     // at each end so the tie sits flush under the rafters.
-    bom_member("collar_tie", "spruce", V3_COLLAR_TIE_W, V3_COLLAR_TIE_H,
-               ww - 2*sd, "interior_collar_tie", system="vaegge");
     color(pal_post(pal))
     hull() {
         translate([hl/2 - V3_COLLAR_TIE_W/2, sd,
@@ -127,9 +124,6 @@ module v3_yard_posts_and_sills(hl, rl, ww, bh, fpw, ct, pal) {
     // Yard corner reglar sits on top of the sill plate (sill plate sits
     // directly on the fundablok ring, standard stud-wall convention).
     z0 = bh + V3_SILL_H;
-    for (p = corner_reglar)
-        bom_member("reglar", "pt-pine", reglar_t, fpw, p[2] - z0,
-                   "yard_corner_reglar", system="vaegge");
 
     color(pal_post(pal))
     for (p = corner_reglar) {
@@ -139,19 +133,8 @@ module v3_yard_posts_and_sills(hl, rl, ww, bh, fpw, ct, pal) {
 
     sill_z = bh;
 
-    // BOM — yard sills (4 segments)
     front_left_len  = V3_YARD_DOOR_X - (hl + ct);
     front_right_len = (hl + rl - fpw) - (V3_YARD_DOOR_X + V3_YARD_DOOR_W);
-    if (front_left_len > 0)
-        bom_member("sill", "pt-pine", fpw, V3_SILL_H, front_left_len,
-                   "yard_front_sill_left", system="vaegge");
-    if (front_right_len > 0)
-        bom_member("sill", "pt-pine", fpw, V3_SILL_H, front_right_len,
-                   "yard_front_sill_right", system="vaegge");
-    bom_member("sill", "pt-pine", fpw, V3_SILL_H, rl - ct - fpw,
-               "yard_back_sill", system="vaegge");
-    bom_member("sill", "pt-pine", fpw, V3_SILL_H, ww - 2*fpw,
-               "yard_right_sill", system="vaegge");
 
     color(pal_post(pal)) {
         // Front sill, segment LEFT of the yard door
@@ -180,9 +163,6 @@ module v3_yard_posts_and_sills(hl, rl, ww, bh, fpw, ct, pal) {
 module v3_yard_top_beams(hl, rl, ww, fpw, ct, pal) {
     bx0 = hl - fpw;            // beam west end
     blen = rl + fpw;           // beam length
-
-    bom_member("beam", "limtree", fpw, V3_BEAM_H, blen, "yard_front_beam", system="vaegge");
-    bom_member("beam", "limtree", fpw, V3_BEAM_H, blen, "yard_back_beam", system="vaegge");
 
     color(pal_post(pal))
     hull() {

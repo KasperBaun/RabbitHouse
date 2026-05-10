@@ -16,7 +16,6 @@ use <tagkonstruktion.scad>
 use <beklaedning.scad>
 use <aabninger.scad>
 use <inventar.scad>
-use <../../lib/bom.scad>
 
 // ============================================================================
 // Toggles — edit these, save, re-render.
@@ -38,7 +37,6 @@ roof_cover = "tagpap";
 // ============================================================================
 
 module build_v3() {
-    bom_header();
     pal = DEFAULT_PALETTE;
 
     // === Aktivt indhold ===

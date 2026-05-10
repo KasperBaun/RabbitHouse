@@ -10,7 +10,6 @@ include <config.scad>
 use <../../lib/primitives/fundablok.scad>
 use <../../lib/primitives/beslag.scad>
 use <../../lib/decor/landscape.scad>
-use <../../lib/bom.scad>
 
 // `show_ground=false` skjuler græs/grus så fundamentringen er synlig
 // hele vejen rundt (12 cm sokkel over jord, 48 cm under jord).

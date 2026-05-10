@@ -13,7 +13,6 @@
 
 include <../../lib/defaults.scad>
 include <config.scad>
-use <../../lib/bom.scad>
 
 MURPAP_COLOR = [0.10, 0.10, 0.12];
 MURPAP_T     = 2;          // mm thickness — bitumen DPC tape (visual only)
@@ -66,8 +65,6 @@ module v3_stroer_floor(palette = DEFAULT_PALETTE) {
     inner_d  = inner_y1 - inner_y0;
     z_ledger = V3_FLOOR_LEDGER_Z;
 
-    bom_member("ledger", "pt-pine", V3_FLOOR_LEDGER_W, V3_FLOOR_LEDGER_H,
-               inner_d, "floor_ledger", system="konstruktions-skelet", count=2);
     color(pal_post(palette)) {
         translate([inner_x0 - V3_FLOOR_LEDGER_W, inner_y0, z_ledger])
             cube([V3_FLOOR_LEDGER_W, inner_d, V3_FLOOR_LEDGER_H]);
@@ -80,16 +77,12 @@ module v3_stroer_floor(palette = DEFAULT_PALETTE) {
     for (i = [0 : n_joists - 1]) {
         y = inner_y0 + i * V3_FLOOR_JOIST_C2C;
         if (y < inner_y1 - V3_FLOOR_JOIST_W/2) {
-            bom_member("joist", "pt-pine", V3_FLOOR_JOIST_W, V3_FLOOR_JOIST_H,
-                       inner_w, "floor_joist", system="konstruktions-skelet");
             color(pal_post(palette))
             translate([inner_x0, y - V3_FLOOR_JOIST_W/2, joist_z])
                 cube([inner_w, V3_FLOOR_JOIST_W, V3_FLOOR_JOIST_H]);
         }
     }
 
-    bom_member("krydsfiner", "ply-18mm", inner_w, inner_d, V3_FLOOR_DECK_T,
-               "floor_deck", system="konstruktions-skelet");
     color(pal_floor(palette))
     translate([inner_x0, inner_y0, V3_FLOOR_DECK_Z])
         cube([inner_w, inner_d, V3_FLOOR_DECK_T]);

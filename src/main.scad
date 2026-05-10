@@ -1,4 +1,5 @@
-// Rabbit-house — currently showing src/designs/v3/build.scad.
+// Rabbit-house
+// currently showing src/designs/v3/build.scad.
 $fn = 48;
 
 // Initial GUI viewport. 

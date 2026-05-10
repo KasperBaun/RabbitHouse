@@ -7,6 +7,21 @@ Det måler 6,0 × 2,5 m og har en sokkel-højde på 12 cm over jord.
 Total ringhøjde er 60 cm (3 skifter à 20 cm).  
 Der lægges 10 cm stabilgrus i bunden for at sikre dræning og stabilitet.
 
+```
+        ┌────────────┬────────── perimeter-ring ──────────┐
+        │            │                                    │
+        │            │                                    │
+        │  hus-zone  │             yard-zone              │
+        │  X=0..1500 │           X=1500..6000             │
+        │            │                                    │
+        │       cross-wall                                │
+        │            │                                    │
+        └────────────┴────────── perimeter-ring ──────────┘
+        ←── 1500 ───→ ←───────────── 4500 ────────────────→
+        ←──────────────────── 6000 mm ────────────────────→
+                            (set ovenfra)
+```
+
 ## Mål
 
 | Egenskab | Værdi |
@@ -17,6 +32,21 @@ Der lægges 10 cm stabilgrus i bunden for at sikre dræning og stabilitet.
 | Stabilgrus i bunden | 10 cm |
 
 ## Konstruktion
+
+```
+                            ↓ M10 ankerskrue c/c 1000 mm
+        ┌────────────────────────────────────┐    ← sokkel z=+120 mm
+        │            3. skifte               │
+        │ - - - - - - - - - - - - - - - - -  │    ← grade  z=0 (jord/græs)
+        ├────────────────────────────────────┤    ← z=-80 mm
+        │            2. skifte               │
+        ├────────────────────────────────────┤    ← z=-280 mm
+        │            1. skifte               │
+        └────────────────────────────────────┘    ← z=-480 mm
+        ░░░░░░░░░ stabilgrus 100 mm ░░░░░░░░░░
+        ────────────────────────────────────      ← z=-580 mm (bund af grøft)
+                       (tværsnit gennem ring)
+```
 
 Tre skifter fundablok 50 × 20 × 15 cm lagt i halvstensforbandt rundt om hele perimeteren samt på tværs ved X = 1500 mm (hus/yard-skel).  
 Hulrum udstøbes med selvblandet beton (cement + støbemix + vand).  
