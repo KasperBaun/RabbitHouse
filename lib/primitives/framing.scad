@@ -34,12 +34,12 @@ module stud_wall(origin, length, height, axis="X",
     stud_h  = min(height, h_in) - 2 * sw;
 
     // BOM (no-op when $bom_mode != true)
-    bom_member("bundrem", "pt-pine", sd, sw, length, "stud_wall");
-    bom_member("toprem", "spruce", sd, sw, length, "stud_wall");
+    bom_member("bundrem", "pt-pine", sd, sw, length, "stud_wall", system="vaegge");
+    bom_member("toprem", "spruce", sd, sw, length, "stud_wall", system="vaegge");
     for (p = [0 : sp : length - sw])
         if (!_in_skip(p + sw/2, skip_ranges))
-            bom_member("stud", "spruce", sw, sd, stud_h, "stud_wall");
-    bom_member("stud", "spruce", sw, sd, stud_h, "stud_wall_end");
+            bom_member("stud", "spruce", sw, sd, stud_h, "stud_wall", system="vaegge");
+    bom_member("stud", "spruce", sw, sd, stud_h, "stud_wall_end", system="vaegge");
 
     color(pal_post(palette)) {
         if (axis == "X") {
@@ -112,15 +112,15 @@ module stud_wall_sloped(origin, length, h_start, h_end, axis="Y",
     ox = origin[0]; oy = origin[1]; oz = origin[2];
 
     // BOM
-    bom_member("bundrem", "pt-pine", sd, sw, length, "stud_wall_sloped");
-    bom_member("toprem", "spruce", sd, sw, length, "stud_wall_sloped");
+    bom_member("bundrem", "pt-pine", sd, sw, length, "stud_wall_sloped", system="vaegge");
+    bom_member("toprem", "spruce", sd, sw, length, "stud_wall_sloped", system="vaegge");
     for (p = [0 : sp : length - sw])
         if (!_in_skip(p + sw/2, skip_ranges)) {
             sh_p = _slope_h(h_start, h_end, length, p + sw/2) - 2*sw;
-            bom_member("stud", "spruce", sw, sd, sh_p, "stud_wall_sloped");
+            bom_member("stud", "spruce", sw, sd, sh_p, "stud_wall_sloped", system="vaegge");
         }
     end_h = _slope_h(h_start, h_end, length, length - sw/2) - 2*sw;
-    bom_member("stud", "spruce", sw, sd, end_h, "stud_wall_sloped_end");
+    bom_member("stud", "spruce", sw, sd, end_h, "stud_wall_sloped_end", system="vaegge");
 
     color(pal_post(palette)) {
         if (axis == "Y") {
@@ -197,25 +197,25 @@ module framed_opening_y(wall_origin, length, h_start, h_end,
 
     // BOM
     bom_member("jamb", "spruce", sd, sw, tp_j1 - (oz + sw),
-               "framed_opening_y_jamb1");
+               "framed_opening_y_jamb1", system="vaegge");
     bom_member("jamb", "spruce", sd, sw, tp_j2 - (oz + sw),
-               "framed_opening_y_jamb2");
+               "framed_opening_y_jamb2", system="vaegge");
     bom_member("header", "spruce", sd, header_h, j2 + sw - j1,
-               "framed_opening_y_header");
+               "framed_opening_y_header", system="vaegge");
     for (y = [j1 + sp/2 : sp : j2 - sp/2]) {
         crp_top_y = oz + _slope_h(h_start, h_end, length, y + sw/2) - sw;
         if (crp_top_y - crp_z0 > 20)
             bom_member("cripple", "spruce", sd, sw, crp_top_y - crp_z0,
-                       "framed_opening_y_cripple_above");
+                       "framed_opening_y_cripple_above", system="vaegge");
     }
     if (has_sill) {
         bom_member("sill", "spruce", sd, sill_h, j2 + sw - j1,
-                   "framed_opening_y_sill");
+                   "framed_opening_y_sill", system="vaegge");
         for (y = [j1 + sp/2 : sp : j2 - sp/2])
             if ((opening_z - sill_h) - (oz + sw) > 20)
                 bom_member("cripple", "spruce", sd, sw,
                            (opening_z - sill_h) - (oz + sw),
-                           "framed_opening_y_cripple_below");
+                           "framed_opening_y_cripple_below", system="vaegge");
     }
 
     color(pal_post(palette)) {
@@ -253,7 +253,7 @@ module framed_opening_y(wall_origin, length, h_start, h_end,
 
 // A single solid wood post.
 module post(origin, size, height, palette=DEFAULT_PALETTE, name="post") {
-    bom_member("post", "pt-pine", size[0], size[1], height, name);
+    bom_member("post", "pt-pine", size[0], size[1], height, name, system="vaegge");
     color(pal_post(palette))
     translate([origin[0], origin[1], origin[2]])
         cube([size[0], size[1], height]);
@@ -275,7 +275,7 @@ module beam_hull(p1, p2, section, palette=DEFAULT_PALETTE) {
 // h_start at y0 to h_end at y0+len. Section [thick, 0.01, beam_h].
 module top_beam_sloped_y(x, y0, len, h_start, h_end, thick=100, beam_h=180,
                          palette=DEFAULT_PALETTE, name="top_beam_sloped_y") {
-    bom_member("beam", "limtree", thick, beam_h, len, name);
+    bom_member("beam", "limtree", thick, beam_h, len, name, system="vaegge");
     color(pal_post(palette))
     hull() {
         translate([x, y0, h_start - beam_h])

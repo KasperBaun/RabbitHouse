@@ -70,7 +70,7 @@ module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
     // instead of passing through them. Top z follows the roof underside
     // at each end so the tie sits flush under the rafters.
     bom_member("collar_tie", "spruce", V3_COLLAR_TIE_W, V3_COLLAR_TIE_H,
-               ww - 2*sd, "interior_collar_tie");
+               ww - 2*sd, "interior_collar_tie", system="vaegge");
     color(pal_post(pal))
     hull() {
         translate([hl/2 - V3_COLLAR_TIE_W/2, sd,
@@ -110,7 +110,7 @@ module v3_yard_posts_and_sills(hl, rl, ww, bh, fpw, ct, pal) {
     // the fundablok ring top at Z=bh (sokkel level).
     for (p = corner_reglar)
         bom_member("bracket", "steel-galv", reglar_t + 16, fpw + 16,
-                   bracket_h, "yard_corner_post_base");
+                   bracket_h, "yard_corner_post_base", system="vaegge");
 
     color([0.30, 0.30, 0.32])
     for (p = corner_reglar)
@@ -121,7 +121,7 @@ module v3_yard_posts_and_sills(hl, rl, ww, bh, fpw, ct, pal) {
     z0 = bh + bracket_h;
     for (p = corner_reglar)
         bom_member("reglar", "pt-pine", reglar_t, fpw, p[2] - z0,
-                   "yard_corner_reglar");
+                   "yard_corner_reglar", system="vaegge");
 
     color(pal_post(pal))
     for (p = corner_reglar) {
@@ -136,14 +136,14 @@ module v3_yard_posts_and_sills(hl, rl, ww, bh, fpw, ct, pal) {
     front_right_len = (hl + rl - fpw) - (V3_YARD_DOOR_X + V3_YARD_DOOR_W);
     if (front_left_len > 0)
         bom_member("sill", "pt-pine", fpw, V3_SILL_H, front_left_len,
-                   "yard_front_sill_left");
+                   "yard_front_sill_left", system="vaegge");
     if (front_right_len > 0)
         bom_member("sill", "pt-pine", fpw, V3_SILL_H, front_right_len,
-                   "yard_front_sill_right");
+                   "yard_front_sill_right", system="vaegge");
     bom_member("sill", "pt-pine", fpw, V3_SILL_H, rl - ct - fpw,
-               "yard_back_sill");
+               "yard_back_sill", system="vaegge");
     bom_member("sill", "pt-pine", fpw, V3_SILL_H, ww - 2*fpw,
-               "yard_right_sill");
+               "yard_right_sill", system="vaegge");
 
     color(pal_post(pal)) {
         // Front sill, segment LEFT of the yard door
@@ -173,8 +173,8 @@ module v3_yard_top_beams(hl, rl, ww, fpw, ct, pal) {
     bx0 = hl - fpw;            // beam west end
     blen = rl + fpw;           // beam length
 
-    bom_member("beam", "limtree", fpw, V3_BEAM_H, blen, "yard_front_beam");
-    bom_member("beam", "limtree", fpw, V3_BEAM_H, blen, "yard_back_beam");
+    bom_member("beam", "limtree", fpw, V3_BEAM_H, blen, "yard_front_beam", system="vaegge");
+    bom_member("beam", "limtree", fpw, V3_BEAM_H, blen, "yard_back_beam", system="vaegge");
 
     color(pal_post(pal))
     hull() {
@@ -210,7 +210,7 @@ module v3_yard_stiles(hl, rl, ww, fpw, pal) {
     front_beam_top = v3_roof_under(0) - V3_BEAM_H;
     for (xs = front_xs)
         bom_member("stile", "spruce", sw, sw,
-                   front_beam_top - sill_top, "yard_front_stile");
+                   front_beam_top - sill_top, "yard_front_stile", system="vaegge");
     color(pal_post(pal))
     for (xs = front_xs)
         translate([xs - sw/2, 0, sill_top])
@@ -220,7 +220,7 @@ module v3_yard_stiles(hl, rl, ww, fpw, pal) {
     back_beam_top = v3_roof_under(ww) - V3_BEAM_H;
     for (xs = back_xs)
         bom_member("stile", "spruce", sw, sw,
-                   back_beam_top - sill_top, "yard_back_stile");
+                   back_beam_top - sill_top, "yard_back_stile", system="vaegge");
     color(pal_post(pal))
     for (xs = back_xs)
         translate([xs - sw/2, ww - sw, sill_top])
@@ -231,7 +231,7 @@ module v3_yard_stiles(hl, rl, ww, fpw, pal) {
     for (ys = right_ys) {
         beam_top = v3_roof_under(ys) - V3_BEAM_H;
         bom_member("stile", "spruce", sw, sw,
-                   beam_top - sill_top, "yard_right_stile");
+                   beam_top - sill_top, "yard_right_stile", system="vaegge");
         translate([hl + rl - sw, ys - sw/2, sill_top])
             cube([sw, sw, beam_top - sill_top]);
     }
