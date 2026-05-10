@@ -25,9 +25,10 @@ V3_RUN_LEN      = 4500;
 
 // Wall heights, measured from sokkel-top (Z=V3_BASE_H) to roof underside
 // at the wall face. EH_FRONT > EH_BACK gives a mono-pitch slope front→back.
-// Drop 500 over 2500 = 11.3° (20 % fald) — comfortable for tagpap, stål
-// and eternit_10 (with extended overlap).
-V3_EH_FRONT     = 2500;
+// Drop 200 over 2500 = 4,6° (8 % fald). Tagpap kræver minimum 2,5 cm/m
+// = 2,5 % = 1,4° — vores 8 % er rigeligt. Stål og eternit kræver mere
+// hældning og virker IKKE med disse højder.
+V3_EH_FRONT     = 2200;
 V3_EH_BACK      = 2000;
 
 // Roof overhangs

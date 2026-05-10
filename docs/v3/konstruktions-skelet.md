@@ -8,11 +8,12 @@ Træ-skelettet der sidder ovenpå fundamentet. Indeholder kun de fire grundlægg
 
 | Egenskab | Værdi |
 |---|---|
-| Front-væg højde (fra sokkel-top) | 2,5 m (HØJ — den høje side i mono-pitch) |
+| Front-væg højde (fra sokkel-top) | 2,2 m (HØJ — den høje side i mono-pitch) |
 | Bag-væg højde | 2,0 m (LAV) |
 | Sidemæg + partition højde | 2,0 m (LAV — flugter med bag-væg) |
-| Top af front top plate | z = 2,62 m over jord |
+| Top af front top plate | z = 2,32 m over jord |
 | Top af bag/side/partition top plate | z = 2,12 m over jord |
+| Tag-hældning (drop 200 over 2500) | 4,6° (8 % fald) — OK for tagpap, ikke nok for stål/eternit |
 | Stud-spacing | 600 mm c/c |
 
 ## Konstruktion
@@ -23,7 +24,7 @@ Træ-skelettet der sidder ovenpå fundamentet. Indeholder kun de fire grundlægg
 3. Studs (reglar)       45×95 lodrette c/c 600, alle vægge
                          skip-ranges: dør- og vindues-åbninger holdes fri
 4. Top plate (toprem)   45×95 vandret oven på studs
-                         Front: HØJ (z=2620) — flugter med tagets underside
+                         Front: HØJ (z=2320) — flugter med tagets underside
                          Bag/side/partition: LAV (z=2120) — flugter med bagsiden
 ```
 
@@ -52,7 +53,7 @@ Priser tilføjes senere.
 | | | | | | **Total** | **kr.** |
 
 Reglar-længder afhænger af vægposition:
-- Front-væg studs: 2,41 m hver
+- Front-væg studs: 2,11 m hver
 - Bag-, side- og partition-væg studs: 1,91 m hver
 
 ## Hvad er IKKE i denne fil
