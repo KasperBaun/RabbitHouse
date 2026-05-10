@@ -72,3 +72,15 @@ module bjaelkesko(p, beam_w=95, beam_h=180, system="vaegge") {
         translate([-1, 0, beam_h])    cube([beam_w + 2, 60, 2]);
     }
 }
+
+// Joist hanger for a 45×95 strø bearing on a ledger or ring face.
+module stroesko(p, joist_w=45, joist_h=95, system="fundament") {
+    bom_member("stroesko", "steel-galv", joist_w + 4, joist_h, 2,
+               "joist_hanger", system=system);
+    color(BESLAG_COLOR)
+    translate(p) {
+        translate([-1, 0, 0])         cube([2, joist_h, joist_h]);
+        translate([joist_w-1, 0, 0])  cube([2, joist_h, joist_h]);
+        translate([-1, 0, 0])         cube([joist_w + 2, joist_h, 2]);
+    }
+}
