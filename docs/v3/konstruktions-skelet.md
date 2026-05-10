@@ -2,9 +2,20 @@
 
 > Implementeret i `src/designs/v3/konstruktions-skelet.scad`.
 
-Træ-skelettet sidder oven på fundamentet og består af 4 lag: **DPC (murpap) → bundrem → reglar → toprem**.  
-Bygningen har 5 vægge — front (V1) er HØJ for at rumme udhusdøren; bag og sider (V2-V5) er LAV.  
-Mono-pitch tag-hældning er 4,6° (8 % fald) — passer til tagpap.
+Træ-skelettet sidder oven på fundamentet og består af 4 lag.
+
+1. DPC (murpap)
+2. Bundrem
+3. Reglar
+4. Toprem  
+
+Bygningen har 5 vægge.
+- Front (V1)
+- Bag(V2)
+- Venstre(V3)
+- Højre(V4)
+- Tværgående(V5).  
+Tag-hældning er 4,6° (8 % fald).
 
 ```
                     V2 (bag, LAV — 2,2 m)
@@ -23,29 +34,27 @@ Mono-pitch tag-hældning er 4,6° (8 % fald) — passer til tagpap.
 ```
 
 ```
-   z=2,52 m ┐ V1 toprem (HØJ — front)
-            ╲
-            │ ╲    tag-hældning 4,6° (8 % fald)
-            │  ╲
-            │   ╲────────┐ z=2,32 m   V2/V3/V4/V5 toprem (LAV)
-            │            │
-            │  hus-rum   │
-            │            │
-   z=0,17 m ├────────────┤ bundrem-top (= gulv)
-   z=0,12 m ├────────────┤ sokkel-top
-   z=0     ─┤   jord    ─┤
-            ←── 2,5 m ──→
-                              (tværsnit Y, set fra siden)
+        ┌─── toprem 45×95 ───┐  z=2,52 m (V1) / 2,32 m (V2-V5)
+        │                    │
+        │                    │
+        │  reglar 45×95      │  studs 1908 mm (LAV) / 2108 mm (HØJ)
+        │  c/c 600 mm        │
+        │                    │
+        │                    │
+        ├─── bundrem 45×95 ──┤  z=0,17 m (= gulv-top)
+        ├═══ murpap (DPC) ═══┤  z=0,12 m
+        ▒▒▒▒▒ sokkel-ring ▒▒▒▒
+                              (lag-stak gennem en væg)
 ```
 
 ## Mål
 
-| Egenskab | Værdi |
-|---|---|
-| V1 højde (HØJ — front, mono-pitch høje side) | 2,4 m (rummer std 95×205 udhusdør) |
-| V2-V5 højde (LAV — bag + sider + partition) | 2,2 m (rummer std 80×200 indvendig dør) |
-| Tag-hældning | 4,6° / 8 % fald (drop 200 over 2500 mm) |
-| Reglar-spacing | 600 mm c/c |
+| Egenskab                                     | Værdi                                   |
+| -------------------------------------------- | --------------------------------------- |
+| V1 højde (HØJ — front, mono-pitch høje side) | 2,4 m (rummer std 95×205 udhusdør)      |
+| V2-V5 højde (LAV — bag + sider + partition)  | 2,2 m (rummer std 80×200 indvendig dør) |
+| Tag-hældning                                 | 4,6° / 8 % fald (drop 200 over 2500 mm) |
+| Reglar-spacing                               | 600 mm c/c                              |
 
 ## Konstruktion
 
@@ -58,15 +67,18 @@ Trekanten over V3/V4 — mellem den vandrette toprem og det skrå tag — er IKK
 
 ## Materialeliste
 
-| # | Vare | Beskrivelse | Antal | Enhed | Pris/enh | I alt |
-|---|---|---|---|---|---|---|
-| 1 | Reglar 45 × 95 × 2400 mm | Gran C24 — alle studs (1 stud pr. stik, skæres til 2308 eller 2108 mm) | 37 | stk | | |
-| 2 | Reglar 45 × 95 × 4800 mm | PT NTR-AB — bundrem (~19,5 m perimeter + cross-wall) | 5 | stk | | |
-| 3 | Reglar 45 × 95 × 4800 mm | Gran C24 — toprem (~19,5 m) | 5 | stk | | |
-| 4 | Bitumen-tape 100 mm bred | Murpap mellem sokkel og bundrem | 1 | rulle 25 m | | |
-| | | | | | **Total** | **kr.** |
+Maks længde 3600 mm — V1 og V2 (6 m hver) splejses af ét 3600 + ét 2400 stykke.
 
-Header, cripples og rough sill (~5 m i alt) skæres af spild fra de øvrige reglar.
+| #   | Vare                     | Beskrivelse                                                             | Antal | Enhed      | Pris/enh  | I alt   |
+| --- | ------------------------ | ----------------------------------------------------------------------- | ----- | ---------- | --------- | ------- |
+| 1   | Reglar 45 × 95 × 2400 mm | Gran C24 — studs (37 stk, skæres 2108/1908 mm) + toprem til V3/V4/V5 (5) | 42    | stk        |           |         |
+| 2   | Reglar 45 × 95 × 3600 mm | Gran C24 — toprem til V1 + V2 (splejses med 2400-stykker fra #1)        | 2     | stk        |           |         |
+| 3   | Reglar 45 × 95 × 2400 mm | PT NTR-AB — bundrem til V3/V4/V5 + splejs-stykker på V1+V2              | 5     | stk        |           |         |
+| 4   | Reglar 45 × 95 × 3600 mm | PT NTR-AB — bundrem til V1 + V2 (splejses med 2400-stykker fra #3)      | 2     | stk        |           |         |
+| 5   | Bitumen-tape 100 mm bred | Murpap mellem sokkel og bundrem                                         | 1     | rulle 25 m |           |         |
+|     |                          |                                                                         |       |            | **Total** | **kr.** |
+
+Header, cripples og rough sill (~5 m i alt) skæres af spild fra studs (~12 m i alt fra 2400-stokken).
 
 ## Bygge-rækkefølge
 
