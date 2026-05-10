@@ -20,3 +20,25 @@ module ankerskrue_m10(p, system="fundament") {
         translate([p[0], p[1], 0])    cylinder(h=8,  r1=10, r2=8, $fn=12);
     }
 }
+
+// 90×90 mm perforated angle bracket. Two perpendicular legs, 2 mm steel.
+// orientation = "+x+z" means leg-1 along +X face, leg-2 along +Z face.
+// Origin = inside corner.
+module vinkelbeslag(p, leg=90, thick=2, orientation="+x+z", system="vaegge") {
+    bom_member("vinkelbeslag", "steel-galv", leg, leg, thick, "BMF90", system=system);
+    color(BESLAG_COLOR)
+    translate(p)
+    if (orientation == "+x+z") {
+        cube([leg, thick, thick]);
+        cube([thick, thick, leg]);
+    } else if (orientation == "-x+z") {
+        translate([-leg, 0, 0]) cube([leg, thick, thick]);
+        translate([-thick, 0, 0]) cube([thick, thick, leg]);
+    } else if (orientation == "+y+z") {
+        cube([thick, leg, thick]);
+        cube([thick, thick, leg]);
+    } else if (orientation == "-y+z") {
+        translate([0, -leg, 0]) cube([thick, leg, thick]);
+        translate([0, -thick, 0]) cube([thick, thick, leg]);
+    }
+}
