@@ -115,6 +115,24 @@ function v3_roof_oz() =
 function v3_roof_under(y) =
     v3_roof_oz() - (V3_OH_FRONT + y) * v3_total_drop() / v3_span_total();
 
+// Roof slope per cover type. Eternit B6 needs steeper hældning than v3's
+// configured 9° (drop 400 / width 2500). Eternit_10 lowers eh_back to
+// 2160 (drop 440, ~10°); eternit_14 lowers it to 1976 (drop 624, 14°).
+function v3_eh_back_for(cover) =
+      cover == "eternit_10" ? 2160
+    : cover == "eternit_14" ? 1976
+    : V3_EH_BACK;
+
+// Cover-aware versions of the roof geometry helpers (defined further up
+// in this file). These accept eh_back as a parameter so the roof can be
+// re-positioned when a steeper cover is selected.
+function v3_total_drop_for(eh_back) =
+    (V3_EH_FRONT - eh_back) * v3_span_total() / V3_WIDTH;
+function v3_roof_oz_for(eh_back) =
+    V3_BASE_H + V3_EH_FRONT + V3_OH_FRONT * v3_total_drop_for(eh_back) / v3_span_total();
+function v3_roof_under_for(eh_back, y) =
+    v3_roof_oz_for(eh_back) - (V3_OH_FRONT + y) * v3_total_drop_for(eh_back) / v3_span_total();
+
 // Top of the yard sill plate (= bracket top + sill height).
 V3_YARD_SILL_TOP = 18 + V3_SILL_H;  // = 63
 
