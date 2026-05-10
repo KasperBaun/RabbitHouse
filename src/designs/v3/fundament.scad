@@ -55,30 +55,6 @@ module v3_stroer_floor(palette = DEFAULT_PALETTE) {
         cube([inner_w, inner_d, V3_FLOOR_DECK_T]);
 }
 
-// Continuous perimeter bundrem on top of the fundablok ring + cross-wall.
-// Visual-only: actual bundrem segments come from individual stud_wall calls
-// (which carry the BOM). This module provides the fill-ins so there are
-// NO GAPS in the perimeter where the user can see the ring top exposed.
-module v3_bundrem_ring(palette = DEFAULT_PALETTE) {
-    ll = V3_LENGTH; ww = V3_WIDTH; hl = V3_HOUSE_LEN;
-    sd = 95;        // bundrem deep (= V3_POST_W stud depth)
-    sw = V3_SILL_H; // bundrem tall (45)
-    z  = V3_BASE_H; // sits on ring top (z=120)
-
-    color(pal_post(palette)) {
-        // Front (Y=0..sd) — continuous from X=0 to X=ll
-        translate([0, 0, z])           cube([ll, sd, sw]);
-        // Back (Y=ww-sd..ww) — continuous
-        translate([0, ww - sd, z])     cube([ll, sd, sw]);
-        // Left (X=0..sd) — continuous
-        translate([0, 0, z])           cube([sd, ww, sw]);
-        // Right (X=ll-sd..ll) — continuous
-        translate([ll - sd, 0, z])     cube([sd, ww, sw]);
-        // Partition cross-wall (X=hl-sd/2..hl+sd/2) — under partition
-        translate([hl - sd/2, 0, z])   cube([sd, ww, sw]);
-    }
-}
-
 // `show_ground=false` hides the ground / gravel path so the buried fundablok
 // ring foundation (Z<0) is visible from above.
 module v3_fundament(show_ground = true, palette = DEFAULT_PALETTE) {
@@ -98,7 +74,6 @@ module v3_fundament(show_ground = true, palette = DEFAULT_PALETTE) {
     // visible around the yard — without `top_z`, the whole ring sits
     // at/below grade and the surrounding grass plane buries it.
     fundablok_ring(ll, ww, 3, [hl], top_z = bh);
-    v3_bundrem_ring(palette);
 
     // Ankerskruer M10 c/c 1000 mm along the perimeter ring + partition cross-wall.
     // Head sits at Z=bh (top of ring = sokkel level); shaft sinks 120 mm into ring.

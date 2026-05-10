@@ -8,6 +8,7 @@ include <../../lib/defaults.scad>
 include <config.scad>
 
 use <fundament.scad>
+use <konstruktions-skelet.scad>
 use <vaegge.scad>
 use <tagkonstruktion.scad>
 use <beklaedning.scad>
@@ -26,6 +27,7 @@ module build_v3(show_cladding = true, show_ground = true, roof_cover = "tagpap")
     stud = DEFAULT_STUD;
 
     v3_fundament(show_ground, pal);
+    v3_konstruktions_skelet(pal);
     v3_vaegge(stud, mesh, pal);
     v3_tagkonstruktion(roof_cover, pal);
     if (show_cladding) v3_beklaedning(clad, pal);
