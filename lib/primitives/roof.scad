@@ -435,7 +435,7 @@ module ceiling_rafters_mono(origin, length, width, drop, eave_h,
     rafter_len = sqrt(pow(width - 2*wall_t, 2) + pow(drop, 2));
     for (x = [ox + xi : spacing : ox + length - xi])
         bom_member("rafter", "spruce", rafter_w, rafter_h, rafter_len,
-                   "ceiling_rafter");
+                   "ceiling_rafter", system="tagkonstruktion");
 
     color(pal_post(palette))
     for (x = [ox + xi : spacing : ox + length - xi]) {
