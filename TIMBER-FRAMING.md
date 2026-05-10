@@ -12,12 +12,12 @@
 | Element | Dimension | Notes |
 |---|---|---|
 | Reglar / studs | 45×95 mm | Standard wall stud, sufficient for non-insulated outbuilding |
-| Stolper / corner posts | 95×95 mm or 120×120 mm | Use 120×120 at corners carrying roof load |
+| Stolper / corner posts | 120×120 mm | Corners carrying roof load; 45×95 reglar elsewhere |
 | Bundrem / bottom plate | 45×95 mm | Flat (lying on wide face), bolted to foundation |
 | Toprem / top plate | 45×95 mm | Can double up (2×45×95) on long spans >4m |
 | Front beam (remme) | 45×180 mm | Main front beam carrying roof, sized for span |
 | Losholte / nogging | 45×95 mm | Horizontal bracing between studs |
-| Spær / rafters | 45×120 mm | Only if separate rafter system; mono-pitch can use toprem as bearer |
+| Spær / rafters | 45×95 mm, c/c 600 mm | Mono-pitch rafters; use toprem as bearer at both ends |
 
 ## Stud Spacing — Rules of Thumb for Small Outbuildings
 
@@ -65,6 +65,20 @@ This is **not** a dwelling. BR18 dimensional requirements for dwellings do not a
 | Toprem to stolper | 2× 5.0×100 mm screws + angle bracket |
 | Cladding to studs/battens | 2.5×50 mm galv. ring-shank nails, 2 per board per support |
 | Mesh to frame | 25 mm galv. staples or U-clips, 150 mm c/c |
+
+## Beslag (steel connectors)
+
+Defined in `lib/primitives/beslag.scad`. Each module renders the connector and emits a BOM row.
+
+| Module | Use | Typical part |
+|---|---|---|
+| `ankerskrue_m10()` | bundrem → fundablok ring, c/c 1000 | M10 × 120 mm anchor screw |
+| `vinkelbeslag()` | stud → bundrem / toprem at corners | BMF 90×90×2 angle bracket |
+| `spaersko()` | spær → toprem, both ends | Simpson sloping rafter shoe |
+| `bjaelkesko()` | beam → post | Beam joist hanger |
+| `stroesko()` | floor strø → ledger | 45×95 joist hanger |
+
+All beslag are hot-dip galvanised steel.
 
 ## Roof Load Path
 
