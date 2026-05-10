@@ -61,8 +61,8 @@ M10 ankerskruer drives ned i topskiftet c/c 1000 mm langs hele perimeteren + cro
 |---|---|---|---|---|---|---|
 | 1 | Stabilgrus 0–32 mm | Bundlag 10 cm i frostfri grøft (~30 cm bred × 19,35 m) | ~0,6 | m³ | | |
 | 2 | Fundablok 50 × 20 × 15 cm | Ring + partition cross-wall, 3 skifter forbandt | 124 | stk (117 + buffer) | | |
-| 3 | Armeringsjern Ø8 mm | 6 m længder, lodret + vandret | 7 | stk | | |
-| 4 | Cement (Aalborg Portland CEM I/II, 25 kg-sæk) | Til hulrumsudstøbning, ~900 L beton | 12 | sæk | | |
+| 3 | Armeringsjern Ø8 mm | 3 m længder, lodret (~5 stk) + vandret i topskifte (~8 stk) | 13 | stk | | |
+| 4 | Cement (Aalborg Portland CEM I/II, 25 kg-sæk) | Hulrumsudstøbning ~900 L beton ved 1:4 (13 sæk) + 1 sæk buffer | 14 | sæk | | |
 | 5 | Støbemix 0–16 mm | Sand+grus til selvblanding, big-bag 1 m³ | 1 | stk | | |
 | 6 | Ankerskruer M10 × 120 | Bundrem-til-ring c/c 1000 | 18 | stk | | |
 | | | | | | **Total** | **kr.** |
