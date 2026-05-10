@@ -1,6 +1,6 @@
 # v3 Buildable — Phase 1 Design Spec
 
-**Status:** Awaiting user review
+**Status:** Implemented (commits e1c68af..b6f40e3 on main)
 **Date:** 2026-05-09
 **Scope:** v3 only (v1, v2 untouched)
 **Goal:** Make the v3 SCAD model into something a Danish tømrer could actually build from, with a BOM detailed enough to buy materials.
