@@ -5,6 +5,7 @@ include <../../lib/defaults.scad>
 include <config.scad>
 use <../../lib/primitives/framing.scad>
 use <../../lib/primitives/mesh.scad>
+use <../../lib/primitives/beslag.scad>
 use <../../lib/bom.scad>
 
 module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
@@ -79,6 +80,13 @@ module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
     v3_vindkryds([0, 0, z_sill], hl, v3_roof_under(0) - z_sill, "X");
     v3_vindkryds([0, ww - sd, z_sill], hl, v3_roof_under(ww - sd) - z_sill, "X");
     v3_vindkryds([0, 0, z_sill], ww, min(ehf - air_gap, ehb - air_gap), "Y");
+
+    // Vinkelbeslag at each of the 4 house wall corners, top + bottom (8 total).
+    for (corner_xy = [[0, 0], [hl-sd, 0], [0, ww-sd], [hl-sd, ww-sd]]) {
+        vinkelbeslag([corner_xy[0], corner_xy[1], z_sill + sw], orientation="+x+z");
+        vinkelbeslag([corner_xy[0], corner_xy[1],
+                      v3_roof_under(corner_xy[1]) - sw - 90], orientation="+x+z");
+    }
 
     // Interior collar tie at hl/2 — 45×195 reglar tying the front-back
     // rafters across the centre. Y span is sd..ww-sd so the tie ends at
