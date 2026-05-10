@@ -25,10 +25,12 @@ module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
               v3_roof_under(0)      - z_sill, "X", stud, pal,
               h_inner = v3_roof_under(sd)        - z_sill);
     v3_wall_bats([0, sd, z_sill], hl, v3_roof_under(0) - z_sill, "X");
+    v3_wind_paper([0, -WIND_PAPER_T, z_sill], hl, v3_roof_under(0) - z_sill, "X");
     stud_wall([0, ww - sd, z_sill], hl,
               v3_roof_under(ww - sd) - z_sill, "X", stud, pal,
               h_inner = v3_roof_under(ww)        - z_sill);
     v3_wall_bats([0, ww - sd, z_sill], hl, v3_roof_under(ww - sd) - z_sill, "X");
+    v3_wind_paper([0, ww, z_sill], hl, v3_roof_under(ww - sd) - z_sill, "X");
 
     // Side and partition walls — sloped top plates that bear directly on
     // rafters; the top plate underside follows the roof line. No separate
@@ -45,10 +47,12 @@ module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
                      "Y", stud, pal, left_skip);
     v3_wall_bats([sd, 0, z_sill], ww, min(ehf - air_gap, ehb - air_gap), "Y",
                  skip_ranges = left_skip);
+    v3_wind_paper([-WIND_PAPER_T, 0, z_sill], ww, min(ehf - air_gap, ehb - air_gap), "Y");
     stud_wall_sloped([hl - sd, 0, z_sill], ww, ehf - air_gap, ehb - air_gap,
                      "Y", stud, pal, partition_skip);
     v3_wall_bats([hl - sd, 0, z_sill], ww, min(ehf - air_gap, ehb - air_gap), "Y",
                  skip_ranges = partition_skip);
+    v3_wind_paper([hl, 0, z_sill], ww, min(ehf - air_gap, ehb - air_gap), "Y");
 
     // Framed openings — jamb studs, header, cripples (and rough sill for
     // the window). Wall heights mirror the parent stud_wall_sloped so the
@@ -351,6 +355,23 @@ module v3_vaegge(stud = DEFAULT_STUD, mesh = DEFAULT_MESH,
     v3_yard_mesh_front(hl, rl, ww, fpw, ct, palette, mesh);
     v3_yard_mesh_back(hl, rl, ww, fpw, ct, palette, mesh);
     v3_yard_mesh_right(hl, rl, ww, fpw, palette, mesh);
+}
+
+// ---------------------------------------------------------------------------
+// Vindpapir (E2) — wind membrane on wall outer faces
+// ---------------------------------------------------------------------------
+
+WIND_PAPER_COLOR = [0.50, 0.50, 0.52];
+WIND_PAPER_T     = 1;
+
+module v3_wind_paper(origin, length, height, axis) {
+    bom_member("vindpapir", "polyolefin", length, height, WIND_PAPER_T,
+               "wind_membrane_m2", system="vaegge");
+    color(WIND_PAPER_COLOR)
+    if (axis == "X")
+        translate(origin) cube([length, WIND_PAPER_T, height]);
+    else
+        translate(origin) cube([WIND_PAPER_T, length, height]);
 }
 
 // ---------------------------------------------------------------------------
