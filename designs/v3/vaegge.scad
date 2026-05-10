@@ -11,8 +11,11 @@ use <../../lib/bom.scad>
 module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
     sd       = ss_d(stud);
     sw       = ss_w(stud);
-    air_gap  = 10;                   // 5–10 mm air gap per TIMBER-FRAMING.md
-    z_sill   = bh + air_gap;         // bundrem bottom
+    air_gap  = 10;                   // 5–10 mm drainage / capillary-break gap
+    // Wall sill rests on top of the fundablok ring (Z=0). 10 mm air gap
+    // between bundrem and ring per TIMBER-FRAMING.md (drainage / capillary
+    // break). Was previously bh+air_gap when the wall sat on a slab.
+    z_sill   = 10;
     z_bp_top = z_sill + sw;          // bundrem top — door rough-opening floor
 
     // Damp-proof course (fugtspærre) directly on slab top, under each bundrem
