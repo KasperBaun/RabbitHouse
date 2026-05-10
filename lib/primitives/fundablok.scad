@@ -17,9 +17,9 @@ FUNDABLOK_H      = 200;
 FUNDABLOK_COLOR  = [0.78, 0.76, 0.72];
 
 // Continuous fundablok ring around a [ll × ww] rectangle with optional
-// cross-walls at the X positions in `partitions_x`. The ring is centred
-// on the building outer line; cross-walls are centred on their X line
-// and span between the perimeter ring's inner faces.
+// cross-walls at the X positions in `partitions_x`. The ring outer face
+// is flush with [0,0]..[ll,ww] (the building outer line); the ring extends
+// inward only by FUNDABLOK_W (150 mm) on each face.
 //
 // `top_z` sets the top-of-ring Z (= sokkel-niveau per the Phase 1 spec —
 // "Top af ring = sokkel-niveau (= base h), bundrem af alle vægge sidder
@@ -38,16 +38,17 @@ module fundablok_ring(ll, ww, courses = 3, partitions_x = [], top_z = 0) {
     z_bot   = top_z - total_h;
 
     color(FUNDABLOK_COLOR) {
-        // Outer perimeter ring: solid rectangle minus inner cavity
+        // Outer perimeter ring: solid rectangle minus inner cavity.
+        // Outer face flush at [0,0]..[ll,ww]; ring extends inward by bw.
         difference() {
-            translate([-bw/2, -bw/2, z_bot])
-                cube([ll + bw, ww + bw, total_h]);
-            translate([bw/2, bw/2, z_bot - 1])
-                cube([ll - bw, ww - bw, total_h + 2]);
+            translate([0, 0, z_bot])
+                cube([ll, ww, total_h]);
+            translate([bw, bw, z_bot - 1])
+                cube([ll - 2*bw, ww - 2*bw, total_h + 2]);
         }
         // Interior cross-walls under load-bearing partitions
         for (px = partitions_x)
-            translate([px - bw/2, bw/2, z_bot])
-                cube([bw, ww - bw, total_h]);
+            translate([px - bw/2, bw, z_bot])
+                cube([bw, ww - 2*bw, total_h]);
     }
 }
