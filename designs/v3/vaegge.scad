@@ -24,9 +24,11 @@ module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
     stud_wall([0, 0, z_sill], hl,
               v3_roof_under(0)      - z_sill, "X", stud, pal,
               h_inner = v3_roof_under(sd)        - z_sill);
+    v3_wall_bats([0, sd, z_sill], hl, v3_roof_under(0) - z_sill, "X");
     stud_wall([0, ww - sd, z_sill], hl,
               v3_roof_under(ww - sd) - z_sill, "X", stud, pal,
               h_inner = v3_roof_under(ww)        - z_sill);
+    v3_wall_bats([0, ww - sd, z_sill], hl, v3_roof_under(ww - sd) - z_sill, "X");
 
     // Side and partition walls — sloped top plates that bear directly on
     // rafters; the top plate underside follows the roof line. No separate
@@ -41,8 +43,12 @@ module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
     ];
     stud_wall_sloped([0, 0, z_sill], ww, ehf - air_gap, ehb - air_gap,
                      "Y", stud, pal, left_skip);
+    v3_wall_bats([sd, 0, z_sill], ww, min(ehf - air_gap, ehb - air_gap), "Y",
+                 skip_ranges = left_skip);
     stud_wall_sloped([hl - sd, 0, z_sill], ww, ehf - air_gap, ehb - air_gap,
                      "Y", stud, pal, partition_skip);
+    v3_wall_bats([hl - sd, 0, z_sill], ww, min(ehf - air_gap, ehb - air_gap), "Y",
+                 skip_ranges = partition_skip);
 
     // Framed openings — jamb studs, header, cripples (and rough sill for
     // the window). Wall heights mirror the parent stud_wall_sloped so the
@@ -345,4 +351,34 @@ module v3_vaegge(stud = DEFAULT_STUD, mesh = DEFAULT_MESH,
     v3_yard_mesh_front(hl, rl, ww, fpw, ct, palette, mesh);
     v3_yard_mesh_back(hl, rl, ww, fpw, ct, palette, mesh);
     v3_yard_mesh_right(hl, rl, ww, fpw, palette, mesh);
+}
+
+// ---------------------------------------------------------------------------
+// Wall bats (E1) — 95 mm Rockwool slabs in stud bays
+// ---------------------------------------------------------------------------
+
+BATS_COLOR_VAL = [0.92, 0.84, 0.55, 0.70];  // muted yellow with alpha
+BATS_T         = 95;
+
+function _v3_in_skip(c, ranges) =
+    len([for (r = ranges) if (c >= r[0] && c <= r[1]) 1]) > 0;
+
+// Insulation bats inside a length-by-h stud wall; orientation matches the
+// wall's stud-wall axis. Skips bays that are part of openings.
+module v3_wall_bats(origin, length, height, axis, sw=45, sd=95, sp=600,
+                    skip_ranges=[]) {
+    bom_member("bats_95mm", "rockwool", BATS_T, height - 2*sw,
+               length, "wall_bats", system="vaegge");
+    color(BATS_COLOR_VAL)
+    if (axis == "X") {
+        for (x = [sw : sp : length - sw - sp])
+            if (!_v3_in_skip(x + sp/2, skip_ranges))
+                translate([origin[0] + x, origin[1], origin[2] + sw])
+                    cube([sp - sw, sd, height - 2*sw]);
+    } else {
+        for (y = [sw : sp : length - sw - sp])
+            if (!_v3_in_skip(y + sp/2, skip_ranges))
+                translate([origin[0], origin[1] + y, origin[2] + sw])
+                    cube([sd, sp - sw, height - 2*sw]);
+    }
 }
