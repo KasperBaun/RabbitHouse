@@ -35,10 +35,10 @@ Bygningen har 5 vægge.
 ```
 
 ```
-        ┌─── toprem 45×95 ───┐  z=2,52 m (V1) / 2,32 m (V2-V5)
+        ┌─── toprem 45×95 ───┐  z=2,52 m (V1) / 2,32 m (V2) / 2,52→2,32 m (V3-V5)
         │                    │
         │                    │
-        │  reglar 45×95      │  studs 1908 mm (LAV) / 2108 mm (HØJ)
+        │  reglar 45×95      │  studs 2108-2308 mm (skåret til hver position)
         │  c/c 600 mm        │
         │                    │
         │                    │
@@ -50,21 +50,22 @@ Bygningen har 5 vægge.
 
 ## Mål
 
-| Egenskab       | Værdi                                   |
-| -------------- | --------------------------------------- |
-| V1             | 2,4 m (rummer std 95×205 udhusdør)      |
-| V2-V5          | 2,2 m (rummer std 80×200 indvendig dør) |
-| Tag-hældning   | 4,6° / 8 % fald (drop 200 over 2500 mm) |
-| Reglar-afstand | 600 mm c/c                              |
+| Egenskab       | Værdi                                                          |
+| -------------- | -------------------------------------------------------------- |
+| V1 (front)     | 2,4 m flat (rummer std 95×205 udhusdør)                        |
+| V2 (bag)       | 2,2 m flat                                                     |
+| V3, V4, V5     | 2,4 → 2,2 m skrå (følger taget; V5 rummer std 80×200 hus-dør)  |
+| Tag-hældning   | 4,6° / 8 % fald (drop 200 over 2500 mm)                        |
+| Reglar-afstand | 600 mm c/c                                                     |
 
 ## Konstruktion
 
 V1 (front) og V2 (bag) løber kontinuert hele bygningens 6 m længde.  
-V3, V4 (sidemæg) og V5 (partition) BUTTER mod V1/V2's inderflade  
+V3, V4 (sidemæg) og V5 (partition) BUTTER mod V1/V2's inderflade.  
 Reglar 45 × 95 mm c/c 600 mm med jamb-reglar ved hver dør/vindue og junction-reglar i V1+V2 hvor V5 møder dem.  
 Header (vandret 45 × 95) over hver dør/vindue. V3-vinduet har også rough sill under sig.
 
-Trekanten over V3/V4 — mellem den vandrette toprem og det skrå tag — er IKKE en del af denne fil. Det er gavlfyld der hører til tagkonstruktionen.
+V3, V4 og V5 løber parallelt med tagets hældning. Deres toprem skrår fra HØJ ved front til LAV ved bag, og hver stud er skåret til varierende højde (2108-2308 mm) så toprem hviler fladt på alle studs — ingen separat gavlfyld.
 
 ## Materialeliste
 
@@ -72,7 +73,7 @@ Maks længde 3600 mm — V1 og V2 (6 m hver) splejses af ét 3600 + ét 2400 sty
 
 | #   | Vare                     | Beskrivelse                                                              | Antal | Enhed      | Pris/enh  | I alt   |
 | --- | ------------------------ | ------------------------------------------------------------------------ | ----- | ---------- | --------- | ------- |
-| 1   | Reglar 45 × 95 × 2400 mm | Gran C24 — studs (37 stk, skæres 2108/1908 mm) + toprem til V3/V4/V5 (5) | 42    | stk        |           |         |
+| 1   | Reglar 45 × 95 × 2400 mm | Gran C24 — studs (37 stk, skæres 2108-2308 mm) + skrå toprem til V3/V4/V5 (5) | 42    | stk        |           |         |
 | 2   | Reglar 45 × 95 × 3600 mm | Gran C24 — toprem til V1 + V2 (splejses med 2400-stykker fra #1)         | 2     | stk        |           |         |
 | 3   | Reglar 45 × 95 × 2400 mm | PT NTR-AB — bundrem til V3/V4/V5 + splejs-stykker på V1+V2               | 5     | stk        |           |         |
 | 4   | Reglar 45 × 95 × 3600 mm | PT NTR-AB — bundrem til V1 + V2 (splejses med 2400-stykker fra #3)       | 2     | stk        |           |         |
@@ -88,7 +89,7 @@ Header, cripples og rough sill (~5 m i alt) skæres af spild fra studs (~12 m i 
 3. Sæt corner-reglar og jamb-reglar lodret med vinkelbeslag
 4. Sæt grid-reglar c/c 600 mm + junction-reglar i V1/V2 hvor V5 møder dem
 5. Sæt header over hver åbning + rough sill under V3-vinduet
-6. Læg toprem oven på studs — V1 HØJ, V2-V5 LAV
+6. Læg toprem oven på studs — V1 flat HØJ, V2 flat LAV, V3/V4/V5 skrå (følger taget)
 
 ## Rendering / verificering
 

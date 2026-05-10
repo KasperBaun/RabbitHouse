@@ -11,8 +11,6 @@
 - Slet `src/designs/v3/vaegge.scad` når #3 (aabninger) og #4 (beklaedning) er færdige —
   først der har vi trukket alt vi har brug for ud (framed_opening_y, mesh-paneler, bats, etc.).
   Indtil da ligger filen urørt på disk men kaldes ikke fra build.scad.
-- Gavlfyld (trekant over sidemæg, mellem vandret toprem og skrå tag) — beslut hvor det hører:
-  i konstruktions-skelet.scad, i tagkonstruktion.scad, eller i egen `gavl.scad`.
 - Strøer-gulv (floor joists inde i huset) — egen fil eller del af konstruktions-skelet?
 - "yard" → "løbegård" rename på tværs af kodebasen.
 
