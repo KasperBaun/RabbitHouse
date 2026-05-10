@@ -15,7 +15,7 @@ use <aabninger.scad>
 use <inventar.scad>
 use <../../lib/bom.scad>
 
-module build_v3(show_cladding = true, show_ground = true) {
+module build_v3(show_cladding = true, show_ground = true, roof_cover = "tagpap") {
     bom_header();
     pal  = DEFAULT_PALETTE;
     clad = DEFAULT_CLAD;
@@ -27,7 +27,7 @@ module build_v3(show_cladding = true, show_ground = true) {
 
     v3_fundament(show_ground, pal);
     v3_vaegge(stud, mesh, pal);
-    v3_tagkonstruktion(pal);
+    v3_tagkonstruktion(roof_cover, pal);
     if (show_cladding) v3_beklaedning(clad, pal);
     if (show_cladding) v3_aabninger(mesh, pal);
     v3_inventar(show_cladding, show_ground, pal);

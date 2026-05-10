@@ -6,7 +6,7 @@ include <config.scad>
 use <../../lib/primitives/roof.scad>
 use <../../lib/bom.scad>
 
-module v3_tagkonstruktion(palette = DEFAULT_PALETTE) {
+module v3_tagkonstruktion(roof_cover = "tagpap", palette = DEFAULT_PALETTE) {
     ll = V3_LENGTH; ww = V3_WIDTH; wt = V3_WALL_T;
     roof_oz = v3_roof_oz();
     drop_full = v3_total_drop();

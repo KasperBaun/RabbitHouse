@@ -17,10 +17,16 @@ v1_preset = "7x3";
 // (Currently honoured by v3 only.)
 show_cladding = false;
 
-// Toggle outdoor grass / gravel path / yard grass. With ground off, the
-// buried fundablok strip foundation (Z<0) becomes visible from above.
-// (Honoured by v3 only.)
+// Toggle outdoor grass / gravel path / yard grass. The fundablok ring
+// stands 120 mm proud of grade so its sokkel is visible even with
+// ground on; turning ground off also exposes the 480 mm buried below
+// grade. (Honoured by v3 only.)
 show_ground = true;
+
+// Tag-dækning. "tagpap" og "stål" virker på v3's nuværende hældning (9°);
+// "eternit_10" og "eternit_14" sænker eh_back automatisk så hældningen
+// overholder Cembrit B6's profil.
+roof_cover = "tagpap";
 
 $fn = 48;
 
@@ -38,4 +44,5 @@ use <designs/v3/build.scad>
 
 if (design == "v1") build_v1(v1_preset);
 if (design == "v2") build_v2();
-if (design == "v3") build_v3(show_cladding=show_cladding, show_ground=show_ground);
+if (design == "v3") build_v3(show_cladding=show_cladding, show_ground=show_ground,
+                              roof_cover=roof_cover);
