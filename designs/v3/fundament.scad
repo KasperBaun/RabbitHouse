@@ -74,10 +74,7 @@ module v3_fundament(show_ground = true, palette = DEFAULT_PALETTE) {
     // at/below grade and the surrounding grass plane buries it.
     fundablok_ring(ll, ww, 3, [hl], top_z = bh);
 
-    // Floor slab (Sub-phase D will replace this with strøer floor)
-    slab([-ct, -ct], [hl + 2*ct, ww + 2*ct], bh, palette,
-         edge_thicken_h = 200, edge_thicken_w = 250);
-    interior_floor([wt, wt], [hl - 2*wt, ww - 2*wt], bh, 20, palette);
+    v3_stroer_floor(palette);
     rabbit_floor_grass([wt, wt], [hl - 2*wt, ww - 2*wt], bh);
 
     apron_skirt([hl, 0, ll, ww], V3_APRON_W,
