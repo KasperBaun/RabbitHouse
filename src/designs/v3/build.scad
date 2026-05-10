@@ -39,21 +39,35 @@ roof_cover = "tagpap";
 
 module build_v3() {
     bom_header();
-    pal  = DEFAULT_PALETTE;
-    clad = DEFAULT_CLAD;
-    mesh = mesh_spec(spacing = V3_MESH_SPACING,
-                     bar     = V3_MESH_BAR,
-                     frame   = V3_MESH_FRAME,
-                     depth   = V3_MESH_DEPTH);
-    stud = DEFAULT_STUD;
+    pal = DEFAULT_PALETTE;
 
+    // === Aktivt indhold ===
+    // Vi nedbryder modellen pr. todo.md — slå systemer til efterhånden
+    // som de er rettet til. Lige nu ser vi KUN fundamentet.
     v3_fundament(show_ground, pal);
-    v3_konstruktions_skelet(pal);
-    v3_vaegge(stud, mesh, pal);
-    v3_tagkonstruktion(roof_cover, pal);
-    if (show_cladding) v3_beklaedning(clad, pal);
-    if (show_cladding) v3_aabninger(mesh, pal);
-    v3_inventar(show_cladding, show_ground, pal);
+
+    // === Inaktivt — slå til når de er rettet til (uncomment) ===
+    // todo.md #2: konstruktions-skelet (murpap, bundrem, reglar, toprem, strøer)
+    // v3_konstruktions_skelet(pal);
+    //
+    // todo.md #3: aabninger (døre + vinduer)
+    // if (show_cladding) v3_aabninger(_default_mesh(), pal);
+    //
+    // todo.md #4: beklaedning (vindpap, klemmelister, klink, voliernet)
+    // if (show_cladding) v3_beklaedning(DEFAULT_CLAD, pal);
+    //
+    // todo.md #5: tagkonstruktion (spær + dækning)
+    // v3_tagkonstruktion(roof_cover, pal);
+    //
+    // Legacy — vil blive foldet ind i konstruktions-skelet/beklaedning:
+    // v3_vaegge(DEFAULT_STUD, _default_mesh(), pal);
+    // v3_inventar(show_cladding, show_ground, pal);
 }
+
+// Helper for re-aktivering af systemer der bruger mesh-spec.
+function _default_mesh() = mesh_spec(spacing = V3_MESH_SPACING,
+                                      bar     = V3_MESH_BAR,
+                                      frame   = V3_MESH_FRAME,
+                                      depth   = V3_MESH_DEPTH);
 
 build_v3();

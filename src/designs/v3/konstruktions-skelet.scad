@@ -52,7 +52,51 @@ module v3_bundrem_ring(palette = DEFAULT_PALETTE) {
     }
 }
 
+// Strøer-gulv inde i hus-delen af fundablok-ringen.
+// Ledger fastgjort til ringens inderside; 45×95 strøer hænger i strøsko;
+// 18 mm krydsfiner-dæk ovenpå. Flyttet hertil fra fundament.scad — dette
+// er træ-skelet, ikke beton-fundament.
+module v3_stroer_floor(palette = DEFAULT_PALETTE) {
+    hl = V3_HOUSE_LEN; ww = V3_WIDTH; ring_w = 150;  // FUNDABLOK_W
+    inner_x0 = ring_w/2;
+    inner_x1 = hl - ring_w/2;
+    inner_y0 = ring_w/2;
+    inner_y1 = ww - ring_w/2;
+    inner_w  = inner_x1 - inner_x0;
+    inner_d  = inner_y1 - inner_y0;
+    z_ledger = V3_FLOOR_LEDGER_Z;
+
+    bom_member("ledger", "pt-pine", V3_FLOOR_LEDGER_W, V3_FLOOR_LEDGER_H,
+               inner_d, "floor_ledger", system="konstruktions-skelet", count=2);
+    color(pal_post(palette)) {
+        translate([inner_x0 - V3_FLOOR_LEDGER_W, inner_y0, z_ledger])
+            cube([V3_FLOOR_LEDGER_W, inner_d, V3_FLOOR_LEDGER_H]);
+        translate([inner_x1, inner_y0, z_ledger])
+            cube([V3_FLOOR_LEDGER_W, inner_d, V3_FLOOR_LEDGER_H]);
+    }
+
+    n_joists = floor(inner_d / V3_FLOOR_JOIST_C2C) + 1;
+    joist_z = z_ledger;
+    for (i = [0 : n_joists - 1]) {
+        y = inner_y0 + i * V3_FLOOR_JOIST_C2C;
+        if (y < inner_y1 - V3_FLOOR_JOIST_W/2) {
+            bom_member("joist", "pt-pine", V3_FLOOR_JOIST_W, V3_FLOOR_JOIST_H,
+                       inner_w, "floor_joist", system="konstruktions-skelet");
+            color(pal_post(palette))
+            translate([inner_x0, y - V3_FLOOR_JOIST_W/2, joist_z])
+                cube([inner_w, V3_FLOOR_JOIST_W, V3_FLOOR_JOIST_H]);
+        }
+    }
+
+    bom_member("krydsfiner", "ply-18mm", inner_w, inner_d, V3_FLOOR_DECK_T,
+               "floor_deck", system="konstruktions-skelet");
+    color(pal_floor(palette))
+    translate([inner_x0, inner_y0, V3_FLOOR_DECK_Z])
+        cube([inner_w, inner_d, V3_FLOOR_DECK_T]);
+}
+
 module v3_konstruktions_skelet(palette = DEFAULT_PALETTE) {
     v3_murpap_ring();
     v3_bundrem_ring(palette);
+    // v3_stroer_floor(palette);  // aktiveres når vi gennemgår strøer i todo.md #2
 }
