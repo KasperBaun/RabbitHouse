@@ -72,6 +72,58 @@ module v3_cover_tagpap(eh_back, palette = DEFAULT_PALETTE) {
                     V3_OH_FRONT, V3_OH_BACK, V3_OH_SIDE, palette);
 }
 
+// Stålplade cover: undertag membrane + 25×50 afstandsliste along spær +
+// 38×73 lægter c/c 600 perpendicular + 0.5 mm trapezstål. Min slope 3°.
+module v3_cover_staal(eh_back, palette = DEFAULT_PALETTE) {
+    ll = V3_LENGTH; ww = V3_WIDTH;
+    drop_full = v3_total_drop_for(eh_back);
+    roof_oz = v3_roof_oz_for(eh_back);
+    span_y = ww + V3_OH_FRONT + V3_OH_BACK;
+    span_x = ll + V3_OH_SIDE * 2;
+    area = span_x * sqrt(span_y * span_y + drop_full * drop_full) / 1e6;
+
+    // Undertag: thin grey membrane on top of spær
+    bom_member("undertag", "polyolefin", 1, span_x, span_y,
+               str("undertag_", area, "_m2"), system="tagkonstruktion");
+    color([0.40, 0.40, 0.42])
+    polyhedron(
+        points = [
+            [-V3_OH_SIDE, -V3_OH_FRONT, roof_oz - 1],
+            [ll + V3_OH_SIDE, -V3_OH_FRONT, roof_oz - 1],
+            [ll + V3_OH_SIDE, ww + V3_OH_BACK, roof_oz - drop_full - 1],
+            [-V3_OH_SIDE, ww + V3_OH_BACK, roof_oz - drop_full - 1],
+            [-V3_OH_SIDE, -V3_OH_FRONT, roof_oz],
+            [ll + V3_OH_SIDE, -V3_OH_FRONT, roof_oz],
+            [ll + V3_OH_SIDE, ww + V3_OH_BACK, roof_oz - drop_full],
+            [-V3_OH_SIDE, ww + V3_OH_BACK, roof_oz - drop_full]
+        ],
+        faces = [[0,1,2,3], [4,7,6,5], [0,4,5,1], [1,5,6,2], [2,6,7,3], [3,7,4,0]]
+    );
+
+    // Lægter 38×73 c/c 600 perpendicular to spær (running in X direction)
+    n_laegter = floor(span_y / 600) + 1;
+    bom_member("lægte", "spruce", 38, 73, span_x,
+               "trapezstal_lægte", system="tagkonstruktion", count=n_laegter);
+
+    // Trapezstål 0.5 mm — represented as a single sloped slab in metallic colour.
+    bom_member("trapezstål", "steel-galv", 0.5, span_x, span_y,
+               str("trapez_", area, "_m2"), system="tagkonstruktion");
+    color([0.72, 0.72, 0.74])
+    polyhedron(
+        points = [
+            [-V3_OH_SIDE, -V3_OH_FRONT, roof_oz + 100],
+            [ll + V3_OH_SIDE, -V3_OH_FRONT, roof_oz + 100],
+            [ll + V3_OH_SIDE, ww + V3_OH_BACK, roof_oz - drop_full + 100],
+            [-V3_OH_SIDE, ww + V3_OH_BACK, roof_oz - drop_full + 100],
+            [-V3_OH_SIDE, -V3_OH_FRONT, roof_oz + 80],
+            [ll + V3_OH_SIDE, -V3_OH_FRONT, roof_oz + 80],
+            [ll + V3_OH_SIDE, ww + V3_OH_BACK, roof_oz - drop_full + 80],
+            [-V3_OH_SIDE, ww + V3_OH_BACK, roof_oz - drop_full + 80]
+        ],
+        faces = [[0,1,2,3], [4,7,6,5], [0,4,5,1], [1,5,6,2], [2,6,7,3], [3,7,4,0]]
+    );
+}
+
 module v3_tagkonstruktion(roof_cover = "tagpap", palette = DEFAULT_PALETTE) {
     ll = V3_LENGTH; ww = V3_WIDTH; wt = V3_WALL_T;
     roof_oz = v3_roof_oz();
