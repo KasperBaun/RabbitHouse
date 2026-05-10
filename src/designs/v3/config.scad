@@ -28,8 +28,12 @@ V3_RUN_LEN      = 4500;
 // Drop 200 over 2500 = 4,6° (8 % fald). Tagpap kræver minimum 2,5 cm/m
 // = 2,5 % = 1,4° — vores 8 % er rigeligt. Stål og eternit kræver mere
 // hældning og virker IKKE med disse højder.
-V3_EH_FRONT     = 2200;
-V3_EH_BACK      = 2000;
+//
+// Højder valgt så STANDARD-DØRE passer:
+//   V1 (front, EH_FRONT=2400) rummer 95×205 udhusdør (rough opening 1070×2120)
+//   V5 (partition, EH_BACK=2200) rummer 80×200 indvendig dør (870×2050)
+V3_EH_FRONT     = 2400;
+V3_EH_BACK      = 2200;
 
 // Roof overhangs
 V3_OH_FRONT     = 220;
@@ -38,8 +42,10 @@ V3_OH_SIDE      = 220;
 V3_ROOF_THICK   = 80;
 
 // Human door in the partition (X=V3_HOUSE_LEN, faces +X into the yard).
-V3_HOUSE_DOOR_W = 850;
-V3_HOUSE_DOOR_H = 2100;
+// Rough opening for STANDARD 80×200 cm indvendig dør (= blade 800×2000 +
+// karm 50mm hver side + 15mm tolerance på top).
+V3_HOUSE_DOOR_W = 870;
+V3_HOUSE_DOOR_H = 2050;
 V3_HOUSE_DOOR_Y = 200;       // along Y on the partition
 
 // Rabbit pet door (partition at X=V3_HOUSE_LEN, faces +X into yard).
@@ -47,9 +53,11 @@ V3_PET_DOOR_W   = 250;
 V3_PET_DOOR_H   = 300;
 V3_PET_DOOR_Y   = 1500;
 
-// Yard mesh door (front face Y=0, opens outward to garden).
-V3_YARD_DOOR_W  = 850;
-V3_YARD_DOOR_H  = 1900;
+// Yard udhusdør (front face Y=0, opens outward to garden).
+// Rough opening for STANDARD 95×205 cm udhusdør (= blade 948×2050 +
+// karm 60mm hver side + 15mm tolerance på top).
+V3_YARD_DOOR_W  = 1070;
+V3_YARD_DOOR_H  = 2120;
 V3_YARD_DOOR_X  = 3000;      // X along front (left edge of the door)
 
 // Insulated nest box (against back wall, in main house space). With house
@@ -62,12 +70,12 @@ V3_NEST_D       = 900;
 V3_NEST_H       = 600;
 
 // Side window on left exterior wall (X=0, faces -X).
-// Centered both horizontally (V3_SIDE_WIN_Y=900 → opening Y=900..1600 i wall Y=95..2405)
-// og vertikalt (V3_SIDE_WIN_Z=800 → vindue-bund 800mm over bundrem-top, ~508mm over til toprem).
+// Centreret horizontalt (V3_SIDE_WIN_Y=900 → opening Y=900..1600 i wall Y=95..2405).
+// V3_SIDE_WIN_Z=1100 sætter vinduet ved adult-øjenhøjde (vinduebund ~1,1m over gulv).
 V3_SIDE_WIN_W   = 700;
 V3_SIDE_WIN_H   = 600;
 V3_SIDE_WIN_Y   = 900;
-V3_SIDE_WIN_Z   = 800;
+V3_SIDE_WIN_Z   = 1100;
 
 // Buried mesh apron around yard exterior (predator dig defence).
 V3_APRON_W      = 500;
