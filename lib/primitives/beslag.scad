@@ -59,3 +59,16 @@ module spaersko(p, rafter_w=45, rafter_h=95, slope=0, system="tagkonstruktion") 
         translate([-1, 0, 0])              cube([rafter_w + 2, rafter_h, 2]);
     }
 }
+
+// Joist hanger for a beam bearing on a post / partition top plate.
+module bjaelkesko(p, beam_w=95, beam_h=180, system="vaegge") {
+    bom_member("bjaelkesko", "steel-galv", beam_w + 4, beam_h, 2,
+               "beam_hanger", system=system);
+    color(BESLAG_COLOR)
+    translate(p) {
+        translate([-1, 0, 0])         cube([2, beam_h, beam_h]);
+        translate([beam_w-1, 0, 0])   cube([2, beam_h, beam_h]);
+        translate([-1, 0, 0])         cube([beam_w + 2, beam_h, 2]);
+        translate([-1, 0, beam_h])    cube([beam_w + 2, 60, 2]);
+    }
+}
