@@ -179,18 +179,30 @@ module v3_cover_eternit(eh_back, palette = DEFAULT_PALETTE) {
 }
 
 module v3_tagkonstruktion(roof_cover = "tagpap", palette = DEFAULT_PALETTE) {
-    ll = V3_LENGTH; ww = V3_WIDTH; wt = V3_WALL_T;
-    roof_oz = v3_roof_oz();
-    drop_full = v3_total_drop();
-    rafter_eave_h = v3_roof_under(wt);
-    rafter_drop = v3_roof_under(wt) - v3_roof_under(ww - wt);
+    eh_back = v3_eh_back_for(roof_cover);
 
-    roof_mono_pitch([0, 0, roof_oz], ll, ww, drop_full, V3_ROOF_THICK,
-                    V3_OH_FRONT, V3_OH_BACK, V3_OH_SIDE, palette);
-    fascia_and_gutter_mono([0, 0, roof_oz], ll, ww, drop_full,
+    // Spær — same regardless of cover.
+    v3_spaer(eh_back, palette);
+
+    // Cover layers.
+    if (roof_cover == "tagpap")           v3_cover_tagpap(eh_back, palette);
+    else if (roof_cover == "stål")        v3_cover_staal(eh_back, palette);
+    else if (roof_cover == "eternit_10")  v3_cover_eternit(eh_back, palette);
+    else if (roof_cover == "eternit_14")  v3_cover_eternit(eh_back, palette);
+    else assert(false, str("unknown roof_cover: ", roof_cover));
+
+    // Sternbrædder + tagrende.
+    fascia_and_gutter_mono([0, 0, v3_roof_oz_for(eh_back)],
+                           V3_LENGTH, V3_WIDTH, v3_total_drop_for(eh_back),
                            150, 22, V3_OH_FRONT, V3_OH_BACK, V3_OH_SIDE,
                            110, 65, 0, palette);
-    ceiling_rafters_mono([0, 0, 0], ll, ww, rafter_drop, rafter_eave_h,
-                         900, 45, 140, wt, palette,
-                         x_inset = wt + 55);
+
+    // Loftspær (visible inside the house).
+    rafter_eave_h = v3_roof_under_for(eh_back, V3_WALL_T);
+    rafter_drop = v3_roof_under_for(eh_back, V3_WALL_T)
+                - v3_roof_under_for(eh_back, V3_WIDTH - V3_WALL_T);
+    ceiling_rafters_mono([0, 0, 0], V3_LENGTH, V3_WIDTH,
+                         rafter_drop, rafter_eave_h,
+                         900, 45, 140, V3_WALL_T, palette,
+                         x_inset = V3_WALL_T + 55);
 }
