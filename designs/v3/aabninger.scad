@@ -102,10 +102,10 @@ module v3_aabninger(mesh = DEFAULT_MESH, palette = DEFAULT_PALETTE) {
     rabbit_pet_door_yz(hl - wt, V3_PET_DOOR_Y, bh + 60,
                        V3_PET_DOOR_W, V3_PET_DOOR_H, wt, palette);
     color([0.55, 0.50, 0.40])
-    translate([hl + ct + 20, V3_HOUSE_DOOR_Y - 50, bh + V3_SILL_H + 18])
+    translate([hl + ct + 20, V3_HOUSE_DOOR_Y - 50, bh + V3_YARD_SILL_TOP])
         cube([200, V3_HOUSE_DOOR_W + 100, 12]);
     window_with_trim_xneg(0, V3_SIDE_WIN_Y, bh + V3_SIDE_WIN_Z,
                           V3_SIDE_WIN_W, V3_SIDE_WIN_H, ct, palette, true);
     v3_yard_door(V3_YARD_DOOR_X, V3_YARD_DOOR_W, V3_YARD_DOOR_H,
-                 bh + V3_SILL_H + 18, palette, mesh);
+                 bh + V3_YARD_SILL_TOP, palette, mesh);
 }

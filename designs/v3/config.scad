@@ -115,6 +115,9 @@ function v3_roof_oz() =
 function v3_roof_under(y) =
     v3_roof_oz() - (V3_OH_FRONT + y) * v3_total_drop() / v3_span_total();
 
+// Top of the yard sill plate (= bracket top + sill height).
+V3_YARD_SILL_TOP = 18 + V3_SILL_H;  // = 63
+
 // House floor (strøer + krydsfiner inside the fundablok ring).
 V3_FLOOR_LEDGER_W   = 95;     // ledger bjælke wide along Y/X (face of ring)
 V3_FLOOR_LEDGER_H   = 45;     // ledger bjælke height (Z)
