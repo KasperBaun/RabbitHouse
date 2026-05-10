@@ -18,13 +18,13 @@ Skæreliste pr. element. Mål er millimeter; positioner er i bygningens koordina
 | **Træværk**                                     |       |                                                       |
 | Reglar 47×100×3000 mm gran C24                  | 13    | Spær (11 regulære + 2 vindskede)                      |
 | OSB-3 plade TG4 18 mm 2397×600 mm               | 15    | Tagdæk ~19 m² — 600 mm bredde matcher spær c/c 600    |
-| Imp. stern 21×120×3600 mm gran                  | 6     | Sternbræt hele perimeter                              |
+| Imp. stern 25×125×3600 mm gran                  | 6     | Sternbræt hele perimeter — stikker 7 mm over tagpap   |
 | **Tagdækning**                                  |       |                                                       |
 | Phønix Selvbyggerpap 1×5 m                      | 5     | Selvklæbende, ~5 m²/rulle (~19 m² + overlap)          |
 | TagSealer 300 ml Phønix                         | 3     | Bitumen-fugemasse til alu/pap-overgang                |
-| **Aluinddækning**                               |       |                                                       |
-| Tagfod aluminium 55×80×1000 mm                  | 13    | Front + bag eaves (~13 m)                             |
-| Vindskede aluminium 70×23×80×1000 mm            | 6     | Venstre + højre sider, skrå (~6 m)                    |
+| **Sternkapsler (cap over sternbræt-top)**       |       |                                                       |
+| Sternkapsel lige alu 35×25×1000 mm              | 13    | Front + bag eaves (vandret, ~13 m)                    |
+| Sternkapsel skrå kant alu 35×25×1000 mm         | 6     | Venstre + højre sider (skrå med taget, ~6 m)          |
 | **Vandhåndtering**                              |       |                                                       |
 | Tagrende 110 mm sæt                             | 1     | Bag-eave 6,5 m                                        |
 | Tagrende-beslag                                 | 12    | c/c 550 mm langs bag-eave                             |
@@ -122,7 +122,9 @@ Plader lægges med deres **lange side (2397 mm) PÅ TVÆRS af spær** (= langs X
 
 ---
 
-## Sternbræt 21×120 mm imprægneret gran (~19 m)
+## Sternbræt 25×125 mm imprægneret gran (~19 m)
+
+Sternbræt monteres så **toppen sidder 7 mm over tagpap-toppen** (sternbræt-top = wall_top + 125, tagpap-top = wall_top + 118). Det danner en lille opadgående kant der forhindrer vand i at løbe ud over tagets sider og giver et beskyttet sted til sternkapslen.
 
 | Position     | Længde     | Note                                       |
 | ------------ | ---------- | ------------------------------------------ |
@@ -132,29 +134,31 @@ Plader lægges med deres **lange side (2397 mm) PÅ TVÆRS af spær** (= langs X
 | Højre-eave   | 2910 mm    | Samme                                      |
 | **Total**    | **18,7 m** | 6 stk × 3600 mm dækker med spild           |
 
-Skrues fast i spær-ender (front + bag) og vindskede-spær (sider) med ~5×80 skruer c/c ~300 mm.
+Skrues fast i spær-ender (front + bag) og vindskede-spær (sider) med 5×80 skruer c/c ~300 mm. Selvbyggerpap rulles op og over sternbræt-toppen og foldes ned over outer-face så vandet drypper af kanten.
 
 ---
 
-## Aluinddækning — 2 forskellige profiler
+## Sternkapsler — 2 forskellige typer
 
-**Tagfod aluminium 55×80×1000 mm** på front + bag eaves (vandret afslutning, drypper vand af):
+Cap'er der glider ned over sternbræt-toppen + den oprullede tagpap-kant. Beskytter sternbræt-træet mod vejret og giver et rent finish.
+
+**Sternkapsel lige alu 35×25×1000 mm** på front + bag eaves (vandret):
 
 | Position    | Længde  | Stk |
 | ----------- | ------- | --- |
 | Front-eave  | 6440 mm | 7   |
 | Bag-eave    | 6440 mm | 7   |
 
-(Vi køber 7 stk pr. eave for overlap; 6 stk × 1 m = 6 m, men vi har brug for 6,44 m, så 7 stk og det ene overlapper.)
+(7 stk pr. eave: 6 fulde × 1 m = 6 m + 7. stk overlapper 50 mm for at nå de 6,44 m.)
 
-**Vindskede aluminium 70×23×80×1000 mm** på venstre + højre sider (Z-profil, vikles om gable-overhangets kant, skrå med taget):
+**Sternkapsel skrå kant alu 35×25×1000 mm** på venstre + højre sider (skrå med taget):
 
 | Position     | Længde  | Stk |
 | ------------ | ------- | --- |
 | Venstre-eave | 2910 mm | 3   |
 | Højre-eave   | 2910 mm | 3   |
 
-Begge typer monteres OVENPÅ selvbyggerpap-kanten med rustfri tagskruer m. EPDM-pakning gennem topflangen ind i OSB c/c ~300 mm. **VIGTIGT:** Læg en stribe TagSealer (bitumen-fugemasse, IKKE silikone) UNDER topflangen før montering — det er tætningslaget mellem alu og selvbyggerpap. Overlap mellem to alu-stykker: 50-100 mm, topstykket OVENPÅ bundstykket i vand-strømmens retning.
+Glides ned over sternbræt-toppen (25 mm kapsel-bredde matcher 25 mm sternbræt-tykkelse). Skrues fast gennem topfladen ind i sternbræt-toppen med rustfri tagskruer c/c ~500 mm. **VIGTIGT:** Læg en stribe TagSealer (bitumen-fugemasse, IKKE silikone) UNDER sternkapselen før montering — tætningslag mellem den oprullede tagpap og alu-cap'en. Overlap mellem to sternkapsler: 50 mm, topstykket OVENPÅ bundstykket i vand-strømmens retning.
 
 ---
 
@@ -180,7 +184,7 @@ Nedløb placeres i højre ende af tagrenden (ved X = 6220). Føres ned langs V4-
 - **Spær:** 13 × 2910 mm = 37,8 m brugt af 13 × 3000 mm = 39 m stock → ~1,2 m spild
 - **OSB:** 15 plader TG4 × 1,44 m² = 21,6 m² brugt af 18,7 m² tagflade → ~2,9 m² spild (~14 %). TG4's 600 mm bredde matcher spær c/c 600 så plade-samlinger lander automatisk på spær-centerlinier
 - **Selvbyggerpap:** 5 ruller × 5 m² = 25 m² brugt af 19 m² tagflade → ~6 m² spild til overlap mellem baner
-- **Sternbræt:** ~19 m fra 6 × 3600 mm = 21,6 m stock → ~2,6 m spild
-- **Aluinddækning:** tagfod 14 stk dækker 14 m (front+bag = 12,9 m); vindskede 6 stk dækker 6 m (sider = 5,8 m)
+- **Sternbræt 25×125:** ~19 m fra 6 × 3600 mm = 21,6 m stock → ~2,6 m spild. Top 7 mm over tagpap
+- **Sternkapsler:** lige 13 stk dækker 13 m (front+bag = 12,9 m); skrå 6 stk dækker 6 m (sider = 5,8 m). ~700 kr billigere end tagfod+vindskede
 - **Vinkelbeslag:** 11 regulære × 4 + 2 vindskede × 2 = 48 stk, dækket af 3 × 20-pak = 60 stk
 - **TagSealer:** 3 × 300 ml = 900 ml. ~19 m fugelinje under alu-flange + overlap-fuger ≈ 25 m bead → 1 tube pr. ~8 m, så 3 tuber er rigeligt

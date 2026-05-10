@@ -37,16 +37,15 @@ jamb-reglar og header — kattelem fyldes i bagefter.
 ```
 
 ```
-        ┌──────── arkitrav ────────┐    z=z1+ARCH_W
-        │  ┌────── topkarm ──────┐ │    z=z1
-        │  │                     │ │
-        │  │       leaf          │ │
-        │  │                     │ │
-        │  │                     │ │
-        │  └─── bundkarm/ingen ──┘ │    z=z0
-        │                          │
+           ┌────── topkarm ──────┐    z=z1
+           │                     │
+           │       leaf          │
+           │                     │
+           │                     │
+           └─── bundkarm/ingen ──┘    z=z0
         ────────────────────────────  outer wall plane (Y=0 / X=hl+47.5)
                   (snit gennem Å1 eller Å2)
+        Klink butter direkte mod karm-yder; ingen separat arkitrav-liste.
 ```
 
 ```
@@ -69,7 +68,6 @@ jamb-reglar og header — kattelem fyldes i bagefter.
 | Karm-tykkelse Å1 + Å2 (4 stykker)     | 50 mm                       |
 | Leaf-tykkelse Å1 + Å2                 | 40 mm                       |
 | Bundkarm/dørtrin (kun Å1)             | 30 mm                       |
-| Arkitrav Å1 + Å2                      | 70 × 20 mm                  |
 | Plexi-tykkelse Å3                     | 6 mm                        |
 | Plexi-overlap omkring rough opening   | 30 mm hele vejen rundt      |
 | Voliernet Å1                          | ½ × 1 tomme, 1,2 mm tråd    |
@@ -94,10 +92,10 @@ ikke et danskvinduesnørden.
 Eventuelt kan 4 små lister (22 × 22 mm) lægges udenpå som klemramme; ikke
 modelleret her.
 
-Arkitravet på Å1 og Å2 sidder ved den ydre stud-flade — 70 mm bredt,
-20 mm tykt, hele vejen rundt om åbningen (top + 2 sider; gulvet eller
-dørtrinnet afslutter nedadtil). Når beklædningen kommer på (#4) skal
-arkitravet rykkes udad med klink+lægte-tykkelsen.
+Klinken (#4) butter direkte mod karm-yderfladen rundt om åbningerne på
+Å1 og Å2 — der er ingen separat arkitrav-/karmliste-pakke. I praksis
+sættes en tynd klemmeliste på reglar+karm før klink, og klink skæres
+til rundt om karmen til sidst så det flugter.
 
 Hardware er beslag (hængsler) i HK-hærdet stål og greb i krom — to
 hængsler pr. dør (200 mm fra top og bund), greb i 1050 mm højde.
@@ -118,9 +116,8 @@ en simpel selvbygget gummi-flap) — tilpas med liste-stykker hvis
 | 4   | Plexiglas 6 mm 760 × 660 mm                   | Skæres til side-vinduet, skrues direkte på rough opening               | 1     | stk         |           |         |
 | 5   | Hængsler 80 mm 2-pak                          | Til Å1 og Å2 (i alt 4 stk)                                             | 2     | pak         |           |         |
 | 6   | Dørgreb m. trykker (rustfrit)                 | Til Å1 og Å2                                                           | 2     | sæt         |           |         |
-| 7   | Liste 22 × 70 mm 2400 mm (arkitrav)           | Trim rundt om Å1 og Å2 — ca. 10 m i alt                                | 5     | stk         |           |         |
-| 8   | Skruer + søm + rubberwasher-skruer            | Diverse til montage; rubberwasher-skruer til plexi-fastgørelse         | 1     | pose        |           |         |
-| 9   | Kattelem (separat indkøb)                     | Standard pet-flap til pet-rough opening 250 × 300                      | 1     | stk         |           |         |
+| 7   | Skruer + søm + rubberwasher-skruer            | Diverse til montage; rubberwasher-skruer til plexi-fastgørelse         | 1     | pose        |           |         |
+| 8   | Kattelem (separat indkøb)                     | Standard pet-flap til pet-rough opening 250 × 300                      | 1     | stk         |           |         |
 |     |                                               |                                                                        |       |             | **Total** | **kr.** |
 
 Mesh-leafen på Å1 dækkes af det 25 m + 10 m voliernet, som allerede er
@@ -134,7 +131,7 @@ budgetteret til ydervæggene (i alt ~1350 kr).
 4. Hæng yard-leafen i karmen med 2 hængsler
 5. Skru plexien (Å3) udenpå rough opening på V3 med rubber-washer-skruer i hjørner og midter af pladen
 6. Monter dørgreb og lås på Å1 + Å2
-7. Sæt arkitrav rundt om Å1 og Å2 med klart over- + sidestykker
+7. Klink (#4) skæres til rundt om karme på Å1 og Å2 så det butter direkte mod karm-yder
 8. Monter den valgte kattelem i pet-rough opening på partition-væggen — tilpas med liste-stykker hvis nødvendigt
 
 ## Rendering / verificering

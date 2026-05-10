@@ -1,12 +1,11 @@
 // aabninger.scad — Yard-udhusdør, indvendig dør og side-vindue:
-// karm, leaf/plexi, beslag, arkitrav.
+// karm, leaf/plexi, beslag.
 // Part of the v3 build pipeline; called from build.scad when show_cladding=true.
 //
-// Renderer KUN selve åbnings-enhederne: karm (4 stykker indeni rough opening),
-// leaf eller plexi-rude, hardware (hængsler, lås, håndtag), arkitrav (trim der
-// dækker spalten mellem karm og rough opening) samt bundkarm/dørtrin hvor
-// relevant. Selve det strukturelle (jamb-reglar, header, cripples, rough sill)
-// ligger i konstruktions-skelet.scad.
+// Renderer KUN selve åbnings-enhederne: karm (3-4 stykker indeni rough opening),
+// leaf eller plexi-rude, hardware (hængsler, lås, håndtag) samt bundkarm/
+// dørtrin hvor relevant. Selve det strukturelle (jamb-reglar, header, cripples,
+// rough sill) ligger i konstruktions-skelet.scad.
 //
 // Pet-åbningen i partition-væggen er BEVIDST tom her — det er bare en
 // rough opening i skelettet, klar til at en standard kattelem (eller
@@ -15,11 +14,6 @@
 //
 // Z-base = V3_FLOOR_TOP (= 167, top af bundrem) som matches af skelettets
 // STUD_BOTTOM_Z og alle dets framed_opening-positioner.
-//
-// Note: arkitravet sidder ved den ydre stud-flade (= V3_POST_W=95 mm
-// nede i væggen). Når beklaedning.scad (#4) reaktiveres med klink+lægter,
-// skal arkitravet rykkes udad med klink+lægte-tykkelsen — det er #4's
-// opgave.
 
 include <../../lib/defaults.scad>
 include <config.scad>
@@ -30,8 +24,6 @@ include <config.scad>
 KARM_T          = 50;            // karm tømmer-tykkelse (yard-dør + indvendig dør)
 LEAF_T          = 40;            // dørblad-tykkelse
 THRESHOLD_H     = 30;            // bundkarm/dørtrin-højde (kun yard-dør)
-ARCH_W          = 70;            // arkitrav synlig bredde
-ARCH_T          = 20;            // arkitrav stikker ARCH_T ud fra væg
 
 WALL_DEPTH      = V3_POST_W;     // = 95, stud-dybde
 FLOOR_Z         = V3_FLOOR_TOP;  // = 167, top af bundrem
@@ -50,44 +42,9 @@ PLEXI_C         = [0.88, 0.94, 0.96, 0.50];
 HINGE_C         = [0.30, 0.30, 0.32];
 HANDLE_C        = [0.85, 0.85, 0.88];
 
-// ----------------------------------------------------------------------------
-// Helper — 3-piece arkitrav (top + 2 sider) omkring et rektangel.
-//   plane_n = "+x" | "-x" | "+y" | "-y" — udadgående normal
-//   plane_p = position af planet (X eller Y koordinat)
-//   axis_lo, axis_hi = åbningens ende-punkter langs væggens akse
-//   z0, z1 = åbningens bund og top
-// ----------------------------------------------------------------------------
-module _arch_around(plane_n, plane_p, axis_lo, axis_hi, z0, z1, palette) {
-    w = ARCH_W; t = ARCH_T;
-    color(pal_trim(palette))
-    if (plane_n == "-y") {
-        translate([axis_lo - w, plane_p - t, z0])
-            cube([w, t, z1 - z0]);                  // venstre
-        translate([axis_hi,     plane_p - t, z0])
-            cube([w, t, z1 - z0]);                  // højre
-        translate([axis_lo - w, plane_p - t, z1])
-            cube([axis_hi - axis_lo + 2*w, t, w]);  // top
-    } else if (plane_n == "+y") {
-        translate([axis_lo - w, plane_p, z0])         cube([w, t, z1 - z0]);
-        translate([axis_hi,     plane_p, z0])         cube([w, t, z1 - z0]);
-        translate([axis_lo - w, plane_p, z1])
-            cube([axis_hi - axis_lo + 2*w, t, w]);
-    } else if (plane_n == "-x") {
-        translate([plane_p - t, axis_lo - w, z0])     cube([t, w, z1 - z0]);
-        translate([plane_p - t, axis_hi,     z0])     cube([t, w, z1 - z0]);
-        translate([plane_p - t, axis_lo - w, z1])
-            cube([t, axis_hi - axis_lo + 2*w, w]);
-    } else if (plane_n == "+x") {
-        translate([plane_p, axis_lo - w, z0])         cube([t, w, z1 - z0]);
-        translate([plane_p, axis_hi,     z0])         cube([t, w, z1 - z0]);
-        translate([plane_p, axis_lo - w, z1])
-            cube([t, axis_hi - axis_lo + 2*w, w]);
-    }
-}
-
 // ============================================================================
 // 1. Yard-udhusdør — front-væg V1, vender -Y, åbner udad mod haven.
-//    Mesh-i-træramme leaf med midt-rigel; arkitrav på -Y-siden.
+//    Mesh-i-træramme leaf med midt-rigel.
 // ============================================================================
 module v3_yard_door(mesh, palette) {
     x0 = V3_YARD_DOOR_X;
@@ -153,14 +110,11 @@ module v3_yard_door(mesh, palette) {
     for (zh = [z0 + 200, z1 - 350])
         translate([leaf_x0 - 8, leaf_y - 8, zh])
             cube([15, 8, 100]);
-
-    // --- Arkitrav på -Y-siden ---
-    _arch_around("-y", 0, x0, x1, z0, z1, palette);
 }
 
 // ============================================================================
 // 2. Indvendig dør i partition — V5, vender +X (mod yard), åbner ind i yard.
-//    Massiv leaf med 4 panel-noter; arkitrav på +X-siden.
+//    Massiv leaf med 4 panel-noter.
 // ============================================================================
 module v3_human_door(palette) {
     y0 = V3_HOUSE_DOOR_Y;
@@ -207,9 +161,6 @@ module v3_human_door(palette) {
     for (zh = [z0 + 200, z1 - 350])
         translate([leaf_x - 5, leaf_y0 + 5, zh])
             cube([15, 8, 100]);
-
-    // --- Arkitrav på +X-siden (yard) ---
-    _arch_around("+x", PART_OUTER_X, y0, y1, z0, z1, palette);
 }
 
 // ============================================================================
