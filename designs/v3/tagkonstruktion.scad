@@ -198,6 +198,6 @@ module v3_tagkonstruktion(roof_cover = "tagpap", palette = DEFAULT_PALETTE) {
     fascia_and_gutter_mono([0, 0, v3_roof_oz_for(eh_back)],
                            V3_LENGTH, V3_WIDTH, v3_total_drop_for(eh_back),
                            150, 22, V3_OH_FRONT, V3_OH_BACK, V3_OH_SIDE,
-                           110, 65, 0, palette);
+                           110, 65, V3_BASE_H, palette);
 
 }
