@@ -10,11 +10,11 @@ Vægge har faste ID'er så vi nemt kan referere til dem.
 
 | ID | Navn | Position | Højde | Åbninger |
 |---|---|---|---|---|
-| **V1** | Front-væg | Y=0..95 (kontinuert X=0..6000) | HØJ (2,2 m / z_top=2,32 m) | Yard-dør (X=3000..3850) |
-| **V2** | Bag-væg | Y=2405..2500 (kontinuert X=0..6000) | LAV (2,0 m / z_top=2,12 m) | — |
-| **V3** | Venstre side-væg | X=0..95 (Y=95..2405) | LAV | Side-vindue (Y=900..1600) |
-| **V4** | Højre side-væg | X=5905..6000 (Y=95..2405) | LAV | — |
-| **V5** | Partition (cross-wall) | X=1452,5..1547,5 (Y=95..2405) | LAV | Human-dør (Y=200..1050) + Pet-dør (Y=1500..1750) |
+| **V1** | Front-væg | Y=0..95 (kontinuert X=0..6000) | HØJ (2,4 m / z_top=2,52 m) | Yard-dør 95×205 udhusdør (X=3000..4070) |
+| **V2** | Bag-væg | Y=2405..2500 (kontinuert X=0..6000) | LAV (2,2 m / z_top=2,32 m) | — |
+| **V3** | Venstre side-væg | X=0..95 (Y=95..2405) | LAV (2,2 m) | Side-vindue (Y=900..1600) |
+| **V4** | Højre side-væg | X=5905..6000 (Y=95..2405) | LAV (2,2 m) | — |
+| **V5** | Partition (cross-wall) | X=1452,5..1547,5 (Y=95..2405) | LAV (2,2 m) | Human-dør 80×200 (Y=200..1070) + Pet-dør (Y=1500..1750) |
 
 V1 og V2 løber kontinuert hele bygningens længde. V3, V4, V5 BUTTER mod V1/V2's inderflade.
 
@@ -22,11 +22,11 @@ V1 og V2 løber kontinuert hele bygningens længde. V3, V4, V5 BUTTER mod V1/V2'
 
 | Egenskab | Værdi |
 |---|---|
-| V1 front-væg højde (fra sokkel-top) | 2,2 m (HØJ — den høje side i mono-pitch) |
-| V2 bag-væg højde | 2,0 m (LAV) |
-| V3, V4, V5 sidemæg + partition højde | 2,0 m (LAV — flugter med V2) |
-| Top af V1 top plate | z = 2,32 m over jord |
-| Top af V2/V3/V4/V5 top plate | z = 2,12 m over jord |
+| V1 front-væg højde (fra sokkel-top) | 2,4 m (HØJ — rummer std 95×205 udhusdør + header + cripple) |
+| V2 bag-væg højde | 2,2 m (LAV) |
+| V3, V4, V5 sidemæg + partition højde | 2,2 m (LAV — flugter med V2; V5 rummer std 80×200 indvendig dør) |
+| Top af V1 top plate | z = 2,52 m over jord |
+| Top af V2/V3/V4/V5 top plate | z = 2,32 m over jord |
 | Tag-hældning (drop 200 over 2500) | 4,6° (8 % fald) — OK for tagpap, ikke nok for stål/eternit |
 | Stud-spacing | 600 mm c/c |
 
@@ -43,8 +43,8 @@ V1 og V2 løber kontinuert hele bygningens længde. V3, V4, V5 BUTTER mod V1/V2'
 4. Header + cripples    45×95 over hver åbning + cripples op til toprem
    + (vindue) rough sill og cripples ned til bundrem
 5. Top plate (toprem)   45×95 vandret oven på studs
-                         V1: HØJ (z=2320) — flugter med tagets underside
-                         V2, V3, V4, V5: LAV (z=2120)
+                         V1: HØJ (z=2520) — flugter med tagets underside
+                         V2, V3, V4, V5: LAV (z=2320)
 ```
 
 Trekanten mellem den vandrette top plate på sidemæg og det skrå tag (over front-end) er **ikke** modelleret her — det er gavlfyld der kommer senere.
