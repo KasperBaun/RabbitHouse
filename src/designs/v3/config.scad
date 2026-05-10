@@ -62,12 +62,11 @@ V3_NEST_D       = 900;
 V3_NEST_H       = 600;
 
 // Side window on left exterior wall (X=0, faces -X).
-// Position along wall (Y=1300..2000) and vertical height above bundrem-top.
-// V3_SIDE_WIN_Z = 800 centerer vinduet i den 2000mm høje sidevæg:
-//   ~800mm under (gulv→vindue-bund) + 600mm vindue + ~508mm over (vindue-top→toprem).
+// Centered both horizontally (V3_SIDE_WIN_Y=900 → opening Y=900..1600 i wall Y=95..2405)
+// og vertikalt (V3_SIDE_WIN_Z=800 → vindue-bund 800mm over bundrem-top, ~508mm over til toprem).
 V3_SIDE_WIN_W   = 700;
 V3_SIDE_WIN_H   = 600;
-V3_SIDE_WIN_Y   = 1300;
+V3_SIDE_WIN_Y   = 900;
 V3_SIDE_WIN_Z   = 800;
 
 // Buried mesh apron around yard exterior (predator dig defence).
