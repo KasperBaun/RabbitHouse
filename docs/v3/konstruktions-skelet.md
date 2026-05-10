@@ -2,11 +2,11 @@
 
 > Implementeret i `src/designs/v3/konstruktions-skelet.scad`.
 
-Træ-skelettet der sidder ovenpå fundamentet. Indeholder kun de fire grundlæggende elementer: DPC (murpap), sill plate (bundrem), studs (reglar — inkl. jamb-reglar ved hver åbning), top plate (toprem). Trekant-gavlfyld over sidemæg, losholter, vindkryds, taghane, bjælker, gulvstrøer m.m. kommer i andre filer eller senere iterationer.
+Træ-skelettet der sidder ovenpå fundamentet. Indeholder de fire elementer: DPC (murpap), sill plate (bundrem), studs (reglar), top plate (toprem).
 
 ## Vægge — ID oversigt
 
-Vægge har faste ID'er så vi nemt kan referere til dem i samtaler.
+Vægge har faste ID'er så vi nemt kan referere til dem.
 
 | ID | Navn | Position | Højde | Åbninger |
 |---|---|---|---|---|
@@ -16,7 +16,7 @@ Vægge har faste ID'er så vi nemt kan referere til dem i samtaler.
 | **V4** | Højre side-væg | X=5905..6000 (Y=95..2405) | LAV | — |
 | **V5** | Partition (cross-wall) | X=1452,5..1547,5 (Y=95..2405) | LAV | Human-dør (Y=200..1050) + Pet-dør (Y=1500..1750) |
 
-V1 og V2 løber kontinuert hele bygningens længde. V3, V4, V5 BUTTER mod V1/V2's inderfladen — de overlapper IKKE i den fysiske verden.
+V1 og V2 løber kontinuert hele bygningens længde. V3, V4, V5 BUTTER mod V1/V2's inderflade.
 
 ## Mål
 
@@ -124,14 +124,3 @@ Skæres i strimler matchende bundrem-cut'ene: 6000 + 6000 + 3× 2310 = 18,93 m. 
 6. Sæt jamb-reglar ved hver åbning
 7. Sæt regular grid-studs c/c 600 mm
 8. Læg toprem ovenpå alle studs — vandret (front HØJ, andre LAV)
-
-## Hvad er IKKE i denne fil
-
-- Sokkel og ankerskruer → `fundament.md`
-- Gavlfyld (trekant over V3 og V4 op til skrå tag) → kommer senere
-- Beslag (vinkelbeslag, søm, skruer) → kommer i egen "fasteners"-fil
-- Losholter, vindkryds, taghane, yard-bjælker → kommer senere
-- Strøer-gulv (floor joists inde i huset) → kommer senere
-- Klink, vindpapir, voliernet → `beklaedning.md` (todo.md #4)
-- Selve dør-blade og vinduesrammer (kun struktur-frame her) → `aabninger.md` (todo.md #3)
-- Tag, spær, dækning → `tagkonstruktion.md` (todo.md #5)
