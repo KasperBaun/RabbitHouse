@@ -15,7 +15,7 @@ v1_preset = "7x3";
 // stud walls, posts, plates, and beams are visible — useful for auditing the
 // frame against TIMBER-FRAMING.md and counting timber for a shopping list.
 // (Currently honoured by v3 only.)
-show_cladding = false;
+show_cladding = true;
 
 // Toggle outdoor grass / gravel path / yard grass. The fundablok ring
 // stands 120 mm proud of grade so its sokkel is visible even with
