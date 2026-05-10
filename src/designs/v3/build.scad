@@ -4,7 +4,6 @@ include <config.scad>
 
 use <fundament.scad>
 use <konstruktions-skelet.scad>
-use <vaegge.scad>
 use <tagkonstruktion.scad>
 use <beklaedning.scad>
 use <aabninger.scad>
@@ -20,11 +19,9 @@ module build_v3() {
     // === Aktivt indhold ===
     v3_fundament(show_ground, pal);
     v3_konstruktions_skelet(pal);
+    v3_aabninger(_default_mesh(), pal);
 
     // === Inaktivt — slå til når de er rettet til (uncomment) ===
-    //
-    // todo.md #3: aabninger (døre + vinduer)
-    // if (show_cladding) v3_aabninger(_default_mesh(), pal);
     //
     // todo.md #4: beklaedning (vindpap, klemmelister, klink, voliernet)
     // if (show_cladding) v3_beklaedning(DEFAULT_CLAD, pal);
@@ -32,8 +29,6 @@ module build_v3() {
     // todo.md #5: tagkonstruktion (spær + dækning)
     // v3_tagkonstruktion(roof_cover, pal);
     //
-    // Legacy — vil blive foldet ind i konstruktions-skelet/beklaedning:
-    // v3_vaegge(DEFAULT_STUD, _default_mesh(), pal);
     // v3_inventar(show_cladding, show_ground, pal);
 }
 

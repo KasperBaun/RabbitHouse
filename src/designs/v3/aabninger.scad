@@ -1,112 +1,242 @@
-// aabninger.scad — Doors + window + framed openings
-// Part of the v3 build pipeline; included from build.scad.
+// aabninger.scad — Yard-udhusdør, indvendig dør og side-vindue:
+// karm, leaf/plexi, beslag, arkitrav.
+// Part of the v3 build pipeline; called from build.scad when show_cladding=true.
+//
+// Renderer KUN selve åbnings-enhederne: karm (4 stykker indeni rough opening),
+// leaf eller plexi-rude, hardware (hængsler, lås, håndtag), arkitrav (trim der
+// dækker spalten mellem karm og rough opening) samt bundkarm/dørtrin hvor
+// relevant. Selve det strukturelle (jamb-reglar, header, cripples, rough sill)
+// ligger i konstruktions-skelet.scad.
+//
+// Pet-åbningen i partition-væggen er BEVIDST tom her — det er bare en
+// rough opening i skelettet, klar til at en standard kattelem (eller
+// lignende kommercielt produkt) kan installeres direkte. Ingen geometri
+// rendres for det.
+//
+// Z-base = V3_FLOOR_TOP (= 167, top af bundrem) som matches af skelettets
+// STUD_BOTTOM_Z og alle dets framed_opening-positioner.
+//
+// Note: arkitravet sidder ved den ydre stud-flade (= V3_POST_W=95 mm
+// nede i væggen). Når beklaedning.scad (#4) reaktiveres med klink+lægter,
+// skal arkitravet rykkes udad med klink+lægte-tykkelsen — det er #4's
+// opgave.
 
 include <../../lib/defaults.scad>
 include <config.scad>
-use <../../lib/primitives/openings.scad>
-use <../../lib/primitives/mesh.scad>
-use <../../lib/decor/rabbit.scad>
 
-// Human door in the partition (X=hl outer face, faces +X into yard).
-// `floor_z` is the Z of the finished floor (= V3_FLOOR_TOP = 165); the
-// door leaf and all architraves sit on / start from floor level.
-module v3_partition_door(hl, ct, door_y, door_w, door_h, floor_z, pal) {
-    leaf_t = 40;
-    leaf_x = hl + ct/2 - leaf_t/2;
-    architrave_w = 70;
-    architrave_t = 20;
-    arch_x = hl + ct + 2;
+// ============================================================================
+// Materialeskonstanter
+// ============================================================================
+KARM_T          = 50;            // karm tømmer-tykkelse (yard-dør + indvendig dør)
+LEAF_T          = 40;            // dørblad-tykkelse
+THRESHOLD_H     = 30;            // bundkarm/dørtrin-højde (kun yard-dør)
+ARCH_W          = 70;            // arkitrav synlig bredde
+ARCH_T          = 20;            // arkitrav stikker ARCH_T ud fra væg
 
-    color(pal_door(pal))
-    translate([leaf_x, door_y, floor_z])
-        cube([leaf_t, door_w, door_h]);
-    color(pal_trim(pal))
-    for (i = [0 : 3])
-        translate([leaf_x + leaf_t - 1, door_y + 50, floor_z + 200 + i * 400])
-            cube([2, door_w - 100, 30]);
+WALL_DEPTH      = V3_POST_W;     // = 95, stud-dybde
+FLOOR_Z         = V3_FLOOR_TOP;  // = 167, top af bundrem
 
-    color(pal_trim(pal)) {
-        translate([arch_x, door_y - architrave_w + 10, floor_z + door_h])
-            cube([architrave_t, door_w + 2*architrave_w - 20, architrave_w]);
-        translate([arch_x, door_y - architrave_w + 10, floor_z])
-            cube([architrave_t, architrave_w, door_h]);
-        translate([arch_x, door_y + door_w - 10, floor_z])
-            cube([architrave_t, architrave_w, door_h]);
+PARTITION_X     = V3_HOUSE_LEN;  // partition-væg's midte (X = hl)
+PART_OUTER_X    = PARTITION_X + WALL_DEPTH/2;   // yard-side outer face
+PART_INNER_X    = PARTITION_X - WALL_DEPTH/2;   // hus-side outer face
+
+// Side-vindue: bare et stykke plexi udenpå rough opening, der overlapper
+// jamb-reglar + header + rough sill med PLEXI_OVERLAP hele vejen rundt så
+// der er træværk at skrue igennem.
+PLEXI_T         = 6;
+PLEXI_OVERLAP   = 30;
+
+PLEXI_C         = [0.88, 0.94, 0.96, 0.50];
+HINGE_C         = [0.30, 0.30, 0.32];
+HANDLE_C        = [0.85, 0.85, 0.88];
+
+// ----------------------------------------------------------------------------
+// Helper — 3-piece arkitrav (top + 2 sider) omkring et rektangel.
+//   plane_n = "+x" | "-x" | "+y" | "-y" — udadgående normal
+//   plane_p = position af planet (X eller Y koordinat)
+//   axis_lo, axis_hi = åbningens ende-punkter langs væggens akse
+//   z0, z1 = åbningens bund og top
+// ----------------------------------------------------------------------------
+module _arch_around(plane_n, plane_p, axis_lo, axis_hi, z0, z1, palette) {
+    w = ARCH_W; t = ARCH_T;
+    color(pal_trim(palette))
+    if (plane_n == "-y") {
+        translate([axis_lo - w, plane_p - t, z0])
+            cube([w, t, z1 - z0]);                  // venstre
+        translate([axis_hi,     plane_p - t, z0])
+            cube([w, t, z1 - z0]);                  // højre
+        translate([axis_lo - w, plane_p - t, z1])
+            cube([axis_hi - axis_lo + 2*w, t, w]);  // top
+    } else if (plane_n == "+y") {
+        translate([axis_lo - w, plane_p, z0])         cube([w, t, z1 - z0]);
+        translate([axis_hi,     plane_p, z0])         cube([w, t, z1 - z0]);
+        translate([axis_lo - w, plane_p, z1])
+            cube([axis_hi - axis_lo + 2*w, t, w]);
+    } else if (plane_n == "-x") {
+        translate([plane_p - t, axis_lo - w, z0])     cube([t, w, z1 - z0]);
+        translate([plane_p - t, axis_hi,     z0])     cube([t, w, z1 - z0]);
+        translate([plane_p - t, axis_lo - w, z1])
+            cube([t, axis_hi - axis_lo + 2*w, w]);
+    } else if (plane_n == "+x") {
+        translate([plane_p, axis_lo - w, z0])         cube([t, w, z1 - z0]);
+        translate([plane_p, axis_hi,     z0])         cube([t, w, z1 - z0]);
+        translate([plane_p, axis_lo - w, z1])
+            cube([t, axis_hi - axis_lo + 2*w, w]);
     }
-
-    color([0.85, 0.85, 0.88]) {
-        translate([arch_x + architrave_t, door_y + door_w - 100, floor_z + 1050])
-            cube([25, 60, 25]);
-        translate([arch_x + architrave_t + 3, door_y + door_w - 110, floor_z + 1000])
-            cube([8, 80, 110]);
-        translate([arch_x + architrave_t + 10, door_y + door_w - 90, floor_z + 1700])
-            cube([15, 70, 22]);
-    }
-    color([0.30, 0.30, 0.32])
-    for (zh = [floor_z + 200, floor_z + door_h - 300])
-        translate([arch_x + architrave_t + 3, door_y - 5, zh])
-            cube([8, 15, 100]);
 }
 
-// Yard mesh-and-frame entry door (front, Y=0, swings outward).
-module v3_yard_door(door_x, door_w, door_h, sill_top, pal, mesh) {
-    md  = ms_depth(mesh);
-    sp  = ms_spacing(mesh);
-    mb  = ms_bar(mesh);
-    fr  = 50;
-    z0  = sill_top;
-    z1  = sill_top + door_h;
+// ============================================================================
+// 1. Yard-udhusdør — front-væg V1, vender -Y, åbner udad mod haven.
+//    Mesh-i-træramme leaf med midt-rigel; arkitrav på -Y-siden.
+// ============================================================================
+module v3_yard_door(mesh, palette) {
+    x0 = V3_YARD_DOOR_X;
+    x1 = x0 + V3_YARD_DOOR_W;
+    z0 = FLOOR_Z;
+    z1 = z0 + V3_YARD_DOOR_H;
 
-    z_mid = z0 + V3_MID_RAIL_Z_OFFSET;
-    color(pal_post(pal)) {
-        translate([door_x, -md, z0])               cube([door_w, md, fr]);
-        translate([door_x, -md, z1 - fr])          cube([door_w, md, fr]);
-        translate([door_x, -md, z0])               cube([fr, md, door_h]);
-        translate([door_x + door_w - fr, -md, z0]) cube([fr, md, door_h]);
-        translate([door_x, -md, z_mid - fr/2])     cube([door_w, md, fr]);
+    // --- Karm (4 stykker indeni rough opening) ---
+    color(pal_post(palette)) {
+        // Bundkarm/dørtrin
+        translate([x0, 0, z0])
+            cube([V3_YARD_DOOR_W, WALL_DEPTH, THRESHOLD_H]);
+        // Topkarm
+        translate([x0, 0, z1 - KARM_T])
+            cube([V3_YARD_DOOR_W, WALL_DEPTH, KARM_T]);
+        // Sidekarme
+        karm_h = V3_YARD_DOOR_H - THRESHOLD_H - KARM_T;
+        translate([x0, 0, z0 + THRESHOLD_H])
+            cube([KARM_T, WALL_DEPTH, karm_h]);
+        translate([x1 - KARM_T, 0, z0 + THRESHOLD_H])
+            cube([KARM_T, WALL_DEPTH, karm_h]);
     }
 
-    color(pal_mesh(pal)) {
-        for (band_z = [[z0 + fr, z_mid - fr/2],
-                       [z_mid + fr/2, z1 - fr]]) {
-            zlo = band_z[0]; zhi = band_z[1];
-            for (xx = [door_x + fr + sp/2 : sp : door_x + door_w - fr - sp/2])
-                translate([xx - mb/2, -md + (md-mb)/2, zlo])
-                    cube([mb, mb, zhi - zlo]);
-            for (zz = [zlo + sp/2 : sp : zhi - sp/2])
-                translate([door_x + fr, -md + (md-mb)/2, zz - mb/2])
-                    cube([door_w - 2*fr, mb, mb]);
-        }
+    // --- Mesh-i-træramme leaf (åbner -Y; her vist lukket flush med ydre væg) ---
+    leaf_x0 = x0 + KARM_T;
+    leaf_x1 = x1 - KARM_T;
+    leaf_w  = leaf_x1 - leaf_x0;
+    leaf_z0 = z0 + THRESHOLD_H;
+    leaf_z1 = z1 - KARM_T;
+    leaf_h  = leaf_z1 - leaf_z0;
+    leaf_y  = 5;                                 // 5 mm inset fra ydre væg
+    fr      = 50;                                // ramme-bredde i leaf
+    mid_z   = leaf_z0 + V3_MID_RAIL_Z_OFFSET;
+
+    color(pal_post(palette)) {
+        translate([leaf_x0, leaf_y, leaf_z0])         cube([leaf_w, LEAF_T, fr]);          // bund
+        translate([leaf_x0, leaf_y, leaf_z1 - fr])    cube([leaf_w, LEAF_T, fr]);          // top
+        translate([leaf_x0, leaf_y, leaf_z0])         cube([fr, LEAF_T, leaf_h]);          // venstre
+        translate([leaf_x1 - fr, leaf_y, leaf_z0])    cube([fr, LEAF_T, leaf_h]);          // højre
+        translate([leaf_x0, leaf_y, mid_z - fr/2])    cube([leaf_w, LEAF_T, fr]);          // midt-rigel
     }
 
-    color([0.85, 0.85, 0.88]) {
-        translate([door_x + door_w - 90, -md - 25, z0 + 1050])
-            cube([60, 25, 25]);
-        translate([door_x + door_w - 100, -md - 6, z0 + 1000])
-            cube([80, 8, 110]);
-        translate([door_x + door_w - 90, -md - 14, z0 + 1700])
-            cube([70, 14, 22]);
+    // Mesh i to bånd (over og under midt-rigel)
+    mb = ms_bar(mesh); sp = ms_spacing(mesh);
+    color(pal_mesh(palette))
+    for (band = [[leaf_z0 + fr,  mid_z - fr/2],
+                 [mid_z + fr/2,  leaf_z1 - fr]]) {
+        zlo = band[0]; zhi = band[1];
+        for (xx = [leaf_x0 + fr + sp/2 : sp : leaf_x1 - fr - sp/2])
+            translate([xx - mb/2, leaf_y + LEAF_T/2 - mb/2, zlo])
+                cube([mb, mb, zhi - zlo]);
+        for (zz = [zlo + sp/2 : sp : zhi - sp/2])
+            translate([leaf_x0 + fr, leaf_y + LEAF_T/2 - mb/2, zz - mb/2])
+                cube([leaf_w - 2*fr, mb, mb]);
     }
-    color([0.30, 0.30, 0.32])
-    for (zh = [z0 + 200, z1 - 300])
-        translate([door_x - 8, -md - 8, zh])
+
+    // --- Hardware (greb + hængsler på -Y-siden) ---
+    color(HANDLE_C) {
+        translate([leaf_x1 - 90, leaf_y - 25, z0 + 1050])    cube([60, 25, 25]);
+        translate([leaf_x1 - 100, leaf_y - 6,  z0 + 1000])   cube([80,  8, 110]);
+    }
+    color(HINGE_C)
+    for (zh = [z0 + 200, z1 - 350])
+        translate([leaf_x0 - 8, leaf_y - 8, zh])
             cube([15, 8, 100]);
+
+    // --- Arkitrav på -Y-siden ---
+    _arch_around("-y", 0, x0, x1, z0, z1, palette);
 }
 
-module v3_aabninger(mesh = DEFAULT_MESH, palette = DEFAULT_PALETTE) {
-    ll = V3_LENGTH; ww = V3_WIDTH; bh = V3_BASE_H; wt = V3_WALL_T;
-    hl = V3_HOUSE_LEN;
-    ct = 22;
+// ============================================================================
+// 2. Indvendig dør i partition — V5, vender +X (mod yard), åbner ind i yard.
+//    Massiv leaf med 4 panel-noter; arkitrav på +X-siden.
+// ============================================================================
+module v3_human_door(palette) {
+    y0 = V3_HOUSE_DOOR_Y;
+    y1 = y0 + V3_HOUSE_DOOR_W;
+    z0 = FLOOR_Z;
+    z1 = z0 + V3_HOUSE_DOOR_H;
 
-    v3_partition_door(hl, ct, V3_HOUSE_DOOR_Y, V3_HOUSE_DOOR_W,
-                      V3_HOUSE_DOOR_H, V3_FLOOR_TOP, palette);
-    rabbit_pet_door_yz(hl - wt, V3_PET_DOOR_Y, V3_FLOOR_TOP + 60,
-                       V3_PET_DOOR_W, V3_PET_DOOR_H, wt, palette);
-    color([0.55, 0.50, 0.40])
-    translate([hl + ct + 20, V3_HOUSE_DOOR_Y - 50, V3_FLOOR_TOP])
-        cube([200, V3_HOUSE_DOOR_W + 100, 12]);
-    window_with_trim_xneg(0, V3_SIDE_WIN_Y, V3_FLOOR_TOP + V3_SIDE_WIN_Z,
-                          V3_SIDE_WIN_W, V3_SIDE_WIN_H, ct, palette, true);
-    v3_yard_door(V3_YARD_DOOR_X, V3_YARD_DOOR_W, V3_YARD_DOOR_H,
-                 V3_YARD_SILL_TOP, palette, mesh);
+    // --- Karm (3 stykker — top + 2 sider, ingen bundkarm i indvendig dør) ---
+    color(pal_post(palette)) {
+        // Topkarm (spænder over hele åbningen i Y, fyldt i X)
+        translate([PART_INNER_X, y0, z1 - KARM_T])
+            cube([WALL_DEPTH, V3_HOUSE_DOOR_W, KARM_T]);
+        // Sidekarme (fra gulv til topkarm)
+        karm_h = V3_HOUSE_DOOR_H - KARM_T;
+        translate([PART_INNER_X, y0, z0])
+            cube([WALL_DEPTH, KARM_T, karm_h]);
+        translate([PART_INNER_X, y1 - KARM_T, z0])
+            cube([WALL_DEPTH, KARM_T, karm_h]);
+    }
+
+    // --- Leaf (massivt dørblad i karmens midte, åbner +X) ---
+    leaf_y0 = y0 + KARM_T;
+    leaf_y1 = y1 - KARM_T;
+    leaf_w  = leaf_y1 - leaf_y0;
+    leaf_h  = V3_HOUSE_DOOR_H - KARM_T;
+    leaf_x  = PARTITION_X - LEAF_T/2;            // centreret i væg
+
+    color(pal_door(palette))
+    translate([leaf_x, leaf_y0, z0])
+        cube([LEAF_T, leaf_w, leaf_h]);
+
+    // 4 vandrette panel-noter på +X-fladen af leafen
+    color(pal_trim(palette))
+    for (i = [0 : 3])
+        translate([leaf_x + LEAF_T - 1, leaf_y0 + 50, z0 + 200 + i * 400])
+            cube([2, leaf_w - 100, 30]);
+
+    // --- Hardware (på +X-siden, greb højre side af døren) ---
+    color(HANDLE_C) {
+        translate([leaf_x + LEAF_T,     leaf_y1 - 100, z0 + 1050])  cube([25, 60, 25]);
+        translate([leaf_x + LEAF_T + 3, leaf_y1 - 110, z0 + 1000])  cube([ 8, 80, 110]);
+    }
+    color(HINGE_C)
+    for (zh = [z0 + 200, z1 - 350])
+        translate([leaf_x - 5, leaf_y0 + 5, zh])
+            cube([15, 8, 100]);
+
+    // --- Arkitrav på +X-siden (yard) ---
+    _arch_around("+x", PART_OUTER_X, y0, y1, z0, z1, palette);
+}
+
+// ============================================================================
+// 3. Side-vindue — V3 venstre væg, vender -X. Bare et stykke 6 mm plexi-
+//    glas skruet udenpå rough opening; overlapper jamb-reglar + header +
+//    rough sill med PLEXI_OVERLAP hele vejen rundt så der er træværk at
+//    skrue igennem. Ingen karm, sprosser eller drypnæse — det er en
+//    kanin-stald, ikke et danskvinduesnørden.
+// ============================================================================
+module v3_side_window() {
+    y0 = V3_SIDE_WIN_Y - PLEXI_OVERLAP;
+    y1 = V3_SIDE_WIN_Y + V3_SIDE_WIN_W + PLEXI_OVERLAP;
+    z0 = FLOOR_Z + V3_SIDE_WIN_Z - PLEXI_OVERLAP;
+    z1 = FLOOR_Z + V3_SIDE_WIN_Z + V3_SIDE_WIN_H + PLEXI_OVERLAP;
+
+    color(PLEXI_C)
+    translate([-PLEXI_T, y0, z0])
+        cube([PLEXI_T, y1 - y0, z1 - z0]);
+}
+
+// ============================================================================
+// Wrapper — komponerer de 3 åbnings-enheder.
+// Pet-åbningen i partition-væggen står tom (rough opening i skelettet,
+// kommerciel kattelem installeres direkte deri).
+// ============================================================================
+module v3_aabninger(mesh = DEFAULT_MESH, palette = DEFAULT_PALETTE) {
+    v3_yard_door(mesh, palette);
+    v3_human_door(palette);
+    v3_side_window();
 }

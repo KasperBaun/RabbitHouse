@@ -69,7 +69,7 @@ V3, V4 og V5 løber parallelt med tagets hældning. Deres toprem skrår fra HØJ
 
 ## Materialeliste
 
-Maks længde 3600 mm — V1 og V2 (6 m hver) splejses af ét 3600 + ét 2400 stykke.
+Maks længde 3600 mm — V1 og V2 (6 m hver) splejses af ét 3600 + ét 2400 stykke. Stykkevis skæreliste pr. væg: [skaereliste-skelet.md](skaereliste-skelet.md).
 
 | #   | Vare                     | Beskrivelse                                                              | Antal | Enhed      | Pris/enh  | I alt   |
 | --- | ------------------------ | ------------------------------------------------------------------------ | ----- | ---------- | --------- | ------- |
@@ -80,7 +80,7 @@ Maks længde 3600 mm — V1 og V2 (6 m hver) splejses af ét 3600 + ét 2400 sty
 | 5   | Bitumen-tape 100 mm bred | Murpap mellem sokkel og bundrem                                          | 1     | rulle 25 m |           |         |
 |     |                          |                                                                          |       |            | **Total** | **kr.** |
 
-Header, cripples og rough sill (~5 m i alt) skæres af spild fra studs (~12 m i alt fra 2400-stokken).
+Header, cripples og rough sill (~5,6 m i alt) skæres af spild fra studs (~7,2 m fra 2400-stokken).
 
 ## Bygge-rækkefølge
 

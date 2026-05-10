@@ -148,13 +148,19 @@ function v3_roof_oz_for(eh_back) =
 function v3_roof_under_for(eh_back, y) =
     v3_roof_oz_for(eh_back) - (V3_OH_FRONT + y) * v3_total_drop_for(eh_back) / v3_span_total();
 
-// Floor finish (krydsfiner top) — flush with bundrem top so doors land
-// at floor level, not at slab top. Bundrem sits directly on ring (DPC
-// implicit; no air gap), so floor top = ring top + bundrem height.
-V3_FLOOR_TOP = V3_BASE_H + V3_SILL_H;   // = 120 + 45 = 165
+// DPC tape (murpap) tykkelse mellem sokkel-ring og bundrem. Bundrem bærer
+// alt træ-skelettet og sidder PÅ TOP af DPC-båndet, ikke direkte på sokkel
+// — derfor lægger gulv-niveau 2 mm højere end ring-toppen.
+V3_DPC_T = 2;
 
-// Top of the yard sill plate (sill sits directly on ring at Z=V3_BASE_H).
-V3_YARD_SILL_TOP = V3_BASE_H + V3_SILL_H;  // = 165 (unchanged numeric, but consistent)
+// Floor finish (krydsfiner top) — flush med bundrem-toppen så døre lander
+// ved gulv-niveau. Bundrem sidder ovenpå DPC-båndet på sokkel-ringen, så
+// floor_top = ring_top + DPC + bundrem-tykkelse.
+V3_FLOOR_TOP = V3_BASE_H + V3_DPC_T + V3_SILL_H;   // = 120 + 2 + 45 = 167
+
+// Top of the yard sill plate — yard-bundremmen sidder også på DPC-båndet,
+// så toppen er identisk med V3_FLOOR_TOP.
+V3_YARD_SILL_TOP = V3_FLOOR_TOP;  // = 167
 
 // Yard back wall: low solid-clad skirt at the bottom (driving-rain
 // defence), mesh ventilation band above.
@@ -167,7 +173,7 @@ V3_FLOOR_DECK_T     = 18;
 V3_FLOOR_JOIST_W    = 45;
 V3_FLOOR_JOIST_H    = 95;
 V3_FLOOR_JOIST_C2C  = 600;
-// Top of krydsfiner = floor finish = bundrem top (V3_FLOOR_TOP=165).
-V3_FLOOR_DECK_Z     = V3_FLOOR_TOP - V3_FLOOR_DECK_T;  // = 147 (top of strøer)
+// Top of krydsfiner = floor finish = bundrem top (V3_FLOOR_TOP=167).
+V3_FLOOR_DECK_Z     = V3_FLOOR_TOP - V3_FLOOR_DECK_T;  // = 149 (top of strøer)
 // Ledger top = bottom of strøer.
-V3_FLOOR_LEDGER_Z   = V3_FLOOR_DECK_Z - V3_FLOOR_JOIST_H;  // = 52
+V3_FLOOR_LEDGER_Z   = V3_FLOOR_DECK_Z - V3_FLOOR_JOIST_H;  // = 54

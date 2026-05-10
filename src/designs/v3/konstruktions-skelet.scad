@@ -366,11 +366,12 @@ module v3_framed_openings(palette = DEFAULT_PALETTE) {
                       has_sill = false, wall_top = WALL_TOP_LOW,
                       sloped = true, palette = palette);
 
-    // Pet door — partition V5 (axis Y, sloped top), no sill (small opening,
-    // bundrem covers the gap below).
+    // Pet door — partition V5 (axis Y, sloped top), no sill. Opening starts
+    // 60 mm above floor so kaninen ikke træder ned i bundkarmen ved
+    // gennemgangen; bundrem dækker selve gulv-til-opening-bund-spalten.
     v3_framed_opening(wall_origin = [hl - STUD_DEPTH/2, 0, 0], axis = "Y",
                       opening_pos = V3_PET_DOOR_Y, opening_w = V3_PET_DOOR_W,
-                      opening_z = V3_FLOOR_TOP + 15, opening_h = V3_PET_DOOR_H,
+                      opening_z = V3_FLOOR_TOP + 60, opening_h = V3_PET_DOOR_H,
                       has_sill = false, wall_top = WALL_TOP_LOW,
                       sloped = true, palette = palette);
 }

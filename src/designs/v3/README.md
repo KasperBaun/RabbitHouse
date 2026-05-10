@@ -10,7 +10,7 @@ config.scad                 # constants — read first
 build.scad                  # composes the systems below
 
 fundament.scad              # ↓ what the tømrer builds first
-vaegge.scad                 # ↓ then this
+konstruktions-skelet.scad   # ↓ then this (træ-skelet over fundamentet)
 tagkonstruktion.scad        # ↓ then this
 beklaedning.scad            # ↓ then this (visual layer)
 aabninger.scad              # ↓ then this (doors / window)
@@ -23,8 +23,8 @@ inventar.scad               # last — nest box, bowls, decor
 |---|---|---|
 | `config.scad` | Constants & geometry helpers | — |
 | `build.scad` | Top dispatcher (~30 lines) | — |
-| `fundament.scad` | Fundablok ring + slab/strøer floor + apron | Fundablok 50×20×15, beton, 45×95 PT, 18 mm krydsfiner |
-| `vaegge.scad` | All stud walls (house solid + yard mesh frame) | 45×95 reglar, 95 mm bats, vindpapir, 22×95 vindkryds, 45×95 losholter |
+| `fundament.scad` | Fundablok ring + ankerskruer | Fundablok 50×20×15, beton, ankerskrue M10 |
+| `konstruktions-skelet.scad` | DPC + bundrem + reglar + framed openings + toprem | Murpap, 45×95 reglar (PT/gran C24) |
 | `tagkonstruktion.scad` | Spær + cover layers + sternbrædder + tagrende | 45×95 spær, varies by `roof_cover` |
 | `beklaedning.scad` | Klink cladding + afstandsliste + hjørnetrim | 22 mm klinkbrædder + 22×45 lægter |
 | `aabninger.scad` | 4 openings: human dør (partition), pet dør, yard dør, sidevindue | Trä karm, hængsler, beslag |
