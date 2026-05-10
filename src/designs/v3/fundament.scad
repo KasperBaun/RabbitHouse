@@ -19,7 +19,6 @@ module v3_fundament(show_ground = true, palette = DEFAULT_PALETTE) {
 
     if (show_ground) {
         ground_grass([ll/2, ww/2]);
-        gravel_path_y([V3_YARD_DOOR_X + V3_YARD_DOOR_W/2, 0]);
     }
 
     // Top af ring ligger ved Z=bh (sokkel-niveau), ringen extends 480 mm
