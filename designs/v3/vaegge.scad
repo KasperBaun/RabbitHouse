@@ -26,13 +26,11 @@ module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
               v3_roof_under(0)      - z_sill, "X", stud, pal,
               h_inner = v3_roof_under(sd)        - z_sill);
     v3_wall_bats([0, sd, z_sill], hl, v3_roof_under(0) - z_sill, "X");
-    v3_wind_paper([0, -WIND_PAPER_T, z_sill], hl, v3_roof_under(0) - z_sill, "X");
     v3_losholter([0, 0, z_sill], hl, "X");
     stud_wall([0, ww - sd, z_sill], hl,
               v3_roof_under(ww - sd) - z_sill, "X", stud, pal,
               h_inner = v3_roof_under(ww)        - z_sill);
     v3_wall_bats([0, ww - sd, z_sill], hl, v3_roof_under(ww - sd) - z_sill, "X");
-    v3_wind_paper([0, ww, z_sill], hl, v3_roof_under(ww - sd) - z_sill, "X");
     v3_losholter([0, ww - sd, z_sill], hl, "X");
 
     // Side and partition walls — sloped top plates that bear directly on
@@ -50,13 +48,11 @@ module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
                      "Y", stud, pal, left_skip);
     v3_wall_bats([sd, 0, z_sill], ww, min(ehf - air_gap, ehb - air_gap), "Y",
                  skip_ranges = left_skip);
-    v3_wind_paper([-WIND_PAPER_T, 0, z_sill], ww, min(ehf - air_gap, ehb - air_gap), "Y");
     v3_losholter([0, 0, z_sill], ww, "Y", skip_ranges = left_skip);
     stud_wall_sloped([hl - sd, 0, z_sill], ww, ehf - air_gap, ehb - air_gap,
                      "Y", stud, pal, partition_skip);
     v3_wall_bats([hl - sd, 0, z_sill], ww, min(ehf - air_gap, ehb - air_gap), "Y",
                  skip_ranges = partition_skip);
-    v3_wind_paper([hl, 0, z_sill], ww, min(ehf - air_gap, ehb - air_gap), "Y");
     v3_losholter([hl - sd, 0, z_sill], ww, "Y", skip_ranges = partition_skip);
 
     // Framed openings — jamb studs, header, cripples (and rough sill for
@@ -410,23 +406,6 @@ module v3_losholter(origin, length, axis, sw=45, sd=95, sp=600,
                     cube([sd, b - a, sw]);
         }
     }
-}
-
-// ---------------------------------------------------------------------------
-// Vindpapir (E2) — wind membrane on wall outer faces
-// ---------------------------------------------------------------------------
-
-WIND_PAPER_COLOR = [0.50, 0.50, 0.52];
-WIND_PAPER_T     = 1;
-
-module v3_wind_paper(origin, length, height, axis) {
-    bom_member("vindpapir", "polyolefin", length, height, WIND_PAPER_T,
-               "wind_membrane_m2", system="vaegge");
-    color(WIND_PAPER_COLOR)
-    if (axis == "X")
-        translate(origin) cube([length, WIND_PAPER_T, height]);
-    else
-        translate(origin) cube([WIND_PAPER_T, length, height]);
 }
 
 // ---------------------------------------------------------------------------

@@ -1,10 +1,28 @@
-// beklaedning.scad — Klink + hjørnetrim + (later: afstandsliste/vindpapir)
+// beklaedning.scad — Klink + hjørnetrim + afstandsliste + vindpapir
 // Part of the v3 build pipeline; included from build.scad.
 
 include <../../lib/defaults.scad>
 include <config.scad>
 use <../../lib/primitives/cladding.scad>
 use <../../lib/bom.scad>
+
+// ---------------------------------------------------------------------------
+// Vindpapir (E2) — wind membrane on outer face of each cladded wall.
+// Lives here (not vaegge.scad) so show_cladding=false reveals the frame.
+// ---------------------------------------------------------------------------
+
+WIND_PAPER_COLOR = [0.50, 0.50, 0.52];
+WIND_PAPER_T     = 1;
+
+module v3_wind_paper(origin, length, height, axis) {
+    bom_member("vindpapir", "polyolefin", length, height, WIND_PAPER_T,
+               "wind_membrane_m2", system="beklaedning");
+    color(WIND_PAPER_COLOR)
+    if (axis == "X")
+        translate(origin) cube([length, WIND_PAPER_T, height]);
+    else
+        translate(origin) cube([WIND_PAPER_T, length, height]);
+}
 
 // House cladding: front (no door), back, left (with side window cutout),
 // partition (with house door + pet door cutouts via inline difference()).
@@ -86,6 +104,16 @@ module v3_beklaedning(clad = DEFAULT_CLAD, palette = DEFAULT_PALETTE) {
     // vindpapir at outer stud face; afstandsliste just outside; klink nails to it.
     al_t = 22;   // afstandsliste thickness (depth into wall)
     vp_t = 1;    // vindpapir thickness
+
+    // Vindpapir on outer face of each cladded wall — placed before klink so
+    // it sits between studs and boards in the layer stack.
+    z_sill = 10;  // wall sill air-gap (matches v3_house_framing z_sill)
+    v3_wind_paper([0, -WIND_PAPER_T, z_sill], hl, v3_roof_under(0) - z_sill, "X");
+    v3_wind_paper([0, ww, z_sill], hl, v3_roof_under(ww - 95) - z_sill, "X");
+    v3_wind_paper([-WIND_PAPER_T, 0, z_sill], ww,
+                  min(V3_EH_FRONT - 10, V3_EH_BACK - 10), "Y");
+    v3_wind_paper([hl, 0, z_sill], ww,
+                  min(V3_EH_FRONT - 10, V3_EH_BACK - 10), "Y");
 
     v3_house_cladding(hl, ww, ehf, ehb, bh, ct, palette, clad);
     v3_house_corner_trims(hl, ww, ehf, ehb, bh, ct, palette);
