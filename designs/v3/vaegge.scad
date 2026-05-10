@@ -11,12 +11,11 @@ use <../../lib/bom.scad>
 module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
     sd       = ss_d(stud);
     sw       = ss_w(stud);
-    air_gap  = 10;                   // 5–10 mm drainage / capillary-break gap
-    // Wall sill rests on top of the fundablok ring (Z=0). 10 mm air gap
-    // between bundrem and ring per TIMBER-FRAMING.md (drainage / capillary
-    // break). Was previously bh+air_gap when the wall sat on a slab.
-    z_sill   = 10;
-    z_bp_top = z_sill + sw;          // bundrem top — door rough-opening floor
+    // Bundrem sits DIRECTLY on the fundablok ring top (DPC implicit, no air gap).
+    // Sokkel level = V3_BASE_H = 120; bundrem top = V3_FLOOR_TOP = 165.
+    z_sill   = V3_BASE_H;
+    z_bp_top = z_sill + sw;          // = 165, matches V3_FLOOR_TOP
+    air_gap  = 0;                    // kept as a local for downstream wall-height math
 
     // Front and back walls — top plate slopes across the wall thickness so
     // the toprem follows the roof underside instead of clipping it. Both
