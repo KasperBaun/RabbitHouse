@@ -119,30 +119,19 @@ module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
 //   reglar is sufficient). The reglar sits 45 mm thin along X with its
 //   outer face flush at X=hl+rl, and 95 mm wide along Y matching the
 //   adjacent sill / beam Y-envelope. It rests on a steel post-base
-//   bracket (18 mm) directly on the fundablok ring top at sokkel level
-//   Z=bh per Phase 1 spec ("bundrem af alle vægge sidder her").
+//   sill plate directly on the fundablok ring top at sokkel level Z=bh
+//   (standard stud-wall convention — no intermediate bracket).
 module v3_yard_posts_and_sills(hl, rl, ww, bh, fpw, ct, pal) {
     reglar_t = 45;          // thin dimension along X (the "45" of 45×95)
-    bracket_h = 18;
 
     corner_reglar = [
         [hl + rl - reglar_t, 0,        v3_roof_under(0)],
         [hl + rl - reglar_t, ww - fpw, v3_roof_under(ww - fpw)]
     ];
 
-    // Steel post-base brackets sized to the 45×95 reglar, sitting on
-    // the fundablok ring top at Z=bh (sokkel level).
-    for (p = corner_reglar)
-        bom_member("bracket", "steel-galv", reglar_t + 16, fpw + 16,
-                   bracket_h, "yard_corner_post_base", system="vaegge");
-
-    color([0.30, 0.30, 0.32])
-    for (p = corner_reglar)
-        translate([p[0] - 8, p[1] - 8, bh])
-            cube([reglar_t + 16, fpw + 16, bracket_h]);
-
-    // Yard corner reglar (bracket top → roof underside).
-    z0 = bh + bracket_h;
+    // Yard corner reglar sits on top of the sill plate (sill plate sits
+    // directly on the fundablok ring, standard stud-wall convention).
+    z0 = bh + V3_SILL_H;
     for (p = corner_reglar)
         bom_member("reglar", "pt-pine", reglar_t, fpw, p[2] - z0,
                    "yard_corner_reglar", system="vaegge");
@@ -153,7 +142,7 @@ module v3_yard_posts_and_sills(hl, rl, ww, bh, fpw, ct, pal) {
             cube([reglar_t, fpw, p[2] - z0]);
     }
 
-    sill_z = bh + bracket_h;
+    sill_z = bh;
 
     // BOM — yard sills (4 segments)
     front_left_len  = V3_YARD_DOOR_X - (hl + ct);
@@ -226,9 +215,8 @@ module v3_yard_top_beams(hl, rl, ww, fpw, ct, pal) {
 //   Right: every 1 m from the front corner.
 module v3_yard_stiles(hl, rl, ww, fpw, pal) {
     sw = V3_STILE_W;
-    // Yard sills sit on top of an 18 mm bracket on top of the fundablok
-    // ring whose top is at sokkel level Z=V3_BASE_H per Phase 1 spec.
-    sill_top = V3_BASE_H + V3_SILL_H + 18;
+    // Yard sill plate top = V3_YARD_SILL_TOP (sill sits directly on ring).
+    sill_top = V3_YARD_SILL_TOP;
 
     front_xs = [hl + 3000];
     front_beam_top = v3_roof_under(0) - V3_BEAM_H;
@@ -284,7 +272,7 @@ module v3_mesh_midrail_y(panel_y, panel_w, x_pos, z_center, mesh, pal) {
 // so the wood line is continuous across the whole front wall.
 module v3_yard_mesh_front(hl, rl, ww, fpw, ct, pal, mesh) {
     md = ms_depth(mesh);
-    sill_top = V3_BASE_H + V3_SILL_H + 18;
+    sill_top = V3_YARD_SILL_TOP;
     h = (v3_roof_under(0) - V3_BEAM_H) - sill_top;
     z_rail = sill_top + V3_MID_RAIL_Z_OFFSET;
     seg_xs = [
@@ -310,7 +298,7 @@ module v3_yard_mesh_front(hl, rl, ww, fpw, ct, pal, mesh) {
 // at hl+ct so the panels meet the partition cladding flush.
 module v3_yard_mesh_back(hl, rl, ww, fpw, ct, pal, mesh) {
     md = ms_depth(mesh);
-    sill_top = V3_BASE_H + V3_SILL_H + 18;
+    sill_top = V3_YARD_SILL_TOP;
     h = (v3_roof_under(ww) - V3_BEAM_H) - sill_top;
     z_rail = sill_top + V3_MID_RAIL_Z_OFFSET;
     breaks = [hl + ct, hl + 1000, hl + 2000, hl + 3000, hl + rl - fpw];
@@ -330,7 +318,7 @@ module v3_yard_mesh_back(hl, rl, ww, fpw, ct, pal, mesh) {
 // corner ~1900 mm above sill_top), so it's never actually clipped.
 module v3_yard_mesh_right(hl, rl, ww, fpw, pal, mesh) {
     md = ms_depth(mesh);
-    sill_top = V3_BASE_H + V3_SILL_H + 18;
+    sill_top = V3_YARD_SILL_TOP;
     z_top_max = v3_roof_under(0) - V3_BEAM_H;
     z_top_y0 = v3_roof_under(0) - V3_BEAM_H;
     z_top_y1 = v3_roof_under(ww) - V3_BEAM_H;
