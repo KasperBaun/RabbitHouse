@@ -42,3 +42,20 @@ module vinkelbeslag(p, leg=90, thick=2, orientation="+x+z", system="vaegge") {
         translate([0, -thick, 0]) cube([thick, thick, leg]);
     }
 }
+
+// Sloping rafter shoe (Simpson-type) for 45×W spær on a top plate.
+// Origin = bottom-front-left of the rafter at the bearing point.
+//   rafter_w   = rafter cross-section thin dimension (typ 45)
+//   rafter_h   = rafter cross-section deep dimension (typ 95-145)
+//   slope      = rafter slope angle in degrees (negative for falling)
+module spaersko(p, rafter_w=45, rafter_h=95, slope=0, system="tagkonstruktion") {
+    bom_member("spaersko", "steel-galv", rafter_w + 4, rafter_h, 2,
+               "rafter_shoe", system=system);
+    color(BESLAG_COLOR)
+    translate(p)
+    rotate([slope, 0, 0]) {
+        translate([-1, 0, 0])              cube([2, rafter_h, rafter_h * 0.6]);
+        translate([rafter_w-1, 0, 0])      cube([2, rafter_h, rafter_h * 0.6]);
+        translate([-1, 0, 0])              cube([rafter_w + 2, rafter_h, 2]);
+    }
+}
