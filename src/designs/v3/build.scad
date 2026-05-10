@@ -14,6 +14,12 @@ show_ground = true;
 show_cover = true;           // false = vis kun spær (uden cover-lag)
 roof_cover = "tagpap_osb";   // "tagpap_osb" | "eternit_b7"
 
+// v3-specifik klink-profil: 25×125 mm gran/lærk klink-brædder, 25 mm
+// overlap → step 100 mm. Standard profil hos Stark/Bauhaus i 4200 mm
+// længder. Erstatter DEFAULT_CLAD (24×150 m. 40 mm overlap) som er
+// v1's profil.
+V3_CLAD = clad_spec(board_h=125, overlap=25, thick=25, lip=20);
+
 module build_v3() {
     pal = DEFAULT_PALETTE;
 
@@ -29,7 +35,7 @@ module build_v3() {
         v3_spaer(v3_eh_back_for(roof_cover), pal);
 
     // todo.md #4: beklaedning (vindpap, afstandsliste, klink, voliernet)
-    if (show_cladding) v3_beklaedning(DEFAULT_CLAD, pal);
+    if (show_cladding) v3_beklaedning(V3_CLAD, pal);
 
     // === Inaktivt — slå til når den er rettet til ===
     // v3_inventar(show_cladding, show_ground, pal);

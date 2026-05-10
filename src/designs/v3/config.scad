@@ -168,10 +168,10 @@ V3_FLOOR_TOP = V3_BASE_H + V3_DPC_T + V3_SILL_H;   // = 120 + 2 + 45 = 167
 V3_YARD_SILL_TOP = V3_FLOOR_TOP;  // = 167
 
 // Beklædning lag-stack tykkelser. Bruges af beklaedning.scad til at lægge
-// hver lag udadgående fra stud-fladen.
+// hver lag udadgående fra stud-fladen. Klink-tykkelse kommer fra V3_CLAD
+// (defineret i build.scad) via cs_thick(clad).
 V3_VP_T         = 1;     // vindpapir (membran)
 V3_AL_T         = 22;    // afstandsliste (22×45 lodret klemmeliste)
-V3_KLINK_T      = 24;    // klink-tykkelse (matcher DEFAULT_CLAD.thick)
 
 // House floor (strøer + krydsfiner inside the fundablok ring).
 V3_FLOOR_LEDGER_W   = 95;
