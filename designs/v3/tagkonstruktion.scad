@@ -33,6 +33,8 @@ module v3_spaer(eh_back, palette = DEFAULT_PALETTE) {
             translate([x, ww - wt - 0.01, z_back])
                 cube([SPAER_W, 0.01, SPAER_H]);
         }
+        spaersko([x, wt - 2, z_front], SPAER_W, SPAER_H, slope=0);
+        spaersko([x, ww - wt - SPAER_H + 2, z_back], SPAER_W, SPAER_H, slope=0);
     }
 }
 
