@@ -195,9 +195,6 @@ module v3_yard_stiles(hl, rl, ww, fpw, pal) {
 
     front_xs = [hl + 3000];
     front_beam_top = v3_roof_under(0) - V3_BEAM_H;
-    for (xs = front_xs)
-        bom_member("stile", "spruce", sw, sw,
-                   front_beam_top - sill_top, "yard_front_stile", system="vaegge");
     color(pal_post(pal))
     for (xs = front_xs)
         translate([xs - sw/2, 0, sill_top])
@@ -205,9 +202,6 @@ module v3_yard_stiles(hl, rl, ww, fpw, pal) {
 
     back_xs = [hl + 1000, hl + 2000, hl + 3000];
     back_beam_top = v3_roof_under(ww) - V3_BEAM_H;
-    for (xs = back_xs)
-        bom_member("stile", "spruce", sw, sw,
-                   back_beam_top - sill_top, "yard_back_stile", system="vaegge");
     color(pal_post(pal))
     for (xs = back_xs)
         translate([xs - sw/2, ww - sw, sill_top])
@@ -217,8 +211,6 @@ module v3_yard_stiles(hl, rl, ww, fpw, pal) {
     color(pal_post(pal))
     for (ys = right_ys) {
         beam_top = v3_roof_under(ys) - V3_BEAM_H;
-        bom_member("stile", "spruce", sw, sw,
-                   beam_top - sill_top, "yard_right_stile", system="vaegge");
         translate([hl + rl - sw, ys - sw/2, sill_top])
             cube([sw, sw, beam_top - sill_top]);
     }
@@ -285,8 +277,6 @@ module v3_yard_mesh_back(hl, rl, ww, fpw, ct, pal, mesh) {
     // right corner post inner face (X=hl+rl-fpw).
     skirt_x0 = hl + ct;
     skirt_x1 = hl + rl - fpw;
-    bom_member("klink_skirt", "spruce", 22, V3_BACK_SKIRT_H,
-               skirt_x1 - skirt_x0, "yard_back_clad_skirt", system="vaegge");
     color(pal_panel1(pal))
     translate([skirt_x0, ww - md, sill_top])
         cube([skirt_x1 - skirt_x0, md, V3_BACK_SKIRT_H]);
@@ -370,8 +360,6 @@ module v3_vaegge(stud = DEFAULT_STUD, mesh = DEFAULT_MESH,
 //   w      = brace width along the wall axis (45 = standard 22×45 reglar... we use 95 for visual mass)
 module v3_vindkryds(origin, length, height, axis, t=22, w=95) {
     diag_len = sqrt(length*length + height*height);
-    bom_member("vindkryds", "spruce", t, w, diag_len,
-               "x_brace", system="vaegge", count=2);
 
     // Use atan2 for slope angle. For an X-axis wall (cube extends +X),
     // we rotate around +Y by NEGATIVE atan2 so the X-axis tips UPWARD
@@ -404,8 +392,6 @@ module v3_vindkryds(origin, length, height, axis, t=22, w=95) {
 module v3_losholter(origin, length, axis, sw=45, sd=95, sp=600,
                     z_above_origin=1100, skip_ranges=[]) {
     n = floor(length / sp);
-    bom_member("losholt", "spruce", sw, sd, sp - sw,
-               "wall_nogging", system="vaegge", count=n);
     color([0.86, 0.74, 0.50])
     for (i = [0 : n-1]) {
         a = i * sp + sw;
@@ -435,8 +421,6 @@ function _v3_in_skip(c, ranges) =
 // wall's stud-wall axis. Skips bays that are part of openings.
 module v3_wall_bats(origin, length, height, axis, sw=45, sd=95, sp=600,
                     skip_ranges=[]) {
-    bom_member("bats_95mm", "rockwool", BATS_T, height - 2*sw,
-               length, "wall_bats", system="vaegge");
     color(BATS_COLOR_VAL)
     if (axis == "X") {
         for (x = [sw : sp : length - sw - sp])

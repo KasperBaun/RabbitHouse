@@ -1,7 +1,6 @@
 // Foundation primitives: concrete slab, interior floor, predator dig-defeat.
 
 include <../defaults.scad>
-use <../bom.scad>
 
 function _has_side(s, sides) = len([for (x = sides) if (x == s) 1]) > 0;
 
@@ -17,24 +16,6 @@ module slab(origin, size, base_h=120, palette=DEFAULT_PALETTE,
             edge_sides=["front","back","left","right"]) {
     ox = origin[0]; oy = origin[1];
     sx = size[0];   sy = size[1];
-
-    // BOM
-    bom_member("slab", "concrete", sx, sy, base_h, "slab_main", system="fundament");
-    if (edge_thicken_h > 0) {
-        ew = edge_thicken_w;
-        if (_has_side("front", edge_sides))
-            bom_member("edge_beam", "concrete", sx, ew, edge_thicken_h,
-                       "slab_edge_front", system="fundament");
-        if (_has_side("back", edge_sides))
-            bom_member("edge_beam", "concrete", sx, ew, edge_thicken_h,
-                       "slab_edge_back", system="fundament");
-        if (_has_side("left", edge_sides))
-            bom_member("edge_beam", "concrete", ew, sy, edge_thicken_h,
-                       "slab_edge_left", system="fundament");
-        if (_has_side("right", edge_sides))
-            bom_member("edge_beam", "concrete", ew, sy, edge_thicken_h,
-                       "slab_edge_right", system="fundament");
-    }
 
     color(pal_base(palette)) {
         translate([ox, oy, 0])
@@ -66,7 +47,6 @@ module slab(origin, size, base_h=120, palette=DEFAULT_PALETTE,
 module dpc_strip(origin, length, axis="X", width=120, thickness=2,
                  col=[0.15, 0.15, 0.18]) {
     ox = origin[0]; oy = origin[1]; oz = origin[2];
-    bom_member("dpc", "bitumen", width, thickness, length, "dpc_strip", system="fundament");
     color(col)
     translate([ox, oy, oz])
         cube(axis == "X" ? [length, width, thickness]

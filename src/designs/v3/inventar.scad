@@ -6,7 +6,6 @@ include <config.scad>
 use <../../lib/decor/rabbit.scad>
 use <../../lib/decor/lighting.scad>
 use <../../lib/decor/landscape.scad>
-use <../../lib/bom.scad>
 
 // Yard floor — stabilgrus filled to top of fundablok ring (Z=V3_BASE_H)
 // per Phase 1 spec §3.3, with grass/jord on top. Inside the yard, the

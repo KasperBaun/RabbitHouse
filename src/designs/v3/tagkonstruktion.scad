@@ -4,7 +4,6 @@
 include <../../lib/defaults.scad>
 include <config.scad>
 use <../../lib/primitives/roof.scad>
-use <../../lib/bom.scad>
 use <../../lib/primitives/beslag.scad>
 
 SPAER_W       = 45;
@@ -24,8 +23,6 @@ module v3_spaer(eh_back, palette = DEFAULT_PALETTE) {
     n = floor((ll - 2 * 100) / SPAER_C2C) + 1;
     for (i = [0 : n-1]) {
         x = 100 + i * SPAER_C2C;
-        bom_member("spær", "spruce", SPAER_W, SPAER_H, span_3d,
-                   "monopitch_rafter", system="tagkonstruktion");
         color(pal_post(palette))
         hull() {
             translate([x, wt, z_front])
@@ -49,8 +46,6 @@ module v3_cover_tagpap(eh_back, palette = DEFAULT_PALETTE) {
     area = span_x * sqrt(span_y * span_y + drop_full * drop_full) / 1e6;
 
     // 22 mm forskalling deck (sloped polyhedron — replaces the old solid roof)
-    bom_member("forskalling", "spruce", 22, span_x, span_y,
-               str("tagpap_deck_", area, "_m2"), system="tagkonstruktion");
     color([0.74, 0.62, 0.40])
     polyhedron(
         points = [
@@ -67,9 +62,6 @@ module v3_cover_tagpap(eh_back, palette = DEFAULT_PALETTE) {
     );
 
     // Tagpap (2-lag) — represented as the existing roof_mono_pitch black slab.
-    bom_member("tagpap", "bitumen", 0, 0, 0,
-               str("2lag_underpap_svejsepap_", area, "_m2"),
-               system="tagkonstruktion");
     roof_mono_pitch([0, 0, roof_oz], ll, ww, drop_full, V3_ROOF_THICK,
                     V3_OH_FRONT, V3_OH_BACK, V3_OH_SIDE, palette);
 }
@@ -85,8 +77,6 @@ module v3_cover_staal(eh_back, palette = DEFAULT_PALETTE) {
     area = span_x * sqrt(span_y * span_y + drop_full * drop_full) / 1e6;
 
     // Undertag: thin grey membrane on top of spær
-    bom_member("undertag", "polyolefin", 1, span_x, span_y,
-               str("undertag_", area, "_m2"), system="tagkonstruktion");
     color([0.40, 0.40, 0.42])
     polyhedron(
         points = [
@@ -102,14 +92,7 @@ module v3_cover_staal(eh_back, palette = DEFAULT_PALETTE) {
         faces = [[0,1,2,3], [4,7,6,5], [0,4,5,1], [1,5,6,2], [2,6,7,3], [3,7,4,0]]
     );
 
-    // Lægter 38×73 c/c 600 perpendicular to spær (running in X direction)
-    n_laegter = floor(span_y / 600) + 1;
-    bom_member("lægte", "spruce", 38, 73, span_x,
-               "trapezstal_lægte", system="tagkonstruktion", count=n_laegter);
-
     // Trapezstål 0.5 mm — represented as a single sloped slab in metallic colour.
-    bom_member("trapezstål", "steel-galv", 0.5, span_x, span_y,
-               str("trapez_", area, "_m2"), system="tagkonstruktion");
     color([0.72, 0.72, 0.74])
     polyhedron(
         points = [
@@ -139,8 +122,6 @@ module v3_cover_eternit(eh_back, palette = DEFAULT_PALETTE) {
     area = span_x * sqrt(span_y * span_y + drop_full * drop_full) / 1e6;
 
     // Undertag membrane (same as stål)
-    bom_member("undertag", "polyolefin", 1, span_x, span_y,
-               str("undertag_", area, "_m2"), system="tagkonstruktion");
     color([0.40, 0.40, 0.42])
     polyhedron(
         points = [
@@ -156,14 +137,7 @@ module v3_cover_eternit(eh_back, palette = DEFAULT_PALETTE) {
         faces = [[0,1,2,3], [4,7,6,5], [0,4,5,1], [1,5,6,2], [2,6,7,3], [3,7,4,0]]
     );
 
-    // Lægter c/c 1085 mm (Cembrit B6 standard)
-    n_laegter = floor(span_y / 1085) + 1;
-    bom_member("lægte", "spruce", 38, 73, span_x,
-               "eternit_b6_lægte", system="tagkonstruktion", count=n_laegter);
-
     // Cembrit B6 8 mm bølgeplade — represented as grey sloped slab.
-    bom_member("cembrit_b6", "fiber-cement", 8, span_x, span_y,
-               str("b6_", area, "_m2"), system="tagkonstruktion");
     color([0.55, 0.55, 0.57])
     polyhedron(
         points = [

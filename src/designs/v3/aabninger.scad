@@ -6,7 +6,6 @@ include <config.scad>
 use <../../lib/primitives/openings.scad>
 use <../../lib/primitives/mesh.scad>
 use <../../lib/decor/rabbit.scad>
-use <../../lib/bom.scad>
 
 // Human door in the partition (X=hl outer face, faces +X into yard).
 // `floor_z` is the Z of the finished floor (= V3_FLOOR_TOP = 165); the

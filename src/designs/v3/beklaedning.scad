@@ -4,7 +4,6 @@
 include <../../lib/defaults.scad>
 include <config.scad>
 use <../../lib/primitives/cladding.scad>
-use <../../lib/bom.scad>
 
 // ---------------------------------------------------------------------------
 // Vindpapir (E2) — wind membrane on outer face of each cladded wall.
@@ -15,8 +14,6 @@ WIND_PAPER_COLOR = [0.50, 0.50, 0.52];
 WIND_PAPER_T     = 1;
 
 module v3_wind_paper(origin, length, height, axis) {
-    bom_member("vindpapir", "polyolefin", length, height, WIND_PAPER_T,
-               "wind_membrane_m2", system="beklaedning");
     color(WIND_PAPER_COLOR)
     if (axis == "X")
         translate(origin) cube([length, WIND_PAPER_T, height]);
@@ -81,8 +78,6 @@ module v3_house_corner_trims(hl, ww, ehf, ehb, bh, ct, pal) {
 // ---------------------------------------------------------------------------
 module v3_afstandsliste(origin, length, height, axis, c2c=600) {
     n = floor(length / c2c) + 1;
-    bom_member("afstandsliste", "spruce", 22, 45, height,
-               "vert_lagte", system="beklaedning", count=n);
     color([0.78, 0.65, 0.45])
     if (axis == "X") {
         for (i = [0 : n-1])
