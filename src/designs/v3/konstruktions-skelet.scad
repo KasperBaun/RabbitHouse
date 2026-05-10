@@ -84,22 +84,33 @@ function _in_any_skip(c, ranges) =
 module _v3_studs_one_wall(origin, length, axis, stud_height,
                           skip_ranges=[], palette=DEFAULT_PALETTE) {
     z = STUD_BOTTOM_Z;
+    end_stud_x = length - STUD_THICK;
+
+    // Skip end stud if it would land within ~100 mm of last grid stud's right
+    // face. Otherwise we get an ugly 10 mm "air gap" between two parallel
+    // studs at the wall end (no carpenter would build it that way — the
+    // corner connection from the perpendicular wall provides support).
+    last_loop_x     = floor(end_stud_x / STUD_C2C) * STUD_C2C;
+    last_loop_right = last_loop_x + STUD_THICK;
+    emit_end_stud   = (end_stud_x - last_loop_right) >= 100;
+
     color(pal_post(palette))
     if (axis == "X") {
-        for (x = [0 : STUD_C2C : length - STUD_THICK])
+        for (x = [0 : STUD_C2C : end_stud_x])
             if (!_in_any_skip(x + STUD_THICK/2, skip_ranges))
                 translate([origin[0] + x, origin[1], z])
                     cube([STUD_THICK, STUD_DEPTH, stud_height]);
-        // End stud (always emit; may overlap last loop stud — harmless)
-        translate([origin[0] + length - STUD_THICK, origin[1], z])
-            cube([STUD_THICK, STUD_DEPTH, stud_height]);
+        if (emit_end_stud)
+            translate([origin[0] + end_stud_x, origin[1], z])
+                cube([STUD_THICK, STUD_DEPTH, stud_height]);
     } else {
-        for (y = [0 : STUD_C2C : length - STUD_THICK])
+        for (y = [0 : STUD_C2C : end_stud_x])
             if (!_in_any_skip(y + STUD_THICK/2, skip_ranges))
                 translate([origin[0], origin[1] + y, z])
                     cube([STUD_DEPTH, STUD_THICK, stud_height]);
-        translate([origin[0], origin[1] + length - STUD_THICK, z])
-            cube([STUD_DEPTH, STUD_THICK, stud_height]);
+        if (emit_end_stud)
+            translate([origin[0], origin[1] + end_stud_x, z])
+                cube([STUD_DEPTH, STUD_THICK, stud_height]);
     }
 }
 
@@ -159,6 +170,20 @@ module v3_studs(palette = DEFAULT_PALETTE) {
             cube([STUD_DEPTH, STUD_THICK, h_low]);
         translate([hl - STUD_DEPTH/2, V3_PET_DOOR_Y + V3_PET_DOOR_W, z])
             cube([STUD_DEPTH, STUD_THICK, h_low]);
+    }
+
+    // --- Junction studs (T-samlings-reglar hvor partition møder front/bag) ---
+    // Partition-væggen er en cross-wall der binder hus og yard sammen. Hvor
+    // den møder front- og bag-væggen, skal der være en perpendikulær reglar
+    // i den længdegående væg som partition-væggens endestud kan fastgøres til.
+    // Uden disse reglar står partition-væggen "i luften" ved sine endepunkter.
+    color(pal_post(palette)) {
+        // Front-væg: junction-reglar ved X=hl, full HIGH height
+        translate([hl - STUD_THICK/2, 0, z])
+            cube([STUD_THICK, STUD_DEPTH, h_high]);
+        // Bag-væg: junction-reglar ved X=hl, full LOW height
+        translate([hl - STUD_THICK/2, ww - STUD_DEPTH, z])
+            cube([STUD_THICK, STUD_DEPTH, h_low]);
     }
 }
 
