@@ -43,12 +43,12 @@ This is **not** a dwelling. BR18 dimensional requirements for dwellings do not a
 ```
         ┌──── toprem ────────────────┐
         │                            │
-   stud │    ┌── header ──┐         │ stud
-        │    │             │         │
-        │  jamb           jamb       │
-        │  stud           stud       │
-        │    │   opening   │         │
-        │    │             │         │
+   stud │    ┌── header ──┐          │ stud
+        │    │            │          │
+        │  jamb          jamb        │
+        │  stud          stud        │
+        │    │   opening  │          │
+        │    │            │          │
         └──── bundrem ───────────────┘
 ```
 
