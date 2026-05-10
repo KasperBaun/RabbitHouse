@@ -1,8 +1,10 @@
-// v3 build — top-level dispatcher.
-// Composes the per-system modules from the role-based files. Each system
-// has its own file (fundament, vaegge, tagkonstruktion, beklaedning,
-// aabninger, inventar) so the user can review one building system at a
-// time. See README.md in this folder for the role of each file.
+// v3 build — composes the per-system modules + toggles + the call.
+// Open this file (or include from main.scad) to render the v3 model.
+//
+// File layout: see README.md. Each per-system file (fundament,
+// konstruktions-skelet, vaegge, tagkonstruktion, beklaedning, aabninger,
+// inventar) covers ONE building system. Toggles live here at the top of
+// build.scad — flip them, save, re-render.
 
 include <../../lib/defaults.scad>
 include <config.scad>
@@ -16,7 +18,26 @@ use <aabninger.scad>
 use <inventar.scad>
 use <../../lib/bom.scad>
 
-module build_v3(show_cladding = true, show_ground = true, roof_cover = "tagpap") {
+// ============================================================================
+// Toggles — edit these, save, re-render.
+// CLI override via `-D show_cladding=false` etc.
+// ============================================================================
+
+// Hide klink/doors/window so the wood frame, bats, vindkryds are visible.
+show_cladding = true;
+
+// Hide grass / gravel path / yard fill so the buried fundablok ring is
+// visible from above. The 12 cm sokkel above grade stays visible regardless.
+show_ground = true;
+
+// Tag-dækning: "tagpap" | "stål" (eller ASCII "staal") | "eternit_10" | "eternit_14".
+// "tagpap" og "stål" virker på v3's nuværende hældning (9°); eternit-varianterne
+// sænker eh_back automatisk så hældningen overholder Cembrit B6's profil.
+roof_cover = "tagpap";
+
+// ============================================================================
+
+module build_v3() {
     bom_header();
     pal  = DEFAULT_PALETTE;
     clad = DEFAULT_CLAD;
@@ -35,3 +56,4 @@ module build_v3(show_cladding = true, show_ground = true, roof_cover = "tagpap")
     v3_inventar(show_cladding, show_ground, pal);
 }
 
+build_v3();
