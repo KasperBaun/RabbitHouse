@@ -4,15 +4,29 @@
 
 Træ-skelettet der sidder ovenpå fundamentet. Indeholder kun de fire grundlæggende elementer: DPC (murpap), sill plate (bundrem), studs (reglar — inkl. jamb-reglar ved hver åbning), top plate (toprem). Trekant-gavlfyld over sidemæg, losholter, vindkryds, taghane, bjælker, gulvstrøer m.m. kommer i andre filer eller senere iterationer.
 
+## Vægge — ID oversigt
+
+Vægge har faste ID'er så vi nemt kan referere til dem i samtaler.
+
+| ID | Navn | Position | Højde | Åbninger |
+|---|---|---|---|---|
+| **V1** | Front-væg | Y=0..95 (kontinuert X=0..6000) | HØJ (2,2 m / z_top=2,32 m) | Yard-dør (X=3000..3850) |
+| **V2** | Bag-væg | Y=2405..2500 (kontinuert X=0..6000) | LAV (2,0 m / z_top=2,12 m) | — |
+| **V3** | Venstre side-væg | X=0..95 (Y=95..2405) | LAV | Side-vindue (Y=900..1600) |
+| **V4** | Højre side-væg | X=5905..6000 (Y=95..2405) | LAV | — |
+| **V5** | Partition (cross-wall) | X=1452,5..1547,5 (Y=95..2405) | LAV | Human-dør (Y=200..1050) + Pet-dør (Y=1500..1750) |
+
+V1 og V2 løber kontinuert hele bygningens længde. V3, V4, V5 BUTTER mod V1/V2's inderfladen — de overlapper IKKE i den fysiske verden.
+
 ## Mål
 
 | Egenskab | Værdi |
 |---|---|
-| Front-væg højde (fra sokkel-top) | 2,2 m (HØJ — den høje side i mono-pitch) |
-| Bag-væg højde | 2,0 m (LAV) |
-| Sidemæg + partition højde | 2,0 m (LAV — flugter med bag-væg) |
-| Top af front top plate | z = 2,32 m over jord |
-| Top af bag/side/partition top plate | z = 2,12 m over jord |
+| V1 front-væg højde (fra sokkel-top) | 2,2 m (HØJ — den høje side i mono-pitch) |
+| V2 bag-væg højde | 2,0 m (LAV) |
+| V3, V4, V5 sidemæg + partition højde | 2,0 m (LAV — flugter med V2) |
+| Top af V1 top plate | z = 2,32 m over jord |
+| Top af V2/V3/V4/V5 top plate | z = 2,12 m over jord |
 | Tag-hældning (drop 200 over 2500) | 4,6° (8 % fald) — OK for tagpap, ikke nok for stål/eternit |
 | Stud-spacing | 600 mm c/c |
 
@@ -20,13 +34,17 @@ Træ-skelettet der sidder ovenpå fundamentet. Indeholder kun de fire grundlægg
 
 ```
 1. DPC (murpap)         2 mm bitumen-tape oven på sokkel-ring
-2. Sill plate (bundrem) 45×95 PT, kontinuert hele perimeteren + cross-wall
-3. Studs (reglar)       45×95 lodrette c/c 600, alle vægge
-                         skip-ranges: dør- og vindues-åbninger holdes fri
+                         V1+V2 kontinuert; V3, V4, V5 butted ved Y=100/2400
+2. Sill plate (bundrem) 45×95 PT, samme butting-mønster som DPC
+3. Studs (reglar)       45×95 lodrette c/c 600, alle 5 vægge
+                         skip-ranges holder åbninger fri
                          + jamb-reglar ved hver åbnings kanter
-4. Top plate (toprem)   45×95 vandret oven på studs
-                         Front: HØJ (z=2320) — flugter med tagets underside
-                         Bag/side/partition: LAV (z=2120) — flugter med bagsiden
+                         + junction-reglar i V1+V2 hvor V5 (partition) møder dem
+4. Header + cripples    45×95 over hver åbning + cripples op til toprem
+   + (vindue) rough sill og cripples ned til bundrem
+5. Top plate (toprem)   45×95 vandret oven på studs
+                         V1: HØJ (z=2320) — flugter med tagets underside
+                         V2, V3, V4, V5: LAV (z=2120)
 ```
 
 Trekanten mellem den vandrette top plate på sidemæg og det skrå tag (over front-end) er **ikke** modelleret her — det er gavlfyld der kommer senere.
@@ -35,11 +53,12 @@ Trekanten mellem den vandrette top plate på sidemæg og det skrå tag (over fro
 
 | Modul | Funktion |
 |---|---|
-| `v3_dpc()` | Bitumen-tape oven på sokkel-ring, hele vejen rundt + cross-wall |
-| `v3_sill_plate(palette)` | 45×95 PT bundrem, kontinuert |
-| `v3_studs(palette)` | Stud-grid på alle 5 vægge med skip_ranges + 8 jamb-reglar |
-| `v3_top_plate(palette)` | Vandret toprem, front HØJ, andre LAV |
-| `v3_konstruktions_skelet(palette)` | Wrapper — kalder de 4 ovenstående |
+| `v3_dpc()` | Bitumen-tape — V1+V2 kontinuert, V3/V4/V5 butted |
+| `v3_sill_plate(palette)` | 45×95 PT bundrem — samme butting-mønster |
+| `v3_studs(palette)` | Stud-grid på alle 5 vægge: grid c/c 600 + 8 jamb-reglar + 2 junction-reglar (V1+V2 møde med V5) |
+| `v3_framed_openings(palette)` | Header + cripples over hver åbning + rough sill + cripples under V3-vinduet |
+| `v3_top_plate(palette)` | Vandret toprem — V1 HØJ, V2/V3/V4/V5 LAV |
+| `v3_konstruktions_skelet(palette)` | Wrapper — kalder alle ovenstående |
 
 ## Materialeliste
 
@@ -64,12 +83,14 @@ Hvad du **skærer** ud af det du har købt.
 
 | Cut længde | Antal | Hvor | Spild pr. stik |
 |---|---|---|---|
-| 2108 mm | 12 stk | Front-væg studs (8 grid + 1 end + 2 jambs ved yard-dør + 1 junction ved partition) | 292 mm |
-| 1908 mm | 31 stk | Bag-væg (12) + venstre (6) + højre (5) + partition (8) | 492 mm |
+| 2108 mm | 12 stk | V1 (8 grid + 1 end + 2 jambs ved yard-dør + 1 junction til V5) | 292 mm |
+| 1908 mm | 31 stk | V2 (12: 10 grid + 1 end + 1 junction) + V3 (6: 3 grid + 1 end + 2 jambs til vindue) + V4 (5: 4 grid + 1 end) + V5 (8: 3 grid + 1 end + 4 jambs) | 492 mm |
 
 Total spild: ~16 m off-cuts (kan bruges som klodser, mellemstykker, evt. losholter når de kommer). 1 stud pr. stik — enkel skæring.
 
-Bag-væg-tællingen (12) inkluderer 1 junction-reglar ved partition-mødet (X=1500). Venstre/højre/partition har ingen separat end-stud — sidste grid-reglar sidder tæt på væg-enden og corner-samlingen tager belastningen.
+V2's tælling (12) inkluderer 1 junction-reglar ved V5-mødet (X=1500). V3/V4/V5 har stadig en separat end-stud (efter butting blev wall-length 2310 — gap til sidste grid er stor nok til separat end-stud).
+
+**Bemærk:** Header, cripples og rough sill er IKKE talt med i 31-tallet ovenfor. De cuttes fra spild-off-cuts (~16 m off-cuts er nok til de 4 headers + ~8 cripples + 1 rough sill, da hver er 250-850 mm lang).
 
 ### Reglar 45×95×4800 mm PT — bundrem (5 stk)
 
@@ -107,11 +128,10 @@ Skæres i strimler matchende bundrem-cut'ene: 6000 + 6000 + 3× 2310 = 18,93 m. 
 ## Hvad er IKKE i denne fil
 
 - Sokkel og ankerskruer → `fundament.md`
-- Gavlfyld (trekant over sidemæg) → kommer senere
-- Header + cripples + rough sill (under vinduet) → `aabninger.md` (todo.md #3)
+- Gavlfyld (trekant over V3 og V4 op til skrå tag) → kommer senere
 - Beslag (vinkelbeslag, søm, skruer) → kommer i egen "fasteners"-fil
 - Losholter, vindkryds, taghane, yard-bjælker → kommer senere
 - Strøer-gulv (floor joists inde i huset) → kommer senere
 - Klink, vindpapir, voliernet → `beklaedning.md` (todo.md #4)
-- Døre, vinduer, dør-blade → `aabninger.md` (todo.md #3)
+- Selve dør-blade og vinduesrammer (kun struktur-frame her) → `aabninger.md` (todo.md #3)
 - Tag, spær, dækning → `tagkonstruktion.md` (todo.md #5)
