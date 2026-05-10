@@ -19,24 +19,33 @@ module ankerskrue_m10(p, top_z=0, system="fundament") {
     }
 }
 
-// 90×90 mm perforated angle bracket. Two perpendicular legs, 2 mm steel.
-// orientation = "+x+z" means leg-1 along +X face, leg-2 along +Z face.
-// Origin = inside corner.
-module vinkelbeslag(p, leg=90, thick=2, orientation="+x+z", system="vaegge") {
+// 90×90 mm perforated angle bracket (vinkelbeslag), e.g. Simpson L70/L90.
+//   leg          = leg length (mm)
+//   thick        = steel thickness (mm)
+//   width        = perpendicular flange width — the bracket's "depth" along
+//                  the axis NOT in its bend plane. Default = thick (legacy
+//                  thin-rod look). Pass ~50 mm for a realistic flat strap.
+//   orientation  = "+x+z" / "-x+z" / "+y+z" / "-y+z" — bend plane.
+//                  "+x+z" → leg-1 along +X face, leg-2 along +Z face.
+//                  Width then extends along Y (the plane-perpendicular axis).
+// Origin = inside corner of the L.
+module vinkelbeslag(p, leg=90, thick=2, width=undef,
+                    orientation="+x+z", system="vaegge") {
+    w = is_undef(width) ? thick : width;
     color(BESLAG_COLOR)
     translate(p)
     if (orientation == "+x+z") {
-        cube([leg, thick, thick]);
-        cube([thick, thick, leg]);
+        cube([leg, w, thick]);             // horizontal leg, +X
+        cube([thick, w, leg]);             // vertical leg, +Z
     } else if (orientation == "-x+z") {
-        translate([-leg, 0, 0]) cube([leg, thick, thick]);
-        translate([-thick, 0, 0]) cube([thick, thick, leg]);
+        translate([-leg, 0, 0])   cube([leg, w, thick]);
+        translate([-thick, 0, 0]) cube([thick, w, leg]);
     } else if (orientation == "+y+z") {
-        cube([thick, leg, thick]);
-        cube([thick, thick, leg]);
+        cube([w, leg, thick]);
+        cube([w, thick, leg]);
     } else if (orientation == "-y+z") {
-        translate([0, -leg, 0]) cube([thick, leg, thick]);
-        translate([0, -thick, 0]) cube([thick, thick, leg]);
+        translate([0, -leg, 0])   cube([w, leg, thick]);
+        translate([0, -thick, 0]) cube([w, thick, leg]);
     }
 }
 

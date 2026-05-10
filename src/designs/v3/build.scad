@@ -11,7 +11,8 @@ use <inventar.scad>
 
 show_cladding = true;
 show_ground = true;
-roof_cover = "tagpap";
+show_cover = true;           // false = vis kun spær (uden cover-lag)
+roof_cover = "tagpap_osb";   // "tagpap_osb" | "eternit_b7"
 
 module build_v3() {
     pal = DEFAULT_PALETTE;
@@ -21,13 +22,16 @@ module build_v3() {
     v3_konstruktions_skelet(pal);
     v3_aabninger(_default_mesh(), pal);
 
+    // todo.md #5: tagkonstruktion (spær + dækning)
+    if (show_cover)
+        v3_tagkonstruktion(roof_cover, pal);
+    else
+        v3_spaer(v3_eh_back_for(roof_cover), pal);
+
     // === Inaktivt — slå til når de er rettet til (uncomment) ===
     //
     // todo.md #4: beklaedning (vindpap, klemmelister, klink, voliernet)
     // if (show_cladding) v3_beklaedning(DEFAULT_CLAD, pal);
-    //
-    // todo.md #5: tagkonstruktion (spær + dækning)
-    // v3_tagkonstruktion(roof_cover, pal);
     //
     // v3_inventar(show_cladding, show_ground, pal);
 }
