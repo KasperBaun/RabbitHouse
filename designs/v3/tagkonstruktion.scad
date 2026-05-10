@@ -124,6 +124,60 @@ module v3_cover_staal(eh_back, palette = DEFAULT_PALETTE) {
     );
 }
 
+// Eternit B6 cover: undertag + 25×50 afstandsliste + 38×73 lægter c/c 1085
+// + Cembrit B6 8 mm bølgeplader. Min slope 10° (with extended overlap)
+// or 14° standard. Used for both eternit_10 and eternit_14 (eh_back
+// already lowered by v3_eh_back_for).
+module v3_cover_eternit(eh_back, palette = DEFAULT_PALETTE) {
+    ll = V3_LENGTH; ww = V3_WIDTH;
+    drop_full = v3_total_drop_for(eh_back);
+    roof_oz = v3_roof_oz_for(eh_back);
+    span_y = ww + V3_OH_FRONT + V3_OH_BACK;
+    span_x = ll + V3_OH_SIDE * 2;
+    area = span_x * sqrt(span_y * span_y + drop_full * drop_full) / 1e6;
+
+    // Undertag membrane (same as stål)
+    bom_member("undertag", "polyolefin", 1, span_x, span_y,
+               str("undertag_", area, "_m2"), system="tagkonstruktion");
+    color([0.40, 0.40, 0.42])
+    polyhedron(
+        points = [
+            [-V3_OH_SIDE, -V3_OH_FRONT, roof_oz - 1],
+            [ll + V3_OH_SIDE, -V3_OH_FRONT, roof_oz - 1],
+            [ll + V3_OH_SIDE, ww + V3_OH_BACK, roof_oz - drop_full - 1],
+            [-V3_OH_SIDE, ww + V3_OH_BACK, roof_oz - drop_full - 1],
+            [-V3_OH_SIDE, -V3_OH_FRONT, roof_oz],
+            [ll + V3_OH_SIDE, -V3_OH_FRONT, roof_oz],
+            [ll + V3_OH_SIDE, ww + V3_OH_BACK, roof_oz - drop_full],
+            [-V3_OH_SIDE, ww + V3_OH_BACK, roof_oz - drop_full]
+        ],
+        faces = [[0,1,2,3], [4,7,6,5], [0,4,5,1], [1,5,6,2], [2,6,7,3], [3,7,4,0]]
+    );
+
+    // Lægter c/c 1085 mm (Cembrit B6 standard)
+    n_laegter = floor(span_y / 1085) + 1;
+    bom_member("lægte", "spruce", 38, 73, span_x,
+               "eternit_b6_lægte", system="tagkonstruktion", count=n_laegter);
+
+    // Cembrit B6 8 mm bølgeplade — represented as grey sloped slab.
+    bom_member("cembrit_b6", "fiber-cement", 8, span_x, span_y,
+               str("b6_", area, "_m2"), system="tagkonstruktion");
+    color([0.55, 0.55, 0.57])
+    polyhedron(
+        points = [
+            [-V3_OH_SIDE, -V3_OH_FRONT, roof_oz + 130],
+            [ll + V3_OH_SIDE, -V3_OH_FRONT, roof_oz + 130],
+            [ll + V3_OH_SIDE, ww + V3_OH_BACK, roof_oz - drop_full + 130],
+            [-V3_OH_SIDE, ww + V3_OH_BACK, roof_oz - drop_full + 130],
+            [-V3_OH_SIDE, -V3_OH_FRONT, roof_oz + 122],
+            [ll + V3_OH_SIDE, -V3_OH_FRONT, roof_oz + 122],
+            [ll + V3_OH_SIDE, ww + V3_OH_BACK, roof_oz - drop_full + 122],
+            [-V3_OH_SIDE, ww + V3_OH_BACK, roof_oz - drop_full + 122]
+        ],
+        faces = [[0,1,2,3], [4,7,6,5], [0,4,5,1], [1,5,6,2], [2,6,7,3], [3,7,4,0]]
+    );
+}
+
 module v3_tagkonstruktion(roof_cover = "tagpap", palette = DEFAULT_PALETTE) {
     ll = V3_LENGTH; ww = V3_WIDTH; wt = V3_WALL_T;
     roof_oz = v3_roof_oz();
