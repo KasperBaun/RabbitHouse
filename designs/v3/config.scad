@@ -114,3 +114,13 @@ function v3_roof_oz() =
 // Roof underside z at any Y (in structure coords, where Y=0 is front face).
 function v3_roof_under(y) =
     v3_roof_oz() - (V3_OH_FRONT + y) * v3_total_drop() / v3_span_total();
+
+// House floor (strøer + krydsfiner inside the fundablok ring).
+V3_FLOOR_LEDGER_W   = 95;     // ledger bjælke wide along Y/X (face of ring)
+V3_FLOOR_LEDGER_H   = 45;     // ledger bjælke height (Z)
+V3_FLOOR_LEDGER_Z   = -45;    // top of ledger (= bottom of strøer)
+V3_FLOOR_JOIST_W    = 45;
+V3_FLOOR_JOIST_H    = 95;
+V3_FLOOR_JOIST_C2C  = 600;
+V3_FLOOR_DECK_T     = 18;     // krydsfiner thickness
+V3_FLOOR_DECK_Z     = V3_FLOOR_LEDGER_Z + V3_FLOOR_JOIST_H;  // top of krydsfiner = +50
