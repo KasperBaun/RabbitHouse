@@ -53,12 +53,15 @@ module vinkelbeslag(p, leg=90, thick=2, orientation="+x+z", system="vaegge") {
 module spaersko(p, rafter_w=45, rafter_h=95, slope=0, system="tagkonstruktion") {
     bom_member("spaersko", "steel-galv", rafter_w + 4, rafter_h, 2,
                "rafter_shoe", system=system);
+    cradle_h = rafter_h * 0.6;
     color(BESLAG_COLOR)
     translate(p)
     rotate([slope, 0, 0]) {
-        translate([-1, 0, 0])              cube([2, rafter_h, rafter_h * 0.6]);
-        translate([rafter_w-1, 0, 0])      cube([2, rafter_h, rafter_h * 0.6]);
-        translate([-1, 0, 0])              cube([rafter_w + 2, rafter_h, 2]);
+        // U-cradle extends DOWN from bearing point (bracket bolted to top
+        // plate beneath rafter — rafter sits IN the cradle, not above it).
+        translate([-1, 0, -cradle_h])           cube([2, rafter_h, cradle_h]);   // left cheek
+        translate([rafter_w-1, 0, -cradle_h])   cube([2, rafter_h, cradle_h]);   // right cheek
+        translate([-1, 0, -2])                  cube([rafter_w + 2, rafter_h, 2]); // bottom strap
     }
 }
 
