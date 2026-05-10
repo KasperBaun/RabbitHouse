@@ -78,13 +78,13 @@ module v3_fundament(show_ground = true, palette = DEFAULT_PALETTE) {
     // Ankerskruer M10 c/c 1000 mm along the perimeter ring + partition cross-wall.
     // Head sits at Z=bh (top of ring = sokkel level); shaft sinks 120 mm into ring.
     for (x = [500 : 1000 : ll - 500]) {
-        ankerskrue_m10([x, 0]);    // front sill line
-        ankerskrue_m10([x, ww]);   // back sill line
+        ankerskrue_m10([x, 0],  top_z=bh);    // front sill line
+        ankerskrue_m10([x, ww], top_z=bh);    // back sill line
     }
     for (y = [500 : 1000 : ww - 500]) {
-        ankerskrue_m10([0, y]);    // left sill line
-        ankerskrue_m10([ll, y]);   // right sill line
-        ankerskrue_m10([hl, y]);   // partition cross-wall
+        ankerskrue_m10([0,  y], top_z=bh);    // left sill line
+        ankerskrue_m10([ll, y], top_z=bh);    // right sill line
+        ankerskrue_m10([hl, y], top_z=bh);    // partition cross-wall
     }
 
     v3_stroer_floor(palette);

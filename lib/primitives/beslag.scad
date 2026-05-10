@@ -11,13 +11,15 @@ use <../bom.scad>
 
 BESLAG_COLOR = [0.62, 0.62, 0.66];
 
-// M10 anchor screw, ~120 mm long, head at z=0 (top of fundablok ring),
-// shaft sinking into the ring. p = [x, y] on the ring's centerline.
-module ankerskrue_m10(p, system="fundament") {
+// M10 anchor screw, ~120 mm long. Head sits at Z=top_z (top of fundablok
+// ring / sokkel), shaft sinks 120 mm down into the ring.
+//   p     = [x, y] on the ring centerline
+//   top_z = Z of the ring top (default 0 for legacy callers)
+module ankerskrue_m10(p, top_z=0, system="fundament") {
     bom_member("ankerskrue_m10", "steel-galv", 10, 10, 120, "anchor_M10x120", system=system);
     color(BESLAG_COLOR) {
-        translate([p[0], p[1], -120]) cylinder(h=120, r=5, $fn=12);
-        translate([p[0], p[1], 0])    cylinder(h=8,  r1=10, r2=8, $fn=12);
+        translate([p[0], p[1], top_z - 120]) cylinder(h=120, r=5, $fn=12);
+        translate([p[0], p[1], top_z])       cylinder(h=8,  r1=10, r2=8, $fn=12);
     }
 }
 
