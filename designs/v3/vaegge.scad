@@ -362,24 +362,39 @@ module v3_vaegge(stud = DEFAULT_STUD, mesh = DEFAULT_MESH,
 // Vindkryds (E5) — 22×95 X-bracing per house wall
 // ---------------------------------------------------------------------------
 
+// X-bracing (vindkryds) on a wall face. Two diagonals crossing in an X.
+//   origin = bottom-near corner of the wall (z = z_sill, axis-axis = 0)
+//   length = wall length along its axis (X or Y)
+//   height = wall height along Z
+//   axis   = "X" (wall runs along +X) or "Y" (wall runs along +Y)
+//   t      = brace thickness perpendicular to wall face
+//   w      = brace width along the wall axis (45 = standard 22×45 reglar... we use 95 for visual mass)
 module v3_vindkryds(origin, length, height, axis, t=22, w=95) {
     diag_len = sqrt(length*length + height*height);
     bom_member("vindkryds", "spruce", t, w, diag_len,
                "x_brace", system="vaegge", count=2);
+
+    // Use atan2 for slope angle. For an X-axis wall (cube extends +X),
+    // we rotate around +Y by NEGATIVE atan2 so the X-axis tips UPWARD
+    // (positive Y rotation in OpenSCAD takes +X toward -Z, so we negate).
+    ang = atan2(height, length);
     color([0.65, 0.55, 0.40])
     translate(origin)
     if (axis == "X") {
-        rotate([0, atan2(height, length), 0])
-            cube([sqrt(length*length + height*height), t, w]);
+        // Diagonal 1: from (0,0,0) to (length, 0, height) — going UP-and-RIGHT
+        rotate([0, -ang, 0])
+            cube([diag_len, t, w]);
+        // Diagonal 2: from (length, 0, 0) to (0, 0, height) — going UP-and-LEFT
         translate([length, 0, 0])
-        rotate([0, 180 - atan2(height, length), 0])
-            cube([sqrt(length*length + height*height), t, w]);
+        rotate([0, -(180 - ang), 0])
+            cube([diag_len, t, w]);
     } else {
-        rotate([atan2(height, length), 0, 0])
-            cube([t, sqrt(length*length + height*height), w]);
+        // Y-axis wall: rotate around +X axis. Same sign logic.
+        rotate([ang, 0, 0])
+            cube([t, diag_len, w]);
         translate([0, length, 0])
-        rotate([180 - atan2(height, length), 0, 0])
-            cube([t, sqrt(length*length + height*height), w]);
+        rotate([(180 - ang), 0, 0])
+            cube([t, diag_len, w]);
     }
 }
 
