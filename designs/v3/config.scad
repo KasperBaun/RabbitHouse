@@ -99,3 +99,18 @@ V3_STILE_SPACING = 1000;
 // the whole front wall.
 V3_MID_RAIL_Z_OFFSET = 1000;       // above sill top
 V3_MID_RAIL_H        = 40;         // matches mesh frame thickness
+
+// Roof geometry helpers — kept here (rather than build.scad) so that the
+// per-system files (vaegge.scad, fundament.scad, ...) can see them via
+// `include <config.scad>`. `roof_mono_pitch` interprets eave_h/drop across
+// the FULL overhang span, so we derive a corrected origin Z and total drop
+// (V3_OH_FRONT and V3_OH_BACK overhangs) so wall tops align with the roof
+// underside at the wall faces, not just at the overhang tips.
+function v3_span_total() = V3_OH_FRONT + V3_WIDTH + V3_OH_BACK;
+function v3_total_drop() =
+    (V3_EH_FRONT - V3_EH_BACK) * v3_span_total() / V3_WIDTH;
+function v3_roof_oz() =
+    V3_BASE_H + V3_EH_FRONT + V3_OH_FRONT * v3_total_drop() / v3_span_total();
+// Roof underside z at any Y (in structure coords, where Y=0 is front face).
+function v3_roof_under(y) =
+    v3_roof_oz() - (V3_OH_FRONT + y) * v3_total_drop() / v3_span_total();
