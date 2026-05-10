@@ -2,27 +2,30 @@
 
 > Implementeret i `src/designs/v3/fundament.scad`.
 
-Kontinuert fundablok-strimmel under hele bygningens perimeter (6 × 2,5 m, ~17 m omkreds) plus en cross-wall under partition-væggen ved X = 1,5 m. Fundamentet er kun det betonbaserede underlag — bundrem, murpap og resten af træ-skelettet ligger i `konstruktions-skelet.md`.
+Fundamentet er en ring af fundablokke støbt fast i jorden.  
+Det måler 6,0 × 2,5 m og har en sokkel-højde på 12 cm over jord.  
+Total ringhøjde er 60 cm (3 skifter à 20 cm).  
+Der lægges 10 cm stabilgrus i bunden for at sikre dræning og stabilitet.
 
 ## Mål
 
 | Egenskab | Værdi |
 |---|---|
-| Footprint | 6,0 × 2,5 m |
-| Sokkel-højde over jord | 12 cm (1 skifte) |
+| Længde og bredde | 6,0 × 2,5 m |
+| Sokkel-højde over jord | 12 cm |
 | Total ringhøjde | 60 cm (3 skifter à 20 cm) |
-| Frostfri grøftdybde | ~80 cm |
 | Stabilgrus i bunden | 10 cm |
 
 ## Konstruktion
 
-Tre skifter fundablok 50 × 20 × 15 cm lagt i halvstensforbandt rundt om hele perimeteren samt på tværs ved X = 1500 mm (hus/yard-skel). Hulrum udstøbes med selvblandet beton (cement + støbemix + vand). Lodret armeringsjern Ø8 mm sættes gennem hver ~1 m + alle hjørner og T-samlinger; vandret bane i øverste skifte. Topskiftet ligger flush med sokkel-niveau (z = 120 mm over jord).
+Tre skifter fundablok 50 × 20 × 15 cm lagt i halvstensforbandt rundt om hele perimeteren samt på tværs ved X = 1500 mm (hus/yard-skel).  
+Hulrum udstøbes med selvblandet beton (cement + støbemix + vand).  
+Lodret armeringsjern Ø8 mm sættes gennem hver ~1 m + alle hjørner og T-samlinger; vandret bane i øverste skifte.  
+Topskiftet ligger flush med sokkel-niveau (z = 120 mm over jord).
 
-M10 ankerskruer drives ned i topskiftet c/c 1000 mm langs hele perimeteren + cross-wall — disse fastgør den efterfølgende bundrem (se `konstruktions-skelet.md`).
+M10 ankerskruer drives ned i topskiftet c/c 1000 mm langs hele perimeteren + cross-wall — disse fastgør den efterfølgende bundrem.
 
 ## Materialeliste
-
-Priser tilføjes senere. Forslag til leverandører: Bauhaus, Stark, XL-BYG.
 
 | # | Vare | Beskrivelse | Antal | Enhed | Pris/enh | I alt |
 |---|---|---|---|---|---|---|
@@ -41,20 +44,9 @@ Priser tilføjes senere. Forslag til leverandører: Bauhaus, Stark, XL-BYG.
 3. Læg 3 skifter fundablok i halvstensforbandt
 4. Sæt lodret armering i hulrum hver ~1 m + alle hjørner og T-samlinger; vandret armering i topskiftet
 5. Bland selv beton (cement + støbemix + vand i ~1:4 forhold), udstøb alle hulrum, lad hærde ~7 dage
-6. Bor og sæt M10 ankerskruer c/c 1000 mm i topskiftet (klar til bundrem fra `konstruktions-skelet`)
+6. Bor og sæt M10 ankerskruer c/c 1000 mm i topskiftet så de klar til bundrem.
 
-## Hvad er IKKE i denne fil
-
-- Bundrem + murpap → `konstruktions-skelet.md`
-- Stolper, toprem, losholter, vindkryds → `vaegge.md` (vil flytte til konstruktions-skelet senere)
-- Strøer-gulv, krydsfiner, mus-net → kommer i egen fil (gulv eller del af konstruktions-skelet)
-- Mesh apron (predator dig defence) → kommer i egen fil
-- Tag og spær → `tagkonstruktion.md`
-- Døre og vindue → `aabninger.md`
-- Beklædning → `beklaedning.md`
-- Inventar → `inventar.md`
-
-## Audit / verificering
+## Rendering / verificering
 
 ```powershell
 # Render fundamentet alene (uden græs så ringen er synlig)
