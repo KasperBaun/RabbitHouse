@@ -5,7 +5,6 @@ include <../../lib/defaults.scad>
 include <config.scad>
 use <../../lib/primitives/framing.scad>
 use <../../lib/primitives/mesh.scad>
-use <../../lib/primitives/foundation.scad>   // dpc_strip lives here
 use <../../lib/bom.scad>
 
 module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
@@ -17,12 +16,6 @@ module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
     // break). Was previously bh+air_gap when the wall sat on a slab.
     z_sill   = 10;
     z_bp_top = z_sill + sw;          // bundrem top — door rough-opening floor
-
-    // Damp-proof course (fugtspærre) directly on slab top, under each bundrem
-    dpc_strip([0, 0, bh], hl, "X", sd);
-    dpc_strip([0, ww - sd, bh], hl, "X", sd);
-    dpc_strip([0, 0, bh], ww, "Y", sd);
-    dpc_strip([hl - sd, 0, bh], ww, "Y", sd);
 
     // Front and back walls — top plate slopes across the wall thickness so
     // the toprem follows the roof underside instead of clipping it. Both
