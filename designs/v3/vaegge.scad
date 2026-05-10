@@ -26,11 +26,13 @@ module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
               h_inner = v3_roof_under(sd)        - z_sill);
     v3_wall_bats([0, sd, z_sill], hl, v3_roof_under(0) - z_sill, "X");
     v3_wind_paper([0, -WIND_PAPER_T, z_sill], hl, v3_roof_under(0) - z_sill, "X");
+    v3_losholter([0, 0, z_sill], hl, "X");
     stud_wall([0, ww - sd, z_sill], hl,
               v3_roof_under(ww - sd) - z_sill, "X", stud, pal,
               h_inner = v3_roof_under(ww)        - z_sill);
     v3_wall_bats([0, ww - sd, z_sill], hl, v3_roof_under(ww - sd) - z_sill, "X");
     v3_wind_paper([0, ww, z_sill], hl, v3_roof_under(ww - sd) - z_sill, "X");
+    v3_losholter([0, ww - sd, z_sill], hl, "X");
 
     // Side and partition walls — sloped top plates that bear directly on
     // rafters; the top plate underside follows the roof line. No separate
@@ -48,11 +50,13 @@ module v3_house_framing(hl, ww, ehf, ehb, bh, wt, fpw, stud, pal) {
     v3_wall_bats([sd, 0, z_sill], ww, min(ehf - air_gap, ehb - air_gap), "Y",
                  skip_ranges = left_skip);
     v3_wind_paper([-WIND_PAPER_T, 0, z_sill], ww, min(ehf - air_gap, ehb - air_gap), "Y");
+    v3_losholter([0, 0, z_sill], ww, "Y", skip_ranges = left_skip);
     stud_wall_sloped([hl - sd, 0, z_sill], ww, ehf - air_gap, ehb - air_gap,
                      "Y", stud, pal, partition_skip);
     v3_wall_bats([hl - sd, 0, z_sill], ww, min(ehf - air_gap, ehb - air_gap), "Y",
                  skip_ranges = partition_skip);
     v3_wind_paper([hl, 0, z_sill], ww, min(ehf - air_gap, ehb - air_gap), "Y");
+    v3_losholter([hl - sd, 0, z_sill], ww, "Y", skip_ranges = partition_skip);
 
     // Framed openings — jamb studs, header, cripples (and rough sill for
     // the window). Wall heights mirror the parent stud_wall_sloped so the
@@ -355,6 +359,30 @@ module v3_vaegge(stud = DEFAULT_STUD, mesh = DEFAULT_MESH,
     v3_yard_mesh_front(hl, rl, ww, fpw, ct, palette, mesh);
     v3_yard_mesh_back(hl, rl, ww, fpw, ct, palette, mesh);
     v3_yard_mesh_right(hl, rl, ww, fpw, palette, mesh);
+}
+
+// ---------------------------------------------------------------------------
+// Losholter (E4) — 45×95 mid-height noggings per stud bay
+// ---------------------------------------------------------------------------
+
+module v3_losholter(origin, length, axis, sw=45, sd=95, sp=600,
+                    z_above_origin=1100, skip_ranges=[]) {
+    n = floor(length / sp);
+    bom_member("losholt", "spruce", sw, sd, sp - sw,
+               "wall_nogging", system="vaegge", count=n);
+    color([0.86, 0.74, 0.50])
+    for (i = [0 : n-1]) {
+        a = i * sp + sw;
+        b = (i+1) * sp;
+        if (!_v3_in_skip((a+b)/2, skip_ranges)) {
+            if (axis == "X")
+                translate([origin[0] + a, origin[1], origin[2] + z_above_origin])
+                    cube([b - a, sd, sw]);
+            else
+                translate([origin[0], origin[1] + a, origin[2] + z_above_origin])
+                    cube([sd, b - a, sw]);
+        }
+    }
 }
 
 // ---------------------------------------------------------------------------
