@@ -22,6 +22,7 @@ use <../../lib/bom.scad>
 use <fundament.scad>
 use <vaegge.scad>
 use <tagkonstruktion.scad>
+use <beklaedning.scad>
 
 // Roof-geometry helpers (v3_span_total, v3_total_drop, v3_roof_oz,
 // v3_roof_under) live in config.scad so per-system files like vaegge.scad
@@ -74,8 +75,7 @@ module build_v3(show_cladding=true, show_ground=true) {
 
     // --- House cladding (front, back, left, partition) ----------------
     if (show_cladding) {
-        v3_house_cladding(hl, ww, ehf, ehb, bh, ct, pal, clad);
-        v3_house_corner_trims(hl, ww, ehf, ehb, bh, ct, pal);
+        v3_beklaedning(clad, pal);
 
         // --- Partition: human door + rabbit pet door ------------------
         v3_partition_door(hl, ct, V3_HOUSE_DOOR_Y, V3_HOUSE_DOOR_W,
@@ -133,76 +133,6 @@ module build_v3(show_cladding=true, show_ground=true) {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-// Yard floor — stabilgrus filled to top of fundablok ring (Z=V3_BASE_H)
-// per Phase 1 spec §3.3, with grass/jord on top. Inside the yard, the
-// 8 mm grass surface therefore sits at Z=V3_BASE_H..V3_BASE_H+8.
-module v3_yard_grass(yard_x0, yard_len, ww) {
-    z0 = V3_BASE_H;
-    color([0.32, 0.58, 0.22])
-    translate([yard_x0, 0, z0])
-        cube([yard_len, ww, 8]);
-    color([0.40, 0.62, 0.28])
-    for (cx = [yard_x0 + 350, yard_x0 + 1100, yard_x0 + 1900,
-               yard_x0 + 2700, yard_x0 + 3400])
-        for (cy = [350, 950, 1500, 2050])
-            translate([cx, cy, z0 + 8])
-                cube([280 + (cx % 90), 220 + (cy % 70), 4]);
-    color([0.30, 0.50, 0.20])
-    for (cx = [yard_x0 + 200, yard_x0 + 600])
-        translate([cx, 1500 + cx % 200, z0 + 8])
-            cube([180, 160, 3]);
-}
-
-// External corner trim posts (45×45 vertical) at the four house cladding
-// corners. Each post overlaps both cladding faces at the corner so the raw
-// klink board end-grain is covered, matching standard Danish carpentry.
-// Heights follow the wall: back corners use ehb, front corners use ehf.
-module v3_house_corner_trims(hl, ww, ehf, ehb, bh, ct, pal) {
-    tw = 45;
-    color(pal_trim(pal)) {
-        translate([-ct,           -ct,            bh]) cube([tw, tw, ehf]);
-        translate([hl + ct - tw,  -ct,            bh]) cube([tw, tw, ehf]);
-        translate([-ct,           ww + ct - tw,   bh]) cube([tw, tw, ehb]);
-        translate([hl + ct - tw,  ww + ct - tw,   bh]) cube([tw, tw, ehb]);
-    }
-}
-
-// House cladding: front (no door), back, left (with side window cutout),
-// partition (with house door + pet door cutouts via inline difference()).
-module v3_house_cladding(hl, ww, ehf, ehb, bh, ct, pal, clad) {
-    clad_wall_rect([0, -ct, bh], hl, ehf, "X", pal, clad);
-    clad_wall_rect([0, ww, bh], hl, ehb, "X", pal, clad);
-    clad_wall_mono_pitch_with_cutout([-ct, 0, bh], ww, ehf, ehb, "Y",
-        pal, clad,
-        [V3_SIDE_WIN_Y, V3_SIDE_WIN_Y + V3_SIDE_WIN_W,
-         V3_SIDE_WIN_Z, V3_SIDE_WIN_Z + V3_SIDE_WIN_H]);
-    fpw = V3_POST_W;
-    difference() {
-        clad_wall_mono_pitch([hl, 0, bh], ww, ehf, ehb, "Y", pal, clad);
-        translate([hl - 10, V3_PET_DOOR_Y, bh + 60])
-            cube([ct + 20, V3_PET_DOOR_W, V3_PET_DOOR_H]);
-        translate([hl - 10, V3_HOUSE_DOOR_Y, bh])
-            cube([ct + 20, V3_HOUSE_DOOR_W, V3_HOUSE_DOOR_H]);
-        // Yard front beam pass-through (sloped notch matching the beam).
-        hull() {
-            translate([hl - 10, 0, v3_roof_under(0) - V3_BEAM_H])
-                cube([ct + 20, 0.01, V3_BEAM_H]);
-            translate([hl - 10, fpw - 0.01,
-                       v3_roof_under(fpw) - V3_BEAM_H])
-                cube([ct + 20, 0.01, V3_BEAM_H]);
-        }
-        // Yard back beam pass-through.
-        hull() {
-            translate([hl - 10, ww - fpw,
-                       v3_roof_under(ww - fpw) - V3_BEAM_H])
-                cube([ct + 20, 0.01, V3_BEAM_H]);
-            translate([hl - 10, ww - 0.01,
-                       v3_roof_under(ww) - V3_BEAM_H])
-                cube([ct + 20, 0.01, V3_BEAM_H]);
-        }
-    }
-}
 
 // Human door in the partition (X=hl outer face, faces +X into yard).
 module v3_partition_door(hl, ct, door_y, door_w, door_h, bh, pal) {
@@ -286,6 +216,26 @@ module v3_yard_door(door_x, door_w, door_h, sill_top, pal, mesh) {
     for (zh = [z0 + 200, z1 - 300])
         translate([door_x - 8, -md - 8, zh])
             cube([15, 8, 100]);
+}
+
+// Yard floor — stabilgrus filled to top of fundablok ring (Z=V3_BASE_H)
+// per Phase 1 spec §3.3, with grass/jord on top. Inside the yard, the
+// 8 mm grass surface therefore sits at Z=V3_BASE_H..V3_BASE_H+8.
+module v3_yard_grass(yard_x0, yard_len, ww) {
+    z0 = V3_BASE_H;
+    color([0.32, 0.58, 0.22])
+    translate([yard_x0, 0, z0])
+        cube([yard_len, ww, 8]);
+    color([0.40, 0.62, 0.28])
+    for (cx = [yard_x0 + 350, yard_x0 + 1100, yard_x0 + 1900,
+               yard_x0 + 2700, yard_x0 + 3400])
+        for (cy = [350, 950, 1500, 2050])
+            translate([cx, cy, z0 + 8])
+                cube([280 + (cx % 90), 220 + (cy % 70), 4]);
+    color([0.30, 0.50, 0.20])
+    for (cx = [yard_x0 + 200, yard_x0 + 600])
+        translate([cx, 1500 + cx % 200, z0 + 8])
+            cube([180, 160, 3]);
 }
 
 // External landscape dressing.
