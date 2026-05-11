@@ -9,7 +9,7 @@ use <beklaedning.scad>
 use <aabninger.scad>
 use <inventar.scad>
 
-show_cladding = false;
+show_cladding = true;
 show_ground = true;
 show_cover = true;           // false = vis kun spær (uden cover-lag)
 roof_cover = "tagpap_osb";   // "tagpap_osb" | "eternit_b7"
