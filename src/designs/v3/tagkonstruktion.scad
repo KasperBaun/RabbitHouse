@@ -43,16 +43,16 @@ module v3_spaer(eh_back, palette = DEFAULT_PALETTE) {
     BRK_W    = 50; BRK_LEG = 90; BRK_T = 2;
 
     // Spær-X-positioner. V1+V2 toprem stopper ved byggelinjen (X=0..ll);
-    // barge-raftrene bæres af 3 lookouts pr. side (se v3_lookouts) ved
-    // Y=47,5 / 1250 / 2452,5 — udlobere fra V3/V4-gable-spær og
-    // andenrad-spær ud til barge-spæret.
+    // barge-spæret lateral-fastholdes til V3/V4-gable-spæret via 3 tvær-
+    // blokeringer pr. side (se v3_lookouts) ved Y=47,5 / 1250 / 2452,5.
+    // Kantilever-moment over side-overhang bæres af OSB-diaphragm.
     //
     //   Barge venstre (X=-220) — bracket kun på +X side (yderside i luft);
-    //                            bæres af lookouts, ikke toprem
+    //                            holdt af tværblokering til V3
     //   Gable V3       (X=0)    — 2 brackets, plus hviler på V3 toprem
     //   Indre regulære (X=600, 1200, ..., 5400) — 2 brackets pr. bearing
     //   Gable V4       (X=5955) — 2 brackets, plus hviler på V4 toprem
-    //   Barge højre    (X=6175) — bracket kun på -X side; bæres af lookouts
+    //   Barge højre    (X=6175) — bracket kun på -X side; holdt af tværblokering
     spaer_xs = concat(
         [-V3_OH_SIDE],                          // venstre barge
         [for (i = [0 : 9]) i * SPAER_C2C],      // 0, 600, ..., 5400
@@ -93,15 +93,19 @@ module v3_spaer(eh_back, palette = DEFAULT_PALETTE) {
 }
 
 // ============================================================================
-// Lookouts (udlobere) — bærer barge-raftrene ved side-overhang.
+// Lookouts / tværblokering mellem barge-spær og V3/V4-gable-spær.
 // 3 stk pr. side i spær-planet, 45×95, ved Y=47,5 / 1250 / 2452,5.
-// Spænder fra barge-rafter (X=-V3_OH_SIDE / X=ll+V3_OH_SIDE) gennem
-// V3/V4-gable-spær (X=0..45 / X=ll-45..ll) til andenrad-spær
-// (X=600..645 / X=ll-645..ll-600). CSG-overlap hvor lookout krydser
-// gable-spær og V1/V2-toprem svarer til notched-through konstruktion.
+//
+// Geometri: blokken sidder i den 175 mm brede tomgang mellem de to
+// yderste spær — yder-flade mod barge-rafterens inder-face, inder-flade
+// mod V3/V4-gable-spærets yder-face. Længde = V3_OH_SIDE − V3_SPAER_W.
+//
+// Struktur: tværblokkene fastholder barge-spæret lateralt mod V3/V4-
+// gable-spæret. Kantilever-moment over side-overhang bæres primært af
+// OSB-pladen som diaphragm — standard dansk småhus-konstruktion.
 // ============================================================================
-LOOKOUT_INBOARD = 600 + V3_SPAER_W;   // 645 — yderkant af andenrad-spær
-LOOKOUT_YS = [47.5, V3_WIDTH/2, V3_WIDTH - 47.5];
+LOOKOUT_LEN = V3_OH_SIDE - V3_SPAER_W;   // 175 = 220 − 45
+LOOKOUT_YS  = [47.5, V3_WIDTH/2, V3_WIDTH - 47.5];
 
 module v3_lookouts(eh_back, palette = DEFAULT_PALETTE) {
     ll = V3_LENGTH;
@@ -110,12 +114,12 @@ module v3_lookouts(eh_back, palette = DEFAULT_PALETTE) {
         z_top = v3_roof_under_for(eh_back, yc);
         z_bot = z_top - V3_SPAER_H;
         y_min = yc - V3_SPAER_W/2;
-        // Venstre side: X=[-V3_OH_SIDE, LOOKOUT_INBOARD]
-        translate([-V3_OH_SIDE, y_min, z_bot])
-            cube([V3_OH_SIDE + LOOKOUT_INBOARD, V3_SPAER_W, V3_SPAER_H]);
-        // Højre side (speil): X=[ll-LOOKOUT_INBOARD, ll+V3_OH_SIDE]
-        translate([ll - LOOKOUT_INBOARD, y_min, z_bot])
-            cube([V3_OH_SIDE + LOOKOUT_INBOARD, V3_SPAER_W, V3_SPAER_H]);
+        // Venstre: mellem barge (X=-220..-175) og V3-gable (X=0..45).
+        translate([-V3_OH_SIDE + V3_SPAER_W, y_min, z_bot])
+            cube([LOOKOUT_LEN, V3_SPAER_W, V3_SPAER_H]);
+        // Højre: mellem V4-gable (X=5955..6000) og barge (X=6175..6220).
+        translate([ll, y_min, z_bot])
+            cube([LOOKOUT_LEN, V3_SPAER_W, V3_SPAER_H]);
     }
 }
 
