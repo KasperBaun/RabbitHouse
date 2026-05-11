@@ -9,7 +9,7 @@ use <beklaedning.scad>
 use <aabninger.scad>
 use <inventar.scad>
 
-show_cladding = false;       // false = skjul klink + sternbræt + sternkapsel + sofitt (= alle trim-stykker)
+show_cladding = true;       // false = skjul klink + sternbræt + sternkapsel + sofitt (= alle trim-stykker)
 show_ground = true;
 show_cover = true;           // false = skjul OSB + underpap + tagpap (vis kun framing)
 roof_cover = "tagpap_osb";   // "tagpap_osb" | "eternit_b7"
