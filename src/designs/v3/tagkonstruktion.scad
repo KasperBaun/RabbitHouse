@@ -396,10 +396,19 @@ module v3_cover_eternit_b7(eh_back, palette = DEFAULT_PALETTE) {
 
 // ============================================================================
 // Top-level — vælger cover-system og tilføjer fælles sternbræt + tagrende.
+//
+// Toggles:
+//   show_cover  — OSB + underpap + tagpap (cover-lag). false → bare spær+lookouts.
+//   show_finish — sternbræt + sternkapsel + sofitt (visuel finish/trim).
+//                 false → ingen trim, så framing kan inspiceres rent.
 // ============================================================================
-module v3_tagkonstruktion(roof_cover = "tagpap_osb", palette = DEFAULT_PALETTE) {
+module v3_tagkonstruktion(roof_cover = "tagpap_osb",
+                          show_cover = true,
+                          show_finish = true,
+                          palette = DEFAULT_PALETTE) {
     eh_back = v3_eh_back_for(roof_cover);
 
+    // Bærende træværk — altid synligt.
     v3_spaer(eh_back, palette);
     v3_lookouts(eh_back, palette);
 
@@ -413,35 +422,43 @@ module v3_tagkonstruktion(roof_cover = "tagpap_osb", palette = DEFAULT_PALETTE) 
         : OSB_T + UNDERPAP_T + TAGPAP_T;
     STERN_LIP = 7;   // sternbræt-top stikker 7 mm over cover-top
 
-    if (roof_cover == "tagpap_osb")          v3_cover_tagpap_osb(eh_back, palette);
-    else if (roof_cover == "eternit_b7")     v3_cover_eternit_b7(eh_back, palette);
-    else if (roof_cover == "tagpap")         v3_cover_tagpap_osb(eh_back, palette);  // legacy alias
-    else if (roof_cover == "eternit_10"
-          || roof_cover == "eternit_14")     v3_cover_eternit_b7(eh_back, palette);  // legacy alias
-    else assert(false, str("unknown roof_cover: ", roof_cover));
+    if (show_cover) {
+        if (roof_cover == "tagpap_osb")          v3_cover_tagpap_osb(eh_back, palette);
+        else if (roof_cover == "eternit_b7")     v3_cover_eternit_b7(eh_back, palette);
+        else if (roof_cover == "tagpap")         v3_cover_tagpap_osb(eh_back, palette);  // legacy alias
+        else if (roof_cover == "eternit_10"
+              || roof_cover == "eternit_14")     v3_cover_eternit_b7(eh_back, palette);  // legacy alias
+        else assert(false, str("unknown roof_cover: ", roof_cover));
+    }
 
-    // Sternbræt 25×125 imprægneret gran. Toppen sidder cover_thick + STERN_LIP
-    // (typisk 30 mm) over spær-top, dvs. ~7 mm over tagpap. Sternkapslen
-    // glider derefter ned over toppen som beskyttelse.
-    //
-    // Sternbrædderne sidder UDVENDIGT på spær-endefladerne — dvs. de skal
-    // ligge UDEN FOR det eave-spænd der svarer til spær-yder-positionerne
-    // (X=-V3_OH_SIDE..ll+V3_OH_SIDE, Y=-V3_OH_FRONT..ww+V3_OH_BACK).
-    // fascia_and_gutter_mono placerer brædderne PÅ INDERSIDEN af de overhangs
-    // den får. Derfor passerer vi overhang_* + STERN_T, så bræddernes
-    // INDER-flader lander præcist på spær-endefladerne.
-    fascia_origin_z = v3_roof_oz_for(eh_back) + cover_thick + STERN_LIP;
-    fascia_and_gutter_mono([0, 0, fascia_origin_z],
-                           V3_LENGTH, V3_WIDTH, v3_total_drop_for(eh_back),
-                           125, STERN_T,
-                           V3_OH_FRONT + STERN_T,
-                           V3_OH_BACK  + STERN_T,
-                           V3_OH_SIDE  + STERN_T,
-                           110, 65, V3_BASE_H, palette);
+    // Visuel finish: sternbræt + sternkapsel + sofitt. Toggles sammen
+    // med cladding via show_finish — så show_cladding=false skjuler
+    // alle trim-stykker, og framing kan inspiceres rent.
+    if (show_finish) {
+        // Sternbræt 25×125 imprægneret gran. Toppen sidder cover_thick +
+        // STERN_LIP (typisk 30 mm) over spær-top, dvs. ~7 mm over tagpap.
+        // Sternkapslen glider derefter ned over toppen som beskyttelse.
+        //
+        // Sternbrædderne sidder UDVENDIGT på spær-endefladerne — dvs. de
+        // skal ligge UDEN FOR det eave-spænd der svarer til spær-yder-
+        // positionerne (X=-V3_OH_SIDE..ll+V3_OH_SIDE, Y=-V3_OH_FRONT..
+        // ww+V3_OH_BACK). fascia_and_gutter_mono placerer brædderne PÅ
+        // INDERSIDEN af de overhangs den får. Derfor passerer vi
+        // overhang_* + STERN_T, så bræddernes INDER-flader lander præcist
+        // på spær-endefladerne.
+        fascia_origin_z = v3_roof_oz_for(eh_back) + cover_thick + STERN_LIP;
+        fascia_and_gutter_mono([0, 0, fascia_origin_z],
+                               V3_LENGTH, V3_WIDTH, v3_total_drop_for(eh_back),
+                               125, STERN_T,
+                               V3_OH_FRONT + STERN_T,
+                               V3_OH_BACK  + STERN_T,
+                               V3_OH_SIDE  + STERN_T,
+                               110, 65, V3_BASE_H, palette);
 
-    // Sternkapsler (alu cap-profiler) ovenpå sternbræt-toppen.
-    v3_sternkapsler(eh_back, cover_thick + STERN_LIP, palette);
+        // Sternkapsler (alu cap-profiler) ovenpå sternbræt-toppen.
+        v3_sternkapsler(eh_back, cover_thick + STERN_LIP, palette);
 
-    // Sofitt — lukker tagskæg-undersiden på alle 4 sider.
-    v3_sofitt(eh_back, palette);
+        // Sofitt — lukker tagskæg-undersiden på alle 4 sider.
+        v3_sofitt(eh_back, palette);
+    }
 }

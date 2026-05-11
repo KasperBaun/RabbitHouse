@@ -9,9 +9,9 @@ use <beklaedning.scad>
 use <aabninger.scad>
 use <inventar.scad>
 
-show_cladding = true;
+show_cladding = false;       // false = skjul klink + sternbræt + sternkapsel + sofitt (= alle trim-stykker)
 show_ground = true;
-show_cover = true;           // false = vis kun spær (uden cover-lag)
+show_cover = true;           // false = skjul OSB + underpap + tagpap (vis kun framing)
 roof_cover = "tagpap_osb";   // "tagpap_osb" | "eternit_b7"
 
 // v3-specifik klink-profil: 25×125 mm gran/lærk klink-brædder, 25 mm
@@ -28,11 +28,11 @@ module build_v3() {
     v3_konstruktions_skelet(pal);
     v3_aabninger(_default_mesh(), pal);
 
-    // todo.md #5: tagkonstruktion (spær + dækning)
-    if (show_cover)
-        v3_tagkonstruktion(roof_cover, pal);
-    else
-        v3_spaer(v3_eh_back_for(roof_cover), pal);
+    // todo.md #5: tagkonstruktion (spær + lookouts altid; cover/finish toggles)
+    v3_tagkonstruktion(roof_cover=roof_cover,
+                       show_cover=show_cover,
+                       show_finish=show_cladding,
+                       palette=pal);
 
     // todo.md #4: beklaedning (vindpap, afstandsliste, klink, voliernet)
     if (show_cladding) v3_beklaedning(V3_CLAD, pal);
