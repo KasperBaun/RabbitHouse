@@ -146,61 +146,91 @@ module v3_tagpap_overlag(eh_back, palette = DEFAULT_PALETTE) {
     _v3_roof_layer(eh_back, OSB_T + UNDERPAP_T, TAGPAP_T, TAGPAP_COLOR);
 }
 
-// Aluinddækning ved tagskæg: L-profil 2 mm, 80 mm topflange + 60 mm dryp-kant.
-// Anvendes ved alle 4 eaves (front, bag, venstre, højre). cover_top_offset
-// er vertikal afstand fra spær-top (= roof_oz) til toppen af det vandtætte
-// dækningslag — for tagpap_osb 25 mm, for eternit_b7 72 mm.
-module v3_aluinddaekning(eh_back, cover_top_offset, palette = DEFAULT_PALETTE) {
+// Sternbræt-tykkelse (25×125 imprægneret gran). Bruges også af sternkapslen
+// som topflange-bredde. Konstant her så fascia-kaldet og sternkapsel-modulet
+// er enige om hvor sternbrædderne sidder.
+STERN_T = 25;
+
+// Sternkapsel cap-profil 35×25 mm i aluminium: glides over sternbræt-toppen
+// + den oprullede tagpap-kant. 25 mm topflange matcher sternbræt-tykkelsen
+// (25 mm); 35 mm drop hænger ned udvendigt forbi sternbrædet.
+//
+// Anvendes ved alle 4 eaves. Lige profil på horisontalt front/bag,
+// skrå profil på sloped venstre/højre.
+//
+// Sternbræt-placering (efter at v3_tagkonstruktion kalder fascia med
+// overhang_* + STERN_T): sternbrædderne sidder UDVENDIGT på spær-endefladerne.
+//   • Front sternbræt outer face = Y = -V3_OH_FRONT - STERN_T,
+//                       inner face = Y = -V3_OH_FRONT (spær-endeflade).
+//   • Bag sternbræt   outer face = Y = ww + V3_OH_BACK + STERN_T.
+//   • Venstre sternbræt outer face = X = -V3_OH_SIDE - STERN_T.
+//   • Højre sternbræt   outer face = X = ll + V3_OH_SIDE + STERN_T.
+//
+//   sternbraet_top_offset = z-offset fra v3_roof_oz_for(eh_back) til
+//                           sternbræt-toppen (= cover_thick + lip).
+//                           Sternbræt-toppen sidder altid over cover-toppen
+//                           med en lille kant (lip) på 7 mm.
+module v3_sternkapsler(eh_back, sternbraet_top_offset, palette = DEFAULT_PALETTE) {
     ll = V3_LENGTH; ww = V3_WIDTH;
     drop_full = v3_total_drop_for(eh_back);
     roof_oz   = v3_roof_oz_for(eh_back);
-    z_front_eave = roof_oz + cover_top_offset;                  // z @ y=-OH_FRONT
-    z_back_eave  = roof_oz - drop_full + cover_top_offset;      // z @ y=ww+OH_BACK
-    ALU_T = 2; FACE_H = 60; TOP_W = 80;
+    z_front = roof_oz + sternbraet_top_offset;                  // z @ y=-OH_FRONT
+    z_back  = roof_oz - drop_full + sternbraet_top_offset;      // z @ y=ww+OH_BACK
+
+    CAP_W    = STERN_T;     // 25 mm cap-bredde (matcher sternbræt-top)
+    CAP_DROP = 35;          // 35 mm drop udvendigt
+    CAP_T    = 2;           // alu-tykkelse
+
+    // Sternbræt yder-flader (= cap topflange yder-kanter).
+    y_front_outer = -V3_OH_FRONT - STERN_T;
+    y_back_outer  = ww + V3_OH_BACK + STERN_T;
+    x_left_outer  = -V3_OH_SIDE - STERN_T;
+    x_right_outer = ll + V3_OH_SIDE + STERN_T;
 
     color(ALU_COLOR) {
-        // FRONT eave (y=-V3_OH_FRONT) — flat (alu profil ligger vandret langs X)
-        translate([-V3_OH_SIDE, -V3_OH_FRONT, z_front_eave])
-            cube([ll + 2*V3_OH_SIDE, TOP_W, ALU_T]);
-        translate([-V3_OH_SIDE, -V3_OH_FRONT - ALU_T, z_front_eave - FACE_H])
-            cube([ll + 2*V3_OH_SIDE, ALU_T, FACE_H + ALU_T]);
+        // FRONT eave — topflange ligger over sternbræt-top (Y= y_front_outer..-V3_OH_FRONT).
+        // Strækker sig over hele front-sternbrættets X-spænd (inkl. de sidevendte
+        // sternbrædders bredde) så hjørnerne er dækkede.
+        translate([x_left_outer, y_front_outer, z_front])
+            cube([x_right_outer - x_left_outer, STERN_T, CAP_T]);
+        // Outer drop hænger udvendigt forbi sternbræt-front-fladen.
+        translate([x_left_outer, y_front_outer - CAP_T, z_front - CAP_DROP])
+            cube([x_right_outer - x_left_outer, CAP_T, CAP_DROP + CAP_T]);
 
-        // BAG eave (y=ww+V3_OH_BACK) — flat (alu profil ligger vandret langs X)
-        translate([-V3_OH_SIDE, ww + V3_OH_BACK - TOP_W, z_back_eave])
-            cube([ll + 2*V3_OH_SIDE, TOP_W, ALU_T]);
-        translate([-V3_OH_SIDE, ww + V3_OH_BACK, z_back_eave - FACE_H])
-            cube([ll + 2*V3_OH_SIDE, ALU_T, FACE_H + ALU_T]);
+        // BAG eave
+        translate([x_left_outer, ww + V3_OH_BACK, z_back])
+            cube([x_right_outer - x_left_outer, STERN_T, CAP_T]);
+        translate([x_left_outer, y_back_outer, z_back - CAP_DROP])
+            cube([x_right_outer - x_left_outer, CAP_T, CAP_DROP + CAP_T]);
 
-        // VENSTRE side (x=-V3_OH_SIDE) — sloper med taget (z_front_eave→z_back_eave)
-        // Topflange (vandret bredde TOP_W langs +X)
+        // VENSTRE side (skrå cap der følger tagets hældning).
+        // Topflange dækker sternbræt-top i X=[x_left_outer, -V3_OH_SIDE].
         hull() {
-            translate([-V3_OH_SIDE, -V3_OH_FRONT, z_front_eave])
-                cube([TOP_W, 0.01, ALU_T]);
-            translate([-V3_OH_SIDE, ww + V3_OH_BACK - 0.01, z_back_eave])
-                cube([TOP_W, 0.01, ALU_T]);
+            translate([x_left_outer, y_front_outer, z_front])
+                cube([STERN_T, 0.01, CAP_T]);
+            translate([x_left_outer, y_back_outer - 0.01, z_back])
+                cube([STERN_T, 0.01, CAP_T]);
         }
-        // Dryp-kant (vertikal flange hænger nedad ved x=-V3_OH_SIDE)
+        // Outer drop hænger udvendigt for venstre sternbræts yder-flade.
         hull() {
-            translate([-V3_OH_SIDE - ALU_T, -V3_OH_FRONT, z_front_eave - FACE_H])
-                cube([ALU_T, 0.01, FACE_H + ALU_T]);
-            translate([-V3_OH_SIDE - ALU_T, ww + V3_OH_BACK - 0.01, z_back_eave - FACE_H])
-                cube([ALU_T, 0.01, FACE_H + ALU_T]);
+            translate([x_left_outer - CAP_T, y_front_outer, z_front - CAP_DROP])
+                cube([CAP_T, 0.01, CAP_DROP + CAP_T]);
+            translate([x_left_outer - CAP_T, y_back_outer - 0.01, z_back - CAP_DROP])
+                cube([CAP_T, 0.01, CAP_DROP + CAP_T]);
         }
 
-        // HØJRE side (x=ll+V3_OH_SIDE) — sloper med taget
-        // Topflange
+        // HØJRE side
         hull() {
-            translate([ll + V3_OH_SIDE - TOP_W, -V3_OH_FRONT, z_front_eave])
-                cube([TOP_W, 0.01, ALU_T]);
-            translate([ll + V3_OH_SIDE - TOP_W, ww + V3_OH_BACK - 0.01, z_back_eave])
-                cube([TOP_W, 0.01, ALU_T]);
+            translate([ll + V3_OH_SIDE, y_front_outer, z_front])
+                cube([STERN_T, 0.01, CAP_T]);
+            translate([ll + V3_OH_SIDE, y_back_outer - 0.01, z_back])
+                cube([STERN_T, 0.01, CAP_T]);
         }
-        // Dryp-kant
         hull() {
-            translate([ll + V3_OH_SIDE, -V3_OH_FRONT, z_front_eave - FACE_H])
-                cube([ALU_T, 0.01, FACE_H + ALU_T]);
-            translate([ll + V3_OH_SIDE, ww + V3_OH_BACK - 0.01, z_back_eave - FACE_H])
-                cube([ALU_T, 0.01, FACE_H + ALU_T]);
+            translate([x_right_outer, y_front_outer, z_front - CAP_DROP])
+                cube([CAP_T, 0.01, CAP_DROP + CAP_T]);
+            translate([x_right_outer, y_back_outer - 0.01, z_back - CAP_DROP])
+                cube([CAP_T, 0.01, CAP_DROP + CAP_T]);
         }
     }
 }
@@ -209,7 +239,8 @@ module v3_cover_tagpap_osb(eh_back, palette = DEFAULT_PALETTE) {
     v3_osb_daek(eh_back, palette);
     v3_underpap(eh_back, palette);
     v3_tagpap_overlag(eh_back, palette);
-    v3_aluinddaekning(eh_back, OSB_T + UNDERPAP_T + TAGPAP_T, palette);
+    // Sternkapsler kaldes fra v3_tagkonstruktion (de sidder på sternbræt-top,
+    // ikke direkte på coveret).
 }
 
 // ============================================================================
@@ -290,9 +321,7 @@ module v3_cover_eternit_b7(eh_back, palette = DEFAULT_PALETTE) {
     v3_afstandsliste(eh_back, palette);
     v3_laegter_eternit(eh_back, palette);
     v3_eternit_b7(eh_back, palette);
-    v3_aluinddaekning(eh_back,
-                      UNDERTAG_T + AFSTANDS_T + LAGTE_T + ETERNIT_T,
-                      palette);
+    // Sternkapsler kaldes fra v3_tagkonstruktion.
 }
 
 // ============================================================================
@@ -303,6 +332,16 @@ module v3_tagkonstruktion(roof_cover = "tagpap_osb", palette = DEFAULT_PALETTE) 
 
     v3_spaer(eh_back, palette);
 
+    // Cover-tykkelse over spær — bruges til at løfte sternbræt + sternkapsel
+    // op over cover-toppen med en lille kant.
+    cover_thick =
+          (roof_cover == "tagpap_osb" || roof_cover == "tagpap") ?
+              OSB_T + UNDERPAP_T + TAGPAP_T
+        : (roof_cover == "eternit_b7" || roof_cover == "eternit_10" || roof_cover == "eternit_14") ?
+              UNDERTAG_T + AFSTANDS_T + LAGTE_T + ETERNIT_T
+        : OSB_T + UNDERPAP_T + TAGPAP_T;
+    STERN_LIP = 7;   // sternbræt-top stikker 7 mm over cover-top
+
     if (roof_cover == "tagpap_osb")          v3_cover_tagpap_osb(eh_back, palette);
     else if (roof_cover == "eternit_b7")     v3_cover_eternit_b7(eh_back, palette);
     else if (roof_cover == "tagpap")         v3_cover_tagpap_osb(eh_back, palette);  // legacy alias
@@ -310,9 +349,25 @@ module v3_tagkonstruktion(roof_cover = "tagpap_osb", palette = DEFAULT_PALETTE) 
           || roof_cover == "eternit_14")     v3_cover_eternit_b7(eh_back, palette);  // legacy alias
     else assert(false, str("unknown roof_cover: ", roof_cover));
 
-    // Sternbræt + tagrende — samme på begge cover-systemer.
-    fascia_and_gutter_mono([0, 0, v3_roof_oz_for(eh_back)],
+    // Sternbræt 25×125 imprægneret gran. Toppen sidder cover_thick + STERN_LIP
+    // (typisk 30 mm) over spær-top, dvs. ~7 mm over tagpap. Sternkapslen
+    // glider derefter ned over toppen som beskyttelse.
+    //
+    // Sternbrædderne sidder UDVENDIGT på spær-endefladerne — dvs. de skal
+    // ligge UDEN FOR det eave-spænd der svarer til spær-yder-positionerne
+    // (X=-V3_OH_SIDE..ll+V3_OH_SIDE, Y=-V3_OH_FRONT..ww+V3_OH_BACK).
+    // fascia_and_gutter_mono placerer brædderne PÅ INDERSIDEN af de overhangs
+    // den får. Derfor passerer vi overhang_* + STERN_T, så bræddernes
+    // INDER-flader lander præcist på spær-endefladerne.
+    fascia_origin_z = v3_roof_oz_for(eh_back) + cover_thick + STERN_LIP;
+    fascia_and_gutter_mono([0, 0, fascia_origin_z],
                            V3_LENGTH, V3_WIDTH, v3_total_drop_for(eh_back),
-                           150, 22, V3_OH_FRONT, V3_OH_BACK, V3_OH_SIDE,
+                           125, STERN_T,
+                           V3_OH_FRONT + STERN_T,
+                           V3_OH_BACK  + STERN_T,
+                           V3_OH_SIDE  + STERN_T,
                            110, 65, V3_BASE_H, palette);
+
+    // Sternkapsler (alu cap-profiler) ovenpå sternbræt-toppen.
+    v3_sternkapsler(eh_back, cover_thick + STERN_LIP, palette);
 }
