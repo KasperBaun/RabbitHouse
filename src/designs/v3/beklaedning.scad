@@ -23,6 +23,35 @@ module v3_wind_paper(origin, length, height, axis) {
         translate(origin) cube([V3_VP_T, length, height]);
 }
 
+// Sloped vindpapir til skrå vægge (V3, V5). Top z lapper toprem-bunden
+// linært fra h_high (ved origin-enden) til h_low (ved den fjerne ende).
+// Bottom er flad ved origin.z. Bruges hvor wall-toppen skråner med taget
+// så vindpapiren ikke har et flat-top gap ved HØJ-enden.
+module v3_wind_paper_sloped(origin, length, h_high, h_low, axis) {
+    ox = origin[0]; oy = origin[1]; oz = origin[2];
+    color(WIND_PAPER_COLOR)
+    if (axis == "X") {
+        hull() {
+            translate([ox, oy, oz])
+                cube([0.01, V3_VP_T, h_high]);
+            translate([ox + length - 0.01, oy, oz])
+                cube([0.01, V3_VP_T, h_low]);
+        }
+    } else {
+        hull() {
+            translate([ox, oy, oz])
+                cube([V3_VP_T, 0.01, h_high]);
+            translate([ox, oy + length - 0.01, oz])
+                cube([V3_VP_T, 0.01, h_low]);
+        }
+    }
+}
+
+// Hjælpefunktion: wall-højde fra sokkel-top (bh=V3_BASE_H) til toprem-TOP
+// ved enhver y. Linear mellem V3_EH_FRONT (y=0) og V3_EH_BACK (y=V3_WIDTH).
+function v3_wall_h(y) =
+    V3_EH_FRONT - (V3_EH_FRONT - V3_EH_BACK) * y / V3_WIDTH;
+
 // ---------------------------------------------------------------------------
 // Klink-beklædning på de 4 hus-vægge.
 // Klink-origin sidder s = V3_VP_T + V3_AL_T mm udad fra stud-fladen, så
@@ -50,14 +79,23 @@ module v3_house_cladding(hl, ww, ehf, ehb, bh, ct, pal, clad) {
 
     // Partition wall, yard side (X = part_outer_x). axis="Y", thickness
     // extends +X. Klink occupies X = part_outer_x+s..part_outer_x+s+ct.
-    klink_in = part_outer_x + s;     // klink inner face X
+    // V5 BUTTER mellem V1+V2's inderfladser (Y = V3_POST_W..ww-V3_POST_W),
+    // så klink må ikke stikke ud i V1/V2's footprint. Heights matcher
+    // wall_top_z ved butted-positionerne (ehf - 7.6 / ehb + 7.6 for default
+    // geometri) så klink-top præcist møder den skrå toprem-top.
+    klink_in    = part_outer_x + s;     // klink inner face X
+    butt_y0     = V3_POST_W;            // 95
+    butt_len    = ww - 2 * V3_POST_W;   // 2310
+    v5_h_high   = v3_wall_h(butt_y0);            // = 2392.4
+    v5_h_low    = v3_wall_h(butt_y0 + butt_len); // = 2207.6
     difference() {
-        clad_wall_mono_pitch([klink_in, 0, bh], ww, ehf, ehb, "Y", pal, clad);
-        // Pet door cutout (rabbit hatch).
-        translate([klink_in - 10, V3_PET_DOOR_Y, bh + 60])
+        clad_wall_mono_pitch([klink_in, butt_y0, bh], butt_len,
+                             v5_h_high, v5_h_low, "Y", pal, clad);
+        // Pet door cutout — z=V3_FLOOR_TOP+15 (= 180, 15 mm over gulv)
+        translate([klink_in - 10, V3_PET_DOOR_Y, V3_FLOOR_TOP + 15])
             cube([ct + 20, V3_PET_DOOR_W, V3_PET_DOOR_H]);
-        // Human door cutout.
-        translate([klink_in - 10, V3_HOUSE_DOOR_Y, bh])
+        // Human door cutout — z=V3_FLOOR_TOP (167, gulv-niveau), IKKE bh (120, sokkel)
+        translate([klink_in - 10, V3_HOUSE_DOOR_Y, V3_FLOOR_TOP])
             cube([ct + 20, V3_HOUSE_DOOR_W, V3_HOUSE_DOOR_H]);
     }
 }
@@ -78,6 +116,12 @@ module v3_house_corner_trims(hl, ww, ehf, ehb, bh, ct, pal) {
     }
 }
 
+// Skip-check helper — true hvis center-koordinaten c falder inden for
+// nogen af de angivne [lo, hi] intervaller. Bruges af afstandsliste og
+// kunne genbruges af andre dør/vindue-aware moduler.
+function _in_any_skip(c, ranges) =
+    len([for (r = ranges) if (c >= r[0] && c <= r[1]) 1]) > 0;
+
 // ---------------------------------------------------------------------------
 // Afstandsliste — 22×45 vertical counter-battens. Sits BETWEEN vindpapir
 // and klink: at outer offset V3_VP_T, extending outward by V3_AL_T.
@@ -86,19 +130,32 @@ module v3_house_corner_trims(hl, ww, ehf, ehb, bh, ct, pal) {
 //         lineært fra `height` (i=0) til `h_far` (i=n-1). Standard h_far
 //         = height (= flad top på V1/V2). Skrå vægge V3/V5 sætter
 //         h_far = ehb så listerne følger toprem'ens fald front→bag.
+// skip_ranges = liste af [lo, hi] i ABSOLUTE wall-akse koordinater. Lister
+//         hvis centerlinie falder inden for et range droppes (åbninger).
 // ---------------------------------------------------------------------------
-module v3_afstandsliste(origin, length, height, axis, c2c=600, h_far=undef) {
+module v3_afstandsliste(origin, length, height, axis, c2c=600, h_far=undef,
+                        skip_ranges=[]) {
     n = floor(length / c2c) + 1;
     h_end = is_undef(h_far) ? height : h_far;
     color([0.78, 0.65, 0.45])
     for (i = [0 : n-1]) {
-        h_i = (n > 1) ? height + (h_end - height) * i / (n - 1) : height;
-        if (axis == "X")
-            translate([origin[0] + i*c2c, origin[1], origin[2]])
-                cube([45, V3_AL_T, h_i]);
-        else
-            translate([origin[0], origin[1] + i*c2c, origin[2]])
-                cube([V3_AL_T, 45, h_i]);
+        // Lister centerlinie i absolute wall-akse coords (45/2 = 22.5)
+        center = (axis == "X" ? origin[0] : origin[1]) + i*c2c + 22.5;
+        if (!_in_any_skip(center, skip_ranges)) {
+            // Position-baseret interpolation ved lister-FAR-edge (i*c2c + 45)
+            // så listen aldrig stikker UP over toprem på en skrå væg. Lokalt y
+            // ved far-edge / wall-length giver præcis matching mod sloped toprem.
+            far_edge = i * c2c + 45;
+            h_i = (length > 0)
+                ? height + (h_end - height) * far_edge / length
+                : height;
+            if (axis == "X")
+                translate([origin[0] + i*c2c, origin[1], origin[2]])
+                    cube([45, V3_AL_T, h_i]);
+            else
+                translate([origin[0], origin[1] + i*c2c, origin[2]])
+                    cube([V3_AL_T, 45, h_i]);
+        }
     }
 }
 
@@ -173,8 +230,24 @@ module v3_beklaedning(clad = DEFAULT_CLAD, palette = DEFAULT_PALETTE) {
     cap_h_front = ehf - PLATE_H;            // = 2355
     cap_h_back  = ehb - PLATE_H;            // = 2155
 
-    z_sill = 10;  // wall sill air-gap (matches v3_house_framing z_sill)
+    // Vindpapir starter ved sokkel-top (V3_BASE_H = 120) hvor wood-strukturen
+    // begynder. Stale legacy-værdi var 10 mm hvilket fik vindpapir til at
+    // strække sig 110 mm ned over fundamentet. Bottom z=120 betyder vindpapir
+    // dækker bundrem-yderfladen (122..167) og laps mod DPC ved sokkel-top.
+    z_sill = V3_BASE_H;                     // = 120
     part_outer_x = hl + V3_POST_W/2;        // = hl + 47.5
+
+    // V5 partition er INTERIOR og BUTTER mellem V1+V2's inderfladser.
+    // Vindpapir, klink og afstandsliste skal alle holde sig inden for det
+    // butted range så de ikke stikker ud i V1/V2's footprint.
+    butt_y0  = V3_POST_W;                   // 95
+    butt_len = V3_WIDTH - 2 * V3_POST_W;    // 2310
+
+    // V5 wall-højder ved butted-positionerne (matcher præcist wall_top_z der).
+    // Bruges af både klink, vindpapir og afstandsliste så de møder den skrå
+    // toprem-top uden den tidligere 7.6 mm gap.
+    v5_h_high_listere = v3_wall_h(butt_y0);             // = 2392.4 (toprem-TOP ved Y=95)
+    v5_h_low_listere  = v3_wall_h(butt_y0 + butt_len);  // = 2207.6 (toprem-TOP ved Y=2405)
 
     // --- Vindpapir på OUTER stud-face af hver væg. Skrå vægge bruger
     //     cap_h_back (LOW) som flad højde så membranen aldrig stikker
@@ -182,8 +255,34 @@ module v3_beklaedning(clad = DEFAULT_CLAD, palette = DEFAULT_PALETTE) {
     //     skrå triangel) dækkes alligevel af klink + roof-overhang. ---
     v3_wind_paper([0, -V3_VP_T,   z_sill],   hl, cap_h_front, "X");  // front (HIGH)
     v3_wind_paper([0, ww,         z_sill],   hl, cap_h_back,  "X");  // back  (LOW)
-    v3_wind_paper([-V3_VP_T,   0, z_sill],   ww, cap_h_back,  "Y");  // left  (skrå)
-    v3_wind_paper([part_outer_x, 0, z_sill], ww, cap_h_back,  "Y");  // partition (skrå)
+
+    // V3 left wall vindpapir: SLOPED top (matcher den skrå toprem) +
+    // side-vindue cutout. V3 er EXTERIOR og spænder Y=0..ww (wraps om
+    // hjørnet til V1/V2), så ingen Y-butting; kun cutout og slope.
+    difference() {
+        v3_wind_paper_sloped([-V3_VP_T, 0, z_sill], ww,
+                             cap_h_front, cap_h_back, "Y");
+        // Side-vindue cutout (700×600 ved Z=V3_FLOOR_TOP+V3_SIDE_WIN_Z=1267)
+        translate([-V3_VP_T - 1, V3_SIDE_WIN_Y, V3_FLOOR_TOP + V3_SIDE_WIN_Z])
+            cube([V3_VP_T + 2, V3_SIDE_WIN_W, V3_SIDE_WIN_H]);
+    }
+
+    // V5 partition vindpapir: butted Y-extent + SLOPED top + dør-cutouts.
+    // h_high/h_low matcher wall_top ved butted-positionerne (præcis møde med
+    // den skrå toprem; ingen flat-top gap ved HØJ-enden). Hus-dør på
+    // gulv-niveau (V3_FLOOR_TOP=167); pet-dør 15 mm over gulv.
+    v5_cap_h_high = v3_wall_h(butt_y0) - PLATE_H;            // = 2347.4
+    v5_cap_h_low  = v3_wall_h(butt_y0 + butt_len) - PLATE_H; // = 2162.6
+    difference() {
+        v3_wind_paper_sloped([part_outer_x, butt_y0, z_sill], butt_len,
+                             v5_cap_h_high, v5_cap_h_low, "Y");
+        // Hus-dør cutout (870×2050 fra gulv-niveau)
+        translate([part_outer_x - 1, V3_HOUSE_DOOR_Y, V3_FLOOR_TOP])
+            cube([V3_VP_T + 2, V3_HOUSE_DOOR_W, V3_HOUSE_DOOR_H]);
+        // Dyre-dør cutout (250×300, 15 mm over gulv)
+        translate([part_outer_x - 1, V3_PET_DOOR_Y, V3_FLOOR_TOP + 15])
+            cube([V3_VP_T + 2, V3_PET_DOOR_W, V3_PET_DOOR_H]);
+    }
 
     // --- Klink + hjørnetrim ---
     v3_house_cladding(hl, ww, ehf, ehb, bh, ct, palette, clad);
@@ -197,9 +296,17 @@ module v3_beklaedning(clad = DEFAULT_CLAD, palette = DEFAULT_PALETTE) {
     // Back (Y=ww, flad LOW): listerne har alle samme højde ehb.
     v3_afstandsliste([0, ww + V3_VP_T, bh],          hl, ehb, "X");
     // Left exterior wall (skrå): liste i=0 har ehf, liste i=n-1 har ehb.
-    v3_afstandsliste([-(V3_VP_T + V3_AL_T), 0, bh],  ww, ehf, "Y", 600, ehb);
-    // Partition wall yard-side (samme slope som left).
-    v3_afstandsliste([part_outer_x + V3_VP_T, 0, bh], ww, ehf, "Y", 600, ehb);
+    // Skip lister hvis centerlinie falder i side-vinduet (Y=900..1600).
+    v3_afstandsliste([-(V3_VP_T + V3_AL_T), 0, bh], ww, ehf, "Y", 600, ehb,
+                     skip_ranges = [[V3_SIDE_WIN_Y, V3_SIDE_WIN_Y + V3_SIDE_WIN_W]]);
+    // V5 partition yard-side: butted Y-extent + heights ved butted-positionerne
+    // (i stedet for ehf/ehb der er for fuld Y=0..ww) + skip lister hvor dørene er.
+    v3_afstandsliste([part_outer_x + V3_VP_T, butt_y0, bh], butt_len,
+                     v5_h_high_listere, "Y", 600, v5_h_low_listere,
+                     skip_ranges = [
+                         [V3_HOUSE_DOOR_Y, V3_HOUSE_DOOR_Y + V3_HOUSE_DOOR_W],
+                         [V3_PET_DOOR_Y,   V3_PET_DOOR_Y   + V3_PET_DOOR_W]
+                     ]);
 
     // --- Voliernet — yard mesh perimeter (front, back, right) ---
     v3_voliere(palette);
