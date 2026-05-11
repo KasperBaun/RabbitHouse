@@ -389,16 +389,15 @@ module v3_top_plate(palette = DEFAULT_PALETTE) {
     z_low_bot  = WALL_TOP_LOW  - sw;
     butt_y0 = sd;
     butt_y1 = ww - sd;
-    // V1 og V2 toprem forlænges V3_OH_SIDE i hver ende. Forlængelsen
-    // kantilevrer forbi V3/V4 og bærer barge raftren ved side-overhang —
-    // erstatter behovet for lookouts.
-    extended_x0  = -V3_OH_SIDE;
-    extended_len = ll + 2 * V3_OH_SIDE;
+    // V1 og V2 toprem stopper ved byggelinjen (X=0..ll). Side-overhangets
+    // barge-raftre bæres af lookouts (45×95 udlobere) defineret i
+    // tagkonstruktion.scad:v3_lookouts — kantilevrer fra V3/V4-gable-spær
+    // og bagvedliggende andenrad-spær ud til barge-spæret.
     color(pal_post(palette)) {
-        // V1 — front, flat HIGH, forlænget med OH_SIDE i hver ende
-        translate([extended_x0, 0, z_high_bot])      cube([extended_len, sd, sw]);
-        // V2 — back, flat LOW, forlænget med OH_SIDE i hver ende
-        translate([extended_x0, ww - sd, z_low_bot]) cube([extended_len, sd, sw]);
+        // V1 — front, flat HIGH
+        translate([0, 0, z_high_bot])      cube([ll, sd, sw]);
+        // V2 — back, flat LOW
+        translate([0, ww - sd, z_low_bot]) cube([ll, sd, sw]);
         // V3 — left, sloped, butted (urørt — sidder mellem V1+V2 indersider)
         _v3_sloped_toprem(0,                butt_y0, butt_y1);
         // V4 — right, sloped, butted (urørt)

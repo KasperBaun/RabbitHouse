@@ -42,15 +42,17 @@ module v3_spaer(eh_back, palette = DEFAULT_PALETTE) {
     y_brk_b  = ww - sd / 2;                 // 2452.5 — V2 bearing midte
     BRK_W    = 50; BRK_LEG = 90; BRK_T = 2;
 
-    // Spær-X-positioner. V1+V2 toprem er forlænget V3_OH_SIDE i hver ende
-    // (i konstruktions-skelet.scad), så barge raftren bærer direkte på den
-    // forlængede toprem — præcis som de regulære spær. Ingen lookouts behøves.
+    // Spær-X-positioner. V1+V2 toprem stopper ved byggelinjen (X=0..ll);
+    // barge-raftrene bæres af 3 lookouts pr. side (se v3_lookouts) ved
+    // Y=47,5 / 1250 / 2452,5 — udlobere fra V3/V4-gable-spær og
+    // andenrad-spær ud til barge-spæret.
     //
-    //   Barge venstre (X=-220) — bracket kun på +X side (yderside er i luften)
+    //   Barge venstre (X=-220) — bracket kun på +X side (yderside i luft);
+    //                            bæres af lookouts, ikke toprem
     //   Gable V3       (X=0)    — 2 brackets, plus hviler på V3 toprem
     //   Indre regulære (X=600, 1200, ..., 5400) — 2 brackets pr. bearing
     //   Gable V4       (X=5955) — 2 brackets, plus hviler på V4 toprem
-    //   Barge højre    (X=6175) — bracket kun på -X side
+    //   Barge højre    (X=6175) — bracket kun på -X side; bæres af lookouts
     spaer_xs = concat(
         [-V3_OH_SIDE],                          // venstre barge
         [for (i = [0 : 9]) i * SPAER_C2C],      // 0, 600, ..., 5400
@@ -88,6 +90,74 @@ module v3_spaer(eh_back, palette = DEFAULT_PALETTE) {
                          leg=BRK_LEG, thick=BRK_T, width=BRK_W, orientation="+x+z");
         }
     }
+}
+
+// ============================================================================
+// Lookouts (udlobere) — bærer barge-raftrene ved side-overhang.
+// 3 stk pr. side i spær-planet, 45×95, ved Y=47,5 / 1250 / 2452,5.
+// Spænder fra barge-rafter (X=-V3_OH_SIDE / X=ll+V3_OH_SIDE) gennem
+// V3/V4-gable-spær (X=0..45 / X=ll-45..ll) til andenrad-spær
+// (X=600..645 / X=ll-645..ll-600). CSG-overlap hvor lookout krydser
+// gable-spær og V1/V2-toprem svarer til notched-through konstruktion.
+// ============================================================================
+LOOKOUT_INBOARD = 600 + V3_SPAER_W;   // 645 — yderkant af andenrad-spær
+LOOKOUT_YS = [47.5, V3_WIDTH/2, V3_WIDTH - 47.5];
+
+module v3_lookouts(eh_back, palette = DEFAULT_PALETTE) {
+    ll = V3_LENGTH;
+    color(pal_post(palette))
+    for (yc = LOOKOUT_YS) {
+        z_top = v3_roof_under_for(eh_back, yc);
+        z_bot = z_top - V3_SPAER_H;
+        y_min = yc - V3_SPAER_W/2;
+        // Venstre side: X=[-V3_OH_SIDE, LOOKOUT_INBOARD]
+        translate([-V3_OH_SIDE, y_min, z_bot])
+            cube([V3_OH_SIDE + LOOKOUT_INBOARD, V3_SPAER_W, V3_SPAER_H]);
+        // Højre side (speil): X=[ll-LOOKOUT_INBOARD, ll+V3_OH_SIDE]
+        translate([ll - LOOKOUT_INBOARD, y_min, z_bot])
+            cube([V3_OH_SIDE + LOOKOUT_INBOARD, V3_SPAER_W, V3_SPAER_H]);
+    }
+}
+
+// ============================================================================
+// Sofitt — 18 mm krydsfiner der lukker undersiden af tagskægget på alle
+// 4 sider. Sloped (følger spær-/lookout-bund). Farve pal_panel1 (= klink).
+// Front + bag dækker hele eave-bredden (inkl. side-vindskede-yder-flader);
+// sider slutter ved væglinjerne (Y=0..ww) for at undgå dobbelt-dækning.
+// ============================================================================
+SOFITT_T = 18;
+
+module _v3_sofitt_panel(x0, x1, y0, y1, eh_back, palette) {
+    z_top_y0 = v3_roof_under_for(eh_back, y0) - V3_SPAER_H;
+    z_top_y1 = v3_roof_under_for(eh_back, y1) - V3_SPAER_H;
+    color(pal_panel1(palette))
+    polyhedron(
+        points = [
+            [x0, y0, z_top_y0 - SOFITT_T],
+            [x1, y0, z_top_y0 - SOFITT_T],
+            [x1, y1, z_top_y1 - SOFITT_T],
+            [x0, y1, z_top_y1 - SOFITT_T],
+            [x0, y0, z_top_y0],
+            [x1, y0, z_top_y0],
+            [x1, y1, z_top_y1],
+            [x0, y1, z_top_y1]
+        ],
+        faces = [[0,1,2,3], [4,7,6,5], [0,4,5,1], [1,5,6,2], [2,6,7,3], [3,7,4,0]]
+    );
+}
+
+module v3_sofitt(eh_back, palette = DEFAULT_PALETTE) {
+    ll = V3_LENGTH; ww = V3_WIDTH;
+    x_left  = -V3_OH_SIDE - STERN_T;
+    x_right = ll + V3_OH_SIDE + STERN_T;
+    // Front (dækker hjørner)
+    _v3_sofitt_panel(x_left, x_right, -V3_OH_FRONT, 0, eh_back, palette);
+    // Bag (dækker hjørner)
+    _v3_sofitt_panel(x_left, x_right, ww, ww + V3_OH_BACK, eh_back, palette);
+    // Venstre (mellem væglinjer)
+    _v3_sofitt_panel(x_left, 0, 0, ww, eh_back, palette);
+    // Højre
+    _v3_sofitt_panel(ll, x_right, 0, ww, eh_back, palette);
 }
 
 // ============================================================================
@@ -331,6 +401,7 @@ module v3_tagkonstruktion(roof_cover = "tagpap_osb", palette = DEFAULT_PALETTE) 
     eh_back = v3_eh_back_for(roof_cover);
 
     v3_spaer(eh_back, palette);
+    v3_lookouts(eh_back, palette);
 
     // Cover-tykkelse over spær — bruges til at løfte sternbræt + sternkapsel
     // op over cover-toppen med en lille kant.
@@ -370,4 +441,7 @@ module v3_tagkonstruktion(roof_cover = "tagpap_osb", palette = DEFAULT_PALETTE) 
 
     // Sternkapsler (alu cap-profiler) ovenpå sternbræt-toppen.
     v3_sternkapsler(eh_back, cover_thick + STERN_LIP, palette);
+
+    // Sofitt — lukker tagskæg-undersiden på alle 4 sider.
+    v3_sofitt(eh_back, palette);
 }
