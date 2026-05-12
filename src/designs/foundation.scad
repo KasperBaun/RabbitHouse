@@ -1,16 +1,13 @@
-// Foundation: fundablok ring + anchor screws + ground surface.
+// Foundation: fundablok ring + anchor screws.
 
 include <../lib/defaults.scad>
 include <config.scad>
 use <../lib/primitives/fundablok.scad>
 use <../lib/primitives/beslag.scad>
-use <../lib/decor/landscape.scad>
 
-module RenderFoundation(show_ground = true, palette = DEFAULT_PALETTE) {
+module RenderFoundation(palette = DEFAULT_PALETTE) {
     ll = RH_LENGTH; ww = RH_WIDTH; bh = RH_BASE_H;
     hl = RH_HOUSE_LEN;
-
-    if (show_ground) ground_grass([ll/2, ww/2]);
 
     // Ring top at Z=bh (sokkel-top); ring extends 480 mm down into the
     // frost trench (600 mm total). Cross-wall under partition at X=hl

@@ -2,6 +2,7 @@
 include <../lib/defaults.scad>
 include <config.scad>
 
+use <ground.scad>
 use <foundation.scad>
 use <framing.scad>
 use <openings.scad>
@@ -10,10 +11,10 @@ use <roof_structure.scad>
 use <roof_plates.scad>
 // use <interior.scad>
 
-show_ground = true;
-roof_cover  = "eternit_b7";   // tagpap_osb | eternit_b7 | eternit_10 | eternit_14
+roof_cover = "eternit_b7";   // tagpap_osb | eternit_b7 | eternit_10 | eternit_14
 
-RenderFoundation(show_ground);
+RenderGround();
+RenderFoundation();
 RenderFraming();
 RenderOpenings();
 RenderRoofStructure("eternit_b7");
