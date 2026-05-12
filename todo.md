@@ -10,7 +10,7 @@
 
 - Strøer-gulv (floor joists inde i huset) — egen fil eller del af konstruktions-skelet?
 - "yard" → "løbegård" rename på tværs af kodebasen.
-- v3_house_cladding/vindpapir bruger flade højder på partition+left-væg (skrå tope).
+- rh_house_cladding/vindpapir bruger flade højder på partition+left-væg (skrå tope).
   Top stikker lidt ud over toprem ved den lave ende; intersection med en sloped wedge ville
   gøre det clean. Lavt prioritet — dækkes visuelt af hjørnetrim og roof-overhang.
 

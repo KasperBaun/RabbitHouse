@@ -1,15 +1,15 @@
 // fundament.scad — Foundation: kun beton-baseret underlag.
 // Part of the v3 build pipeline; included from build.scad.
 
-include <../../lib/defaults.scad>
+include <../lib/defaults.scad>
 include <config.scad>
-use <../../lib/primitives/fundablok.scad>
-use <../../lib/primitives/beslag.scad>
-use <../../lib/decor/landscape.scad>
+use <../lib/primitives/fundablok.scad>
+use <../lib/primitives/beslag.scad>
+use <../lib/decor/landscape.scad>
 
-module v3_fundament(show_ground = true, palette = DEFAULT_PALETTE) {
-    ll = V3_LENGTH; ww = V3_WIDTH; bh = V3_BASE_H;
-    hl = V3_HOUSE_LEN;
+module rh_fundament(show_ground = true, palette = DEFAULT_PALETTE) {
+    ll = RH_LENGTH; ww = RH_WIDTH; bh = RH_BASE_H;
+    hl = RH_HOUSE_LEN;
 
     if (show_ground) {
         ground_grass([ll/2, ww/2]);

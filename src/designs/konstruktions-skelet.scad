@@ -1,7 +1,7 @@
 // konstruktions-skelet.scad — Wall skeleton: dpc + sill plate + studs + top plate.
 // Part of the v3 build pipeline; included from build.scad.
 
-include <../../lib/defaults.scad>
+include <../lib/defaults.scad>
 include <config.scad>
 
 // === Material constants ===
@@ -9,8 +9,8 @@ DPC_COLOR    = [0.10, 0.10, 0.12];
 DPC_T        = 2;          // mm — bitumen tape thickness
 DPC_W        = 100;        // mm — slightly wider than the sill plate (95)
 
-PLATE_DEPTH  = V3_POST_W;  // 95 — wall thickness (depth of sill + top plate)
-PLATE_HEIGHT = V3_SILL_H;  // 45 — sill / top plate cross-section height
+PLATE_DEPTH  = RH_POST_W;  // 95 — wall thickness (depth of sill + top plate)
+PLATE_HEIGHT = RH_SILL_H;  // 45 — sill / top plate cross-section height
 
 STUD_DEPTH   = 95;         // perpendicular to wall face
 STUD_THICK   = 45;         // along wall length
@@ -19,31 +19,31 @@ STUD_C2C     = 600;        // standard centre-to-centre spacing
 // === Wall top heights ===
 // V1 (front) is flat at HIGH. V2 (back) is flat at LOW. V3, V4, V5 run
 // along Y parallel to the roof slope — their toprem slopes linearly from
-// HIGH (y=0) to LOW (y=V3_WIDTH), and each stud is cut to a varying
+// HIGH (y=0) to LOW (y=RH_WIDTH), and each stud is cut to a varying
 // height with a sloped top so the toprem rests flat on every stud (no
 // separate gable infill — the wall framing IS the gable end).
-WALL_TOP_HIGH = V3_BASE_H + V3_EH_FRONT;   // 120 + 2400 = 2520
-WALL_TOP_LOW  = V3_BASE_H + V3_EH_BACK;    // 120 + 2200 = 2320
+WALL_TOP_HIGH = RH_BASE_H + RH_EH_FRONT;   // 120 + 2400 = 2520
+WALL_TOP_LOW  = RH_BASE_H + RH_EH_BACK;    // 120 + 2200 = 2320
 
 // Z of the bottom of the studs (= top of sill plate, which sits on top of DPC).
-STUD_BOTTOM_Z = V3_BASE_H + DPC_T + PLATE_HEIGHT;   // 167
+STUD_BOTTOM_Z = RH_BASE_H + DPC_T + PLATE_HEIGHT;   // 167
 
 // Top of the (sloped) toprem at any y on V3/V4/V5 walls — linear between
-// HIGH (y=0) and LOW (y=V3_WIDTH).
-function v3_wall_top_z(y) =
-    WALL_TOP_HIGH - (WALL_TOP_HIGH - WALL_TOP_LOW) * y / V3_WIDTH;
+// HIGH (y=0) and LOW (y=RH_WIDTH).
+function rh_wall_top_z(y) =
+    WALL_TOP_HIGH - (WALL_TOP_HIGH - WALL_TOP_LOW) * y / RH_WIDTH;
 
 // Top of stud (= bottom of toprem) at y.
-function v3_stud_top_z(y) = v3_wall_top_z(y) - PLATE_HEIGHT;
+function rh_stud_top_z(y) = rh_wall_top_z(y) - PLATE_HEIGHT;
 
 // === Sloped-top helpers for V3/V4/V5 (walls running along Y) ===
 // Each stud is cut with a 4.6° wedge top so the toprem rests flat on it.
 // hull() of three thin slabs — bottom slab + two top edges at different Z —
 // follows the existing convention (see lib/primitives/framing.scad).
 
-module _v3_sloped_stud_y(x, y) {
-    z_top_front = v3_stud_top_z(y);
-    z_top_back  = v3_stud_top_z(y + STUD_THICK);
+module _rh_sloped_stud_y(x, y) {
+    z_top_front = rh_stud_top_z(y);
+    z_top_back  = rh_stud_top_z(y + STUD_THICK);
     hull() {
         translate([x, y, STUD_BOTTOM_Z])
             cube([STUD_DEPTH, STUD_THICK, 0.1]);
@@ -56,9 +56,9 @@ module _v3_sloped_stud_y(x, y) {
 
 // One sloped cripple (above a header) along Y. Starts at z_bot, top
 // follows the toprem just like a regular stud.
-module _v3_sloped_cripple_y(x, y, z_bot) {
-    z_top_front = v3_stud_top_z(y);
-    z_top_back  = v3_stud_top_z(y + STUD_THICK);
+module _rh_sloped_cripple_y(x, y, z_bot) {
+    z_top_front = rh_stud_top_z(y);
+    z_top_back  = rh_stud_top_z(y + STUD_THICK);
     hull() {
         translate([x, y, z_bot])
             cube([STUD_DEPTH, STUD_THICK, 0.1]);
@@ -71,10 +71,10 @@ module _v3_sloped_cripple_y(x, y, z_bot) {
 
 // Sloped toprem segment running along Y from y0 to y1 at x. Bottom and
 // top faces both slope at the same angle (uniform 45 mm thickness).
-module _v3_sloped_toprem(x, y0, y1) {
+module _rh_sloped_toprem(x, y0, y1) {
     sw = PLATE_HEIGHT;
-    z0 = v3_wall_top_z(y0) - sw;
-    z1 = v3_wall_top_z(y1) - sw;
+    z0 = rh_wall_top_z(y0) - sw;
+    z1 = rh_wall_top_z(y1) - sw;
     hull() {
         translate([x, y0, z0])           cube([STUD_DEPTH, 0.01, sw]);
         translate([x, y1 - 0.01, z1])    cube([STUD_DEPTH, 0.01, sw]);
@@ -87,9 +87,9 @@ module _v3_sloped_toprem(x, y0, y1) {
 // face of front+back (no overlap — like real carpentry).
 // ----------------------------------------------------------------------------
 
-module v3_dpc() {
-    ll = V3_LENGTH; ww = V3_WIDTH; hl = V3_HOUSE_LEN;
-    z = V3_BASE_H;
+module rh_dpc() {
+    ll = RH_LENGTH; ww = RH_WIDTH; hl = RH_HOUSE_LEN;
+    z = RH_BASE_H;
     butt_y0 = DPC_W;            // = 100, inner face of front DPC
     butt_len = ww - 2 * DPC_W;  // = 2300
     color(DPC_COLOR) {
@@ -106,10 +106,10 @@ module v3_dpc() {
 //    the perimeter + cross-wall under the partition.
 // ----------------------------------------------------------------------------
 
-module v3_sill_plate(palette = DEFAULT_PALETTE) {
-    ll = V3_LENGTH; ww = V3_WIDTH; hl = V3_HOUSE_LEN;
+module rh_sill_plate(palette = DEFAULT_PALETTE) {
+    ll = RH_LENGTH; ww = RH_WIDTH; hl = RH_HOUSE_LEN;
     sd = PLATE_DEPTH; sw = PLATE_HEIGHT;
-    z = V3_BASE_H + DPC_T;   // 122 — sits on top of DPC
+    z = RH_BASE_H + DPC_T;   // 122 — sits on top of DPC
     butt_y0 = sd;            // = 95, inner face of front sill plate
     butt_len = ww - 2 * sd;  // = 2310
     color(pal_post(palette)) {
@@ -138,7 +138,7 @@ function _in_any_skip(c, ranges) =
 //   stud_height  = uniform stud height (only used for axis="X")
 //   skip_ranges  = list of [lo, hi] along the wall — studs whose centre
 //                  falls inside any range are omitted
-module _v3_studs_one_wall(origin, length, axis, stud_height,
+module _rh_studs_one_wall(origin, length, axis, stud_height,
                           skip_ranges=[], palette=DEFAULT_PALETTE) {
     z = STUD_BOTTOM_Z;
     end_stud_x = length - STUD_THICK;
@@ -151,7 +151,7 @@ module _v3_studs_one_wall(origin, length, axis, stud_height,
     last_loop_right = last_loop_x + STUD_THICK;
     emit_end_stud   = (end_stud_x - last_loop_right) >= 100;
 
-    // Skip ranges are in ABSOLUTE coordinates (e.g., V3_HOUSE_DOOR_Y = 200);
+    // Skip ranges are in ABSOLUTE coordinates (e.g., RH_HOUSE_DOOR_Y = 200);
     // we add origin's axis-coordinate so the check works for walls whose
     // origin isn't at 0 (e.g., butted partition starting at Y=95).
     color(pal_post(palette))
@@ -167,14 +167,14 @@ module _v3_studs_one_wall(origin, length, axis, stud_height,
         // axis "Y" — sloped-top studs cut to varying heights along Y.
         for (y = [0 : STUD_C2C : end_stud_x])
             if (!_in_any_skip(origin[1] + y + STUD_THICK/2, skip_ranges))
-                _v3_sloped_stud_y(origin[0], origin[1] + y);
+                _rh_sloped_stud_y(origin[0], origin[1] + y);
         if (emit_end_stud)
-            _v3_sloped_stud_y(origin[0], origin[1] + end_stud_x);
+            _rh_sloped_stud_y(origin[0], origin[1] + end_stud_x);
     }
 }
 
-module v3_studs(palette = DEFAULT_PALETTE) {
-    ll = V3_LENGTH; ww = V3_WIDTH; hl = V3_HOUSE_LEN;
+module rh_studs(palette = DEFAULT_PALETTE) {
+    ll = RH_LENGTH; ww = RH_WIDTH; hl = RH_HOUSE_LEN;
     z = STUD_BOTTOM_Z;
 
     // Stud heights — top plate sits ABOVE the stud, so subtract PLATE_HEIGHT.
@@ -189,11 +189,11 @@ module v3_studs(palette = DEFAULT_PALETTE) {
     JAMB_BUFFER = 300;
     bx          = STUD_THICK + JAMB_BUFFER;   // = 345
 
-    front_skip     = [[V3_YARD_DOOR_X - bx, V3_YARD_DOOR_X + V3_YARD_DOOR_W + bx]];
-    left_skip      = [[V3_SIDE_WIN_Y  - bx, V3_SIDE_WIN_Y  + V3_SIDE_WIN_W  + bx]];
+    front_skip     = [[RH_YARD_DOOR_X - bx, RH_YARD_DOOR_X + RH_YARD_DOOR_W + bx]];
+    left_skip      = [[RH_SIDE_WIN_Y  - bx, RH_SIDE_WIN_Y  + RH_SIDE_WIN_W  + bx]];
     partition_skip = [
-        [V3_HOUSE_DOOR_Y - bx, V3_HOUSE_DOOR_Y + V3_HOUSE_DOOR_W + bx],
-        [V3_PET_DOOR_Y   - bx, V3_PET_DOOR_Y   + V3_PET_DOOR_W   + bx]
+        [RH_HOUSE_DOOR_Y - bx, RH_HOUSE_DOOR_Y + RH_HOUSE_DOOR_W + bx],
+        [RH_PET_DOOR_Y   - bx, RH_PET_DOOR_Y   + RH_PET_DOOR_W   + bx]
     ];
 
     // --- Regular grid studs (c/c 600) ---
@@ -202,39 +202,39 @@ module v3_studs(palette = DEFAULT_PALETTE) {
     butt_y0  = STUD_DEPTH;            // 95
     butt_len = ww - 2 * STUD_DEPTH;   // 2310
 
-    _v3_studs_one_wall([0, 0, 0],                       ll, "X", h_high,
+    _rh_studs_one_wall([0, 0, 0],                       ll, "X", h_high,
                        skip_ranges=front_skip,           palette=palette);  // front
-    _v3_studs_one_wall([0, ww - STUD_DEPTH, 0],         ll, "X", h_low,
+    _rh_studs_one_wall([0, ww - STUD_DEPTH, 0],         ll, "X", h_low,
                        palette=palette);                                     // back
-    _v3_studs_one_wall([0, butt_y0, 0],                 butt_len, "Y", h_low,
+    _rh_studs_one_wall([0, butt_y0, 0],                 butt_len, "Y", h_low,
                        skip_ranges=left_skip,            palette=palette);  // left (butted)
-    _v3_studs_one_wall([ll - STUD_DEPTH, butt_y0, 0],   butt_len, "Y", h_low,
+    _rh_studs_one_wall([ll - STUD_DEPTH, butt_y0, 0],   butt_len, "Y", h_low,
                        palette=palette);                                     // right (butted)
-    _v3_studs_one_wall([hl - STUD_DEPTH/2, butt_y0, 0], butt_len, "Y", h_low,
+    _rh_studs_one_wall([hl - STUD_DEPTH/2, butt_y0, 0], butt_len, "Y", h_low,
                        skip_ranges=partition_skip,       palette=palette);  // partition (butted)
 
     // --- Jamb studs (= reglar der binder hver opnings kanter) ---
     // Indersiden af jamb-stud flugter med åbningens kant. V1 (front) er flat
     // HIGH; V3 (window-væg) og V5 (partition) har skrå topper og kalder
-    // _v3_sloped_stud_y der skærer hver jamb til den varierende toprem-højde.
+    // _rh_sloped_stud_y der skærer hver jamb til den varierende toprem-højde.
     color(pal_post(palette)) {
         // Front wall (V1) — yard door (flat HIGH)
-        translate([V3_YARD_DOOR_X - STUD_THICK, 0, z])
+        translate([RH_YARD_DOOR_X - STUD_THICK, 0, z])
             cube([STUD_THICK, STUD_DEPTH, h_high]);
-        translate([V3_YARD_DOOR_X + V3_YARD_DOOR_W, 0, z])
+        translate([RH_YARD_DOOR_X + RH_YARD_DOOR_W, 0, z])
             cube([STUD_THICK, STUD_DEPTH, h_high]);
 
         // Left wall (V3) — side window (sloped top)
-        _v3_sloped_stud_y(0, V3_SIDE_WIN_Y - STUD_THICK);
-        _v3_sloped_stud_y(0, V3_SIDE_WIN_Y + V3_SIDE_WIN_W);
+        _rh_sloped_stud_y(0, RH_SIDE_WIN_Y - STUD_THICK);
+        _rh_sloped_stud_y(0, RH_SIDE_WIN_Y + RH_SIDE_WIN_W);
 
         // Partition wall (V5) — human door (sloped top)
-        _v3_sloped_stud_y(hl - STUD_DEPTH/2, V3_HOUSE_DOOR_Y - STUD_THICK);
-        _v3_sloped_stud_y(hl - STUD_DEPTH/2, V3_HOUSE_DOOR_Y + V3_HOUSE_DOOR_W);
+        _rh_sloped_stud_y(hl - STUD_DEPTH/2, RH_HOUSE_DOOR_Y - STUD_THICK);
+        _rh_sloped_stud_y(hl - STUD_DEPTH/2, RH_HOUSE_DOOR_Y + RH_HOUSE_DOOR_W);
 
         // Partition wall (V5) — pet door (sloped top)
-        _v3_sloped_stud_y(hl - STUD_DEPTH/2, V3_PET_DOOR_Y - STUD_THICK);
-        _v3_sloped_stud_y(hl - STUD_DEPTH/2, V3_PET_DOOR_Y + V3_PET_DOOR_W);
+        _rh_sloped_stud_y(hl - STUD_DEPTH/2, RH_PET_DOOR_Y - STUD_THICK);
+        _rh_sloped_stud_y(hl - STUD_DEPTH/2, RH_PET_DOOR_Y + RH_PET_DOOR_W);
     }
 
     // --- Junction studs (T-samlings-reglar hvor partition møder front/bag) ---
@@ -259,7 +259,7 @@ module v3_studs(palette = DEFAULT_PALETTE) {
 //     vertical gap. Rough sill is the horizontal 45×95 the window frame sits on.
 // ----------------------------------------------------------------------------
 
-module _v3_cripple(p, axis, height, palette) {
+module _rh_cripple(p, axis, height, palette) {
     color(pal_post(palette))
     translate(p)
     if (axis == "X")
@@ -272,8 +272,8 @@ module _v3_cripple(p, axis, height, palette) {
 // sill below + cripples below.
 //   wall_top   = fixed top z (used for axis="X" — V1 flat HIGH)
 //   sloped     = true for axis="Y" walls V3/V4/V5 (cripples above use
-//                v3_stud_top_z per-cripple; wall_top is then ignored)
-module v3_framed_opening(wall_origin, axis,
+//                rh_stud_top_z per-cripple; wall_top is then ignored)
+module rh_framed_opening(wall_origin, axis,
                          opening_pos, opening_w,
                          opening_z, opening_h,
                          has_sill, wall_top,
@@ -318,8 +318,8 @@ module v3_framed_opening(wall_origin, axis,
         if (sloped) {
             for (cy = [STUD_C2C/2 : STUD_C2C : opening_w - STUD_THICK/2]) {
                 cy_abs = wall_origin[1] + opening_pos + cy - STUD_THICK/2;
-                if (v3_stud_top_z(cy_abs + STUD_THICK/2) - z_header_top > 50)
-                    _v3_sloped_cripple_y(wall_origin[0], cy_abs, z_header_top);
+                if (rh_stud_top_z(cy_abs + STUD_THICK/2) - z_header_top > 50)
+                    _rh_sloped_cripple_y(wall_origin[0], cy_abs, z_header_top);
             }
         } else if (crip_above_h > 50) {
             for (cy = [STUD_C2C/2 : STUD_C2C : opening_w - STUD_THICK/2])
@@ -341,37 +341,37 @@ module v3_framed_opening(wall_origin, axis,
     }
 }
 
-module v3_framed_openings(palette = DEFAULT_PALETTE) {
-    hl = V3_HOUSE_LEN; ww = V3_WIDTH; ll = V3_LENGTH;
+module rh_framed_openings(palette = DEFAULT_PALETTE) {
+    hl = RH_HOUSE_LEN; ww = RH_WIDTH; ll = RH_LENGTH;
 
     // Yard door — front wall (axis X), no sill, full HIGH wall
-    v3_framed_opening(wall_origin = [0, 0, 0], axis = "X",
-                      opening_pos = V3_YARD_DOOR_X, opening_w = V3_YARD_DOOR_W,
-                      opening_z = STUD_BOTTOM_Z, opening_h = V3_YARD_DOOR_H,
+    rh_framed_opening(wall_origin = [0, 0, 0], axis = "X",
+                      opening_pos = RH_YARD_DOOR_X, opening_w = RH_YARD_DOOR_W,
+                      opening_z = STUD_BOTTOM_Z, opening_h = RH_YARD_DOOR_H,
                       has_sill = false, wall_top = WALL_TOP_HIGH,
                       palette = palette);
 
     // Side window — left wall V3 (axis Y, sloped top), HAS sill
-    v3_framed_opening(wall_origin = [0, 0, 0], axis = "Y",
-                      opening_pos = V3_SIDE_WIN_Y, opening_w = V3_SIDE_WIN_W,
-                      opening_z = STUD_BOTTOM_Z + V3_SIDE_WIN_Z,
-                      opening_h = V3_SIDE_WIN_H,
+    rh_framed_opening(wall_origin = [0, 0, 0], axis = "Y",
+                      opening_pos = RH_SIDE_WIN_Y, opening_w = RH_SIDE_WIN_W,
+                      opening_z = STUD_BOTTOM_Z + RH_SIDE_WIN_Z,
+                      opening_h = RH_SIDE_WIN_H,
                       has_sill = true, wall_top = WALL_TOP_LOW,
                       sloped = true, palette = palette);
 
     // Human door — partition V5 (axis Y, sloped top), no sill
-    v3_framed_opening(wall_origin = [hl - STUD_DEPTH/2, 0, 0], axis = "Y",
-                      opening_pos = V3_HOUSE_DOOR_Y, opening_w = V3_HOUSE_DOOR_W,
-                      opening_z = STUD_BOTTOM_Z, opening_h = V3_HOUSE_DOOR_H,
+    rh_framed_opening(wall_origin = [hl - STUD_DEPTH/2, 0, 0], axis = "Y",
+                      opening_pos = RH_HOUSE_DOOR_Y, opening_w = RH_HOUSE_DOOR_W,
+                      opening_z = STUD_BOTTOM_Z, opening_h = RH_HOUSE_DOOR_H,
                       has_sill = false, wall_top = WALL_TOP_LOW,
                       sloped = true, palette = palette);
 
     // Pet door — partition V5 (axis Y, sloped top), no sill. Opening starts
     // 60 mm above floor so kaninen ikke træder ned i bundkarmen ved
     // gennemgangen; bundrem dækker selve gulv-til-opening-bund-spalten.
-    v3_framed_opening(wall_origin = [hl - STUD_DEPTH/2, 0, 0], axis = "Y",
-                      opening_pos = V3_PET_DOOR_Y, opening_w = V3_PET_DOOR_W,
-                      opening_z = V3_FLOOR_TOP + 60, opening_h = V3_PET_DOOR_H,
+    rh_framed_opening(wall_origin = [hl - STUD_DEPTH/2, 0, 0], axis = "Y",
+                      opening_pos = RH_PET_DOOR_Y, opening_w = RH_PET_DOOR_W,
+                      opening_z = RH_FLOOR_TOP + 60, opening_h = RH_PET_DOOR_H,
                       has_sill = false, wall_top = WALL_TOP_LOW,
                       sloped = true, palette = palette);
 }
@@ -382,8 +382,8 @@ module v3_framed_openings(palette = DEFAULT_PALETTE) {
 //    matching the roof underside above (no separate gable infill).
 // ----------------------------------------------------------------------------
 
-module v3_top_plate(palette = DEFAULT_PALETTE) {
-    ll = V3_LENGTH; ww = V3_WIDTH; hl = V3_HOUSE_LEN;
+module rh_top_plate(palette = DEFAULT_PALETTE) {
+    ll = RH_LENGTH; ww = RH_WIDTH; hl = RH_HOUSE_LEN;
     sd = PLATE_DEPTH; sw = PLATE_HEIGHT;
     z_high_bot = WALL_TOP_HIGH - sw;
     z_low_bot  = WALL_TOP_LOW  - sw;
@@ -391,7 +391,7 @@ module v3_top_plate(palette = DEFAULT_PALETTE) {
     butt_y1 = ww - sd;
     // V1 og V2 toprem stopper ved byggelinjen (X=0..ll). Side-overhangets
     // barge-raftre bæres af lookouts (45×95 udlobere) defineret i
-    // tagkonstruktion_faelles.scad:v3_lookouts — kantilevrer fra V3/V4-gable-spær
+    // tagkonstruktion_faelles.scad:rh_lookouts — kantilevrer fra V3/V4-gable-spær
     // og bagvedliggende andenrad-spær ud til barge-spæret.
     color(pal_post(palette)) {
         // V1 — front, flat HIGH
@@ -399,11 +399,11 @@ module v3_top_plate(palette = DEFAULT_PALETTE) {
         // V2 — back, flat LOW
         translate([0, ww - sd, z_low_bot]) cube([ll, sd, sw]);
         // V3 — left, sloped, butted (urørt — sidder mellem V1+V2 indersider)
-        _v3_sloped_toprem(0,                butt_y0, butt_y1);
+        _rh_sloped_toprem(0,                butt_y0, butt_y1);
         // V4 — right, sloped, butted (urørt)
-        _v3_sloped_toprem(ll - sd,          butt_y0, butt_y1);
+        _rh_sloped_toprem(ll - sd,          butt_y0, butt_y1);
         // V5 — partition, sloped, butted
-        _v3_sloped_toprem(hl - sd/2,        butt_y0, butt_y1);
+        _rh_sloped_toprem(hl - sd/2,        butt_y0, butt_y1);
     }
 }
 
@@ -411,10 +411,10 @@ module v3_top_plate(palette = DEFAULT_PALETTE) {
 // Wrapper — composes the 4 skeleton elements.
 // ----------------------------------------------------------------------------
 
-module v3_konstruktions_skelet(palette = DEFAULT_PALETTE) {
-    v3_dpc();
-    v3_sill_plate(palette);
-    v3_studs(palette);
-    v3_framed_openings(palette);
-    v3_top_plate(palette);
+module rh_konstruktions_skelet(palette = DEFAULT_PALETTE) {
+    rh_dpc();
+    rh_sill_plate(palette);
+    rh_studs(palette);
+    rh_framed_openings(palette);
+    rh_top_plate(palette);
 }

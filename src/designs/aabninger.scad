@@ -12,10 +12,10 @@
 // lignende kommercielt produkt) kan installeres direkte. Ingen geometri
 // rendres for det.
 //
-// Z-base = V3_FLOOR_TOP (= 167, top af bundrem) som matches af skelettets
+// Z-base = RH_FLOOR_TOP (= 167, top af bundrem) som matches af skelettets
 // STUD_BOTTOM_Z og alle dets framed_opening-positioner.
 
-include <../../lib/defaults.scad>
+include <../lib/defaults.scad>
 include <config.scad>
 
 // ============================================================================
@@ -25,10 +25,10 @@ KARM_T          = 50;            // karm tømmer-tykkelse (yard-dør + indvendig
 LEAF_T          = 40;            // dørblad-tykkelse
 THRESHOLD_H     = 30;            // bundkarm/dørtrin-højde (kun yard-dør)
 
-WALL_DEPTH      = V3_POST_W;     // = 95, stud-dybde
-FLOOR_Z         = V3_FLOOR_TOP;  // = 167, top af bundrem
+WALL_DEPTH      = RH_POST_W;     // = 95, stud-dybde
+FLOOR_Z         = RH_FLOOR_TOP;  // = 167, top af bundrem
 
-PARTITION_X     = V3_HOUSE_LEN;  // partition-væg's midte (X = hl)
+PARTITION_X     = RH_HOUSE_LEN;  // partition-væg's midte (X = hl)
 PART_OUTER_X    = PARTITION_X + WALL_DEPTH/2;   // yard-side outer face
 PART_INNER_X    = PARTITION_X - WALL_DEPTH/2;   // hus-side outer face
 
@@ -46,22 +46,22 @@ HANDLE_C        = [0.85, 0.85, 0.88];
 // 1. Yard-udhusdør — front-væg V1, vender -Y, åbner udad mod haven.
 //    Mesh-i-træramme leaf med midt-rigel.
 // ============================================================================
-module v3_yard_door(mesh, palette) {
-    x0 = V3_YARD_DOOR_X;
-    x1 = x0 + V3_YARD_DOOR_W;
+module rh_yard_door(mesh, palette) {
+    x0 = RH_YARD_DOOR_X;
+    x1 = x0 + RH_YARD_DOOR_W;
     z0 = FLOOR_Z;
-    z1 = z0 + V3_YARD_DOOR_H;
+    z1 = z0 + RH_YARD_DOOR_H;
 
     // --- Karm (4 stykker indeni rough opening) ---
     color(pal_post(palette)) {
         // Bundkarm/dørtrin
         translate([x0, 0, z0])
-            cube([V3_YARD_DOOR_W, WALL_DEPTH, THRESHOLD_H]);
+            cube([RH_YARD_DOOR_W, WALL_DEPTH, THRESHOLD_H]);
         // Topkarm
         translate([x0, 0, z1 - KARM_T])
-            cube([V3_YARD_DOOR_W, WALL_DEPTH, KARM_T]);
+            cube([RH_YARD_DOOR_W, WALL_DEPTH, KARM_T]);
         // Sidekarme
-        karm_h = V3_YARD_DOOR_H - THRESHOLD_H - KARM_T;
+        karm_h = RH_YARD_DOOR_H - THRESHOLD_H - KARM_T;
         translate([x0, 0, z0 + THRESHOLD_H])
             cube([KARM_T, WALL_DEPTH, karm_h]);
         translate([x1 - KARM_T, 0, z0 + THRESHOLD_H])
@@ -77,7 +77,7 @@ module v3_yard_door(mesh, palette) {
     leaf_h  = leaf_z1 - leaf_z0;
     leaf_y  = 5;                                 // 5 mm inset fra ydre væg
     fr      = 50;                                // ramme-bredde i leaf
-    mid_z   = leaf_z0 + V3_MID_RAIL_Z_OFFSET;
+    mid_z   = leaf_z0 + RH_MID_RAIL_Z_OFFSET;
 
     color(pal_post(palette)) {
         translate([leaf_x0, leaf_y, leaf_z0])         cube([leaf_w, LEAF_T, fr]);          // bund
@@ -116,19 +116,19 @@ module v3_yard_door(mesh, palette) {
 // 2. Indvendig dør i partition — V5, vender +X (mod yard), åbner ind i yard.
 //    Massiv leaf med 4 panel-noter.
 // ============================================================================
-module v3_human_door(palette) {
-    y0 = V3_HOUSE_DOOR_Y;
-    y1 = y0 + V3_HOUSE_DOOR_W;
+module rh_human_door(palette) {
+    y0 = RH_HOUSE_DOOR_Y;
+    y1 = y0 + RH_HOUSE_DOOR_W;
     z0 = FLOOR_Z;
-    z1 = z0 + V3_HOUSE_DOOR_H;
+    z1 = z0 + RH_HOUSE_DOOR_H;
 
     // --- Karm (3 stykker — top + 2 sider, ingen bundkarm i indvendig dør) ---
     color(pal_post(palette)) {
         // Topkarm (spænder over hele åbningen i Y, fyldt i X)
         translate([PART_INNER_X, y0, z1 - KARM_T])
-            cube([WALL_DEPTH, V3_HOUSE_DOOR_W, KARM_T]);
+            cube([WALL_DEPTH, RH_HOUSE_DOOR_W, KARM_T]);
         // Sidekarme (fra gulv til topkarm)
-        karm_h = V3_HOUSE_DOOR_H - KARM_T;
+        karm_h = RH_HOUSE_DOOR_H - KARM_T;
         translate([PART_INNER_X, y0, z0])
             cube([WALL_DEPTH, KARM_T, karm_h]);
         translate([PART_INNER_X, y1 - KARM_T, z0])
@@ -139,7 +139,7 @@ module v3_human_door(palette) {
     leaf_y0 = y0 + KARM_T;
     leaf_y1 = y1 - KARM_T;
     leaf_w  = leaf_y1 - leaf_y0;
-    leaf_h  = V3_HOUSE_DOOR_H - KARM_T;
+    leaf_h  = RH_HOUSE_DOOR_H - KARM_T;
     leaf_x  = PARTITION_X - LEAF_T/2;            // centreret i væg
 
     color(pal_door(palette))
@@ -170,11 +170,11 @@ module v3_human_door(palette) {
 //    skrue igennem. Ingen karm, sprosser eller drypnæse — det er en
 //    kanin-stald, ikke et danskvinduesnørden.
 // ============================================================================
-module v3_side_window() {
-    y0 = V3_SIDE_WIN_Y - PLEXI_OVERLAP;
-    y1 = V3_SIDE_WIN_Y + V3_SIDE_WIN_W + PLEXI_OVERLAP;
-    z0 = FLOOR_Z + V3_SIDE_WIN_Z - PLEXI_OVERLAP;
-    z1 = FLOOR_Z + V3_SIDE_WIN_Z + V3_SIDE_WIN_H + PLEXI_OVERLAP;
+module rh_side_window() {
+    y0 = RH_SIDE_WIN_Y - PLEXI_OVERLAP;
+    y1 = RH_SIDE_WIN_Y + RH_SIDE_WIN_W + PLEXI_OVERLAP;
+    z0 = FLOOR_Z + RH_SIDE_WIN_Z - PLEXI_OVERLAP;
+    z1 = FLOOR_Z + RH_SIDE_WIN_Z + RH_SIDE_WIN_H + PLEXI_OVERLAP;
 
     color(PLEXI_C)
     translate([-PLEXI_T, y0, z0])
@@ -186,8 +186,8 @@ module v3_side_window() {
 // Pet-åbningen i partition-væggen står tom (rough opening i skelettet,
 // kommerciel kattelem installeres direkte deri).
 // ============================================================================
-module v3_aabninger(mesh = DEFAULT_MESH, palette = DEFAULT_PALETTE) {
-    v3_yard_door(mesh, palette);
-    v3_human_door(palette);
-    v3_side_window();
+module rh_aabninger(mesh = DEFAULT_MESH, palette = DEFAULT_PALETTE) {
+    rh_yard_door(mesh, palette);
+    rh_human_door(palette);
+    rh_side_window();
 }

@@ -1,5 +1,5 @@
-// v3 build 
-include <../../lib/defaults.scad>
+// Rabbit-house build — composes fundament, skelet, tag, beklædning, åbninger
+include <../lib/defaults.scad>
 include <config.scad>
 
 use <fundament.scad>
@@ -22,16 +22,16 @@ roof_cover = "eternit_b7";
 // overlap → step 100 mm. Standard profil hos Stark/Bauhaus i 4200 mm
 // længder. Erstatter DEFAULT_CLAD (24×150 m. 40 mm overlap) som er
 // v1's profil.
-V3_CLAD = clad_spec(board_h=125, overlap=25, thick=25, lip=20);
+RH_CLAD = clad_spec(board_h=125, overlap=25, thick=25, lip=20);
 
-module build_v3() {
+module build_house() {
     pal = DEFAULT_PALETTE;
 
     // === Aktivt indhold ===
-    v3_fundament(show_ground, pal);
-    v3_konstruktions_skelet(pal);
-    v3_aabninger(_default_mesh(), pal);
-    if (show_cladding) v3_beklaedning(V3_CLAD, pal);
+    rh_fundament(show_ground, pal);
+    rh_konstruktions_skelet(pal);
+    rh_aabninger(_default_mesh(), pal);
+    if (show_cladding) rh_beklaedning(RH_CLAD, pal);
 
    
     
@@ -40,9 +40,9 @@ module build_v3() {
 }
 
 // Helper for re-aktivering af systemer der bruger mesh-spec.
-function _default_mesh() = mesh_spec(spacing = V3_MESH_SPACING,
-                                      bar     = V3_MESH_BAR,
-                                      frame   = V3_MESH_FRAME,
-                                      depth   = V3_MESH_DEPTH);
+function _default_mesh() = mesh_spec(spacing = RH_MESH_SPACING,
+                                      bar     = RH_MESH_BAR,
+                                      frame   = RH_MESH_FRAME,
+                                      depth   = RH_MESH_DEPTH);
 
-build_v3();
+build_house();

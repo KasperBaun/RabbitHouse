@@ -1,9 +1,9 @@
-# Render all per-system audit views into _renders/v3/audit/
+# Render all per-system audit views into _renders/audit/
 # Usage: pwsh scripts/audit_renders.ps1
 
 $ErrorActionPreference = "Stop"
 $env:Path += ";C:\Program Files\OpenSCAD"
-$out = "_renders/v3/audit"
+$out = "_renders/audit"
 New-Item -ItemType Directory -Force -Path $out | Out-Null
 
 $renders = @(
@@ -25,7 +25,6 @@ foreach ($r in $renders) {
         "--imgsize=1600,1100",
         "--colorscheme=Tomorrow",
         "--camera=$($r.cam)",
-        "-D", "design=`"v3`"",
         "-D", "show_cladding=$($r.clad)",
         "-D", "show_ground=$($r.gnd)"
     )

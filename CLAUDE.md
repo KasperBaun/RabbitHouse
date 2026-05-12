@@ -4,35 +4,44 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-OpenSCAD model of a rabbit house — an outdoor structure for a bonded pair of pet rabbits in a Nordic / temperate-maritime climate. The repo holds **multiple designs** that share a parametric library; pick one by name in `main.scad`. All units are millimetres.
+OpenSCAD model of a rabbit house — an outdoor structure for a bonded pair of pet rabbits in a Nordic / temperate-maritime climate. All units are millimetres.
+
+Earlier iterations (v1: mono-pitch shed; v2: gabled house + polycarb run) are frozen in `_archive/` and not part of the active build. The current design is the only one rendered.
 
 ## Opening / Previewing
 
-Open `main.scad` in OpenSCAD. Change the `design` string near the top to switch between designs (`"v1"`, `"v2"`, `"v3"`). For `v1` you can also change `v1_preset` to `"6x3"`, `"7x3"`, or `"8x4"`.
+Open `src/main.scad` in OpenSCAD — it includes `designs/build.scad` directly. Toggle `show_cladding`, `show_ground`, `show_cover` and pick `roof_cover` near the top of `src/designs/build.scad`.
 
 ## Architecture
 
 **Layout:**
 ```
-main.scad                              # 3-line dispatcher
-lib/
-  ctx.scad                             # context-vector accessor functions
-  defaults.scad                        # DEFAULT_PALETTE / CLAD / MESH / STUD
-  presets.scad                         # legacy v1 size presets
-  primitives/                          # cladding, mesh, roof, framing, foundation, openings
-  decor/                               # rabbit, landscape, lighting, furniture
-designs/
-  v1/{config,build}.scad               # original mono-pitch shed
-  v2/{config,build}.scad               # gabled house + mesh run with polycarb roof
-  v3/{config,build,fundament,vaegge,tagkonstruktion,beklaedning,aabninger,inventar}.scad
-                                     # role-based per-system files (see designs/v3/README.md)
+src/
+  main.scad                          # viewport + single include
+  lib/
+    ctx.scad                         # context-vector accessor functions
+    defaults.scad                    # DEFAULT_PALETTE / CLAD / MESH / STUD
+    primitives/                      # cladding, mesh, roof, framing, foundation, openings, beslag, fundablok
+    decor/                           # rabbit, landscape, lighting
+  designs/
+    config.scad                      # constants (RH_LENGTH, RH_WIDTH, ...)
+    build.scad                       # top-level dispatcher (~30 lines)
+    fundament.scad                   # fundablok ring + ankerskruer
+    konstruktions-skelet.scad        # DPC + bundrem + reglar + framed openings + toprem
+    tagkonstruktion_faelles.scad     # spær + lookouts + sofitt (cover-uafhængigt)
+    tagkonstruktion_tagpap.scad      # cover A: OSB + tagpap + alu-sternkapsler
+    tagkonstruktion_eternit.scad     # cover B: C18 lægter + B7 eternit
+    beklaedning.scad                 # klink + afstandsliste + hjørnetrim
+    aabninger.scad                   # doors + window
+    inventar.scad                    # nest box, hay rack, bowls
 docs/
-  prd.md                               # product requirements
-  requirements.md                      # atomic REQ-NNN list
-  superpowers/specs/                   # design specs (per-feature)
+  *.md                               # per-system build documentation
+  materialeliste.xlsx                # consolidated BOM
+  superpowers/specs/                 # historical design specs (one-shot)
+_archive/                            # frozen earlier designs (v1, v2)
 ```
 
-**Library files use `use <...>`**, designs `include <config.scad>` for their own constants.
+**Library files use `use <...>`**, design files `include <config.scad>` for their own constants.
 
 ### Convention: parameters, not globals
 
@@ -46,36 +55,35 @@ Every library module takes **named arguments with sensible defaults**. Things th
 | `mesh_spec` | spacing, bar, frame, depth | `ms_spacing`, `ms_bar`, ... |
 | `stud_spec` | stud_w, stud_d, spacing | `ss_w`, `ss_d`, `ss_spacing` |
 
-A design build file (e.g. `designs/v2/build.scad`) constructs ctx vectors near the top of its build module and threads them into library calls. No library module reads file-global variables.
+`designs/build.scad` constructs ctx vectors near the top of its build module and threads them into library calls. No library module reads file-global variables.
 
-### Spatial layout (shared across designs)
+### Spatial layout
 
 - **Front** = Y=0 (open garden face / mesh side / human entry).
 - **Back** = Y=`width` (solid cladded wall; carries prevailing-wind / driving-rain duty per REQ-016).
 - **Left** = X=0, **Right** = X=`length`.
 - Z up; base height = 120 mm above grade.
 
-### Design-specific structural notes
+### Structural notes
 
-- **v1** — mono-pitch roof, rabbit zone X=0..rabbit_len, human seating zone after that. Roof drops `v1_roof_drop_back(width)` mm front-to-back. Back posts shorter; top beams use `hull()` between two thin cubes at the front and back heights. Mesh panels span up to the back (lowest) beam, with a wedge-shaped wood spandrel filling the triangle above.
-- **v2** — gabled solid house (X=0..2000) + polycarb-roofed mesh run (X=2000..6000). Gable ridge runs along Y at X=1000. Polycarb tucks just under the gable eave at the partition wall (X=2000) for clean flashing. Run perimeter has a 500 mm horizontal mesh apron on the three exterior sides for predator dig defence.
-- **v3** — ONE continuous mono-pitch roof over the entire 6 m × 2,5 m footprint, sloping front-to-back (eh_front=2600, eh_back=2200, drop=400 over 2500 mm = 16 % slope). The house occupies X=0..1500 (1.5 m); the yard occupies X=1500..6000 (4.5 m). **Roof cover** is selected via the `roof_cover` parameter in `main.scad` (values: `"tagpap"`, `"stål"`, `"eternit_10"`, `"eternit_14"`); default is `"tagpap"`. Foundation is a continuous fundablok strip (50×20×15 cm blocks, 3 courses in halvstensforbandt = ~60 cm tall) under ALL walls — perimeter ring + cross-wall under the partition at X=hl — sitting on stabilgrus in a frostfri trench (~80 cm dig). Drawn by `fundablok_ring(ll, ww, 3, [hl])` in `lib/primitives/fundablok.scad`; top of foundation at Z=V3_BASE_H (120 mm above grade — this is the sokkel-niveau where bundrem of all walls sits), with the ring extending 600 mm down into the trench. Use `show_ground=false` in `main.scad` to hide the grass and inspect the buried foundation. **House floor** is `v3_stroer_floor`: 45×95 mm strøer laid flat at c/c 600 mm across the house footprint, with 18 mm krydsfiner (plywood) nailed on top — the old concrete slab is gone. The yard sits on grass at grade. The two right-end corner posts (yard NE and SE) sit on a steel post-base bracket (18 mm) directly on the fundablok ring; previous concrete ground plugs are gone. Yard sill plates run at Z=18..63 (just above bracket level). House side and partition walls are mono-pitch cladded with a sloped top beam below the roof; `vaegge.scad` also adds mineral-wool bats, vindpapir (wind barrier), losholter (horizontal battens), vindkryds (diagonal wind bracing), and vinkelbeslag (angle brackets at stud feet). Yard back wall has a low solid-clad strip (driving-rain skirt) topped by a mesh ventilation band. No play-things in the yard — minimalist grass + bowls + 2 rabbits.
+ONE continuous mono-pitch roof over the entire 6 m × 2,5 m footprint, sloping front-to-back (eh_front=2400, eh_back=2200, drop=200 over 2500 mm = 4,6° / 8 % fald for tagpap default; eh_back lowers further for eternit_10/14). The house occupies X=0..1500 (1.5 m); the yard occupies X=1500..6000 (4.5 m). Roof cover selected via the `roof_cover` parameter in `designs/build.scad` (`"tagpap_osb"` | `"eternit_b7"` | `"eternit_10"` | `"eternit_14"`).
+
+Foundation is a continuous fundablok strip (50×20×15 cm blocks, 3 courses in halvstensforbandt = ~60 cm tall) under ALL walls — perimeter ring + cross-wall under the partition at X=hl — sitting on stabilgrus in a frostfri trench (~80 cm dig). Drawn by `fundablok_ring(ll, ww, 3, [hl])` in `lib/primitives/fundablok.scad`; top of foundation at Z=`RH_BASE_H` (120 mm above grade — sokkel-niveau where bundrem of all walls sits), ring extends 600 mm down into the trench. Use `show_ground=false` in `build.scad` to inspect the buried foundation.
+
+House floor is `rh_stroer_floor`: 45×95 mm strøer laid flat at c/c 600 mm across the house footprint, with 18 mm krydsfiner nailed on top. The yard sits on grass at grade. The two right-end corner posts (yard NE and SE) sit on a steel post-base bracket (18 mm) directly on the fundablok ring. Yard sill plates run at Z=18..63.
+
+House side and partition walls are mono-pitch cladded with a sloped top beam below the roof; `konstruktions-skelet.scad` also adds mineral-wool bats, vindpapir (wind barrier), losholter, vindkryds (diagonal wind bracing), and vinkelbeslag. Yard back wall has a low solid-clad strip (driving-rain skirt) topped by a mesh ventilation band.
 
 ## Conventions
 
 - Colors: bundled into a `palette` ctx vector. Structural wood = `pal_post(palette)`; panels = `pal_panel1`/`pal_panel2`; trim = `pal_trim`; transparent run roof = `pal_polycarb`.
-- Cladding: `klink_board` primitive (horizontal overlapping board with tapered top); higher-level `clad_wall_rect`, `clad_wall_mono_pitch`, `clad_wall_gable`, `clad_wall_*_with_cutout` modules in `lib/primitives/cladding.scad`. For `axis="Y"`, cladding thickness extends in +X from the origin's X — set origin X to the wall's outer face when cladding the +X side, or to `outer_x - cs_thick(clad)` when cladding the -X side.
+- Cladding: `klink_board` primitive + higher-level `clad_wall_*` modules in `lib/primitives/cladding.scad`. For `axis="Y"`, cladding thickness extends in +X — set origin X to the wall's outer face when cladding the +X side, or to `outer_x - cs_thick(clad)` when cladding the -X side.
 - Mesh panels: `mesh_panel_x` / `mesh_panel_y` in `lib/primitives/mesh.scad`.
 - Roofs: `roof_mono_pitch` / `roof_gable_y` / `roof_polycarb_mono` in `lib/primitives/roof.scad`.
-- Angled geometry: `hull()` between two thin cubes at different Z heights (used for sloped beams, wedge spandrels, etc.).
+- Angled geometry: `hull()` between two thin cubes at different Z heights.
 
-## Adding a new design
+## Constants prefix
 
-1. Create `designs/<name>/config.scad` with the constants for that design.
-2. Create `designs/<name>/build.scad` with `module build_<name>(...)` that composes from `lib/`.
-3. Add `use <designs/<name>/build.scad>` and a dispatch `if` line to `main.scad`.
-4. Update this file under "Design-specific structural notes" with anything non-obvious.
+Design-level constants use the `RH_` prefix (Rabbit House) to avoid collision with library `DEFAULT_*` globals — e.g., `RH_LENGTH`, `RH_BASE_H`, `RH_OH_FRONT`. Module names use `rh_` lowercase prefix (e.g., `rh_spaer`, `rh_beklaedning`).
 
-## When changing v1
-
-Test renders before and after via `openscad --viewall --autocenter -o out.png main.scad` (with `design = "v1"`). v1 is a working historical design — keep it rendering identically unless explicitly fixing a bug.
+Wall identifiers V1/V2/V3/V4/V5 in `konstruktions-skelet.scad` refer to **physical walls** (front/back/sides/partition), not version numbers — preserve these labels.

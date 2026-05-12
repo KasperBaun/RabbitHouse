@@ -1,17 +1,17 @@
 // inventar.scad — Nest box, hay rack, bowls, rabbits, outdoor dressing
 // Part of the v3 build pipeline; included from build.scad.
 
-include <../../lib/defaults.scad>
+include <../lib/defaults.scad>
 include <config.scad>
-use <../../lib/decor/rabbit.scad>
-use <../../lib/decor/lighting.scad>
-use <../../lib/decor/landscape.scad>
+use <../lib/decor/rabbit.scad>
+use <../lib/decor/lighting.scad>
+use <../lib/decor/landscape.scad>
 
-// Yard floor — stabilgrus filled to top of fundablok ring (Z=V3_BASE_H)
+// Yard floor — stabilgrus filled to top of fundablok ring (Z=RH_BASE_H)
 // per Phase 1 spec §3.3, with grass/jord on top. Inside the yard, the
-// 8 mm grass surface therefore sits at Z=V3_BASE_H..V3_BASE_H+8.
-module v3_yard_grass(yard_x0, yard_len, ww) {
-    z0 = V3_BASE_H;
+// 8 mm grass surface therefore sits at Z=RH_BASE_H..RH_BASE_H+8.
+module rh_yard_grass(yard_x0, yard_len, ww) {
+    z0 = RH_BASE_H;
     color([0.32, 0.58, 0.22])
     translate([yard_x0, 0, z0])
         cube([yard_len, ww, 8]);
@@ -28,28 +28,28 @@ module v3_yard_grass(yard_x0, yard_len, ww) {
 }
 
 // External landscape dressing.
-module v3_outdoor_dressing(ll, ww, bh) {
+module rh_outdoor_dressing(ll, ww, bh) {
     color([0.55, 0.55, 0.52])
     for (i = [0 : 3])
-        translate([V3_YARD_DOOR_X + V3_YARD_DOOR_W/2 + 200*sin(i*60),
+        translate([RH_YARD_DOOR_X + RH_YARD_DOOR_W/2 + 200*sin(i*60),
                    -2200 - i*420, -3])
             cylinder(h = 14, r = 230, $fn = 8);
 }
 
-module v3_inventar(show_cladding = true, show_ground = true,
+module rh_inventar(show_cladding = true, show_ground = true,
                    palette = DEFAULT_PALETTE) {
-    ll = V3_LENGTH; ww = V3_WIDTH; bh = V3_BASE_H;
-    hl = V3_HOUSE_LEN; rl = V3_RUN_LEN; wt = V3_WALL_T;
+    ll = RH_LENGTH; ww = RH_WIDTH; bh = RH_BASE_H;
+    hl = RH_HOUSE_LEN; rl = RH_RUN_LEN; wt = RH_WALL_T;
     ct = 22;
 
     if (show_ground) {
-        v3_yard_grass(hl + ct, rl - ct, ww);
-        v3_outdoor_dressing(ll, ww, bh);
+        rh_yard_grass(hl + ct, rl - ct, ww);
+        rh_outdoor_dressing(ll, ww, bh);
     }
 
     if (show_cladding) {
-        nest_box_insulated([V3_NEST_X, V3_NEST_Y, bh + 20],
-                           V3_NEST_W, V3_NEST_D, V3_NEST_H, palette);
+        nest_box_insulated([RH_NEST_X, RH_NEST_Y, bh + 20],
+                           RH_NEST_W, RH_NEST_D, RH_NEST_H, palette);
         color([0.78, 0.72, 0.40])
         translate([wt + 50, wt + 30, bh + 20])
             cube([400, 600, 700]);
@@ -62,5 +62,5 @@ module v3_inventar(show_cladding = true, show_ground = true,
     water_bowl(hl + 600, 1500, bh + 8);
     food_bowl(hl + 850, 1500, bh + 8);
     translate([hl + rl/2 - 100, ww/2 - 350, bh + 18])  rabbit(angle = 30);
-    translate([hl + 700, V3_PET_DOOR_Y - 450, bh + 18]) rabbit_loaf(angle = -10);
+    translate([hl + 700, RH_PET_DOOR_Y - 450, bh + 18]) rabbit_loaf(angle = -10);
 }

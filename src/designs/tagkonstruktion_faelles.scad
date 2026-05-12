@@ -5,42 +5,42 @@
 // tagkonstruktion_tagpap.scad og tagkonstruktion_eternit.scad.
 //
 // Indhold:
-//   v3_spaer        — 45×95 spær c/c 600 + vinkelbeslag ved V1/V2 toprem
-//   v3_lookouts     — 175 mm tværblokering mellem barge og V3/V4 gable
-//   v3_sofitt       — 18 mm krydsfiner under tagskæg på alle 4 sider
-//   _v3_roof_layer  — privat helper: sloped slab parallelt med tag-underside
-//   _v3_sofitt_panel — privat helper for v3_sofitt
+//   rh_spaer        — 45×95 spær c/c 600 + vinkelbeslag ved V1/V2 toprem
+//   rh_lookouts     — 175 mm tværblokering mellem barge og V3/V4 gable
+//   rh_sofitt       — 18 mm krydsfiner under tagskæg på alle 4 sider
+//   _rh_roof_layer  — privat helper: sloped slab parallelt med tag-underside
+//   _rh_sofitt_panel — privat helper for rh_sofitt
 
-include <../../lib/defaults.scad>
+include <../lib/defaults.scad>
 include <config.scad>
-use <../../lib/primitives/beslag.scad>
+use <../lib/primitives/beslag.scad>
 
 // ============================================================================
 // Spær — bærende lag, samme uanset cover.
-// Spær-bunden flugter med toprem-toppen (= v3_roof_under_for - V3_SPAER_H),
+// Spær-bunden flugter med toprem-toppen (= rh_roof_under_for - RH_SPAER_H),
 // spær-toppen er på roof underside (= cover bund). Spær spænder fra
 // front-eave til bag-eave. Hvor spær krydser V1+V2 toprem er det bird's-mouth
 // (CSG-overlap).
 // ============================================================================
-module v3_spaer(eh_back, palette = DEFAULT_PALETTE) {
-    ll = V3_LENGTH; ww = V3_WIDTH;
+module rh_spaer(eh_back, palette = DEFAULT_PALETTE) {
+    ll = RH_LENGTH; ww = RH_WIDTH;
     sd = 95;  // wall depth (matcher konstruktions-skelet's STUD_DEPTH)
 
-    y_start = -V3_OH_FRONT;
-    y_end   = ww + V3_OH_BACK;
-    z_start = v3_roof_under_for(eh_back, y_start) - V3_SPAER_H;
-    z_end   = v3_roof_under_for(eh_back, y_end)   - V3_SPAER_H;
+    y_start = -RH_OH_FRONT;
+    y_end   = ww + RH_OH_BACK;
+    z_start = rh_roof_under_for(eh_back, y_start) - RH_SPAER_H;
+    z_end   = rh_roof_under_for(eh_back, y_end)   - RH_SPAER_H;
 
     // Bracket-konstanter (vinkelbeslag på hver side af spæret ved V1 og V2)
-    z_v1_top = V3_BASE_H + V3_EH_FRONT;     // 2520
-    z_v2_top = V3_BASE_H + V3_EH_BACK;      // 2320
+    z_v1_top = RH_BASE_H + RH_EH_FRONT;     // 2520
+    z_v2_top = RH_BASE_H + RH_EH_BACK;      // 2320
     y_brk_f  = sd / 2;                      // 47.5 — V1 bearing midte
     y_brk_b  = ww - sd / 2;                 // 2452.5 — V2 bearing midte
     BRK_W    = 50; BRK_LEG = 90; BRK_T = 2;
 
     // Spær-X-positioner. V1+V2 toprem stopper ved byggelinjen (X=0..ll);
     // barge-spæret lateral-fastholdes til V3/V4-gable-spæret via 3 tvær-
-    // blokeringer pr. side (se v3_lookouts) ved Y=47,5 / 1250 / 2452,5.
+    // blokeringer pr. side (se rh_lookouts) ved Y=47,5 / 1250 / 2452,5.
     // Kantilever-moment over side-overhang bæres af OSB-diaphragm (tagpap)
     // eller af lægter (eternit).
     //
@@ -51,10 +51,10 @@ module v3_spaer(eh_back, palette = DEFAULT_PALETTE) {
     //   Gable V4       (X=5955) — 2 brackets, plus hviler på V4 toprem
     //   Barge højre    (X=6175) — bracket kun på -X side; holdt af tværblokering
     spaer_xs = concat(
-        [-V3_OH_SIDE],                                  // venstre barge
-        [for (i = [0 : 9]) i * V3_SPAER_C2C],           // 0, 600, ..., 5400
-        [ll - V3_SPAER_W],                              // V4 gable
-        [ll + V3_OH_SIDE - V3_SPAER_W]                  // højre barge
+        [-RH_OH_SIDE],                                  // venstre barge
+        [for (i = [0 : 9]) i * RH_SPAER_C2C],           // 0, 600, ..., 5400
+        [ll - RH_SPAER_W],                              // V4 gable
+        [ll + RH_OH_SIDE - RH_SPAER_W]                  // højre barge
     );
     n_spaer = len(spaer_xs);
 
@@ -66,9 +66,9 @@ module v3_spaer(eh_back, palette = DEFAULT_PALETTE) {
         color(pal_post(palette))
         hull() {
             translate([x, y_start, z_start])
-                cube([V3_SPAER_W, 0.01, V3_SPAER_H]);
+                cube([RH_SPAER_W, 0.01, RH_SPAER_H]);
             translate([x, y_end - 0.01, z_end])
-                cube([V3_SPAER_W, 0.01, V3_SPAER_H]);
+                cube([RH_SPAER_W, 0.01, RH_SPAER_H]);
         }
 
         // Venstre side af spæret (bracket peger -X) — droppes for venstre barge
@@ -81,9 +81,9 @@ module v3_spaer(eh_back, palette = DEFAULT_PALETTE) {
         }
         // Højre side af spæret (bracket peger +X) — droppes for højre barge.
         if (!is_right_barge) {
-            vinkelbeslag([x + V3_SPAER_W, y_brk_f - BRK_W/2, z_v1_top],
+            vinkelbeslag([x + RH_SPAER_W, y_brk_f - BRK_W/2, z_v1_top],
                          leg=BRK_LEG, thick=BRK_T, width=BRK_W, orientation="+x+z");
-            vinkelbeslag([x + V3_SPAER_W, y_brk_b - BRK_W/2, z_v2_top],
+            vinkelbeslag([x + RH_SPAER_W, y_brk_b - BRK_W/2, z_v2_top],
                          leg=BRK_LEG, thick=BRK_T, width=BRK_W, orientation="+x+z");
         }
     }
@@ -95,29 +95,29 @@ module v3_spaer(eh_back, palette = DEFAULT_PALETTE) {
 //
 // Geometri: blokken sidder i den 175 mm brede tomgang mellem de to
 // yderste spær — yder-flade mod barge-rafterens inder-face, inder-flade
-// mod V3/V4-gable-spærets yder-face. Længde = V3_OH_SIDE − V3_SPAER_W.
+// mod V3/V4-gable-spærets yder-face. Længde = RH_OH_SIDE − RH_SPAER_W.
 //
 // Struktur: tværblokkene fastholder barge-spæret lateralt mod V3/V4-
 // gable-spæret. Kantilever-moment over side-overhang bæres primært af
 // OSB-pladen (tagpap) eller af lægterne (eternit) som diaphragm —
 // standard dansk småhus-konstruktion.
 // ============================================================================
-LOOKOUT_LEN = V3_OH_SIDE - V3_SPAER_W;   // 175 = 220 − 45
-LOOKOUT_YS  = [47.5, V3_WIDTH/2, V3_WIDTH - 47.5];
+LOOKOUT_LEN = RH_OH_SIDE - RH_SPAER_W;   // 175 = 220 − 45
+LOOKOUT_YS  = [47.5, RH_WIDTH/2, RH_WIDTH - 47.5];
 
-module v3_lookouts(eh_back, palette = DEFAULT_PALETTE) {
-    ll = V3_LENGTH;
+module rh_lookouts(eh_back, palette = DEFAULT_PALETTE) {
+    ll = RH_LENGTH;
     color(pal_post(palette))
     for (yc = LOOKOUT_YS) {
-        z_top = v3_roof_under_for(eh_back, yc);
-        z_bot = z_top - V3_SPAER_H;
-        y_min = yc - V3_SPAER_W/2;
+        z_top = rh_roof_under_for(eh_back, yc);
+        z_bot = z_top - RH_SPAER_H;
+        y_min = yc - RH_SPAER_W/2;
         // Venstre: mellem barge (X=-220..-175) og V3-gable (X=0..45).
-        translate([-V3_OH_SIDE + V3_SPAER_W, y_min, z_bot])
-            cube([LOOKOUT_LEN, V3_SPAER_W, V3_SPAER_H]);
+        translate([-RH_OH_SIDE + RH_SPAER_W, y_min, z_bot])
+            cube([LOOKOUT_LEN, RH_SPAER_W, RH_SPAER_H]);
         // Højre: mellem V4-gable (X=5955..6000) og barge (X=6175..6220).
         translate([ll, y_min, z_bot])
-            cube([LOOKOUT_LEN, V3_SPAER_W, V3_SPAER_H]);
+            cube([LOOKOUT_LEN, RH_SPAER_W, RH_SPAER_H]);
     }
 }
 
@@ -129,9 +129,9 @@ module v3_lookouts(eh_back, palette = DEFAULT_PALETTE) {
 // ============================================================================
 SOFITT_T = 18;
 
-module _v3_sofitt_panel(x0, x1, y0, y1, eh_back, palette) {
-    z_top_y0 = v3_roof_under_for(eh_back, y0) - V3_SPAER_H;
-    z_top_y1 = v3_roof_under_for(eh_back, y1) - V3_SPAER_H;
+module _rh_sofitt_panel(x0, x1, y0, y1, eh_back, palette) {
+    z_top_y0 = rh_roof_under_for(eh_back, y0) - RH_SPAER_H;
+    z_top_y1 = rh_roof_under_for(eh_back, y1) - RH_SPAER_H;
     color(pal_panel1(palette))
     polyhedron(
         points = [
@@ -148,18 +148,18 @@ module _v3_sofitt_panel(x0, x1, y0, y1, eh_back, palette) {
     );
 }
 
-module v3_sofitt(eh_back, palette = DEFAULT_PALETTE) {
-    ll = V3_LENGTH; ww = V3_WIDTH;
-    x_left  = -V3_OH_SIDE - V3_STERN_T;
-    x_right = ll + V3_OH_SIDE + V3_STERN_T;
+module rh_sofitt(eh_back, palette = DEFAULT_PALETTE) {
+    ll = RH_LENGTH; ww = RH_WIDTH;
+    x_left  = -RH_OH_SIDE - RH_STERN_T;
+    x_right = ll + RH_OH_SIDE + RH_STERN_T;
     // Front (dækker hjørner)
-    _v3_sofitt_panel(x_left, x_right, -V3_OH_FRONT, 0, eh_back, palette);
+    _rh_sofitt_panel(x_left, x_right, -RH_OH_FRONT, 0, eh_back, palette);
     // Bag (dækker hjørner)
-    _v3_sofitt_panel(x_left, x_right, ww, ww + V3_OH_BACK, eh_back, palette);
+    _rh_sofitt_panel(x_left, x_right, ww, ww + RH_OH_BACK, eh_back, palette);
     // Venstre (mellem væglinjer)
-    _v3_sofitt_panel(x_left, 0, 0, ww, eh_back, palette);
+    _rh_sofitt_panel(x_left, 0, 0, ww, eh_back, palette);
     // Højre
-    _v3_sofitt_panel(ll, x_right, 0, ww, eh_back, palette);
+    _rh_sofitt_panel(ll, x_right, 0, ww, eh_back, palette);
 }
 
 // ============================================================================
@@ -167,21 +167,21 @@ module v3_sofitt(eh_back, palette = DEFAULT_PALETTE) {
 // vertikal offset over spær-top, med en given tykkelse og farve.
 // Bruges til alle cover-lag (membran, OSB, tagpap, eternit, ...).
 // ============================================================================
-module _v3_roof_layer(eh_back, offset_z, thick, color_rgb) {
-    ll = V3_LENGTH; ww = V3_WIDTH;
-    drop_full = v3_total_drop_for(eh_back);
-    roof_oz   = v3_roof_oz_for(eh_back);
+module _rh_roof_layer(eh_back, offset_z, thick, color_rgb) {
+    ll = RH_LENGTH; ww = RH_WIDTH;
+    drop_full = rh_total_drop_for(eh_back);
+    roof_oz   = rh_roof_oz_for(eh_back);
     color(color_rgb)
     polyhedron(
         points = [
-            [-V3_OH_SIDE, -V3_OH_FRONT,           roof_oz + offset_z],
-            [ll + V3_OH_SIDE, -V3_OH_FRONT,       roof_oz + offset_z],
-            [ll + V3_OH_SIDE, ww + V3_OH_BACK,    roof_oz - drop_full + offset_z],
-            [-V3_OH_SIDE, ww + V3_OH_BACK,        roof_oz - drop_full + offset_z],
-            [-V3_OH_SIDE, -V3_OH_FRONT,           roof_oz + offset_z + thick],
-            [ll + V3_OH_SIDE, -V3_OH_FRONT,       roof_oz + offset_z + thick],
-            [ll + V3_OH_SIDE, ww + V3_OH_BACK,    roof_oz - drop_full + offset_z + thick],
-            [-V3_OH_SIDE, ww + V3_OH_BACK,        roof_oz - drop_full + offset_z + thick]
+            [-RH_OH_SIDE, -RH_OH_FRONT,           roof_oz + offset_z],
+            [ll + RH_OH_SIDE, -RH_OH_FRONT,       roof_oz + offset_z],
+            [ll + RH_OH_SIDE, ww + RH_OH_BACK,    roof_oz - drop_full + offset_z],
+            [-RH_OH_SIDE, ww + RH_OH_BACK,        roof_oz - drop_full + offset_z],
+            [-RH_OH_SIDE, -RH_OH_FRONT,           roof_oz + offset_z + thick],
+            [ll + RH_OH_SIDE, -RH_OH_FRONT,       roof_oz + offset_z + thick],
+            [ll + RH_OH_SIDE, ww + RH_OH_BACK,    roof_oz - drop_full + offset_z + thick],
+            [-RH_OH_SIDE, ww + RH_OH_BACK,        roof_oz - drop_full + offset_z + thick]
         ],
         faces = [[0,1,2,3], [4,7,6,5], [0,4,5,1], [1,5,6,2], [2,6,7,3], [3,7,4,0]]
     );

@@ -21,10 +21,10 @@
 //   • Min hældning:    14°  (v3's default 4,6° er IKKE buildbar; brug
 //                      roof_cover = "eternit_14" for korrekt geometri)
 
-include <../../lib/defaults.scad>
+include <../lib/defaults.scad>
 include <config.scad>
 use <tagkonstruktion_faelles.scad>
-use <../../lib/primitives/roof.scad>
+use <../lib/primitives/roof.scad>
 
 // ============================================================================
 // Lægter, plade og skrue-konstanter — alle fra Swisspearl B7 montagevejledning.
@@ -59,13 +59,13 @@ SCREW_COLOR  = [0.20, 0.21, 0.24];   // mørk grafit, lidt lysere end pladen
 // Resultat for v3: 6 lægter, c/c præcis 460 mm, første lægte 510 mm
 // inde fra back-sternbræt yderkant.
 // ============================================================================
-module v3_laegter_eternit(eh_back, palette = DEFAULT_PALETTE) {
-    ll = V3_LENGTH;
-    x_start = -V3_OH_SIDE;
-    x_end   = ll + V3_OH_SIDE;
+module rh_laegter_eternit(eh_back, palette = DEFAULT_PALETTE) {
+    ll = RH_LENGTH;
+    x_start = -RH_OH_SIDE;
+    x_end   = ll + RH_OH_SIDE;
 
-    y_back_eave  = V3_WIDTH + V3_OH_BACK + V3_STERN_T;
-    y_front_eave = -V3_OH_FRONT - V3_STERN_T;
+    y_back_eave  = RH_WIDTH + RH_OH_BACK + RH_STERN_T;
+    y_front_eave = -RH_OH_FRONT - RH_STERN_T;
     y_first_laegte = y_back_eave - B7_A_MAAL;
 
     n_intervals = floor((y_first_laegte - y_front_eave) / LAGTE_C2C);
@@ -73,7 +73,7 @@ module v3_laegter_eternit(eh_back, palette = DEFAULT_PALETTE) {
     color(pal_post(palette))
     for (i = [0 : n_intervals]) {
         y_i = y_first_laegte - i * LAGTE_C2C;
-        z   = v3_roof_under_for(eh_back, y_i);   // spær-top = lægte-bund
+        z   = rh_roof_under_for(eh_back, y_i);   // spær-top = lægte-bund
         translate([x_start, y_i - LAGTE_W/2, z])
             cube([x_end - x_start, LAGTE_W, LAGTE_T]);
     }
@@ -97,15 +97,15 @@ module v3_laegter_eternit(eh_back, palette = DEFAULT_PALETTE) {
 // Helper — renderer én corrugated strip fra y_start til y_end med trough z
 // = lægte-top z (ved y_start) plus en eventuel z_offset (=B7_THICK når
 // strippen ligger i overlap-zonen ovenpå pladen nedenfor).
-module _v3_b7_strip(eh_back, y_start, y_end, z_offset) {
+module _rh_b7_strip(eh_back, y_start, y_end, z_offset) {
     if (y_end > y_start) {
-        ll        = V3_LENGTH;
-        drop_full = v3_total_drop_for(eh_back);
-        span_y    = V3_WIDTH + V3_OH_FRONT + V3_OH_BACK;
+        ll        = RH_LENGTH;
+        drop_full = rh_total_drop_for(eh_back);
+        span_y    = RH_WIDTH + RH_OH_FRONT + RH_OH_BACK;
         strip_len = y_end - y_start;
 
-        x_start    = -V3_OH_SIDE;
-        x_end      = ll + V3_OH_SIDE;
+        x_start    = -RH_OH_SIDE;
+        x_end      = ll + RH_OH_SIDE;
         total_x    = x_end - x_start;
         n_per_wave = 12;
         n_waves    = floor(total_x / B7_PITCH);
@@ -124,7 +124,7 @@ module _v3_b7_strip(eh_back, y_start, y_end, z_offset) {
             [x, z]
         ];
 
-        z_base = v3_roof_under_for(eh_back, y_start) + LAGTE_T + z_offset;
+        z_base = rh_roof_under_for(eh_back, y_start) + LAGTE_T + z_offset;
 
         color(B7_COLOR)
         translate([0, y_start, z_base])
@@ -141,9 +141,9 @@ module _v3_b7_strip(eh_back, y_start, y_end, z_offset) {
     }
 }
 
-module v3_eternit_b7(eh_back, palette = DEFAULT_PALETTE) {
-    y_back_eave    = V3_WIDTH + V3_OH_BACK + V3_STERN_T;
-    y_front_eave   = -V3_OH_FRONT - V3_STERN_T;
+module rh_eternit_b7(eh_back, palette = DEFAULT_PALETTE) {
+    y_back_eave    = RH_WIDTH + RH_OH_BACK + RH_STERN_T;
+    y_front_eave   = -RH_OH_FRONT - RH_STERN_T;
     y_first_laegte = y_back_eave - B7_A_MAAL;
     n_intervals    = floor((y_first_laegte - y_front_eave) / LAGTE_C2C);
 
@@ -152,7 +152,7 @@ module v3_eternit_b7(eh_back, palette = DEFAULT_PALETTE) {
     // nedenfor at overlappe med). Hænger 60 mm forbi back-sternbræt yderkant.
     y_p1_top = y_first_laegte;
     y_p1_bot = y_back_eave + B7_EAVE_OVERHANG;   // = 2705 + 60 = 2765
-    _v3_b7_strip(eh_back, y_p1_top, y_p1_bot, 0);
+    _rh_b7_strip(eh_back, y_p1_top, y_p1_bot, 0);
 
     // Plader 2 .. (n_intervals+1) — hver med top-portion på slope_z og
     // bund-portion (=overlap med pladen nedenfor) på slope_z + B7_THICK.
@@ -160,8 +160,8 @@ module v3_eternit_b7(eh_back, palette = DEFAULT_PALETTE) {
         y_top  = y_first_laegte - i * LAGTE_C2C;
         y_kink = y_top + LAGTE_C2C;                      // = top + 460 = næste lægte
         y_bot  = y_top + B7_PLATE_LEN;                   // = top + 570
-        _v3_b7_strip(eh_back, y_top,  y_kink, 0);        // top-portion på egen lægte
-        _v3_b7_strip(eh_back, y_kink, y_bot,  B7_THICK); // bund-portion på plade nedenfor
+        _rh_b7_strip(eh_back, y_top,  y_kink, 0);        // top-portion på egen lægte
+        _rh_b7_strip(eh_back, y_kink, y_bot,  B7_THICK); // bund-portion på plade nedenfor
     }
 
     // Top-cut plade ved front-eave. Skæres til pasning; entire stykke i
@@ -169,7 +169,7 @@ module v3_eternit_b7(eh_back, palette = DEFAULT_PALETTE) {
     y_last_laegte = y_first_laegte - n_intervals * LAGTE_C2C;
     y_cut_top     = y_front_eave;
     y_cut_bot     = y_last_laegte + B7_OVERLAP;
-    _v3_b7_strip(eh_back, y_cut_top, y_cut_bot, B7_THICK);
+    _rh_b7_strip(eh_back, y_cut_top, y_cut_bot, B7_THICK);
 }
 
 // ============================================================================
@@ -177,13 +177,13 @@ module v3_eternit_b7(eh_back, palette = DEFAULT_PALETTE) {
 // Per spec: 2 stk pr. plade i bølgetop. I vores model: hver anden bølgetop
 // pr. lægte = visuelt regelmæssigt mønster matchende realistic skrue-placering.
 // ============================================================================
-module v3_skruer(eh_back, palette = DEFAULT_PALETTE) {
-    ll = V3_LENGTH;
-    x_start = -V3_OH_SIDE;
-    x_end   = ll + V3_OH_SIDE;
+module rh_skruer(eh_back, palette = DEFAULT_PALETTE) {
+    ll = RH_LENGTH;
+    x_start = -RH_OH_SIDE;
+    x_end   = ll + RH_OH_SIDE;
 
-    y_back_eave  = V3_WIDTH + V3_OH_BACK + V3_STERN_T;
-    y_front_eave = -V3_OH_FRONT - V3_STERN_T;
+    y_back_eave  = RH_WIDTH + RH_OH_BACK + RH_STERN_T;
+    y_front_eave = -RH_OH_FRONT - RH_STERN_T;
     y_first_laegte = y_back_eave - B7_A_MAAL;
     n_intervals = floor((y_first_laegte - y_front_eave) / LAGTE_C2C);
 
@@ -195,7 +195,7 @@ module v3_skruer(eh_back, palette = DEFAULT_PALETTE) {
         // Skruerne går igennem BOTH plader i overlap-zonen (= plade ovenfor +
         // plade nedenfor + ind i lægten). Hovedet sidder på TOP-pladen, der
         // ligger B7_THICK over lægte-top pga. overlap-kick-up.
-        z_top = v3_roof_under_for(eh_back, y_i) + LAGTE_T + 2*B7_THICK + B7_AMP;
+        z_top = rh_roof_under_for(eh_back, y_i) + LAGTE_T + 2*B7_THICK + B7_AMP;
         for (j = [0 : 2 : n_crests]) {
             x_j = x_start + j * B7_PITCH;
             translate([x_j, y_i, z_top])
@@ -211,21 +211,21 @@ module v3_skruer(eh_back, palette = DEFAULT_PALETTE) {
 //   show_cover  — lægter + B7 plader + skruer. false → bare spær+lookouts.
 //   show_finish — sternbræt + tagrende.
 // ============================================================================
-module v3_tagkonstruktion_eternit(roof_cover  = "eternit_b7",
+module rh_tagkonstruktion_eternit(roof_cover  = "eternit_b7",
                                   show_cover  = true,
                                   show_finish = true,
                                   palette     = DEFAULT_PALETTE) {
-    eh_back = v3_eh_back_for(roof_cover);
+    eh_back = rh_eh_back_for(roof_cover);
 
     // Bærende træværk — altid synligt.
-    v3_spaer(eh_back, palette);
-    v3_lookouts(eh_back, palette);
+    rh_spaer(eh_back, palette);
+    rh_lookouts(eh_back, palette);
 
     // Cover-stak: lægter → B7 plader → skruer.
     if (show_cover) {
-        v3_laegter_eternit(eh_back, palette);
-        v3_eternit_b7(eh_back, palette);
-        v3_skruer(eh_back, palette);
+        rh_laegter_eternit(eh_back, palette);
+        rh_eternit_b7(eh_back, palette);
+        rh_skruer(eh_back, palette);
     }
 
     // Sternbræt + tagrende. Sternbræt-top placeres så den ligger LIGE UNDER
@@ -235,15 +235,15 @@ module v3_tagkonstruktion_eternit(roof_cover  = "eternit_b7",
     if (show_finish) {
         // STERN_OFFSET = LAGTE_T - clearance. Clearance på 8 mm vælges så
         // sternbræt-toppen ligger under eternit-trough også ved bag (hvor
-        // slope-drop på 25 mm V3_STERN_T-spændet flytter trough ned).
+        // slope-drop på 25 mm RH_STERN_T-spændet flytter trough ned).
         STERN_OFFSET = LAGTE_T - 8;
-        fascia_origin_z = v3_roof_oz_for(eh_back) + STERN_OFFSET;
+        fascia_origin_z = rh_roof_oz_for(eh_back) + STERN_OFFSET;
         fascia_and_gutter_mono([0, 0, fascia_origin_z],
-                               V3_LENGTH, V3_WIDTH, v3_total_drop_for(eh_back),
-                               125, V3_STERN_T,
-                               V3_OH_FRONT + V3_STERN_T,
-                               V3_OH_BACK  + V3_STERN_T,
-                               V3_OH_SIDE  + V3_STERN_T,
-                               110, 65, V3_BASE_H, palette);
+                               RH_LENGTH, RH_WIDTH, rh_total_drop_for(eh_back),
+                               125, RH_STERN_T,
+                               RH_OH_FRONT + RH_STERN_T,
+                               RH_OH_BACK  + RH_STERN_T,
+                               RH_OH_SIDE  + RH_STERN_T,
+                               110, 65, RH_BASE_H, palette);
     }
 }
