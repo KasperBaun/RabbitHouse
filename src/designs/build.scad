@@ -1,48 +1,37 @@
-// Rabbit-house build — composes fundament, skelet, tag, beklædning, åbninger
+// Rabbit-house build orchestrator.
 include <../lib/defaults.scad>
 include <config.scad>
 
-use <fundament.scad>
-use <konstruktions-skelet.scad>
-use <tagkonstruktion_faelles.scad>
-use <tagkonstruktion_tagpap.scad>
-use <tagkonstruktion_eternit.scad>
-use <beklaedning.scad>
-use <aabninger.scad>
-use <inventar.scad>
+use <foundation.scad>
+use <framing.scad>
+use <openings.scad>
+use <cladding.scad>
+use <roof_structure.scad>
+use <roof_plates.scad>
+// use <interior.scad>
 
-show_cladding = true;       // false = skjul klink + sternbræt + sternkapsel/vindskede + sofitt (= alle trim-stykker)
-show_ground = true;
-show_cover = true;           // false = skjul cover-lag (vis kun framing)
-// "tagpap_osb" | "tagpap" (legacy alias for tagpap_osb)
-// "eternit_b7" (flad — kun til layout) | "eternit_10" (10°) | "eternit_14" (14°)
-roof_cover = "eternit_b7";
+show_cladding = true;
+show_ground   = true;
+show_cover    = true;
+roof_cover    = "eternit_b7";   // tagpap_osb | eternit_b7 | eternit_10 | eternit_14
 
-// v3-specifik klink-profil: 25×125 mm gran/lærk klink-brædder, 25 mm
-// overlap → step 100 mm. Standard profil hos Stark/Bauhaus i 4200 mm
-// længder. Erstatter DEFAULT_CLAD (24×150 m. 40 mm overlap) som er
-// v1's profil.
+// Local klink profile: 25x125 mm spruce/larch boards, 25 mm overlap, step
+// 100 mm. Standard Stark/Bauhaus stock in 4200 mm lengths. Overrides
+// DEFAULT_CLAD (24x150 with 40 mm overlap).
 RH_CLAD = clad_spec(board_h=125, overlap=25, thick=25, lip=20);
 
-module build_house() {
+module RenderHouse() {
     pal = DEFAULT_PALETTE;
-
-    // === Aktivt indhold ===
-    rh_fundament(show_ground, pal);
-    rh_konstruktions_skelet(pal);
-    rh_aabninger(_default_mesh(), pal);
-    if (show_cladding) rh_beklaedning(RH_CLAD, pal);
-
-   
-    
-
-
+    RenderFoundation(show_ground, pal);
+    RenderFraming(pal);
+    RenderOpenings(default_mesh(), pal);
+    RenderRoofStructure(roof_cover, show_cladding, pal);
+    if (show_cover)    RenderRoofPlates(roof_cover, pal);
+    if (show_cladding) RenderCladding(RH_CLAD, pal);
+    // RenderInterior(show_cladding, show_ground, pal);
 }
 
-// Helper for re-aktivering af systemer der bruger mesh-spec.
-function _default_mesh() = mesh_spec(spacing = RH_MESH_SPACING,
-                                      bar     = RH_MESH_BAR,
-                                      frame   = RH_MESH_FRAME,
-                                      depth   = RH_MESH_DEPTH);
+function default_mesh() = mesh_spec(spacing=RH_MESH_SPACING, bar=RH_MESH_BAR,
+                                     frame=RH_MESH_FRAME, depth=RH_MESH_DEPTH);
 
-build_house();
+RenderHouse();

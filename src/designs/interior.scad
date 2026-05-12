@@ -1,5 +1,4 @@
-// inventar.scad — Nest box, hay rack, bowls, rabbits, outdoor dressing
-// Part of the v3 build pipeline; included from build.scad.
+// Interior dressing: nest box, hay rack, bowls, rabbits, outdoor landscape.
 
 include <../lib/defaults.scad>
 include <config.scad>
@@ -8,9 +7,8 @@ use <../lib/decor/lighting.scad>
 use <../lib/decor/landscape.scad>
 
 // Yard floor — stabilgrus filled to top of fundablok ring (Z=RH_BASE_H)
-// per Phase 1 spec §3.3, with grass/jord on top. Inside the yard, the
-// 8 mm grass surface therefore sits at Z=RH_BASE_H..RH_BASE_H+8.
-module rh_yard_grass(yard_x0, yard_len, ww) {
+// per Phase 1 spec §3.3, with grass on top.
+module render_yard_grass(yard_x0, yard_len, ww) {
     z0 = RH_BASE_H;
     color([0.32, 0.58, 0.22])
     translate([yard_x0, 0, z0])
@@ -28,7 +26,7 @@ module rh_yard_grass(yard_x0, yard_len, ww) {
 }
 
 // External landscape dressing.
-module rh_outdoor_dressing(ll, ww, bh) {
+module render_landscape(ll, ww, bh) {
     color([0.55, 0.55, 0.52])
     for (i = [0 : 3])
         translate([RH_YARD_DOOR_X + RH_YARD_DOOR_W/2 + 200*sin(i*60),
@@ -36,15 +34,15 @@ module rh_outdoor_dressing(ll, ww, bh) {
             cylinder(h = 14, r = 230, $fn = 8);
 }
 
-module rh_inventar(show_cladding = true, show_ground = true,
-                   palette = DEFAULT_PALETTE) {
+module RenderInterior(show_cladding = true, show_ground = true,
+                      palette = DEFAULT_PALETTE) {
     ll = RH_LENGTH; ww = RH_WIDTH; bh = RH_BASE_H;
     hl = RH_HOUSE_LEN; rl = RH_RUN_LEN; wt = RH_WALL_T;
-    ct = 22;
+    ct = RH_COUNTER_BATTEN_T;
 
     if (show_ground) {
-        rh_yard_grass(hl + ct, rl - ct, ww);
-        rh_outdoor_dressing(ll, ww, bh);
+        render_yard_grass(hl + ct, rl - ct, ww);
+        render_landscape(ll, ww, bh);
     }
 
     if (show_cladding) {
