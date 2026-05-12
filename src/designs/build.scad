@@ -7,11 +7,13 @@ use <foundation.scad>
 use <framing.scad>
 use <openings.scad>
 use <cladding.scad>
+use <mesh.scad>
 use <roof_structure.scad>
 use <roof_plates.scad>
 use <interior.scad>
 
-roof_cover = "eternit_b7";   // tagpap_osb | eternit_b7 | eternit_10 | eternit_14
+roof_cover    = "eternit_b7";        // tagpap_osb | eternit_b7 | eternit_10 | eternit_14
+cladding_type = "board_on_board";    // klink | board_on_board
 
 RenderGround();
 RenderFoundation();
@@ -19,5 +21,6 @@ RenderFraming();
 RenderOpenings();
 RenderRoofStructure("eternit_b7");
 RenderRoofPlates(roof_cover);
-RenderCladding();
+RenderCladding(cladding_type);
+RenderMesh();
 RenderInterior();

@@ -80,6 +80,28 @@ function cs_thick(c)   = c[2];
 function cs_lip(c)     = c[3];
 function cs_step(c)    = c[0] - c[1];
 
+// --- bob_spec (board-on-board cladding) -------------------------------------
+//
+// Vertical 1-på-2 cladding: two layers of boards. Back layer stepped at
+// pitch = board_w + back_gap; front layer centred on the gaps, overlapping
+// each adjacent back board by `overlap` mm per side.
+//   board_w  = board width along the wall (e.g. 150 mm)
+//   board_t  = board thickness (e.g. 25 mm)
+//   overlap  = front-on-back overlap per side (e.g. 25 mm, BR minimum 22)
+//   back_gap = gap between adjacent back boards (e.g. 100 mm)
+// Invariant: board_w = back_gap + 2*overlap (so the front board exactly
+// covers the gap + the required overlaps).
+
+function bob_spec(board_w=150, board_t=25, overlap=25, back_gap=100) =
+    [board_w, board_t, overlap, back_gap];
+
+function bs_board_w(b)  = b[0];
+function bs_board_t(b)  = b[1];
+function bs_overlap(b)  = b[2];
+function bs_back_gap(b) = b[3];
+function bs_pitch(b)    = b[0] + b[3];     // c/c module width
+function bs_stickout(b) = 2 * b[1];         // total cladding thickness
+
 // --- mesh_spec ---------------------------------------------------------------
 
 function mesh_spec(spacing=150, bar=8, frame=40, depth=20) =

@@ -200,3 +200,130 @@ module corner_trim_post(pos, height, trim_w=50, trim_t=22,
             cube([trim_t, trim_w, height]);
     }
 }
+
+// ============================================================================
+// Board-on-board (1-på-2) cladding primitives.
+// Vertical orientation — boards run along +Z. Two layers:
+//   back  boards: stepped along the wall axis at `pitch` = board_w + back_gap
+//   front boards: centred on gaps, overlap each back board by `overlap` mm
+// Same axis convention as klink: axis="X" → boards step in +X, thickness +Y;
+// axis="Y" → boards step in +Y, thickness +X. Cladding occupies thickness
+// 0..2*board_t outward from origin.
+// ============================================================================
+
+module bob_board(origin, h, board_w, board_t, axis, col) {
+    color(col)
+    translate(origin)
+    if (axis == "X") cube([board_w, board_t, h]);
+    else             cube([board_t, board_w, h]);
+}
+
+// Internal: one layer of boards stepped by `pitch` along the wall axis, at
+// thickness offset t_off, starting at start_off from origin.
+module _bob_layer(origin, len, h, axis, t_off, start_off,
+                  board_w, board_t, pitch, col) {
+    ox = origin[0]; oy = origin[1]; oz = origin[2];
+    n = max(0, floor((len - start_off) / pitch) + 1);
+    for (i = [0 : n - 1]) {
+        s = start_off + i * pitch;
+        if (s + board_w <= len + 0.5) {
+            if (axis == "X")
+                bob_board([ox + s, oy + t_off, oz],
+                          h, board_w, board_t, "X", col);
+            else
+                bob_board([ox + t_off, oy + s, oz],
+                          h, board_w, board_t, "Y", col);
+        }
+    }
+}
+
+module clad_wall_bob_rect(origin, len, wall_h, axis="X",
+                          palette=DEFAULT_PALETTE, bob=DEFAULT_BOB) {
+    bw = bs_board_w(bob);
+    bt = bs_board_t(bob);
+    pitch = bs_pitch(bob);
+    c1 = pal_panel1(palette);
+    c2 = pal_panel2(palette);
+    _bob_layer(origin, len, wall_h, axis,  0,        0, bw, bt, pitch, c1);
+    _bob_layer(origin, len, wall_h, axis, bt, pitch/2, bw, bt, pitch, c2);
+}
+
+module clad_wall_bob_mono_pitch(origin, len, h_high, h_low, axis="X",
+                                palette=DEFAULT_PALETTE, bob=DEFAULT_BOB) {
+    bt = bs_board_t(bob);
+    full_h = max(h_high, h_low) + 50;
+    th2 = 2 * bt;
+    ox = origin[0]; oy = origin[1]; oz = origin[2];
+    difference() {
+        clad_wall_bob_rect(origin, len, full_h, axis, palette, bob);
+        if (axis == "X") {
+            hull() {
+                translate([ox - 10, oy - 10, oz + h_high])
+                    cube([10, th2 + 20, 1500]);
+                translate([ox + len, oy - 10, oz + h_low])
+                    cube([10, th2 + 20, 1500]);
+            }
+        } else {
+            hull() {
+                translate([ox - 10, oy - 10, oz + h_high])
+                    cube([th2 + 20, 10, 1500]);
+                translate([ox - 10, oy + len, oz + h_low])
+                    cube([th2 + 20, 10, 1500]);
+            }
+        }
+    }
+}
+
+module clad_wall_bob_with_cutout(origin, len, wall_h, axis="X",
+                                 palette=DEFAULT_PALETTE, bob=DEFAULT_BOB,
+                                 cutout=undef) {
+    bt = bs_board_t(bob);
+    th2 = 2 * bt;
+    ox = origin[0]; oy = origin[1]; oz = origin[2];
+    if (is_undef(cutout)) {
+        clad_wall_bob_rect(origin, len, wall_h, axis, palette, bob);
+    } else {
+        difference() {
+            clad_wall_bob_rect(origin, len, wall_h, axis, palette, bob);
+            if (axis == "X") {
+                translate([ox + cutout[0], oy - 10, oz + cutout[2]])
+                    cube([cutout[1] - cutout[0], th2 + 20,
+                          cutout[3] - cutout[2]]);
+            } else {
+                translate([ox - 10, oy + cutout[0], oz + cutout[2]])
+                    cube([th2 + 20, cutout[1] - cutout[0],
+                          cutout[3] - cutout[2]]);
+            }
+        }
+    }
+}
+
+module clad_wall_bob_mono_pitch_with_cutout(origin, len, h_high, h_low,
+                                            axis="X",
+                                            palette=DEFAULT_PALETTE,
+                                            bob=DEFAULT_BOB,
+                                            cutout=undef) {
+    bt = bs_board_t(bob);
+    full_h = max(h_high, h_low) + 50;
+    th2 = 2 * bt;
+    ox = origin[0]; oy = origin[1]; oz = origin[2];
+    difference() {
+        clad_wall_bob_with_cutout(origin, len, full_h, axis, palette, bob,
+                                  cutout);
+        if (axis == "X") {
+            hull() {
+                translate([ox - 10, oy - 10, oz + h_high])
+                    cube([10, th2 + 20, 1500]);
+                translate([ox + len, oy - 10, oz + h_low])
+                    cube([10, th2 + 20, 1500]);
+            }
+        } else {
+            hull() {
+                translate([ox - 10, oy - 10, oz + h_high])
+                    cube([th2 + 20, 10, 1500]);
+                translate([ox - 10, oy + len, oz + h_low])
+                    cube([th2 + 20, 10, 1500]);
+            }
+        }
+    }
+}

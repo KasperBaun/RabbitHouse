@@ -91,6 +91,11 @@ RH_MESH = mesh_spec(spacing = RH_MESH_SPACING, bar   = RH_MESH_BAR,
 // the library's DEFAULT_CLAD (24x150 with 40 mm overlap).
 RH_CLAD = clad_spec(board_h=125, overlap=25, thick=25, lip=20);
 
+// Board-on-board (1-på-2) profile: 25x150 mm savskåret gran, 25 mm overlap
+// per side, 100 mm back-board gap → 250 mm c/c pitch, 50 mm total stickout.
+// Standard Aros Savværk / Frøslev / Silvan stock (sold as raw boards).
+RH_CLAD_BOB = bob_spec(board_w=150, board_t=25, overlap=25, back_gap=100);
+
 // Vertical wood stiles along yard mesh walls (~1 m c/c).
 RH_STILE_W       = 70;
 RH_STILE_SPACING = 1000;

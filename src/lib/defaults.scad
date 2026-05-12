@@ -5,5 +5,6 @@ include <ctx.scad>
 
 DEFAULT_PALETTE = palette();
 DEFAULT_CLAD    = clad_spec();
+DEFAULT_BOB     = bob_spec();
 DEFAULT_MESH    = mesh_spec();
 DEFAULT_STUD    = stud_spec();
