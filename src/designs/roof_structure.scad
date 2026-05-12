@@ -179,25 +179,21 @@ function fascia_top_offset_for(cover) =
     : 0;
 
 // ============================================================================
-// Entry point — rafters + lookouts always; fascia + gutter + soffit when
-// show_finish=true.
+// Entry point — rafters + lookouts + soffit + fascia + gutter.
 // ============================================================================
-module RenderRoofStructure(roof_cover, show_finish = true,
-                           palette = DEFAULT_PALETTE) {
+module RenderRoofStructure(roof_cover, palette = DEFAULT_PALETTE) {
     eh_back = back_eave_height_for(roof_cover);
 
     render_rafters(eh_back, palette);
     render_lookouts(eh_back, palette);
 
-    if (show_finish) {
-        fascia_origin_z = roof_oz_for(eh_back) + fascia_top_offset_for(roof_cover);
-        fascia_and_gutter_mono([0, 0, fascia_origin_z],
-                               RH_LENGTH, RH_WIDTH, total_drop_for(eh_back),
-                               125, RH_FASCIA_T,
-                               RH_OH_FRONT + RH_FASCIA_T,
-                               RH_OH_BACK  + RH_FASCIA_T,
-                               RH_OH_SIDE  + RH_FASCIA_T,
-                               110, 65, RH_BASE_H, palette);
-        render_soffit(eh_back, palette);
-    }
+    fascia_origin_z = roof_oz_for(eh_back) + fascia_top_offset_for(roof_cover);
+    fascia_and_gutter_mono([0, 0, fascia_origin_z],
+                           RH_LENGTH, RH_WIDTH, total_drop_for(eh_back),
+                           125, RH_FASCIA_T,
+                           RH_OH_FRONT + RH_FASCIA_T,
+                           RH_OH_BACK  + RH_FASCIA_T,
+                           RH_OH_SIDE  + RH_FASCIA_T,
+                           110, 65, RH_BASE_H, palette);
+    render_soffit(eh_back, palette);
 }
