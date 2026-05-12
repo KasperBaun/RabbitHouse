@@ -11,7 +11,9 @@ build.scad                  # composes the systems below
 
 fundament.scad              # ↓ what the tømrer builds first
 konstruktions-skelet.scad   # ↓ then this (træ-skelet over fundamentet)
-tagkonstruktion.scad        # ↓ then this
+tagkonstruktion_faelles.scad   # ↓ spær + lookouts + sofitt (cover-uafhængigt)
+tagkonstruktion_tagpap.scad    # ↓ cover A: OSB + tagpap + alu-sternkapsler
+tagkonstruktion_eternit.scad   # ↓ cover B: undertag + C18 lægter + B7 eternit + træ-vindskede
 beklaedning.scad            # ↓ then this (visual layer)
 aabninger.scad              # ↓ then this (doors / window)
 inventar.scad               # last — nest box, bowls, decor
@@ -25,7 +27,9 @@ inventar.scad               # last — nest box, bowls, decor
 | `build.scad` | Top dispatcher (~30 lines) | — |
 | `fundament.scad` | Fundablok ring + ankerskruer | Fundablok 50×20×15, beton, ankerskrue M10 |
 | `konstruktions-skelet.scad` | DPC + bundrem + reglar + framed openings + toprem | Murpap, 45×95 reglar (PT/gran C24) |
-| `tagkonstruktion.scad` | Spær + cover layers + sternbrædder + tagrende | 45×95 spær, varies by `roof_cover` |
+| `tagkonstruktion_faelles.scad` | Spær + lookouts + sofitt + cover-layer helper (delt mellem cover-varianter) | 45×95 spær, 18 mm krydsfiner sofitt |
+| `tagkonstruktion_tagpap.scad` | Cover A: OSB-dæk + underpap + tagpap + alu-sternkapsler | 18 mm OSB, 4 mm tagpap, 35×25 alu cap |
+| `tagkonstruktion_eternit.scad` | Cover B: undertag + afstandsliste + C18 lægter + Cembrit B7 + træ-vindskede | 1 mm undertag, 38×73 C18 lægter c/c 500, 8 mm B7 plade, 25×150 imp. fyr vindskede |
 | `beklaedning.scad` | Klink cladding + afstandsliste + hjørnetrim | 22 mm klinkbrædder + 22×45 lægter |
 | `aabninger.scad` | 4 openings: human dør (partition), pet dør, yard dør, sidevindue | Trä karm, hængsler, beslag |
 | `inventar.scad` | Nest box, hay rack, bowls, rabbits, outdoor dressing | — |
@@ -34,7 +38,7 @@ inventar.scad               # last — nest box, bowls, decor
 
 - `show_cladding=false` — hide klink, doors, window so the framing is visible
 - `show_ground=false` — hide grass / path / yard fill so the foundation is visible
-- `roof_cover="tagpap"` — switch tag-dækning between `tagpap`, `stål`, `eternit_10`, `eternit_14` (pluggable in Sub-phase F)
+- `roof_cover` (i `build.scad`) — switch tag-dækning mellem `"tagpap_osb"` (= default, alias `"tagpap"`) eller `"eternit_b7"` / `"eternit_10"` (10°) / `"eternit_14"` (14°). Dispatcheren i `build.scad` vælger den rigtige `tagkonstruktion_*.scad` per cover.
 
 ## Phase 1 spec
 

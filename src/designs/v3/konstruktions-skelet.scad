@@ -391,7 +391,7 @@ module v3_top_plate(palette = DEFAULT_PALETTE) {
     butt_y1 = ww - sd;
     // V1 og V2 toprem stopper ved byggelinjen (X=0..ll). Side-overhangets
     // barge-raftre bæres af lookouts (45×95 udlobere) defineret i
-    // tagkonstruktion.scad:v3_lookouts — kantilevrer fra V3/V4-gable-spær
+    // tagkonstruktion_faelles.scad:v3_lookouts — kantilevrer fra V3/V4-gable-spær
     // og bagvedliggende andenrad-spær ud til barge-spæret.
     color(pal_post(palette)) {
         // V1 — front, flat HIGH

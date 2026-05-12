@@ -1,6 +1,6 @@
 # Skæreliste — Tagkonstruktion
 
-> Implementeret i `src/designs/v3/tagkonstruktion.scad`. Materialeliste i [tagkonstruktion.md](tagkonstruktion.md).
+> Implementeret i `src/designs/v3/tagkonstruktion_tagpap.scad` og `tagkonstruktion_eternit.scad` (delt framing i `tagkonstruktion_faelles.scad`). Materialelister i [tagkonstruktion_eternit.md](tagkonstruktion_eternit.md) og [tagkonstruktion_tagpap.md](tagkonstruktion_tagpap.md). Variant-sammenligning: [tagkonstruktion.md](tagkonstruktion.md).
 
 Skæreliste pr. element. Mål er millimeter; positioner er i bygningens koordinatsystem (X = længde-akse, Y = front→bag).
 

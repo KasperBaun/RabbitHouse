@@ -118,6 +118,12 @@ V3_SPAER_W   = 45;
 V3_SPAER_H   = 95;
 V3_SPAER_C2C = 600;
 
+// Sternbræt-tykkelse (25×125 imprægneret gran). Bruges af alle tag-varianter
+// (tagpap-, eternit-) til at placere stern + sternkapsel/vindskede UDVENDIGT
+// på spær-endefladerne. Lever i config så både tagkonstruktion_faelles.scad,
+// tagkonstruktion_tagpap.scad og tagkonstruktion_eternit.scad ser samme værdi.
+V3_STERN_T   = 25;
+
 // Roof geometry helpers. v3_roof_oz / v3_roof_oz_for now return the z of
 // the SPÆR TOP (= cover bottom) at the front-eave corner — i.e., they sit
 // SPAER_H above the wall-plate top. This means:
