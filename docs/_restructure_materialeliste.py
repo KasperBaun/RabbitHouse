@@ -27,104 +27,198 @@ from copy import copy
 XLSX = r'C:\dev\privat\rabbit-house\docs\materialeliste.xlsx'
 
 # ---------------------------------------------------------------------------
+# Colors — match the Office theme tints used in the original master sheet
+# (theme 4/5/6/8 with tint 0.8 → light accent colors). We use direct RGB
+# so it renders the same regardless of the user's installed Office theme.
+# Each data sheet gets its own category color on column A.
+# ---------------------------------------------------------------------------
+COL_FUNDAMENT  = "D9E2F3"   # theme 4 tint 0.8 — light blue
+COL_KONSTRUKT  = "FBE5D6"   # theme 5 tint 0.8 — peach
+COL_TAG_TAGPAP = "EDEDED"   # theme 6 tint 0.8 — light gray  (preserved original)
+COL_TAG_ETERN  = "FFF2CC"   # theme 7 tint 0.8 — light yellow
+COL_CLAD_KLINK = "DEEBF7"   # theme 8 tint 0.8 — light cyan  (preserved original)
+COL_CLAD_BOB   = "E2EFDA"   # theme 9 tint 0.8 — light green
+COL_VOLIERE    = "F8CBAD"   # peach accent for the Voliere subsection
+
+HEADER_BG       = "1F3864"   # dark navy — header row background
+HEADER_FG       = "FFFFFF"   # white text on dark header
+SUBHEADER_BG    = "8EA9DB"   # mid blue for section sub-headers in summary
+TOTAL_BG        = "FFD966"   # gold for total cells
+DELTA_POS_BG    = "FFE5D9"   # light pink for positive delta (extra cost)
+DELTA_NEG_BG    = "E2EFDA"   # light green for negative delta (savings)
+LINK_BLUE       = "0563C1"   # standard Excel hyperlink color
+
+# Per-sheet color mapping (column A fill + main badge color)
+SHEET_COLORS = {
+    "fundament":                  COL_FUNDAMENT,
+    "konstruktion":               COL_KONSTRUKT,
+    "tagkonstruktion_tagpap":     COL_TAG_TAGPAP,
+    "tagkonstruktion_eternit_b7": COL_TAG_ETERN,
+    "beklaedning_klink":          COL_CLAD_KLINK,
+    "beklaedning_board_on_board": COL_CLAD_BOB,
+}
+
+# ---------------------------------------------------------------------------
 # Styling
 # ---------------------------------------------------------------------------
-BOLD = Font(bold=True)
-HEADER_FILL = PatternFill("solid", fgColor="DDDDDD")
-SUBHEADER_FILL = PatternFill("solid", fgColor="EEEEEE")
-TOTAL_FILL = PatternFill("solid", fgColor="FFF2CC")
-DELTA_FILL = PatternFill("solid", fgColor="E2EFDA")
-THIN = Side(border_style="thin", color="999999")
-THIN_BORDER = Border(left=THIN, right=THIN, top=THIN, bottom=THIN)
+BOLD            = Font(bold=True)
+HEADER_FONT     = Font(bold=True, color=HEADER_FG, size=11)
+HEADER_FILL     = PatternFill("solid", fgColor=HEADER_BG)
+SUBHEADER_FILL  = PatternFill("solid", fgColor=SUBHEADER_BG)
+TOTAL_FILL      = PatternFill("solid", fgColor=TOTAL_BG)
+DELTA_POS_FILL  = PatternFill("solid", fgColor=DELTA_POS_BG)
+DELTA_NEG_FILL  = PatternFill("solid", fgColor=DELTA_NEG_BG)
+LINK_FONT       = Font(color=LINK_BLUE, underline="single")
+THIN            = Side(border_style="thin", color="BFBFBF")
+THIN_BORDER     = Border(left=THIN, right=THIN, top=THIN, bottom=THIN)
 
 # ---------------------------------------------------------------------------
 # Data — preserved from the original sheet, split by category and variant.
 # Each row: (kategori, vare, antal, enhed, pris_enh, leverandør, noter)
 # ---------------------------------------------------------------------------
 
+# Each row: (kategori, vare, antal, enhed, pris_enh, leverandør_tekst, noter, url)
+# URL may be None when no specific product link is known — leverandør then
+# renders as plain text. EST_PRICE rows (estimates) carry "est." in noter so
+# the user can spot which prices need verification.
+
+URL_MATPLADS_STABILGRUS = "https://materialepladsen.dk/produkter/grus/Stabilgrus0-32mm"
+URL_MATPLADS_STOEBEMIX = "https://materialepladsen.dk/produkter/grus/Stoebemix0-16mm"
+URL_JF_FUNDABLOK       = "https://www.jemogfix.dk/fundablok-graa-15-x-20-x-50-cm/4176/9033558/"
+URL_JF_ARMERING        = "https://www.jemogfix.dk/kamstaal-8-mm-x-3-meter/4164/9042660/"
+URL_JF_CEMENT          = "https://www.jemogfix.dk/aalborg-portland-basis-aalborg-cement-25-kg/4170/9814769/"
+URL_JF_GEVINDSTANG     = "https://www.jemogfix.dk/nkt-fasteners-gevindstang-m10-x-1000-mm/5116/9711834/"
+URL_JF_M10_MOETRIK     = "https://www.jemogfix.dk/nkt-fasteners-moetrik-elforzinket-m10-12-stk/5118/9513052/"
+
+URL_JF_MURPAP_11       = "https://www.jemogfix.dk/phoenix-murpap-11-cm-x-20-meter/4210/9036209/"
+URL_JF_REGLAR_45_3600  = "https://www.jemogfix.dk/impraegneret-reglar-45-x-95-x-3600-mm/4310/9057360/"
+URL_JF_REGLAR_45_2400  = "https://www.jemogfix.dk/impraegneret-reglar-45-x-95-x-2400-mm/4310/9057358/"
+URL_JF_REGLAR_47_3600  = "https://www.jemogfix.dk/reglar-47-x-100-x-3600-mm/4110/9057297/"
+URL_JF_REGLAR_47_2400  = "https://www.jemogfix.dk/reglar-47-x-100-x-2400-mm/4110/9057295/"
+URL_JF_REGLAR_47_3000  = "https://www.jemogfix.dk/reglar-47-x-100-x-3000-mm/4110/9057296/"
+
+URL_JF_OSB             = "https://www.jemogfix.dk/osb-3-plade-tg4-18-mm-2397-x-600-mm/4138/9050213/"
+URL_JF_STERN           = "https://www.jemogfix.dk/impraegneret-stern-mellem-21-x-120-x-3600-mm/4321/9057378/"
+URL_JF_TAGPAP          = "https://www.jemogfix.dk/phoenix-selvbyggerpap-1-x-5-meter/4210/9021085/"
+URL_JF_KLAEBEASFALT    = "https://www.jemogfix.dk/phoenix-klaebeasfalt-310-ml/4211/9014391/"
+URL_JF_MURPAP_15       = "https://www.jemogfix.dk/phoenix-murpap-15-cm-x-20-meter/4210/9060998/"
+URL_JF_ALU_TAGFOD      = "https://www.jemogfix.dk/tagfod-sort-aluminium-55-x-80-x-1000-mm/4210/9058507/"
+URL_JF_STERNKAPSEL     = "https://www.jemogfix.dk/sternkapsel-lige-sort-35-x-25-mm-x-100-cm/4210/9062741/"
+URL_JF_TAGRENDE        = "https://www.jemogfix.dk/staaltagrende-med-silver-metallic-4-meter/4203/9000602/"
+URL_JF_KONSOLJERN      = "https://www.jemogfix.dk/konsoljern-staal-90-grader/4203/9000608/"
+URL_JF_SAMLESTYKKE     = "https://www.jemogfix.dk/samlestykke-staal/4203/9000604/"
+URL_JF_ENDEBUND        = "https://www.jemogfix.dk/rodena-endebund-staal-hoejrevenstre/4203/9000603/"
+URL_JF_BLADSAMLER      = "https://www.jemogfix.dk/bladsamler-i-plast-75-82-mm/4202/9711493/"
+URL_JF_NEDLOEBSROER    = "https://www.jemogfix.dk/nedloebsroer-staal-3-m/4203/9000611/"
+URL_JF_NEDLOEBSBOEJ    = "https://www.jemogfix.dk/rodena-boejning-70-gr-staal/4203/9000612/"
+URL_JF_TUDSTYKKE       = "https://www.jemogfix.dk/tudstykke-staal-oe75-mm/4203/9000605/"
+URL_JF_ALUSOEM         = "https://www.jemogfix.dk/alusoem-2-6-x-25-mm-100-stk/4210/9038151/"
+
+URL_JF_KLINK           = "https://www.jemogfix.dk/klinkbeklaedning-sortmalet/4115/9023155/"
+URL_JF_VINDPAP         = "https://www.jemogfix.dk/phoenix-isoleringspap-rf-650-1-0-x-20-meter/4210/9358237/"
+URL_JF_KLEMMELISTE     = "https://www.jemogfix.dk/impraegneret-forskalling-fyr-25-x-50-x-4200-mm/4310/9063674/"
+URL_JF_HJORNETRIM_45   = "https://www.jemogfix.dk/reglar-47-x-50-x-3000-mm/4110/9052623/"
+URL_JF_ISOLERING       = "https://www.jemogfix.dk/glasuld-isover-basic-ruller-95-mm/4180/9039070/"
+
+# Eternit-specific URLs (from docs/tagkonstruktion_eternit.md)
+URL_104_LAEGTE         = "https://www.10-4.dk/varer/byggematerialer/trae/laegter/38x73mm-taglaegte-c18-1731038073"
+URL_XLBYG_STERN        = "https://www.xl-byg.dk/produkt/xl-byg-ru-sternbraet-over-trykimpraegneret-25-x-125-x-3600-mm-1143025122-0360"
+URL_BYGXTRA_B7         = "https://www.bygxtra.dk/produkter/swisspearl-boelgeplade-b7-fk-i-sortblaa-1100x570-mm-1617012"
+URL_DAVIDSEN_SKRUE     = "https://www.davidsen.dk/swisspearl-100-tagskrue-m-taetningsskive-6x100-mm-graa-100-stk-c-id525046-p-51601506116"
+URL_WOOD_VINKEL        = "https://wood-online.dk/shop/paslode-vinkelbeslag-542p.html"
+
+# Board-on-board URLs
+URL_AROS_1PA2          = "https://arossavvaerk.dk/vare/1-paa-2-beklaedning-svensk-gran/"
+
+
 FUNDAMENT = [
-    ("Fundament", "Stabilgrus 0-32 mm", 1050, "kg", 0.55, "materialepladsen.dk", "ca. 0,6 m³, 1.750 kg pr. m³"),
-    ("Fundament", "Fundablok 50x20x15 cm", 120, "stk", 15.75, "jemogfix.dk", "Behov 117 stk; købes 120"),
-    ("Fundament", "Armeringsjern Ø8 mm × 3 m", 13, "stk", 29.75, "jemogfix.dk", "I bundrem-rille"),
-    ("Fundament", "Cement 25 kg", 14, "stk", 75.00, "jemogfix.dk", "1:4 blandingsforhold, 25 kg ~ 18 L"),
-    ("Fundament", "Støbemix 0-16 mm", 1485, "kg", 0.66, "materialepladsen.dk", "ca. 0,9 m³, 1.650 kg pr. m³"),
-    ("Fundament", "Gevindstang M10 × 1000 mm", 18, "stk", 27.95, "jemogfix.dk", "Ankerbolte gennem sokkel"),
-    ("Fundament", "M10 møtrikker (12-pak)", 2, "pk.", 28.95, "jemogfix.dk", "NKT Fasteners"),
+    ("Fundament", "Stabilgrus 0-32 mm",        1050, "kg",  0.55,  "materialepladsen.dk", "ca. 0,6 m³, 1.750 kg pr. m³",  URL_MATPLADS_STABILGRUS),
+    ("Fundament", "Fundablok 50x20x15 cm",      120, "stk", 15.75, "jemogfix.dk",         "Behov 117 stk; købes 120",      URL_JF_FUNDABLOK),
+    ("Fundament", "Armeringsjern Ø8 mm × 3 m",   13, "stk", 29.75, "jemogfix.dk",         "I bundrem-rille",                URL_JF_ARMERING),
+    ("Fundament", "Cement 25 kg",                14, "stk", 75.00, "jemogfix.dk",         "1:4 blandingsforhold, 25 kg ~ 18 L", URL_JF_CEMENT),
+    ("Fundament", "Støbemix 0-16 mm",          1485, "kg",  0.66,  "materialepladsen.dk", "ca. 0,9 m³, 1.650 kg pr. m³",   URL_MATPLADS_STOEBEMIX),
+    ("Fundament", "Gevindstang M10 × 1000 mm",   18, "stk", 27.95, "jemogfix.dk",         "Ankerbolte gennem sokkel",      URL_JF_GEVINDSTANG),
+    ("Fundament", "M10 møtrikker (12-pak)",       2, "pk.", 28.95, "jemogfix.dk",         "NKT Fasteners",                  URL_JF_M10_MOETRIK),
 ]
 
 KONSTRUKTION = [
-    ("Konstruktion", "Murpap (DPC)", 1, "stk", 99.00, "jemogfix.dk", "11 cm × 20 m — sokkel-isolering"),
-    ("Konstruktion", "Bundrem 45×95×3600 PT NTR-AB", 2, "stk", 71.10, "jemogfix.dk", ""),
-    ("Konstruktion", "Bundrem 45×95×2400 PT NTR-AB", 5, "stk", 47.40, "jemogfix.dk", ""),
-    ("Konstruktion", "Toprem 47×100×3600 C24 gran", 4, "stk", 63.90, "jemogfix.dk", ""),
-    ("Konstruktion", "Reglar 47×100×2400 C24 gran", 42, "stk", 42.60, "jemogfix.dk", "Vægreglar c/c 600"),
+    ("Konstruktion", "Murpap (DPC)",                    1,  "stk", 99.00, "jemogfix.dk", "11 cm × 20 m — sokkel-isolering", URL_JF_MURPAP_11),
+    ("Konstruktion", "Bundrem 45×95×3600 PT NTR-AB",     2,  "stk", 71.10, "jemogfix.dk", "",                                 URL_JF_REGLAR_45_3600),
+    ("Konstruktion", "Bundrem 45×95×2400 PT NTR-AB",     5,  "stk", 47.40, "jemogfix.dk", "",                                 URL_JF_REGLAR_45_2400),
+    ("Konstruktion", "Toprem 47×100×3600 C24 gran",      4,  "stk", 63.90, "jemogfix.dk", "",                                 URL_JF_REGLAR_47_3600),
+    ("Konstruktion", "Reglar 47×100×2400 C24 gran",     42,  "stk", 42.60, "jemogfix.dk", "Vægreglar c/c 600",                URL_JF_REGLAR_47_2400),
 ]
 
-# Roof — TAGPAP variant
+# Tagpap variant — preserved exactly as the original master sheet (rows
+# 17-45). Items without a price in the original (Vinkelbeslag, OSB/spær-
+# skruer, Rustfri tagskruer) stay empty so they don't fabricate a total.
 TAG_TAGPAP = [
-    ("Træværk",        "Spær 45×95×3000 C24 gran",                  13, "stk",   53.25, "jemogfix.dk",  ""),
-    ("Træværk",        "OSB-3 TG4 18 mm 2397×600 mm",               15, "stk",  129.00, "jemogfix.dk",  "Tagdæk"),
-    ("Træværk",        "Sternbræt 21×120×3600 gran",                 6, "stk",   92.70, "jemogfix.dk",  "Hele perimeter 19 m"),
-    ("Tagdækning",     "Phoenix Selvbyggerpap 1×5 m",                5, "stk",  579.00, "jemogfix.dk",  ""),
-    ("Tagdækning",     "Phoenix klæbeasfalt 310 ml",                 3, "stk",   69.95, "jemogfix.dk",  ""),
-    ("Tagdækning",     "Phoenix murpap til tagfod 15 cm × 20 m",     1, "stk",  149.00, "jemogfix.dk",  ""),
-    ("Aluinddækning",  "Alu tagfod sort 55×80×1000 mm",              7, "stk",   39.75, "jemogfix.dk",  ""),
-    ("Aluinddækning",  "Alu sternkapsel sort 35×25×1000 mm",        13, "stk",   59.95, "jemogfix.dk",  ""),
-    ("Vandhåndtering", "Tagrende 110 mm (4+3 m)",                    7, "m",    49.95, "jemogfix.dk",  ""),
-    ("Vandhåndtering", "Tagrende-beslag (konsoljern)",              10, "stk",  24.95, "jemogfix.dk",  "c/c 550 mm"),
-    ("Vandhåndtering", "Samlestykke tagrende",                       1, "stk",  46.75, "jemogfix.dk",  ""),
-    ("Vandhåndtering", "Endebund tagrende 110 mm",                   2, "stk",  43.75, "jemogfix.dk",  ""),
-    ("Vandhåndtering", "Bladsamler",                                 1, "stk",  19.95, "jemogfix.dk",  ""),
-    ("Vandhåndtering", "Nedløbsrør Ø75 mm × 3 m",                    1, "stk", 210.00, "jemogfix.dk",  "Stål"),
-    ("Vandhåndtering", "Nedløbsbøjning",                             1, "stk",  78.75, "jemogfix.dk",  ""),
-    ("Vandhåndtering", "Tudstykke til tagrende",                     1, "stk", 105.00, "jemogfix.dk",  "Ø75 mm"),
-    ("Beslag",         "Paslode vinkelbeslag 90×90×40 (20-pak)",     3, "pak",  150.00, "wood-online.dk", "48 nødvendige; 60 stk i 3 pak"),
-    ("Beslag",         "OSB/spær-skruer 5×80 mm",                  250, "stk",   0.40, "jemogfix.dk",  ""),
-    ("Beslag",         "Galvaniseret tagpapsøm 2,6×25 mm (100-pak)", 1, "pk.",  69.95, "jemogfix.dk",  ""),
+    ("Træværk",        "Spær 47×100×3000 C24 gran",                 13, "stk",   53.25, "jemogfix.dk",    "",                                  URL_JF_REGLAR_47_3000),
+    ("Træværk",        "OSB-3 TG4 18 mm 2397×600 mm",               15, "stk",  129.00, "jemogfix.dk",    "Tagdæk",                            URL_JF_OSB),
+    ("Træværk",        "Sternbræt imp. 21×120×3600 gran",            6, "stk",   92.70, "jemogfix.dk",    "Hele perimeter 19 m",               URL_JF_STERN),
+    ("Tagdækning",     "Phoenix Selvbyggerpap 1×5 m",                5, "stk",  579.00, "jemogfix.dk",    "",                                  URL_JF_TAGPAP),
+    ("Tagdækning",     "Phoenix klæbeasfalt 310 ml",                 3, "stk",   69.95, "jemogfix.dk",    "",                                  URL_JF_KLAEBEASFALT),
+    ("Tagdækning",     "Phoenix murpap til tagfod 15 cm × 20 m",     1, "stk",  149.00, "jemogfix.dk",    "",                                  URL_JF_MURPAP_15),
+    ("Aluinddækning",  "Alu tagfod sort 55×80×1000 mm",              7, "stk",   39.75, "jemogfix.dk",    "",                                  URL_JF_ALU_TAGFOD),
+    ("Aluinddækning",  "Alu sternkapsel sort 35×25×1000 mm",        13, "stk",   59.95, "jemogfix.dk",    "",                                  URL_JF_STERNKAPSEL),
+    ("Vandhåndtering", "Tagrende 110 mm (4+3 m)",                    7, "m",     49.95, "jemogfix.dk",    "",                                  URL_JF_TAGRENDE),
+    ("Vandhåndtering", "Tagrende-beslag (konsoljern)",              10, "stk",   24.95, "jemogfix.dk",    "c/c 550 mm",                        URL_JF_KONSOLJERN),
+    ("Vandhåndtering", "Samlestykke tagrende",                       1, "stk",   46.75, "jemogfix.dk",    "",                                  URL_JF_SAMLESTYKKE),
+    ("Vandhåndtering", "Endebund tagrende 110 mm",                   2, "stk",   43.75, "jemogfix.dk",    "",                                  URL_JF_ENDEBUND),
+    ("Vandhåndtering", "Bladsamler",                                 1, "stk",   19.95, "jemogfix.dk",    "",                                  URL_JF_BLADSAMLER),
+    ("Vandhåndtering", "Nedløbsrør Ø75 mm × 3 m",                    1, "stk",  210.00, "jemogfix.dk",    "Stål",                              URL_JF_NEDLOEBSROER),
+    ("Vandhåndtering", "Nedløbsbøjning",                             1, "stk",   78.75, "jemogfix.dk",    "",                                  URL_JF_NEDLOEBSBOEJ),
+    ("Vandhåndtering", "Tudstykke til tagrende",                     1, "stk",  105.00, "jemogfix.dk",    "Ø75 mm",                            URL_JF_TUDSTYKKE),
+    ("Beslag",         "Paslode vinkelbeslag 90×90×40 (20-pak)",     3, "pak",   None,  "wood-online.dk", "TBD pris — enkelt ~8,48 kr",        URL_WOOD_VINKEL),
+    ("Beslag",         "OSB/spær-skruer 5×80 mm",                  250, "stk",   None,  "jemogfix.dk",    "TBD pris",                          None),
+    ("Beslag",         "Rustfri tagskruer m. EPDM-pakning",       None, "stk",   None,  "jemogfix.dk",    "TBD antal + pris",                  None),
+    ("Beslag",         "Galvaniseret tagpapsøm 2,6×25 mm (100-pak)", 1, "pk.",   69.95, "jemogfix.dk",    "Alusøm",                            URL_JF_ALUSOEM),
 ]
 
-# Roof — ETERNIT_B7 variant (from docs/tagkonstruktion_eternit.md)
+# Eternit-B7 variant. Items marked "est." in noter have prices that come from
+# docs/tagkonstruktion_eternit.md as rough estimates — please verify before
+# ordering. Shared items (vandhåndtering, vinkelbeslag) reuse the tagpap URLs.
 TAG_ETERNIT = [
-    ("Træværk",        "Spær 47×100×3000 C24 gran",                 13, "stk",   85.00, "Stark",         "Tungere end tagpap-spær"),
-    ("Træværk",        "C18 taglægte 38×73×4200 mm",                11, "stk",   52.50, "10-4.dk",       "6 rækker à ~6,44 m + spild"),
-    ("Træværk",        "Imp. sternbræt 25×125×3600 gran",            6, "stk",   82.60, "xl-byg.dk",     "Hele perimeter ~19 m"),
-    ("Tagdækning",     "Swisspearl B7 bølgeplade FK 1100×570 sortblå", 52, "stk", 95.00, "bygxtra.dk",    "49 hele + 5 % spild"),
-    ("Tagdækning",     "Swisspearl 100 Tagskrue 6×100 (100-pak)",    2, "pak",  425.00, "davidsen.dk",   "2 pr. plade × 49 + spild ~108"),
-    ("Tagdækning",     "Swisspearl PVC skumstrimmel 4,5 mm",         1, "rl.",  150.00, "Cembrit",       "Overlap-tætning"),
-    ("Vandhåndtering", "Tagrende 110 mm (4+3 m)",                    7, "m",    49.95, "jemogfix.dk",   ""),
-    ("Vandhåndtering", "Tagrende-beslag",                           12, "stk",   30.00, "jemogfix.dk",   "c/c 550 mm"),
-    ("Vandhåndtering", "Endebund tagrende 110 mm",                   2, "stk",   50.00, "jemogfix.dk",   ""),
-    ("Vandhåndtering", "Bladsamler 75-82 mm",                        1, "stk",   80.00, "jemogfix.dk",   ""),
-    ("Vandhåndtering", "Nedløbsrør Ø75 mm × 3 m",                    1, "stk",  200.00, "jemogfix.dk",   ""),
-    ("Vandhåndtering", "Nedløbsbøjning Ø75 mm",                      2, "stk",   80.00, "jemogfix.dk",   ""),
-    ("Beslag",         "Paslode vinkelbeslag 90×90×40 (20-pak)",     3, "pak",  150.00, "wood-online.dk", ""),
-    ("Beslag",         "Lægtesøm varmforzinket 2,8×60 (250-pak)",    1, "pk.",  120.00, "jemogfix.dk",   "Lægter på spær"),
+    ("Træværk",        "Spær 47×100×3000 C24 gran",                 13, "stk",   85.00, "Stark",          "est. — Stark; tungere end tagpap",  URL_JF_REGLAR_47_3000),
+    ("Træværk",        "C18 taglægte 38×73×4200 mm",                11, "stk",   52.50, "10-4.dk",        "6 rækker à ~6,44 m + spild",        URL_104_LAEGTE),
+    ("Træværk",        "Imp. sternbræt 25×125×3600 gran",            6, "stk",   82.60, "xl-byg.dk",      "Hele perimeter ~19 m",              URL_XLBYG_STERN),
+    ("Tagdækning",     "Swisspearl B7 bølgeplade FK 1100×570 sortblå", 52, "stk", 95.00, "bygxtra.dk",     "49 hele + 5 % spild",               URL_BYGXTRA_B7),
+    ("Tagdækning",     "Swisspearl 100 Tagskrue 6×100 (100-pak)",    2, "pak",  425.00, "davidsen.dk",    "2 pr. plade × 49 + spild ~108",     URL_DAVIDSEN_SKRUE),
+    ("Tagdækning",     "Swisspearl PVC skumstrimmel 4,5 mm",         1, "rl.",   None,  "Cembrit",        "TBD pris — overlap-tætning",        None),
+    ("Vandhåndtering", "Tagrende 110 mm (4+3 m)",                    7, "m",     49.95, "jemogfix.dk",    "",                                  URL_JF_TAGRENDE),
+    ("Vandhåndtering", "Tagrende-beslag (konsoljern)",              12, "stk",   24.95, "jemogfix.dk",    "c/c 550 mm",                        URL_JF_KONSOLJERN),
+    ("Vandhåndtering", "Endebund tagrende 110 mm",                   2, "stk",   43.75, "jemogfix.dk",    "",                                  URL_JF_ENDEBUND),
+    ("Vandhåndtering", "Bladsamler",                                 1, "stk",   19.95, "jemogfix.dk",    "",                                  URL_JF_BLADSAMLER),
+    ("Vandhåndtering", "Nedløbsrør Ø75 mm × 3 m",                    1, "stk",  210.00, "jemogfix.dk",    "",                                  URL_JF_NEDLOEBSROER),
+    ("Vandhåndtering", "Nedløbsbøjning",                             2, "stk",   78.75, "jemogfix.dk",    "",                                  URL_JF_NEDLOEBSBOEJ),
+    ("Beslag",         "Paslode vinkelbeslag 90×90×40 (20-pak)",     3, "pak",   None,  "wood-online.dk", "TBD pris — enkelt ~8,48 kr",        URL_WOOD_VINKEL),
+    ("Beslag",         "Lægtesøm varmforzinket 2,8×60",            None, "stk",   None,  "jemogfix.dk",    "TBD antal + pris",                  None),
 ]
 
-# Cladding — KLINK variant
+# Klink variant — preserved exactly as the original master rows 48-54 (incl.
+# items where the user had no price yet).
 CLAD_KLINK = [
-    ("Beklædning", "Klinkbeklædning sortmalet gran 25×125×4200 (pak)", 6, "pak", 497.70, "jemogfix.dk", "Frøslev klink, ~3 m² pr. pak"),
-    ("Beklædning", "Hjørnetrim 45×45×2400 mm",                          4, "stk",  29.25, "jemogfix.dk", "4 udvendige hjørner"),
-    ("Beklædning", "Vindpap (housewrap)",                                1, "rl.", 299.00, "jemogfix.dk", "20 m² pr. rulle; behov ~17,5 m²"),
-    ("Beklædning", "Klemmelister 25×50×4200 mm",                       10, "stk",  28.35, "jemogfix.dk", "Lodrette afstandslister c/c 600"),
-    ("Beklædning", "Isolering mineraluld 95 mm",                       20, "m²",   29.61, "jemogfix.dk", "I stud-rum, 2 vægge ~6 m² + 2 vægge ~4 m²"),
-    ("Voliere",    "Voliernet welded 13×13 mm 1 m rl.",                  2, "stk",1350.00, "jemogfix.dk", "1×10 m + 1×25 m"),
-    ("Voliere",    "Klamper til voliernet (pak)",                        2, "pk.",  89.00, "jemogfix.dk", "Galvaniserede sømklamper"),
+    ("Voliere",    "Voliernet welded 13×13 mm",                         2, "stk", 1350.00, "(ukendt)",    "1×10 m + 1×25 m",                              None),
+    ("Voliere",    "Klamper til voliernet",                          None, "stk",  None,   "jemogfix.dk", "TBD antal + pris",                            None),
+    ("Beklædning", "Klinkbeklædning sortmalet gran 25×125×4200 (pak)",   6, "pak",  497.70, "jemogfix.dk", "Frøslev klink; sortmalet gran",                URL_JF_KLINK),
+    ("Beklædning", "Vindpap (housewrap)",                                1, "rl.",  299.00, "jemogfix.dk", "20 m² pr. rulle; behov ~17,5 m²",              URL_JF_VINDPAP),
+    ("Beklædning", "Klemmelister 25×50×4200 mm",                       10, "stk",   28.35, "jemogfix.dk", "Lodrette afstandslister c/c 600",              URL_JF_KLEMMELISTE),
+    ("Beklædning", "Hjørnetrim 45×45×2400 mm",                          4, "stk",   29.25, "jemogfix.dk", "4 udvendige hjørner",                          URL_JF_HJORNETRIM_45),
+    ("Beklædning", "Isolering mineraluld 95 mm",                       20, "m²",    29.61, "jemogfix.dk", "I stud-rum, 2 vægge ~6 m² + 2 vægge ~4 m²",   URL_JF_ISOLERING),
 ]
 
-# Cladding — BOARD_ON_BOARD (1-på-2) variant
-# Aros Savværk: 1-på-2 svensk gran 25×150 savskåret ~160 kr/m² (tilbud), 225 kr/m² (normal).
-# Net cladded area ≈ 16 m² (4 walls minus side window 0,42 m² + house door 1,78 m² + pet door 0,08 m²).
+# Board-on-board variant. Aros Savværk price er real source; alt andet med
+# "est." i noter er gæt og bør verificeres.
 CLAD_BOB = [
-    ("Beklædning", "1-på-2 svensk gran 25×150 savskåret",              16, "m²",  160.00, "arossavvaerk.dk", "Tilbudspris; normal 225 kr/m². 2 lag pr. m² indeholdt"),
-    ("Beklædning", "Træolie/maling til naturligt træ",                   3, "L",    149.00, "jemogfix.dk",     "Behandling af gran 1-på-2 (klink kommer sortmalet)"),
-    ("Beklædning", "Hjørnetrim 70×70×2400 mm trykimp.",                  4, "stk",   49.50, "jemogfix.dk",     "Større end klink-trim — bob-stickout = 50 mm"),
-    ("Beklædning", "Vindpap (housewrap)",                                1, "rl.", 299.00, "jemogfix.dk",     "20 m² pr. rulle"),
-    ("Beklædning", "Klemmelister 25×50×4200 mm",                       10, "stk",  28.35, "jemogfix.dk",     "Vandrette afstandslister c/c 600 (lodrette boards)"),
-    ("Beklædning", "Isolering mineraluld 95 mm",                       20, "m²",   29.61, "jemogfix.dk",     "Samme som klink"),
-    ("Beklædning", "Rustfri A4 facadeskruer 4×60 (200-pak)",             2, "pk.", 199.00, "jemogfix.dk",     "Begge lag i bob — flere skruer end klink"),
-    ("Voliere",    "Voliernet welded 13×13 mm 1 m rl.",                  2, "stk",1350.00, "jemogfix.dk",     "1×10 m + 1×25 m"),
-    ("Voliere",    "Klamper til voliernet (pak)",                        2, "pk.",  89.00, "jemogfix.dk",     ""),
+    ("Voliere",    "Voliernet welded 13×13 mm",                         2, "stk", 1350.00, "(ukendt)",         "1×10 m + 1×25 m",                            None),
+    ("Voliere",    "Klamper til voliernet",                          None, "stk",  None,   "jemogfix.dk",      "TBD antal + pris",                          None),
+    ("Beklædning", "1-på-2 svensk gran 25×150 savskåret",              16, "m²",   160.00, "arossavvaerk.dk",  "Aros tilbudspris; normal 225 kr/m²",         URL_AROS_1PA2),
+    ("Beklædning", "Træolie/maling til naturligt træ",                  3, "L",     None,  "(vælg selv)",      "TBD — Gori/Cuprinol/Pinotex; klink er sortmalet", None),
+    ("Beklædning", "Vindpap (housewrap)",                                1, "rl.",  299.00, "jemogfix.dk",      "Samme som klink",                            URL_JF_VINDPAP),
+    ("Beklædning", "Klemmelister 25×50×4200 mm",                       10, "stk",   28.35, "jemogfix.dk",      "Vandrette afstandslister c/c 600",           URL_JF_KLEMMELISTE),
+    ("Beklædning", "Hjørnetrim 70×70×2400 trykimp.",                    4, "stk",   None,  "jemogfix.dk",      "TBD — større end klink (bob stickout 50 mm)",None),
+    ("Beklædning", "Isolering mineraluld 95 mm",                       20, "m²",    29.61, "jemogfix.dk",      "Samme som klink",                            URL_JF_ISOLERING),
+    ("Beklædning", "Rustfri A4 facadeskruer 4×60",                   None, "pk.",   None,  "jemogfix.dk",      "TBD antal + pris — flere end klink (2 lag)", None),
 ]
 
 # ---------------------------------------------------------------------------
@@ -132,46 +226,71 @@ CLAD_BOB = [
 # ---------------------------------------------------------------------------
 HEADERS = ["Kategori", "Vare", "Antal", "Enhed", "Pris pr. enhed (DKK)",
            "I alt (DKK)", "Leverandør", "Noter"]
-COL_WIDTHS = [16, 50, 8, 8, 16, 14, 22, 60]
+COL_WIDTHS = [18, 50, 8, 8, 16, 14, 24, 60]
 
 def write_header(ws):
     for col, (h, w) in enumerate(zip(HEADERS, COL_WIDTHS), start=1):
         c = ws.cell(row=1, column=col, value=h)
-        c.font = BOLD
+        c.font = HEADER_FONT
         c.fill = HEADER_FILL
         c.border = THIN_BORDER
+        c.alignment = Alignment(horizontal="left", vertical="center")
         ws.column_dimensions[get_column_letter(col)].width = w
+    ws.row_dimensions[1].height = 22
     ws.freeze_panes = "A2"
 
-def write_rows(ws, rows, start_row=2):
+def write_rows(ws, rows, sheet_color, start_row=2):
+    """rows = list of 8-tuples: (kat, vare, antal, enhed, pris, lev, noter, url).
+    sheet_color = hex (no #) for column A fill on this sheet."""
+    cat_fill = PatternFill("solid", fgColor=sheet_color)
+    voliere_fill = PatternFill("solid", fgColor=COL_VOLIERE)
     r = start_row
     last_kategori = None
     for row in rows:
-        kat, vare, antal, enhed, pris, lev, noter = row
+        kat, vare, antal, enhed, pris, lev, noter, url = row
         if kat != last_kategori and last_kategori is not None:
             r += 1   # blank separator
-        ws.cell(row=r, column=1, value=kat).font = BOLD if kat != last_kategori else Font()
+
+        # Column A — category badge (colored fill, bold first occurrence)
+        a = ws.cell(row=r, column=1, value=kat)
+        a.fill = voliere_fill if kat == "Voliere" else cat_fill
+        a.font = Font(bold=(kat != last_kategori))
+
         ws.cell(row=r, column=2, value=vare)
         ws.cell(row=r, column=3, value=antal)
-        ws.cell(row=r, column=4, value=enhed)
+        ws.cell(row=r, column=4, value=enhed).alignment = Alignment(horizontal="center")
         ws.cell(row=r, column=5, value=pris)
-        ws.cell(row=r, column=6, value=f"=C{r}*E{r}")
-        ws.cell(row=r, column=7, value=lev)
-        ws.cell(row=r, column=8, value=noter)
+        # "I alt" formula only when both antal+pris are numeric; else blank
+        if isinstance(antal, (int, float)) and isinstance(pris, (int, float)):
+            ws.cell(row=r, column=6, value=f"=C{r}*E{r}")
+        else:
+            ws.cell(row=r, column=6, value=None)
+
+        lev_cell = ws.cell(row=r, column=7, value=lev)
+        if url:
+            lev_cell.hyperlink = url
+            lev_cell.font = LINK_FONT
+
+        ws.cell(row=r, column=8, value=noter).alignment = Alignment(wrap_text=False, vertical="center")
+
         for c in range(1, 9):
             ws.cell(row=r, column=c).border = THIN_BORDER
+
         last_kategori = kat
         r += 1
     return r   # next free row
 
-def write_total(ws, last_row):
-    # Per-sheet subtotal in column H (Noter) so summary's SUM(F:F) doesn't
-    # double-count. SUBTOTAL(9,...) on the items also keeps F-column clean.
+def write_total(ws, last_row, sheet_color):
+    """TOTAL in column H so summary's SUM(F:F) doesn't double-count."""
     r = last_row + 1
-    ws.cell(row=r, column=5, value="TOTAL").font = BOLD
-    ws.cell(row=r, column=5).fill = TOTAL_FILL
+    cat_fill = PatternFill("solid", fgColor=sheet_color)
+    ws.cell(row=r, column=1, value="").fill = cat_fill
+    label = ws.cell(row=r, column=5, value="TOTAL")
+    label.font = BOLD
+    label.fill = TOTAL_FILL
+    label.alignment = Alignment(horizontal="right")
     total_cell = ws.cell(row=r, column=8, value=f"=SUM(F2:F{last_row-1})")
-    total_cell.font = BOLD
+    total_cell.font = Font(bold=True, size=11)
     total_cell.fill = TOTAL_FILL
     total_cell.number_format = '#,##0.00 "kr"'
     for c in range(1, 9):
@@ -183,8 +302,9 @@ def write_data_sheet(wb, name, rows):
         del wb[name]
     ws = wb.create_sheet(name)
     write_header(ws)
-    next_r = write_rows(ws, rows)
-    write_total(ws, next_r)
+    color = SHEET_COLORS[name]
+    next_r = write_rows(ws, rows, color)
+    write_total(ws, next_r, color)
     return ws
 
 # ---------------------------------------------------------------------------
@@ -195,90 +315,158 @@ def write_summary(wb):
         del wb["summary"]
     ws = wb.create_sheet("summary", 0)   # first sheet
 
-    ws.column_dimensions["A"].width = 36
+    ws.column_dimensions["A"].width = 38
     ws.column_dimensions["B"].width = 22
     ws.column_dimensions["C"].width = 22
-    ws.column_dimensions["D"].width = 22
+    ws.column_dimensions["D"].width = 26
 
-    ws.cell(row=1, column=1, value="Rabbit-house BOM — variant selector").font = Font(bold=True, size=14)
+    DKK_FMT = '#,##0.00 "kr"'
+
+    # --- title bar ---
+    t = ws.cell(row=1, column=1, value="Rabbit-house BOM  —  variant selector")
+    t.font = Font(bold=True, color=HEADER_FG, size=14)
+    t.fill = HEADER_FILL
+    t.alignment = Alignment(horizontal="left", vertical="center")
     ws.merge_cells("A1:D1")
+    ws.row_dimensions[1].height = 28
 
     # --- selector block ---
-    ws.cell(row=3, column=1, value="Valgt tagdækning:").font = BOLD
-    ws.cell(row=3, column=2, value="tagpap")
+    ws.cell(row=3, column=1, value="Vælg tagdækning:").font = BOLD
+    sel_roof = ws.cell(row=3, column=2, value="tagpap")
+    sel_roof.fill = PatternFill("solid", fgColor=COL_TAG_TAGPAP)
+    sel_roof.font = BOLD
+    sel_roof.alignment = Alignment(horizontal="center")
     dv_roof = DataValidation(type="list", formula1='"tagpap,eternit_b7"', allow_blank=False)
     dv_roof.add("B3")
     ws.add_data_validation(dv_roof)
 
-    ws.cell(row=4, column=1, value="Valgt beklædning:").font = BOLD
-    ws.cell(row=4, column=2, value="klink")
+    ws.cell(row=4, column=1, value="Vælg beklædning:").font = BOLD
+    sel_clad = ws.cell(row=4, column=2, value="klink")
+    sel_clad.fill = PatternFill("solid", fgColor=COL_CLAD_KLINK)
+    sel_clad.font = BOLD
+    sel_clad.alignment = Alignment(horizontal="center")
     dv_clad = DataValidation(type="list", formula1='"klink,board_on_board"', allow_blank=False)
     dv_clad.add("B4")
     ws.add_data_validation(dv_clad)
 
-    # --- selected totals (via INDIRECT into chosen variant sheets) ---
-    ws.cell(row=6, column=1, value="Valgt konfiguration — totaler").font = BOLD
-    ws.cell(row=6, column=1).fill = SUBHEADER_FILL
+    # --- section header: Selected totals ---
+    h = ws.cell(row=6, column=1, value="Valgt konfiguration — totaler")
+    h.font = HEADER_FONT
+    h.fill = SUBHEADER_FILL
+    ws.merge_cells("A6:D6")
+    ws.row_dimensions[6].height = 20
 
-    ws.cell(row=7, column=1, value="Fundament")
-    ws.cell(row=7, column=2, value="=SUM(fundament!F:F)")
-    ws.cell(row=8, column=1, value="Konstruktion")
-    ws.cell(row=8, column=2, value="=SUM(konstruktion!F:F)")
-    ws.cell(row=9, column=1, value="Tagkonstruktion")
-    ws.cell(row=9, column=2, value='=SUM(INDIRECT("tagkonstruktion_"&B3&"!F:F"))')
-    ws.cell(row=10, column=1, value="Beklædning")
-    ws.cell(row=10, column=2, value='=SUM(INDIRECT("beklaedning_"&B4&"!F:F"))')
+    # Per-category rows. Column A gets the category color, B the value.
+    sel_rows = [
+        ("Fundament",      COL_FUNDAMENT,  "=SUM(fundament!F:F)"),
+        ("Konstruktion",   COL_KONSTRUKT,  "=SUM(konstruktion!F:F)"),
+        ("Tagkonstruktion","TAG_DYNAMIC",  '=SUM(INDIRECT("tagkonstruktion_"&B3&"!F:F"))'),
+        ("Beklædning",     "CLAD_DYNAMIC", '=SUM(INDIRECT("beklaedning_"&B4&"!F:F"))'),
+    ]
+    for i, (label, color, formula) in enumerate(sel_rows):
+        r = 7 + i
+        a = ws.cell(row=r, column=1, value=label)
+        a.font = BOLD
+        if color == "TAG_DYNAMIC":
+            # No fixed color — formula based, leave neutral light gray
+            a.fill = PatternFill("solid", fgColor="F2F2F2")
+        elif color == "CLAD_DYNAMIC":
+            a.fill = PatternFill("solid", fgColor="F2F2F2")
+        else:
+            a.fill = PatternFill("solid", fgColor=color)
+        b = ws.cell(row=r, column=2, value=formula)
+        b.number_format = DKK_FMT
+        b.alignment = Alignment(horizontal="right")
+        a.border = THIN_BORDER
+        b.border = THIN_BORDER
 
-    ws.cell(row=11, column=1, value="TOTAL valgt").font = BOLD
-    total_sel = ws.cell(row=11, column=2, value="=SUM(B7:B10)")
-    total_sel.font = BOLD
-    total_sel.fill = TOTAL_FILL
-    ws.cell(row=11, column=1).fill = TOTAL_FILL
+    # Grand total row
+    r = 11
+    a = ws.cell(row=r, column=1, value="TOTAL valgt")
+    a.font = Font(bold=True, size=12)
+    a.fill = TOTAL_FILL
+    a.alignment = Alignment(horizontal="right")
+    b = ws.cell(row=r, column=2, value="=SUM(B7:B10)")
+    b.font = Font(bold=True, size=12)
+    b.fill = TOTAL_FILL
+    b.number_format = DKK_FMT
+    b.alignment = Alignment(horizontal="right")
+    a.border = THIN_BORDER
+    b.border = THIN_BORDER
 
-    # --- comparison matrix ---
-    ws.cell(row=13, column=1, value="Sammenligning — alle 4 kombinationer").font = BOLD
-    ws.cell(row=13, column=1).fill = SUBHEADER_FILL
+    # --- section header: Comparison matrix ---
+    h2 = ws.cell(row=13, column=1, value="Sammenligning — alle 4 kombinationer")
+    h2.font = HEADER_FONT
+    h2.fill = SUBHEADER_FILL
+    ws.merge_cells("A13:D13")
+    ws.row_dimensions[13].height = 20
 
-    # Header row
-    ws.cell(row=14, column=2, value="tagpap").font = BOLD
-    ws.cell(row=14, column=3, value="eternit_b7").font = BOLD
-    ws.cell(row=14, column=4, value="Δ (eternit − tagpap)").font = BOLD
+    # Matrix column headers
+    c1 = ws.cell(row=14, column=2, value="tagpap")
+    c1.fill = PatternFill("solid", fgColor=COL_TAG_TAGPAP); c1.font = BOLD
+    c1.alignment = Alignment(horizontal="center")
+    c2 = ws.cell(row=14, column=3, value="eternit_b7")
+    c2.fill = PatternFill("solid", fgColor=COL_TAG_ETERN);  c2.font = BOLD
+    c2.alignment = Alignment(horizontal="center")
+    c3 = ws.cell(row=14, column=4, value="Δ (eternit − tagpap)")
+    c3.font = BOLD
+    c3.alignment = Alignment(horizontal="center")
+    for col in range(2, 5):
+        ws.cell(row=14, column=col).border = THIN_BORDER
 
-    ws.cell(row=15, column=1, value="Klink").font = BOLD
+    # Klink row
+    k = ws.cell(row=15, column=1, value="Klink")
+    k.fill = PatternFill("solid", fgColor=COL_CLAD_KLINK); k.font = BOLD
+    k.alignment = Alignment(horizontal="right")
     ws.cell(row=15, column=2, value="=SUM(fundament!F:F)+SUM(konstruktion!F:F)+SUM(tagkonstruktion_tagpap!F:F)+SUM(beklaedning_klink!F:F)")
     ws.cell(row=15, column=3, value="=SUM(fundament!F:F)+SUM(konstruktion!F:F)+SUM(tagkonstruktion_eternit_b7!F:F)+SUM(beklaedning_klink!F:F)")
     ws.cell(row=15, column=4, value="=C15-B15")
-    ws.cell(row=15, column=4).fill = DELTA_FILL
+    ws.cell(row=15, column=4).fill = DELTA_POS_FILL
 
-    ws.cell(row=16, column=1, value="Board-on-board (1-på-2)").font = BOLD
+    # Bob row
+    b = ws.cell(row=16, column=1, value="Board-on-board (1-på-2)")
+    b.fill = PatternFill("solid", fgColor=COL_CLAD_BOB); b.font = BOLD
+    b.alignment = Alignment(horizontal="right")
     ws.cell(row=16, column=2, value="=SUM(fundament!F:F)+SUM(konstruktion!F:F)+SUM(tagkonstruktion_tagpap!F:F)+SUM(beklaedning_board_on_board!F:F)")
     ws.cell(row=16, column=3, value="=SUM(fundament!F:F)+SUM(konstruktion!F:F)+SUM(tagkonstruktion_eternit_b7!F:F)+SUM(beklaedning_board_on_board!F:F)")
     ws.cell(row=16, column=4, value="=C16-B16")
-    ws.cell(row=16, column=4).fill = DELTA_FILL
+    ws.cell(row=16, column=4).fill = DELTA_POS_FILL
 
-    ws.cell(row=17, column=1, value="Δ (bob − klink)").font = BOLD
-    ws.cell(row=17, column=2, value="=B16-B15")
-    ws.cell(row=17, column=3, value="=C16-C15")
-    ws.cell(row=17, column=2).fill = DELTA_FILL
-    ws.cell(row=17, column=3).fill = DELTA_FILL
+    # Delta row (bob - klink)
+    d = ws.cell(row=17, column=1, value="Δ (bob − klink)")
+    d.font = BOLD
+    d.alignment = Alignment(horizontal="right")
+    d.fill = PatternFill("solid", fgColor="F2F2F2")
+    ws.cell(row=17, column=2, value="=B16-B15").fill = DELTA_POS_FILL
+    ws.cell(row=17, column=3, value="=C16-C15").fill = DELTA_POS_FILL
+
+    # Borders + number format on entire matrix
+    for r in range(15, 18):
+        for c in range(1, 5):
+            cell = ws.cell(row=r, column=c)
+            cell.border = THIN_BORDER
+            if c in (2, 3, 4) and cell.value is not None:
+                cell.number_format = DKK_FMT
+                cell.alignment = Alignment(horizontal="right")
 
     # --- notes ---
-    ws.cell(row=19, column=1, value="Noter").font = BOLD
+    n = ws.cell(row=19, column=1, value="Noter")
+    n.font = HEADER_FONT
+    n.fill = SUBHEADER_FILL
+    ws.merge_cells("A19:D19")
+
     notes = [
-        "Selectors i B3/B4 styrer total i B11 via INDIRECT.",
-        "Tagkonstruktion_eternit_b7 bruger tungere spær (47×100 vs 45×95 ved tagpap).",
+        "Dropdowns i B3/B4 styrer totalen i B11 via INDIRECT på sheet-navne.",
+        "Eternit_b7 bruger tungere spær (47×100 C24) end tagpap (men prisen er fra eternit-doc og er et estimat).",
         "Board-on-board pris er Aros tilbudspris 160 kr/m² (normalpris 225). Klink kommer sortmalet; bob behøver træolie/maling.",
         "Voliernet og isolering er ens på tværs af beklædningsvarianter.",
         "Variantvalg i build.scad: roof_cover = \"tagpap_osb\"|\"eternit_b7\"; cladding_type = \"klink\"|\"board_on_board\".",
+        "Items med pris=tom og noter=\"TBD …\" kræver verifikation før bestilling.",
     ]
-    for i, n in enumerate(notes):
-        ws.cell(row=20 + i, column=1, value=f"• {n}")
+    for i, note in enumerate(notes):
+        ws.cell(row=20 + i, column=1, value=f"•  {note}")
         ws.merge_cells(start_row=20+i, end_row=20+i, start_column=1, end_column=4)
         ws.cell(row=20+i, column=1).alignment = Alignment(wrap_text=True, vertical="top")
-
-    # Format numeric cells as DKK with thousand-separator
-    for cell_addr in ["B7","B8","B9","B10","B11","B15","C15","D15","B16","C16","D16","B17","C17"]:
-        ws[cell_addr].number_format = '#,##0.00 "kr"'
 
     return ws
 
