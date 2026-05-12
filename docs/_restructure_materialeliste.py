@@ -308,6 +308,190 @@ def write_data_sheet(wb, name, rows):
     return ws
 
 # ---------------------------------------------------------------------------
+# Cladding price comparison sheet — all options as rows, sorted by total.
+# Net cladded wall area: ~16 m² (7,81 m perimeter × ~2,3 m gns højde minus
+# vinduer + døre). Antal beregnet pr. produkt-mønster-kombo.
+# ---------------------------------------------------------------------------
+
+# Each row: dict med produkt, mønster, materiale, antal, enhed, pris_stk,
+# behandling_kr, leverandør, url, note.
+CLADDING_OPTIONS = [
+    {
+        "produkt":    "Imp. klinkbeklædning gran 25×125×3600",
+        "monster":    "Klink horisontal",
+        "materiale":  "Trykimp. gran (ubehandlet ud over imp.)",
+        "antal":      43, "enhed": "stk",
+        "kr_stk":     60.30,
+        "behandling": 0,   # imp. behøver ikke maling; kan stå råt
+        "leverandor": "jemogfix.dk",
+        "url":        "https://www.jemogfix.dk/impraegneret-klinkbeklaedning-gran-25-x-125-x-3600-mm/",
+        "note":       "Billigste klink. Grøn-grålig fra start; kan males sort senere (+~450 kr)",
+    },
+    {
+        "produkt":    "Aros 1-på-2 svensk gran 25×150 savskåret",
+        "monster":    "1-på-2 lodret (bob)",
+        "materiale":  "Savskåret svensk gran (FSC)",
+        "antal":      16, "enhed": "m²",
+        "kr_stk":     160.00,
+        "behandling": 450,   # 3 L Pinotex/Gori grunding + topcoat
+        "leverandor": "arossavvaerk.dk",
+        "url":        "https://arossavvaerk.dk/vare/1-paa-2-beklaedning-svensk-gran/",
+        "note":       "Tilbudspris 160 (normal 225). Rustic look. Behandling påkrævet før montage",
+    },
+    {
+        "produkt":    "Klinkbeklædning sortmalet gran 25×125×4200 (6-pak)",
+        "monster":    "Klink horisontal",
+        "materiale":  "Gran, færdig sortmalet vandbaseret RAL 9005",
+        "antal":      6, "enhed": "pak",
+        "kr_stk":     497.70,
+        "behandling": 0,    # færdig sortmalet fra start
+        "leverandor": "jemogfix.dk",
+        "url":        "https://www.jemogfix.dk/klinkbeklaedning-sortmalet/4115/9023155/",
+        "note":       "Klar til at montere. Klassisk skur/sommerhus-look. 6 stk pr. pak = 25,2 m linear",
+    },
+    {
+        "produkt":    "Høvlet forskalling fyr 22×100×3600 UBEHANDLET",
+        "monster":    "1-på-2 lodret (bob)",
+        "materiale":  "Fyr, høvlet, ubehandlet",
+        "antal":      120, "enhed": "stk",
+        "kr_stk":     35.82,
+        "behandling": 600,   # intensiv behandling kræves
+        "leverandor": "jemogfix.dk",
+        "url":        "https://www.jemogfix.dk/hoevlet-forskalling-22-x-100-x-3600-mm/4230/9057349/",
+        "note":       "Jemogfix advarer mod udendørs ubehandlet. Kræver Gori/Pinotex × 3 lag",
+    },
+    {
+        "produkt":    "Beklædning lodret sort 25×125×3000 (4-pak)",
+        "monster":    "Klink lodret",
+        "materiale":  "Skandinavisk gran (FSC), færdig sortmalet vandbaseret",
+        "antal":      13, "enhed": "pak",
+        "kr_stk":     359.40,
+        "behandling": 0,
+        "leverandor": "jemogfix.dk",
+        "url":        "https://www.jemogfix.dk/beklaedning-lodret-sort-25-x-125-x-3000-mm-4-pk/4115/9064083/",
+        "note":       "Lodret klink-profil, færdig sort. 4 stk pr. pak = 12 m linear. Moderne lade-look",
+    },
+    {
+        "produkt":    "Imprægneret høvlet fyr 25×125×3600",
+        "monster":    "1-på-2 lodret (bob)",
+        "materiale":  "Trykimp. fyr, høvlet",
+        "antal":      81, "enhed": "stk",
+        "kr_stk":     63.90,
+        "behandling": 0,
+        "leverandor": "jemogfix.dk",
+        "url":        "https://www.jemogfix.dk/impraegnerede-braedder-fyr-25-x-125-x-3600-mm/",
+        "note":       "Udendørs-godkendt. Grøn-brun farve fra imp. Kan males (+~450 kr)",
+    },
+]
+
+def write_cladding_comparison(wb):
+    name = "sammenligning_beklaedning"
+    if name in wb.sheetnames:
+        del wb[name]
+    ws = wb.create_sheet(name)
+
+    # Title bar
+    t = ws.cell(row=1, column=1,
+                value="Beklædning — prissammenligning ved 16 m² netto facadeareal")
+    t.font = Font(bold=True, color=HEADER_FG, size=13)
+    t.fill = HEADER_FILL
+    t.alignment = Alignment(horizontal="left", vertical="center")
+    ws.merge_cells("A1:L1")
+    ws.row_dimensions[1].height = 24
+
+    # Column headers
+    headers = [
+        ("Produkt", 50), ("Mønster", 18), ("Materiale", 32),
+        ("Antal", 8), ("Enhed", 8), ("Pris/enh", 11),
+        ("Material kr", 13), ("Behandl. kr", 12), ("TOTAL", 13),
+        ("Δ vs billigst", 14), ("Leverandør", 16), ("Note", 60),
+    ]
+    for i, (h, w) in enumerate(headers, start=1):
+        c = ws.cell(row=3, column=i, value=h)
+        c.font = HEADER_FONT
+        c.fill = HEADER_FILL
+        c.border = THIN_BORDER
+        c.alignment = Alignment(horizontal="center", vertical="center")
+        ws.column_dimensions[get_column_letter(i)].width = w
+    ws.row_dimensions[3].height = 20
+
+    # Sort options by total ascending
+    sorted_opts = sorted(
+        CLADDING_OPTIONS,
+        key=lambda o: o["antal"] * o["kr_stk"] + o["behandling"]
+    )
+
+    # Pattern → background color
+    pat_color = {
+        "Klink horisontal":     COL_CLAD_KLINK,
+        "Klink lodret":         COL_TAG_ETERN,
+        "1-på-2 lodret (bob)":  COL_CLAD_BOB,
+    }
+
+    min_total = min(o["antal"] * o["kr_stk"] + o["behandling"] for o in sorted_opts)
+
+    DKK = '#,##0.00 "kr"'
+    DKK_INT = '#,##0 "kr"'
+
+    for i, o in enumerate(sorted_opts):
+        r = 4 + i
+        total = o["antal"] * o["kr_stk"] + o["behandling"]
+        delta = total - min_total
+
+        ws.cell(row=r, column=1, value=o["produkt"])
+        b = ws.cell(row=r, column=2, value=o["monster"])
+        b.fill = PatternFill("solid", fgColor=pat_color[o["monster"]])
+        b.font = BOLD
+        b.alignment = Alignment(horizontal="center")
+        ws.cell(row=r, column=3, value=o["materiale"])
+        ws.cell(row=r, column=4, value=o["antal"]).alignment = Alignment(horizontal="right")
+        ws.cell(row=r, column=5, value=o["enhed"]).alignment = Alignment(horizontal="center")
+        ws.cell(row=r, column=6, value=o["kr_stk"]).number_format = DKK
+        ws.cell(row=r, column=7, value=f"=D{r}*F{r}").number_format = DKK
+        ws.cell(row=r, column=8, value=o["behandling"]).number_format = DKK_INT
+        tot = ws.cell(row=r, column=9, value=f"=G{r}+H{r}")
+        tot.number_format = DKK
+        tot.font = BOLD
+        if i == 0:
+            tot.fill = TOTAL_FILL   # billigste = guld
+        dlt = ws.cell(row=r, column=10, value=delta if delta > 0 else None)
+        dlt.number_format = DKK
+        dlt.alignment = Alignment(horizontal="right")
+        if delta > 0:
+            dlt.fill = DELTA_POS_FILL
+
+        lev = ws.cell(row=r, column=11, value=o["leverandor"])
+        if o.get("url"):
+            lev.hyperlink = o["url"]
+            lev.font = LINK_FONT
+        ws.cell(row=r, column=12, value=o["note"]).alignment = Alignment(wrap_text=False, vertical="center")
+
+        for c in range(1, 13):
+            ws.cell(row=r, column=c).border = THIN_BORDER
+
+    # Legend block
+    legend_row = 4 + len(sorted_opts) + 2
+    ws.cell(row=legend_row, column=1, value="Læsevejledning").font = HEADER_FONT
+    ws.cell(row=legend_row, column=1).fill = SUBHEADER_FILL
+    ws.merge_cells(start_row=legend_row, end_row=legend_row, start_column=1, end_column=6)
+
+    notes = [
+        "Antal er beregnet for 16 m² netto vægareal (4 hus-vægge minus side-vindue + dør + kanindør).",
+        "Behandl. kr = ekstra behandlingsomkostning (træolie/maling) der KRÆVES før montage. 0 hvis produktet er færdigbehandlet eller trykimp.",
+        "Klink-produkter har færdig profil (overlapper indbygget). 1-på-2 (bob) bruger to lag rå brædder; kræver mere arbejde at montere.",
+        "Mønster-farven matcher beklædnings-sheet i resten af workbook'en: blå = klink, grøn = bob, gul = lodret klink.",
+        "TOTAL inkluderer IKKE: voliernet, vindpap, klemmelister, isolering, hjørnetrim (~2.000-2.500 kr fælles, se beklaedning_* sheets).",
+    ]
+    for i, n in enumerate(notes):
+        c = ws.cell(row=legend_row + 1 + i, column=1, value=f"•  {n}")
+        ws.merge_cells(start_row=legend_row+1+i, end_row=legend_row+1+i,
+                       start_column=1, end_column=12)
+        c.alignment = Alignment(wrap_text=True, vertical="top")
+
+    return ws
+
+
+# ---------------------------------------------------------------------------
 # Summary sheet
 # ---------------------------------------------------------------------------
 def write_summary(wb):
@@ -489,12 +673,14 @@ def main():
     write_data_sheet(wb, "beklaedning_klink",          CLAD_KLINK)
     write_data_sheet(wb, "beklaedning_board_on_board", CLAD_BOB)
 
-    # 3. summary
+    # 3. summary + cladding comparison
     write_summary(wb)
+    write_cladding_comparison(wb)
 
-    # 4. order: summary, common, then variants
+    # 4. order: summary, comparison, common, then variants
     order = [
         "summary",
+        "sammenligning_beklaedning",
         "fundament",
         "konstruktion",
         "tagkonstruktion_tagpap",
