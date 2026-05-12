@@ -198,7 +198,7 @@ module render_yard_mesh(palette = DEFAULT_PALETTE) {
 // ---------------------------------------------------------------------------
 // Entry point — housewrap + klink + corner trim + counter-battens + yard mesh.
 // ---------------------------------------------------------------------------
-module RenderCladding(clad = DEFAULT_CLAD, palette = DEFAULT_PALETTE) {
+module RenderCladding(clad = RH_CLAD, palette = DEFAULT_PALETTE) {
     ll = RH_LENGTH; ww = RH_WIDTH; bh = RH_BASE_H;
     hl = RH_HOUSE_LEN;
     ehf = RH_EH_FRONT; ehb = RH_EH_BACK;

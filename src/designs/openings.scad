@@ -168,7 +168,7 @@ module render_side_window() {
 // The pet opening in the partition stays empty (rough opening in the
 // skeleton, a commercial cat-door slots straight in).
 // ----------------------------------------------------------------------------
-module RenderOpenings(mesh = DEFAULT_MESH, palette = DEFAULT_PALETTE) {
+module RenderOpenings(mesh = RH_MESH, palette = DEFAULT_PALETTE) {
     render_yard_door(mesh, palette);
     render_human_door(palette);
     render_side_window();

@@ -13,11 +13,10 @@ use <roof_plates.scad>
 show_ground = true;
 roof_cover  = "eternit_b7";   // tagpap_osb | eternit_b7 | eternit_10 | eternit_14
 
-pal = DEFAULT_PALETTE;
-RenderFoundation(show_ground, pal);
-RenderFraming(pal);
-RenderOpenings(RH_MESH, pal);
-RenderRoofStructure(roof_cover, pal);
-RenderRoofPlates(roof_cover, pal);
-RenderCladding(RH_CLAD, pal);
-// RenderInterior(palette = pal);
+RenderFoundation(show_ground);
+RenderFraming();
+RenderOpenings();
+RenderRoofStructure("eternit_b7");
+RenderRoofPlates(roof_cover);
+RenderCladding();
+// RenderInterior();
