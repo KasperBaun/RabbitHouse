@@ -83,6 +83,13 @@ RH_MESH_SPACING = 13;
 RH_MESH_BAR     = 1;
 RH_MESH_FRAME   = 40;
 RH_MESH_DEPTH   = 20;
+RH_MESH = mesh_spec(spacing = RH_MESH_SPACING, bar   = RH_MESH_BAR,
+                    frame   = RH_MESH_FRAME,   depth = RH_MESH_DEPTH);
+
+// Klink cladding profile: 25x125 mm spruce/larch boards, 25 mm overlap,
+// step 100 mm. Standard Stark/Bauhaus stock in 4200 mm lengths. Overrides
+// the library's DEFAULT_CLAD (24x150 with 40 mm overlap).
+RH_CLAD = clad_spec(board_h=125, overlap=25, thick=25, lip=20);
 
 // Vertical wood stiles along yard mesh walls (~1 m c/c).
 RH_STILE_W       = 70;
