@@ -9,7 +9,7 @@ use <openings.scad>
 use <cladding.scad>
 use <roof_structure.scad>
 use <roof_plates.scad>
-// use <interior.scad>
+use <interior.scad>
 
 roof_cover = "eternit_b7";   // tagpap_osb | eternit_b7 | eternit_10 | eternit_14
 
@@ -20,4 +20,4 @@ RenderOpenings();
 RenderRoofStructure("eternit_b7");
 RenderRoofPlates(roof_cover);
 RenderCladding();
-// RenderInterior();
+RenderInterior();
