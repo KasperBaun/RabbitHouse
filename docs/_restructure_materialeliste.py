@@ -139,19 +139,19 @@ URL_AROS_1PA2          = "https://arossavvaerk.dk/vare/1-paa-2-beklaedning-svens
 # In COMBINED build, V5 is shared (house renders it). Linear-meter share:
 # house ~8 m (41 %), yard ~11.5 m (59 %).
 FUNDAMENT = [
-    ("Fundament", "Stabilgrus 0-32 mm (hus)",      430, "kg",  0.55,  "materialepladsen.dk", "Under hus-strips (~0,25 m³)",       URL_MATPLADS_STABILGRUS, "Hus"),
-    ("Fundament", "Stabilgrus 0-32 mm (yard)",     620, "kg",  0.55,  "materialepladsen.dk", "Under yard-strips (~0,35 m³)",      URL_MATPLADS_STABILGRUS, "Yard"),
-    ("Fundament", "Fundablok 50x20x15 cm (hus)",    50, "stk", 15.75, "jemogfix.dk",         "Hus perimeter + V5 cross — buy 50", URL_JF_FUNDABLOK,        "Hus"),
-    ("Fundament", "Fundablok 50x20x15 cm (yard)",   70, "stk", 15.75, "jemogfix.dk",         "Yard 3-side perimeter — buy 70",    URL_JF_FUNDABLOK,        "Yard"),
-    ("Fundament", "Armeringsjern Ø8 mm × 3 m (hus)", 5, "stk", 29.75, "jemogfix.dk",         "I bundrem-rille hus",                URL_JF_ARMERING,         "Hus"),
-    ("Fundament", "Armeringsjern Ø8 mm × 3 m (yard)",8, "stk", 29.75, "jemogfix.dk",         "I bundrem-rille yard",               URL_JF_ARMERING,         "Yard"),
-    ("Fundament", "Cement 25 kg (hus)",              6, "stk", 75.00, "jemogfix.dk",         "1:4, ~25 kg/m³ × 0,25 m³",           URL_JF_CEMENT,           "Hus"),
-    ("Fundament", "Cement 25 kg (yard)",             8, "stk", 75.00, "jemogfix.dk",         "1:4, ~25 kg/m³ × 0,35 m³",           URL_JF_CEMENT,           "Yard"),
-    ("Fundament", "Støbemix 0-16 mm (hus)",        610, "kg",  0.66,  "materialepladsen.dk", "ca. 0,37 m³",                        URL_MATPLADS_STOEBEMIX,  "Hus"),
-    ("Fundament", "Støbemix 0-16 mm (yard)",       875, "kg",  0.66,  "materialepladsen.dk", "ca. 0,53 m³",                        URL_MATPLADS_STOEBEMIX,  "Yard"),
-    ("Fundament", "Gevindstang M10 × 1000 mm (hus)", 8, "stk", 27.95, "jemogfix.dk",         "Ankerbolte hus-centerlinjer",        URL_JF_GEVINDSTANG,      "Hus"),
-    ("Fundament", "Gevindstang M10 × 1000 mm (yard)",10,"stk", 27.95, "jemogfix.dk",         "Ankerbolte yard-centerlinjer",       URL_JF_GEVINDSTANG,      "Yard"),
-    ("Fundament", "M10 møtrikker (12-pak)",          2, "pk.", 28.95, "jemogfix.dk",         "NKT Fasteners (1 pak hver zone)",    URL_JF_M10_MOETRIK,      "Fælles"),
+    ("Fundament", "Stabilgrus 0-32 mm (hus)",       420, "kg",  0.55,  "materialepladsen.dk", "Under hus-strips (~0,25 m³)",                 URL_MATPLADS_STABILGRUS, "Hus"),
+    ("Fundament", "Stabilgrus 0-32 mm (yard)",      605, "kg",  0.55,  "materialepladsen.dk", "Under yard-strips (~0,35 m³)",                URL_MATPLADS_STABILGRUS, "Yard"),
+    ("Fundament", "Fundablok 50x20x15 cm (hus)",     70, "stk", 15.75, "jemogfix.dk",         "1500x2500 ring, 4 skifter halvstensforbandt — 64 + buffer", URL_JF_FUNDABLOK, "Hus"),
+    ("Fundament", "Fundablok 50x20x15 cm (yard)",    75, "stk", 15.75, "jemogfix.dk",         "3-sidet ring (V5 = hus), 3 skifter halvstensforbandt — 69 + buffer", URL_JF_FUNDABLOK, "Yard"),
+    ("Fundament", "Kamstål Ø10 mm × 3 m (hus)",      14, "stk", 45.00, "jemogfix.dk",         "est. — 2 bund + 2 top + lodrette",            URL_JF_ARMERING,         "Hus"),
+    ("Fundament", "Kamstål Ø10 mm × 3 m (yard)",     18, "stk", 45.00, "jemogfix.dk",         "est. — 2 bund + 2 top + lodrette",            URL_JF_ARMERING,         "Yard"),
+    ("Fundament", "Cement 25 kg (hus)",               8, "stk", 75.00, "jemogfix.dk",         "1:4 blanding, ~240 L beton",                  URL_JF_CEMENT,           "Hus"),
+    ("Fundament", "Cement 25 kg (yard)",              9, "stk", 75.00, "jemogfix.dk",         "1:4 blanding, ~260 L beton",                  URL_JF_CEMENT,           "Yard"),
+    ("Fundament", "Støbemix 0-16 mm (hus)",         500, "kg",  0.66,  "materialepladsen.dk", "ca. 0,30 m³",                                 URL_MATPLADS_STOEBEMIX,  "Hus"),
+    ("Fundament", "Støbemix 0-16 mm (yard)",        700, "kg",  0.66,  "materialepladsen.dk", "ca. 0,42 m³",                                 URL_MATPLADS_STOEBEMIX,  "Yard"),
+    ("Fundament", "Ankerskrue M10 × 120 mm (hus)",    6, "stk", 14.95, "jemogfix.dk",         "est. — bundrem-fast: 1 på V1, 1 på V2, 2 på V3, 2 på V5", URL_JF_GEVINDSTANG, "Hus"),
+    ("Fundament", "Ankerskrue M10 × 120 mm (yard)",  10, "stk", 14.95, "jemogfix.dk",         "est. — 4 på V1, 4 på V2, 2 på V4",            URL_JF_GEVINDSTANG,      "Yard"),
+    ("Fundament", "M10 møtrikker + skiver (12-pak)",  2, "pk.", 28.95, "jemogfix.dk",         "Fastgør bundrem til ankerskrue ovenfra (1 pak pr. zone)", URL_JF_M10_MOETRIK, "Fælles"),
 ]
 
 # Konstruktion split: V3 + V5 (partition) + V1[0..hl] + V2[0..hl] = Hus.
@@ -355,6 +355,127 @@ def write_data_sheet(wb, name, rows):
     color = SHEET_COLORS[name]
     next_r = write_rows(ws, rows, color)
     write_total(ws, next_r, color)
+    return ws
+
+# ---------------------------------------------------------------------------
+# Zone sheet — one consolidated view per zone. Each section (fundament,
+# konstruktion, tag-variant, beklædning-variant) gets a coloured header
+# bar, all matching-zone rows (incl. Fælles), and a section subtotal.
+# Grand zone-total at the bottom.
+# ---------------------------------------------------------------------------
+DKK_FMT = '#,##0.00 "kr"'
+
+def write_zone_sheet(wb, sheet_name, zone, sections):
+    """Build a consolidated zone sheet.
+       sections = list of (label, color_hex, source_rows).
+       Filters rows with Zone == `zone` OR Zone == "Fælles"."""
+    if sheet_name in wb.sheetnames:
+        del wb[sheet_name]
+    ws = wb.create_sheet(sheet_name)
+
+    widths = [22, 50, 8, 8, 12, 13, 22, 50, 10]
+    for i, w in enumerate(widths, start=1):
+        ws.column_dimensions[get_column_letter(i)].width = w
+
+    # Title bar
+    t = ws.cell(row=1, column=1,
+                value=f"{zone} — komplet materialeliste (rene {zone}-poster + Fælles)")
+    t.font = Font(bold=True, color=HEADER_FG, size=13)
+    t.fill = HEADER_FILL
+    t.alignment = Alignment(horizontal="left", vertical="center")
+    ws.merge_cells(start_row=1, end_row=1, start_column=1, end_column=9)
+    ws.row_dimensions[1].height = 26
+
+    # Column headers
+    headers = ["Kategori", "Vare", "Antal", "Enhed", "Pris/enh",
+               "I alt", "Leverandør", "Noter", "Zone"]
+    for col, h in enumerate(headers, start=1):
+        c = ws.cell(row=3, column=col, value=h)
+        c.font = HEADER_FONT
+        c.fill = HEADER_FILL
+        c.border = THIN_BORDER
+        c.alignment = Alignment(horizontal="left", vertical="center")
+    ws.row_dimensions[3].height = 22
+    ws.freeze_panes = "A4"
+
+    r = 4
+    subtotal_cells = []
+    zone_filter = (zone, "Fælles")
+
+    for label, color, rows in sections:
+        # Section header bar
+        section_fill = PatternFill("solid", fgColor=color)
+        sh = ws.cell(row=r, column=1, value=f"  {label}")
+        sh.font = Font(bold=True, size=12)
+        sh.alignment = Alignment(horizontal="left", vertical="center")
+        ws.merge_cells(start_row=r, end_row=r, start_column=1, end_column=9)
+        for c in range(1, 10):
+            ws.cell(row=r, column=c).fill = section_fill
+            ws.cell(row=r, column=c).border = THIN_BORDER
+        ws.row_dimensions[r].height = 20
+        r += 1
+
+        section_start = r
+        for row_data in rows:
+            kat, vare, antal, enhed, pris, lev, noter, url, rzone = row_data
+            if rzone not in zone_filter:
+                continue
+            a = ws.cell(row=r, column=1, value=kat)
+            a.fill = section_fill
+            a.font = BOLD
+            ws.cell(row=r, column=2, value=vare)
+            ws.cell(row=r, column=3, value=antal)
+            ws.cell(row=r, column=4, value=enhed).alignment = Alignment(horizontal="center")
+            ws.cell(row=r, column=5, value=pris).number_format = '#,##0.00'
+            if isinstance(antal, (int, float)) and isinstance(pris, (int, float)):
+                f = ws.cell(row=r, column=6, value=f"=C{r}*E{r}")
+                f.number_format = '#,##0.00'
+            lev_cell = ws.cell(row=r, column=7, value=lev)
+            if url:
+                lev_cell.hyperlink = url
+                lev_cell.font = LINK_FONT
+            ws.cell(row=r, column=8, value=noter).alignment = Alignment(
+                wrap_text=False, vertical="center")
+            z = ws.cell(row=r, column=9, value=rzone)
+            z.alignment = Alignment(horizontal="center")
+            z.fill = PatternFill("solid", fgColor=ZONE_COLORS.get(rzone, "FFFFFF"))
+            z.font = BOLD
+            for c in range(1, 10):
+                ws.cell(row=r, column=c).border = THIN_BORDER
+            r += 1
+        section_end = r - 1
+
+        # Section subtotal
+        stl = ws.cell(row=r, column=5, value=f"{label} subtotal:")
+        stl.font = BOLD
+        stl.alignment = Alignment(horizontal="right")
+        stl.fill = section_fill
+        if section_end >= section_start:
+            sval = ws.cell(row=r, column=6,
+                           value=f"=SUM(F{section_start}:F{section_end})")
+            sval.font = BOLD
+            sval.fill = TOTAL_FILL
+            sval.number_format = DKK_FMT
+            subtotal_cells.append(f"F{r}")
+        for c in range(1, 10):
+            ws.cell(row=r, column=c).border = THIN_BORDER
+        r += 2  # blank separator before next section
+
+    # Grand total
+    r += 1
+    gtl = ws.cell(row=r, column=5, value=f"{zone}-ONLY TOTAL:")
+    gtl.font = Font(bold=True, size=13)
+    gtl.fill = TOTAL_FILL
+    gtl.alignment = Alignment(horizontal="right")
+    if subtotal_cells:
+        gt = ws.cell(row=r, column=6, value=f"={'+'.join(subtotal_cells)}")
+        gt.font = Font(bold=True, size=13)
+        gt.fill = TOTAL_FILL
+        gt.number_format = DKK_FMT
+    for c in range(1, 10):
+        ws.cell(row=r, column=c).border = THIN_BORDER
+    ws.row_dimensions[r].height = 26
+
     return ws
 
 # ---------------------------------------------------------------------------
@@ -727,9 +848,30 @@ def main():
     write_summary(wb)
     write_cladding_comparison(wb)
 
-    # 4. order: summary, comparison, common, then variants
+    # 4. zone sheets — consolidated view per zone (default variant: eternit_b7
+    # + klink, matching main.scad). Edit the section lists if you switch
+    # variant and want the zone view to follow.
+    hus_sections = [
+        ("Fundament",                     COL_FUNDAMENT,  FUNDAMENT),
+        ("Konstruktion",                  COL_KONSTRUKT,  KONSTRUKTION),
+        ("Tagkonstruktion (eternit_b7)",  COL_TAG_ETERN,  TAG_ETERNIT),
+        ("Beklædning (klink)",            COL_CLAD_KLINK, CLAD_KLINK),
+    ]
+    write_zone_sheet(wb, "hus", "Hus", hus_sections)
+
+    yard_sections = [
+        ("Fundament",                     COL_FUNDAMENT,  FUNDAMENT),
+        ("Konstruktion",                  COL_KONSTRUKT,  KONSTRUKTION),
+        ("Tagkonstruktion (eternit_b7)",  COL_TAG_ETERN,  TAG_ETERNIT),
+        ("Beklædning / voliere (klink)",  COL_CLAD_KLINK, CLAD_KLINK),
+    ]
+    write_zone_sheet(wb, "yard", "Yard", yard_sections)
+
+    # 5. order: summary, zone overviews, comparison, common, then variants
     order = [
         "summary",
+        "hus",
+        "yard",
         "sammenligning_beklaedning",
         "fundament",
         "konstruktion",
@@ -740,8 +882,11 @@ def main():
     ]
     wb._sheets = [wb[n] for n in order]
 
-    # Format number columns in data sheets
-    for sheet_name in order[1:]:
+    # Format number columns in data sheets (skip zone sheets — handled in writer)
+    skip_zone_format = {"hus", "yard", "summary", "sammenligning_beklaedning"}
+    for sheet_name in order:
+        if sheet_name in skip_zone_format:
+            continue
         ws = wb[sheet_name]
         for row in ws.iter_rows(min_row=2):
             # E = pris, F = i alt
