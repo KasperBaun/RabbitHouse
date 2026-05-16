@@ -17,9 +17,10 @@ module RenderYardMesh(mesh = RH_MESH, palette = DEFAULT_PALETTE) {
     OUT = 1;   // mesh plane 1 mm outside the stud face
     z_base = RH_YARD_SILL_TOP;
 
+    // Yard mesh tops to the underside of YARD's (lower) top plate.
     PLATE_H = RH_SILL_H;
-    z_top_front = bh + RH_EH_FRONT - PLATE_H;
-    z_top_back  = bh + RH_EH_BACK  - PLATE_H;
+    z_top_front = bh + RH_YARD_EH_FRONT - PLATE_H;
+    z_top_back  = bh + RH_YARD_EH_BACK  - PLATE_H;
     h_front = z_top_front - z_base;
     h_back  = z_top_back  - z_base;
 

@@ -30,31 +30,33 @@ use <designs/yard/roof.scad>
 use <designs/yard/roof_plates.scad>
 use <designs/yard/mesh.scad>
 
-// tagpap_osb | eternit_b7 | eternit_10 | eternit_14
-roof_cover    = "eternit_b7";
+// House gets a real roof — bitumen shingles on OSB:
+//   tagpap_osb | eternit_b7 | eternit_10 | eternit_14 | polycarb | shingles
+house_roof_cover = "shingles";
+
+// Yard gets a transparent, lower roof — polycarb direct on rafters.
+yard_roof_cover  = "polycarb";
 
 // klink | board_on_board
-cladding_type = "klink";
+cladding_type    = "klink";
 
 // shared
-RenderGround();
+//RenderGround();
 
-// house — standalone view (yard block commented out below). Pass
-// standalone=true to RenderHouseRoofPlates so the cover gets its full right
-// overhang + side fascia cap (in combined builds yard provides those).
+// house
 RenderHouseFoundation();
 RenderHouseFraming();
-RenderHouseOpenings();
-RenderHouseRoof(roof_cover);
-RenderHouseRoofPlates(roof_cover, standalone = true);
+//RenderHouseOpenings();
+RenderHouseRoof(house_roof_cover);
+RenderHouseRoofPlates(house_roof_cover);
 RenderHouseCladding(cladding_type);
 
-// yard — uncomment to render the full combined build.
+// yard (uses lower RH_YARD_EH_* eave heights — separate structure)
 //RenderYardFoundation();
 //RenderYardFraming();
 //RenderYardOpenings();
-//RenderYardRoof(roof_cover);
-//RenderYardRoofPlates(roof_cover);
+//RenderYardRoof(yard_roof_cover);
+//RenderYardRoofPlates(yard_roof_cover);
 //RenderYardMesh();
 
 //RenderInterior();

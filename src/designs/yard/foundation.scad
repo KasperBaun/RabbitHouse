@@ -1,42 +1,65 @@
-// YARD foundation — fundablok strip foundation under the yard walls.
-// In the COMBINED build (default): renders front[hl..ll], back[hl..ll], and
-// V4 right. The left side is handled by house's V5 partition strip — no
-// duplicate.
-// In STANDALONE mode (standalone=true): also renders a left strip at X=hl
-// so yard has a complete foundation ring without depending on house/V5.
+// YARD foundation — fundablok perimeter under the yard walls.
+//
+// Combined mode (default): 3-sidet ring (V1 front, V2 back, V4 right). The
+// left side is open — house's V5 partition foundation closes that line.
+// Standalone (standalone=true): adds a V5 left strip at X=hl so yard has
+// its own complete 4-side ring.
+//
+// Halvstensforbandt med vekslende hjørne-ejerskab per skifte (samme mønster
+// som hus-fundamentet):
+//   lige skifter (0, 2): KORTE vægge (V4 + evt. V5) ejer hjørner — fulde
+//                        Y=0..ww. De lange V1, V2 sidder mellem.
+//   ulige skifter (1, 3): LANGE vægge (V1, V2) ejer hjørner — fulde
+//                         X=hl..ll. V4 (og evt. V5) sidder mellem
+//                         Y=bw..ww-bw.
 
 include <../../lib/defaults.scad>
 include <../config.scad>
-use <../../lib/primitives/fundablok.scad>
+include <../../lib/primitives/fundablok.scad>
 use <../../lib/primitives/beslag.scad>
 
-FUNDABLOK_W_LOCAL = 150;
+COURSES = 3;
 
 module RenderYardFoundation(standalone = false, palette = DEFAULT_PALETTE) {
     ll = RH_LENGTH; ww = RH_WIDTH; bh = RH_BASE_H; hl = RH_HOUSE_LEN;
-    bw = FUNDABLOK_W_LOCAL;
+    bw = FUNDABLOK_W;
+    h_per = FUNDABLOK_H;
 
-    // Perimeter strips for [hl..ll] segment.
-    fundablok_strip("X", [hl, 0],         ll - hl,    courses = 3, top_z = bh);
-    fundablok_strip("X", [hl, ww - bw],   ll - hl,    courses = 3, top_z = bh);
-    fundablok_strip("Y", [ll - bw, bw],   ww - 2*bw,  courses = 3, top_z = bh);
+    yard_len = ll - hl;
 
-    // Standalone yard adds its own left wall foundation (replacing V5).
-    if (standalone)
-        fundablok_strip("Y", [hl - bw/2, bw], ww - 2*bw, courses = 3, top_z = bh);
+    color(FUNDABLOK_COLOR)
+    for (c = [0 : COURSES - 1]) {
+        z = bh - (COURSES - c) * h_per;
+        if (c % 2 == 0) {
+            // Lige skifte — korte vægge ejer hjørner. V4 fuld Y=0..ww.
+            // V1, V2 mellem V4 (på højre) og venstre væg/V5/åben kant.
+            _fb_strip_y([ll - bw, 0],          ww,  z, 0);
+            v12_start = standalone ? hl + bw : hl;
+            v12_end   = ll - bw;
+            _fb_strip_x([v12_start, 0],        v12_end - v12_start, z, 0);
+            _fb_strip_x([v12_start, ww - bw],  v12_end - v12_start, z, 0);
+            if (standalone)
+                _fb_strip_y([hl, 0],           ww,  z, 0);
+        } else {
+            // Ulige skifte — lange vægge ejer hjørner. V1, V2 fuld X=hl..ll.
+            // V4 (og evt. V5) mellem Y=bw..ww-bw.
+            _fb_strip_x([hl, 0],               yard_len,  z, 0);
+            _fb_strip_x([hl, ww - bw],         yard_len,  z, 0);
+            _fb_strip_y([ll - bw, bw],         ww - 2*bw, z, 0);
+            if (standalone)
+                _fb_strip_y([hl, bw],          ww - 2*bw, z, 0);
+        }
+    }
 
+    // M10 anchors c/c 1000 mm. Skip x=hl since house owns that anchor.
     cl = bw / 2;
-    // V1 front centreline (within X=hl..ll). First anchor at next 1000 step
-    // past hl so we don't duplicate house's anchor at X=1500.
     for (x = [2500 : 1000 : ll - 500])
-        ankerskrue_m10([x, cl], top_z = bh);
-    // V2 back centreline.
+        ankerskrue_m10([x, cl],       top_z = bh);
     for (x = [2500 : 1000 : ll - 500])
-        ankerskrue_m10([x, ww - cl], top_z = bh);
-    // V4 right side (X=ll-cl).
+        ankerskrue_m10([x, ww - cl],  top_z = bh);
     for (y = [500 : 1000 : ww - 500])
-        ankerskrue_m10([ll - cl, y], top_z = bh);
+        ankerskrue_m10([ll - cl, y],  top_z = bh);
     if (standalone)
         for (y = [500 : 1000 : ww - 500])
-            ankerskrue_m10([hl, y], top_z = bh);
+            ankerskrue_m10([hl, y],   top_z = bh);
 }

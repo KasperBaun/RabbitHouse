@@ -27,6 +27,13 @@ RH_RUN_LEN      = 4500;
 RH_EH_FRONT     = 2400;
 RH_EH_BACK      = 2200;
 
+// Yard walls are shorter than the house so the two roofs read as separate
+// structures (yard reads as a "lean-to" against V5). Front 2100 keeps room
+// for a 1950 rough opening yard door (~187 cm leaf height after threshold
+// and top frame); back 1800 gives a 6,9° slope.
+RH_YARD_EH_FRONT = 2100;
+RH_YARD_EH_BACK  = 1800;
+
 RH_OH_FRONT     = 220;
 RH_OH_BACK      = 180;
 RH_OH_SIDE      = 220;
@@ -44,9 +51,10 @@ RH_PET_DOOR_H   = 300;
 RH_PET_DOOR_Y   = 1500;
 
 // Yard outdoor door on the front (Y=0, opens outward).
-// Rough opening for a standard 95x205 cm outdoor door.
+// Rough opening sized to fit under the lower yard front eave (RH_YARD_EH_FRONT
+// = 2100): 1950 leaves 45 mm header + 105 mm cripple space.
 RH_YARD_DOOR_W  = 1070;
-RH_YARD_DOOR_H  = 2120;
+RH_YARD_DOOR_H  = 1950;
 RH_YARD_DOOR_X  = 3000;
 
 // Insulated nest box (against the back wall, inside the house).
@@ -130,19 +138,45 @@ function roof_underside_at(y) =
 
 // Cover-aware slope: eternit B7 needs steeper pitch. Lowering eh_back
 // without re-fitting the doors is fine because the front-wall door (high
-// eave) is the constrained one.
+// eave) is the constrained one. Polycarbonate works at the default 4,6°.
 function back_eave_height_for(cover) =
       cover == "eternit_10" ? 2160
     : cover == "eternit_14" ? 1976
     : RH_EH_BACK;
 
-function total_drop_for(eh_back) =
-    (RH_EH_FRONT - eh_back) * span_total() / RH_WIDTH;
-function roof_oz_for(eh_back) =
-    RH_BASE_H + RH_EH_FRONT + RH_RAFTER_H +
-    RH_OH_FRONT * total_drop_for(eh_back) / span_total();
-function roof_underside_for(eh_back, y) =
-    roof_oz_for(eh_back) - (RH_OH_FRONT + y) * total_drop_for(eh_back) / span_total();
+// Fascia top z-offset above rafter top, per cover.
+//   tagpap   : OSB 18 + underlay 3 + felt 4 + STERN_LIP 7 = 32
+//   eternit  : BATTEN_T 38 - clearance 8 = 30
+//   polycarb : plate 12 + STERN_LIP 7 = 19
+//   shingles : OSB 18 + underlay 3 + shingle 5 + STERN_LIP 7 = 33
+function fascia_top_offset_for(cover) =
+      cover == "tagpap_osb" || cover == "tagpap" ? (18 + 3 + 4) + 7
+    : cover == "eternit_b7" || cover == "eternit_10" || cover == "eternit_14" ? (38 - 8)
+    : cover == "polycarb" ? (12 + 7)
+    : cover == "shingles" ? (18 + 3 + 5) + 7
+    : 0;
+
+// ----- Generic roof-geometry helpers parameterised by (eh_front, eh_back).
+// Use these from any zone renderer; pass house heights for the house and
+// yard heights for the yard.
+function _roof_drop(eh_front, eh_back) =
+    (eh_front - eh_back) * span_total() / RH_WIDTH;
+function _roof_oz(eh_front, eh_back) =
+    RH_BASE_H + eh_front + RH_RAFTER_H +
+    RH_OH_FRONT * _roof_drop(eh_front, eh_back) / span_total();
+function _roof_underside(eh_front, eh_back, y) =
+    _roof_oz(eh_front, eh_back) -
+    (RH_OH_FRONT + y) * _roof_drop(eh_front, eh_back) / span_total();
+
+// House-friendly wrappers — pin eh_front to RH_EH_FRONT.
+function total_drop_for(eh_back)       = _roof_drop(RH_EH_FRONT, eh_back);
+function roof_oz_for(eh_back)          = _roof_oz(RH_EH_FRONT, eh_back);
+function roof_underside_for(eh_back, y)= _roof_underside(RH_EH_FRONT, eh_back, y);
+
+// Yard helpers — pin eh_front to RH_YARD_EH_FRONT, eh_back to RH_YARD_EH_BACK.
+function yard_total_drop()       = _roof_drop(RH_YARD_EH_FRONT, RH_YARD_EH_BACK);
+function yard_roof_oz()          = _roof_oz(RH_YARD_EH_FRONT, RH_YARD_EH_BACK);
+function yard_roof_underside(y)  = _roof_underside(RH_YARD_EH_FRONT, RH_YARD_EH_BACK, y);
 
 // DPC tape thickness between sokkel ring and sill plate. The sill plate sits
 // ON the DPC band, not directly on the ring — so floor level is 2 mm higher

@@ -9,13 +9,7 @@ use <../../lib/primitives/beslag.scad>
 
 SOFFIT_T = 18;
 
-// Fascia-top offset above roof_oz, per cover.
-function fascia_top_offset_for(cover) =
-      cover == "tagpap_osb" || cover == "tagpap" ?
-        (18 + 3 + 4) + 7
-    : cover == "eternit_b7" || cover == "eternit_10" || cover == "eternit_14" ?
-        (38 - 8)
-    : 0;
+// fascia_top_offset_for() lives in config.scad — covers tagpap, eternit, polycarb.
 
 // Rafters owned by HOUSE — left barge + V3 gable + first two inner rafters.
 _HOUSE_RAFTER_XS = [
@@ -103,9 +97,12 @@ module _soffit_panel(x0, x1, y0, y1, eh_back, palette) {
 
 module _render_soffit_house(eh_back, palette) {
     hl = RH_HOUSE_LEN; ww = RH_WIDTH;
-    x_left = -RH_OH_SIDE - RH_FASCIA_T;
-    _soffit_panel(x_left, hl, -RH_OH_FRONT, 0, eh_back, palette);
-    _soffit_panel(x_left, hl, ww, ww + RH_OH_BACK, eh_back, palette);
+    x_left  = -RH_OH_SIDE - RH_FASCIA_T;
+    // Soffit extends to V5's yard-side face so the partition is fully
+    // tucked under the house roof eave.
+    x_right = hl + RH_POST_W/2;
+    _soffit_panel(x_left, x_right, -RH_OH_FRONT, 0, eh_back, palette);
+    _soffit_panel(x_left, x_right, ww, ww + RH_OH_BACK, eh_back, palette);
     _soffit_panel(x_left, 0, 0, ww, eh_back, palette);
 }
 
@@ -120,7 +117,7 @@ module _render_fascia_house(eh_back, fascia_top_offset, palette) {
     fascia_t = RH_FASCIA_T;
 
     fx_lo = -RH_OH_SIDE - fascia_t;
-    fx_hi = hl;
+    fx_hi = hl + RH_POST_W/2;
     y0 = -RH_OH_FRONT;
     y1 = ww + RH_OH_BACK;
 

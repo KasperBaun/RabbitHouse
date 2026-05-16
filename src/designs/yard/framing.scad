@@ -17,8 +17,10 @@ STUD_DEPTH   = 95;
 STUD_THICK   = 45;
 STUD_C2C     = 600;
 
-WALL_TOP_HIGH = RH_BASE_H + RH_EH_FRONT;
-WALL_TOP_LOW  = RH_BASE_H + RH_EH_BACK;
+// Yard walls are shorter than house (RH_YARD_EH_* in config.scad) so the
+// yard roof reads as a separate, lower structure.
+WALL_TOP_HIGH = RH_BASE_H + RH_YARD_EH_FRONT;
+WALL_TOP_LOW  = RH_BASE_H + RH_YARD_EH_BACK;
 STUD_BOTTOM_Z = RH_BASE_H + DPC_T + PLATE_HEIGHT;
 
 JAMB_BUFFER = 300;

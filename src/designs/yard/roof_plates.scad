@@ -10,14 +10,19 @@ include <../../lib/defaults.scad>
 include <../config.scad>
 use <../roof_plates_tagpap.scad>
 use <../roof_plates_eternit.scad>
+use <../roof_plates_polycarb.scad>
 
 module RenderYardRoofPlates(cover = "tagpap_osb", standalone = false,
                              palette = DEFAULT_PALETTE) {
     hl   = RH_HOUSE_LEN;
     ll   = RH_LENGTH;
-    x_lo = standalone ? hl - RH_OH_SIDE : hl;
+    // Yard plates start past V5's yard-side outer face so they don't
+    // pierce the partition wall.
+    x_lo = standalone ? hl - RH_OH_SIDE : hl + RH_POST_W/2;
     x_hi = ll + RH_OH_SIDE;
 
+    // Yard plates use yard wall heights — the yard roof is independent of
+    // the (typically taller) house roof.
     if (cover == "tagpap_osb" || cover == "tagpap")
         render_roof_plates_tagpap_segment(x_lo, x_hi,
                                            has_left_side  = standalone,
@@ -25,6 +30,11 @@ module RenderYardRoofPlates(cover = "tagpap_osb", standalone = false,
                                            palette = palette);
     else if (cover == "eternit_b7" || cover == "eternit_10" || cover == "eternit_14")
         render_roof_plates_eternit_segment(cover, x_lo, x_hi, palette);
+    else if (cover == "polycarb")
+        render_roof_plates_polycarb_segment(x_lo, x_hi,
+                                             eh_front = RH_YARD_EH_FRONT,
+                                             eh_back  = RH_YARD_EH_BACK,
+                                             palette  = palette);
     else
         assert(false, str("Unknown cover: ", cover));
 }

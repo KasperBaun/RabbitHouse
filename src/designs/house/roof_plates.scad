@@ -10,12 +10,16 @@ include <../../lib/defaults.scad>
 include <../config.scad>
 use <../roof_plates_tagpap.scad>
 use <../roof_plates_eternit.scad>
+use <../roof_plates_polycarb.scad>
+use <../roof_plates_shingles.scad>
 
 module RenderHouseRoofPlates(cover = "tagpap_osb", standalone = false,
                               palette = DEFAULT_PALETTE) {
     hl    = RH_HOUSE_LEN;
     x_lo  = -RH_OH_SIDE;
-    x_hi  = standalone ? hl + RH_OH_SIDE : hl;
+    // Boundary at V5's yard-side outer face (hl + RH_POST_W/2) — V5 is
+    // owned by house, so the cover fully shields it.
+    x_hi  = standalone ? hl + RH_OH_SIDE : hl + RH_POST_W/2;
 
     if (cover == "tagpap_osb" || cover == "tagpap")
         render_roof_plates_tagpap_segment(x_lo, x_hi,
@@ -24,6 +28,10 @@ module RenderHouseRoofPlates(cover = "tagpap_osb", standalone = false,
                                            palette = palette);
     else if (cover == "eternit_b7" || cover == "eternit_10" || cover == "eternit_14")
         render_roof_plates_eternit_segment(cover, x_lo, x_hi, palette);
+    else if (cover == "polycarb")
+        render_roof_plates_polycarb_segment(x_lo, x_hi, palette);
+    else if (cover == "shingles")
+        render_roof_plates_shingles_segment(x_lo, x_hi, palette);
     else
         assert(false, str("Unknown cover: ", cover));
 }

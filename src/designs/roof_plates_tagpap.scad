@@ -20,13 +20,7 @@ OSB_T          = 18;
 UNDERLAYMENT_T = 3;
 FELT_T         = 4;
 
-// Fascia-top offset above roof_oz, per cover.
-function fascia_top_offset_for(cover) =
-      cover == "tagpap_osb" || cover == "tagpap" ?
-        (OSB_T + UNDERLAYMENT_T + FELT_T) + 7
-    : cover == "eternit_b7" || cover == "eternit_10" || cover == "eternit_14" ?
-        (38 - 8)
-    : 0;
+// fascia_top_offset_for() lives in config.scad — covers tagpap, eternit, polycarb.
 
 OSB_COLOR          = [0.78, 0.66, 0.42];
 UNDERLAYMENT_COLOR = [0.18, 0.16, 0.14];
