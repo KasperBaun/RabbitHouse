@@ -1,8 +1,17 @@
 # Skæreliste — Konstruktions-skelet
 
-> Implementeret i `src/designs/v3/konstruktions-skelet.scad`. Materialeliste i [konstruktions-skelet.md](konstruktions-skelet.md).
+> Implementeret i `src/designs/framing.scad` (`RenderHouseFraming()` + `RenderYardFraming()`). Materialeliste i [konstruktions-skelet.md](konstruktions-skelet.md).
 
 Skæreliste pr. væg. Mål er millimeter; positioner er i bygningens koordinatsystem (X = længde-akse, Y = front→bag).
+
+## Zone-opdeling
+
+| Zone | Vægge der hører til                                                  | Render-modul            |
+| ---- | -------------------------------------------------------------------- | ----------------------- |
+| Hus  | V1[0..1500] + V2[0..1500] + V3 + V5 + junction-stud ved X=1500       | `RenderHouseFraming()`  |
+| Yard | V1[1500..6000] + V2[1500..6000] + V4 + yard-dør jamber + yard-dør header | `RenderYardFraming()`   |
+
+V1 (front) og V2 (bag) er én lang væg fysisk, men opdeles ved X=hl=1500 (partition-linjen). De lange 3600 mm bundrem-/toprem-stykker straddler grænsen — markeret som "fælles" i materialelisten.
 
 ## Konventioner
 
@@ -14,54 +23,43 @@ Skæreliste pr. væg. Mål er millimeter; positioner er i bygningens koordinatsy
 
 ## Sammendrag (matcher [materialeliste](konstruktions-skelet.md#materialeliste))
 
-| Vare                       | Antal | Brug                                            |
-| -------------------------- | ----- | ----------------------------------------------- |
-| Reglar 45×95×3600 mm gran  | 4     | Toprem V1+V2 forlænget til 6440 mm (splejset af 2 stk pr. væg) |
-| Reglar 45×95×2400 mm gran  | 42    | Studs (37) + skrå toprem V3/V4/V5 (5)           |
-| Reglar 45×95×3600 mm PT    | 2     | Bundrem på V1 + V2 (splejset)                   |
-| Reglar 45×95×2400 mm PT    | 5     | Bundrem V3/V4/V5 + splejs på V1+V2              |
-| Bitumentape 100 mm         | 1     | Murpap mellem sokkel og bundrem                 |
+| Vare                       | Antal | Hus | Yard | Fælles | Brug                                                              |
+| -------------------------- | ----- | --- | ---- | ------ | ----------------------------------------------------------------- |
+| Reglar 45×95×3600 mm gran  | 4     |     | 2    | 2      | Toprem V1+V2; lange stykker straddler hl, korte i yard-segment    |
+| Reglar 45×95×2400 mm gran  | 42    | 22  | 20   |        | Studs (37) + skrå toprem V3/V4/V5 + headers/cripples fra spild     |
+| Reglar 45×95×3600 mm PT    | 2     |     |      | 2      | Bundrem V1 + V2 (lange stykker, splejset ved x=3600, straddler hl) |
+| Reglar 45×95×2400 mm PT    | 5     | 2   | 3    |        | Bundrem V3 + V5 (hus); V1[2] + V2[2] + V4 (yard)                   |
+| Bitumentape 100 mm         | 1     |     |      | 1      | Murpap mellem sokkel og bundrem, hele perimeter                    |
 
-Headers, cripples og rough sill (i alt ~5,6 m) skæres af spild fra studs (~7,2 m spild fra 2400-stokken efter studs er klippet til).
-
----
-
-## V1 — front (flat HØJ z=2,52 m)
-
-Yderste front-væg, hele 6 m. Indeholder yard-dør (rough opening 1070×2120 mm) ved x=3000..4070.
-
-| Element             | Antal | Længde (mm) | Position                                          |
-| ------------------- | ----- | ----------- | ------------------------------------------------- |
-| Bundrem (PT)        | 1     | 3600 flad   | x=0..3600 (splejs ved 3600)                       |
-| Bundrem (PT)        | 1     | 2400 flad   | x=3600..6000                                      |
-| Stud — grid+end     | 8     | 2308 flad   | x = 0, 600, 1200, 1800, 2400, 4800, 5400, 5955    |
-| Stud — junction     | 1     | 2308 flad   | x = 1477,5 (V5-partition lander her)              |
-| Stud — yard-jamb    | 2     | 2308 flad   | x = 2955 og 4070 (begge sider af yard-dør)        |
-| Header — yard-dør   | 1     | 1070 flad   | x=3000..4070, z=2287..2332                        |
-| Cripple over header | 2     | 143 flad    | over yard-dør, c/c 300 i åbningen                 |
-| Toprem (gran)       | 1     | 3600 flad   | flat z=2520, x=-220..3380 (forlænget 220 mm forbi V3, splejs ved 3380) |
-| Toprem (gran)       | 1     | 3600 flad   | flat z=2520, x=3380..6220 (forlænget 220 mm forbi V4) |
-
-V1 toprem er forlænget V3_OH_SIDE=220 mm i hver ende → 6440 mm total. Forlængelsen kantilevrer forbi V3 og V4 og bærer side-overhangets barge rafters.
+Headers, cripples og rough sill (i alt ~5,6 m) skæres af spild fra studs (~7,2 m spild fra 2400-stokken).
 
 ---
 
-## V2 — bag (flat LAV z=2,32 m)
+# HUS-segment (X = 0..1500)
 
-Yderste bag-væg, hele 6 m. Ingen åbninger.
+`RenderHouseFraming()` — V3 (venstre), V5 (partition), junction-stud ved X=1500, samt V1+V2 segmenterne [0..1500].
 
-| Element            | Antal | Længde (mm) | Position                                                              |
-| ------------------ | ----- | ----------- | --------------------------------------------------------------------- |
-| Bundrem (PT)       | 1     | 3600 flad   | x=0..3600 (splejs)                                                    |
-| Bundrem (PT)       | 1     | 2400 flad   | x=3600..6000                                                          |
-| Stud — grid+end    | 11    | 2108 flad   | x = 0, 600, 1200, 1800, 2400, 3000, 3600, 4200, 4800, 5400, 5955      |
-| Stud — junction    | 1     | 2108 flad   | x = 1477,5 (V5 lander her)                                            |
-| Toprem (gran)      | 1     | 3600 flad   | flat z=2320, x=-220..3380 (forlænget 220 mm forbi V3, splejs ved 3380) |
-| Toprem (gran)      | 1     | 3600 flad   | flat z=2320, x=3380..6220 (forlænget 220 mm forbi V4)                 |
+## V1 (hus) — front [X=0..1500] (flat HØJ z=2,52 m)
 
-V2 toprem er forlænget V3_OH_SIDE=220 mm i hver ende → 6440 mm total — som V1.
+Hus-segment af front-væggen. Ingen åbninger.
 
----
+| Element             | Antal | Længde (mm)          | Position                                              |
+| ------------------- | ----- | -------------------- | ----------------------------------------------------- |
+| Bundrem (PT)        | —     | (del af 3600 fælles) | x=0..1500 (lang stykke fortsætter ind i yard)         |
+| Stud — grid         | 3     | 2308 flad            | x = 0, 600, 1200                                       |
+| Stud — junction     | 1     | 2308 flad            | x = 1477,5 (V5-partition lander her)                   |
+| Toprem (gran)       | —     | (del af 3600 fælles) | flat z=2520 (lang stykke straddler hl)                 |
+
+## V2 (hus) — bag [X=0..1500] (flat LAV z=2,32 m)
+
+Hus-segment af bag-væggen. Ingen åbninger.
+
+| Element             | Antal | Længde (mm)          | Position                                              |
+| ------------------- | ----- | -------------------- | ----------------------------------------------------- |
+| Bundrem (PT)        | —     | (del af 3600 fælles) | x=0..1500                                              |
+| Stud — grid         | 3     | 2108 flad            | x = 0, 600, 1200                                       |
+| Stud — junction     | 1     | 2108 flad            | x = 1477,5                                             |
+| Toprem (gran)       | —     | (del af 3600 fælles) | flat z=2320                                            |
 
 ## V3 — venstre side (skrå HØJ→LAV, 2,52→2,33 m)
 
@@ -79,24 +77,6 @@ Buttet mellem V1 og V2 inderfladser (y=95..2405). Skrår med taget. Indeholder v
 | Cripple over header  | 1     | 469 (top 4,6°)   | y=1177,5, z=1912..~2381                                 |
 | Cripple under sill   | 1     | 1055 flad        | y=1177,5, z=167..1222                                   |
 | Toprem (gran)        | 1     | 2317 (top 4,6°)  | y=95..2405, sloper z=2467 (front) → z=2283 (bag)        |
-
----
-
-## V4 — højre side (skrå HØJ→LAV, 2,52→2,33 m)
-
-Buttet mellem V1 og V2 inderfladser. Skrår med taget. Ingen åbninger.
-
-| Element             | Antal | Længde (mm)      | Position           |
-| ------------------- | ----- | ---------------- | ------------------ |
-| Bundrem (PT)        | 1     | 2310 flad        | y=95..2405         |
-| Stud — front-hjørne | 1     | 2300 (top 4,6°)  | y=95               |
-| Stud — grid 1       | 1     | 2252 (top 4,6°)  | y=695              |
-| Stud — grid 2       | 1     | 2204 (top 4,6°)  | y=1295             |
-| Stud — grid 3       | 1     | 2156 (top 4,6°)  | y=1895             |
-| Stud — bag-hjørne   | 1     | 2119 (top 4,6°)  | y=2360             |
-| Toprem (gran)       | 1     | 2317 (top 4,6°)  | y=95..2405         |
-
----
 
 ## V5 — partition (skrå HØJ→LAV, 2,52→2,33 m)
 
@@ -119,11 +99,62 @@ V5 har kun én "grid"-stud (bag-hjørnet) — de øvrige grid-positioner er udel
 | Cripple over hus-dør     | 1     | 175 (top 4,6°)   | y=477,5, z=2262..~2437                            |
 | Toprem (gran)            | 1     | 2317 (top 4,6°)  | y=95..2405, sloper z=2467 → z=2283                |
 
-Dyre-døren får ingen cripples (åbningen er kun 250 mm bred, så c/c-600-grid-rummet falder uden for åbningen). Heller ingen rough sill — dyre-døren sidder kun 13 mm over bundrem-toppen, så bundremmen selv lukker spalten under.
+Dyre-døren får ingen cripples (åbningen er kun 250 mm bred). Heller ingen rough sill — dyre-døren sidder kun 13 mm over bundrem-toppen.
+
+---
+
+# YARD-segment (X = 1500..6000)
+
+`RenderYardFraming()` — V4 (højre), samt V1+V2 segmenterne [1500..6000] + yard-dør jamber + yard-dør header. Junction-stud ved X=1500 rendres af HUS-segmentet.
+
+## V1 (yard) — front [X=1500..6000] (flat HØJ z=2,52 m)
+
+Yard-segment af front-væggen. Indeholder yard-dør (rough opening 1070×2120 mm) ved x=3000..4070.
+
+| Element             | Antal | Længde (mm)          | Position                                              |
+| ------------------- | ----- | -------------------- | ----------------------------------------------------- |
+| Bundrem (PT)        | —     | (del af 3600 fælles) | x=1500..3600 (slutter ved splejs)                     |
+| Bundrem (PT)        | 1     | 2400 flad            | x=3600..6000                                          |
+| Stud — grid+end     | 5     | 2308 flad            | x = 1800, 2400, 4800, 5400, 5955                      |
+| Stud — yard-jamb    | 2     | 2308 flad            | x = 2955 og 4070 (begge sider af yard-dør)            |
+| Header — yard-dør   | 1     | 1070 flad            | x=3000..4070, z=2287..2332                            |
+| Cripple over header | 2     | 143 flad             | over yard-dør, c/c 300 i åbningen                     |
+| Toprem (gran)       | —     | (del af 3600 fælles) | flat z=2520 (slutter ved splejs)                      |
+| Toprem (gran)       | 1     | 3600 flad            | flat z=2520, x=3380..6220 (forlænget 220 mm forbi V4) |
+
+V1 toprem er forlænget V3_OH_SIDE=220 mm i hver ende → 6440 mm total. Forlængelsen kantilevrer forbi V3 og V4 og bærer side-overhangets barge rafters.
+
+## V2 (yard) — bag [X=1500..6000] (flat LAV z=2,32 m)
+
+Yard-segment af bag-væggen. Ingen åbninger.
+
+| Element            | Antal | Længde (mm)          | Position                                                       |
+| ------------------ | ----- | -------------------- | -------------------------------------------------------------- |
+| Bundrem (PT)       | —     | (del af 3600 fælles) | x=1500..3600                                                   |
+| Bundrem (PT)       | 1     | 2400 flad            | x=3600..6000                                                   |
+| Stud — grid+end    | 8     | 2108 flad            | x = 1800, 2400, 3000, 3600, 4200, 4800, 5400, 5955             |
+| Toprem (gran)      | —     | (del af 3600 fælles) | flat z=2320                                                     |
+| Toprem (gran)      | 1     | 3600 flad            | flat z=2320, x=3380..6220 (forlænget 220 mm forbi V4)           |
+
+V2 toprem forlænget som V1 → 6440 mm total.
+
+## V4 — højre side (skrå HØJ→LAV, 2,52→2,33 m)
+
+Buttet mellem V1 og V2 inderfladser. Skrår med taget. Ingen åbninger.
+
+| Element             | Antal | Længde (mm)      | Position           |
+| ------------------- | ----- | ---------------- | ------------------ |
+| Bundrem (PT)        | 1     | 2310 flad        | y=95..2405         |
+| Stud — front-hjørne | 1     | 2300 (top 4,6°)  | y=95               |
+| Stud — grid 1       | 1     | 2252 (top 4,6°)  | y=695              |
+| Stud — grid 2       | 1     | 2204 (top 4,6°)  | y=1295             |
+| Stud — grid 3       | 1     | 2156 (top 4,6°)  | y=1895             |
+| Stud — bag-hjørne   | 1     | 2119 (top 4,6°)  | y=2360             |
+| Toprem (gran)       | 1     | 2317 (top 4,6°)  | y=95..2405         |
 
 ---
 
 ## Tjek
 
-- Stud-tællingen i tabellerne summerer til **37** (8+1+2 = 11 i V1, 11+1 = 12 i V2, 4 i V3, 5 i V4, 5 i V5) — matcher materialelistens 37 studs.
-- Headers + cripples + sill: 1070 + 700 + 700 + 870 + 250 + 2×143 + 469 + 1055 + 175 = **5575 mm ≈ 5,6 m**, dækkes af spild fra 37×2400-stokken (~7,2 m spild i alt → ~1,7 m netto-spild efter headers er klippet).
+- **Studs i alt:** Hus = V1[0..hl] 3 grid + V2[0..hl] 3 grid + 2 junction (V1+V2 ved hl) + V3 4 + V5 5 = 17. Yard = V1[hl..ll] 5 grid + 2 yard-jamb + V2[hl..ll] 8 grid + V4 5 = 20. Total = **37** — matcher materialelistens 37 studs.
+- Headers + cripples + sill: 1070 + 700 + 700 + 870 + 250 + 2×143 + 469 + 1055 + 175 = **5575 mm ≈ 5,6 m**, dækkes af spild fra 37×2400-stokken (~7,2 m spild i alt → ~1,7 m netto-spild).

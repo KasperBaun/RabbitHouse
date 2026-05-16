@@ -6,11 +6,11 @@
 // Mesh stops at top-plate underside; anything above (between rafters) is
 // the roof's territory.
 
-include <../lib/defaults.scad>
-include <config.scad>
-use <../lib/primitives/mesh.scad>
+include <../../lib/defaults.scad>
+include <../config.scad>
+use <../../lib/primitives/mesh.scad>
 
-module RenderMesh(mesh = RH_MESH, palette = DEFAULT_PALETTE) {
+module RenderYardMesh(mesh = RH_MESH, palette = DEFAULT_PALETTE) {
     ll = RH_LENGTH; ww = RH_WIDTH; hl = RH_HOUSE_LEN;
     bh = RH_BASE_H;
 

@@ -1,10 +1,6 @@
 """Restructure materialeliste.xlsx into per-variant sheets + summary.
 
-Old layout (single master sheet, tagpap+klink only):
-  materialeliste            — everything concatenated
-  tagkonstruktion_tagpap    — duplicate scratch sheet (dropped)
-
-New layout:
+Layout:
   summary                       — variant dropdowns + selected totals + comparison matrix
   fundament                     — shared
   konstruktion                  — shared
@@ -13,8 +9,13 @@ New layout:
   beklaedning_klink             — klink cladding BOM (incl. shared housewrap/insulation/mesh)
   beklaedning_board_on_board    — 1-på-2 cladding BOM (incl. shared bits)
 
-Each data sheet uses the same 8-column layout (matches the original master):
-  A Kategori | B Vare | C Antal | D Enhed | E Pris/enh | F I alt | G Leverandør | H Noter
+Each data sheet uses a 9-column layout:
+  A Kategori | B Vare | C Antal | D Enhed | E Pris/enh | F I alt | G Leverandør | H Noter | I Zone
+
+Zone is one of: "Hus", "Yard", "Fælles". The house/yard split mirrors the
+RenderHouse*/RenderYard* code split at X=RH_HOUSE_LEN (1500 mm). Items that
+genuinely span both zones (continuous foundation ring, OSB deck whose plates
+straddle hl, eternit waves that don't align with hl) stay "Fælles".
 
 F column is a formula =C*E. SUM(F:F) gives the sheet total.
 """
@@ -77,10 +78,12 @@ THIN_BORDER     = Border(left=THIN, right=THIN, top=THIN, bottom=THIN)
 # Each row: (kategori, vare, antal, enhed, pris_enh, leverandør, noter)
 # ---------------------------------------------------------------------------
 
-# Each row: (kategori, vare, antal, enhed, pris_enh, leverandør_tekst, noter, url)
+# Each row: (kategori, vare, antal, enhed, pris_enh, leverandør_tekst, noter, url, zone)
 # URL may be None when no specific product link is known — leverandør then
 # renders as plain text. EST_PRICE rows (estimates) carry "est." in noter so
-# the user can spot which prices need verification.
+# the user can spot which prices need verification. Zone is "Hus" | "Yard"
+# | "Fælles" — the materialeliste sums correctly regardless, but the column
+# lets the user filter cost per zone.
 
 URL_MATPLADS_STABILGRUS = "https://materialepladsen.dk/produkter/grus/Stabilgrus0-32mm"
 URL_MATPLADS_STOEBEMIX = "https://materialepladsen.dk/produkter/grus/Stoebemix0-16mm"
@@ -131,102 +134,127 @@ URL_WOOD_VINKEL        = "https://wood-online.dk/shop/paslode-vinkelbeslag-542p.
 URL_AROS_1PA2          = "https://arossavvaerk.dk/vare/1-paa-2-beklaedning-svensk-gran/"
 
 
+# Foundation split: house owns perimeter [0..hl] front+back + V3 left + V5
+# partition cross. Yard owns perimeter [hl..ll] front+back + V4 right.
+# In COMBINED build, V5 is shared (house renders it). Linear-meter share:
+# house ~8 m (41 %), yard ~11.5 m (59 %).
 FUNDAMENT = [
-    ("Fundament", "Stabilgrus 0-32 mm",        1050, "kg",  0.55,  "materialepladsen.dk", "ca. 0,6 m³, 1.750 kg pr. m³",  URL_MATPLADS_STABILGRUS),
-    ("Fundament", "Fundablok 50x20x15 cm",      120, "stk", 15.75, "jemogfix.dk",         "Behov 117 stk; købes 120",      URL_JF_FUNDABLOK),
-    ("Fundament", "Armeringsjern Ø8 mm × 3 m",   13, "stk", 29.75, "jemogfix.dk",         "I bundrem-rille",                URL_JF_ARMERING),
-    ("Fundament", "Cement 25 kg",                14, "stk", 75.00, "jemogfix.dk",         "1:4 blandingsforhold, 25 kg ~ 18 L", URL_JF_CEMENT),
-    ("Fundament", "Støbemix 0-16 mm",          1485, "kg",  0.66,  "materialepladsen.dk", "ca. 0,9 m³, 1.650 kg pr. m³",   URL_MATPLADS_STOEBEMIX),
-    ("Fundament", "Gevindstang M10 × 1000 mm",   18, "stk", 27.95, "jemogfix.dk",         "Ankerbolte gennem sokkel",      URL_JF_GEVINDSTANG),
-    ("Fundament", "M10 møtrikker (12-pak)",       2, "pk.", 28.95, "jemogfix.dk",         "NKT Fasteners",                  URL_JF_M10_MOETRIK),
+    ("Fundament", "Stabilgrus 0-32 mm (hus)",      430, "kg",  0.55,  "materialepladsen.dk", "Under hus-strips (~0,25 m³)",       URL_MATPLADS_STABILGRUS, "Hus"),
+    ("Fundament", "Stabilgrus 0-32 mm (yard)",     620, "kg",  0.55,  "materialepladsen.dk", "Under yard-strips (~0,35 m³)",      URL_MATPLADS_STABILGRUS, "Yard"),
+    ("Fundament", "Fundablok 50x20x15 cm (hus)",    50, "stk", 15.75, "jemogfix.dk",         "Hus perimeter + V5 cross — buy 50", URL_JF_FUNDABLOK,        "Hus"),
+    ("Fundament", "Fundablok 50x20x15 cm (yard)",   70, "stk", 15.75, "jemogfix.dk",         "Yard 3-side perimeter — buy 70",    URL_JF_FUNDABLOK,        "Yard"),
+    ("Fundament", "Armeringsjern Ø8 mm × 3 m (hus)", 5, "stk", 29.75, "jemogfix.dk",         "I bundrem-rille hus",                URL_JF_ARMERING,         "Hus"),
+    ("Fundament", "Armeringsjern Ø8 mm × 3 m (yard)",8, "stk", 29.75, "jemogfix.dk",         "I bundrem-rille yard",               URL_JF_ARMERING,         "Yard"),
+    ("Fundament", "Cement 25 kg (hus)",              6, "stk", 75.00, "jemogfix.dk",         "1:4, ~25 kg/m³ × 0,25 m³",           URL_JF_CEMENT,           "Hus"),
+    ("Fundament", "Cement 25 kg (yard)",             8, "stk", 75.00, "jemogfix.dk",         "1:4, ~25 kg/m³ × 0,35 m³",           URL_JF_CEMENT,           "Yard"),
+    ("Fundament", "Støbemix 0-16 mm (hus)",        610, "kg",  0.66,  "materialepladsen.dk", "ca. 0,37 m³",                        URL_MATPLADS_STOEBEMIX,  "Hus"),
+    ("Fundament", "Støbemix 0-16 mm (yard)",       875, "kg",  0.66,  "materialepladsen.dk", "ca. 0,53 m³",                        URL_MATPLADS_STOEBEMIX,  "Yard"),
+    ("Fundament", "Gevindstang M10 × 1000 mm (hus)", 8, "stk", 27.95, "jemogfix.dk",         "Ankerbolte hus-centerlinjer",        URL_JF_GEVINDSTANG,      "Hus"),
+    ("Fundament", "Gevindstang M10 × 1000 mm (yard)",10,"stk", 27.95, "jemogfix.dk",         "Ankerbolte yard-centerlinjer",       URL_JF_GEVINDSTANG,      "Yard"),
+    ("Fundament", "M10 møtrikker (12-pak)",          2, "pk.", 28.95, "jemogfix.dk",         "NKT Fasteners (1 pak hver zone)",    URL_JF_M10_MOETRIK,      "Fælles"),
 ]
 
+# Konstruktion split: V3 + V5 (partition) + V1[0..hl] + V2[0..hl] = Hus.
+# V4 + V1[hl..ll] + V2[hl..ll] = Yard. The two long 3600 mm bundrem/toprem
+# pieces on V1+V2 straddle hl and stay "Fælles".
 KONSTRUKTION = [
-    ("Konstruktion", "Murpap (DPC)",                    1,  "stk", 99.00, "jemogfix.dk", "11 cm × 20 m — sokkel-isolering", URL_JF_MURPAP_11),
-    ("Konstruktion", "Bundrem 45×95×3600 PT NTR-AB",     2,  "stk", 71.10, "jemogfix.dk", "",                                 URL_JF_REGLAR_45_3600),
-    ("Konstruktion", "Bundrem 45×95×2400 PT NTR-AB",     5,  "stk", 47.40, "jemogfix.dk", "",                                 URL_JF_REGLAR_45_2400),
-    ("Konstruktion", "Toprem 47×100×3600 C24 gran",      4,  "stk", 63.90, "jemogfix.dk", "",                                 URL_JF_REGLAR_47_3600),
-    ("Konstruktion", "Reglar 47×100×2400 C24 gran",     42,  "stk", 42.60, "jemogfix.dk", "Vægreglar c/c 600",                URL_JF_REGLAR_47_2400),
+    ("Konstruktion", "Murpap (DPC)",                       1,  "stk", 99.00, "jemogfix.dk", "11 cm × 20 m — sokkel-isolering, hele perimeter + tværvæg", URL_JF_MURPAP_11,     "Fælles"),
+    ("Konstruktion", "Bundrem 45×95×3600 PT NTR-AB",        2,  "stk", 71.10, "jemogfix.dk", "V1 + V2 lange stykker — straddler hl ved splejs",            URL_JF_REGLAR_45_3600, "Fælles"),
+    ("Konstruktion", "Bundrem 45×95×2400 PT NTR-AB (hus)",  2,  "stk", 47.40, "jemogfix.dk", "V3 + V5 bundrem",                                            URL_JF_REGLAR_45_2400, "Hus"),
+    ("Konstruktion", "Bundrem 45×95×2400 PT NTR-AB (yard)", 3,  "stk", 47.40, "jemogfix.dk", "V1[2] + V2[2] + V4 bundrem",                                 URL_JF_REGLAR_45_2400, "Yard"),
+    ("Konstruktion", "Toprem 47×100×3600 C24 gran",         2,  "stk", 63.90, "jemogfix.dk", "V1 + V2 lange stykker — straddler hl",                       URL_JF_REGLAR_47_3600, "Fælles"),
+    ("Konstruktion", "Toprem 47×100×3600 C24 gran (yard)",  2,  "stk", 63.90, "jemogfix.dk", "V1[2] + V2[2] yard-segment toprem",                          URL_JF_REGLAR_47_3600, "Yard"),
+    ("Konstruktion", "Reglar 47×100×2400 C24 gran (hus)",  22,  "stk", 42.60, "jemogfix.dk", "Studs V1[0..hl]+V2[0..hl]+V3+V5 + skrå toprem V3+V5 + headers/cripples", URL_JF_REGLAR_47_2400, "Hus"),
+    ("Konstruktion", "Reglar 47×100×2400 C24 gran (yard)", 20,  "stk", 42.60, "jemogfix.dk", "Studs V1[hl..ll]+V2[hl..ll]+V4 + skrå toprem V4 + yard-dør jamber", URL_JF_REGLAR_47_2400, "Yard"),
 ]
 
-# Tagpap variant — preserved exactly as the original master sheet (rows
-# 17-45). Items without a price in the original (Vinkelbeslag, OSB/spær-
-# skruer, Rustfri tagskruer) stay empty so they don't fabricate a total.
+# Tagpap variant. House owns roof segment X<=hl + left side; yard owns
+# X>=hl + right side. OSB plates tile across X — plate 1 fits within house
+# segment, plates 2-3 in yard, so house 1 plate × 5 rows = 5, yard 2 × 5 = 10.
 TAG_TAGPAP = [
-    ("Træværk",        "Spær 47×100×3000 C24 gran",                 13, "stk",   53.25, "jemogfix.dk",    "",                                  URL_JF_REGLAR_47_3000),
-    ("Træværk",        "OSB-3 TG4 18 mm 2397×600 mm",               15, "stk",  129.00, "jemogfix.dk",    "Tagdæk",                            URL_JF_OSB),
-    ("Træværk",        "Sternbræt imp. 21×120×3600 gran",            6, "stk",   92.70, "jemogfix.dk",    "Hele perimeter 19 m",               URL_JF_STERN),
-    ("Tagdækning",     "Phoenix Selvbyggerpap 1×5 m",                5, "stk",  579.00, "jemogfix.dk",    "",                                  URL_JF_TAGPAP),
-    ("Tagdækning",     "Phoenix klæbeasfalt 310 ml",                 3, "stk",   69.95, "jemogfix.dk",    "",                                  URL_JF_KLAEBEASFALT),
-    ("Tagdækning",     "Phoenix murpap til tagfod 15 cm × 20 m",     1, "stk",  149.00, "jemogfix.dk",    "",                                  URL_JF_MURPAP_15),
-    ("Aluinddækning",  "Alu tagfod sort 55×80×1000 mm",              7, "stk",   39.75, "jemogfix.dk",    "",                                  URL_JF_ALU_TAGFOD),
-    ("Aluinddækning",  "Alu sternkapsel sort 35×25×1000 mm",        13, "stk",   59.95, "jemogfix.dk",    "",                                  URL_JF_STERNKAPSEL),
-    ("Vandhåndtering", "Tagrende 110 mm (4+3 m)",                    7, "m",     49.95, "jemogfix.dk",    "",                                  URL_JF_TAGRENDE),
-    ("Vandhåndtering", "Tagrende-beslag (konsoljern)",              10, "stk",   24.95, "jemogfix.dk",    "c/c 550 mm",                        URL_JF_KONSOLJERN),
-    ("Vandhåndtering", "Samlestykke tagrende",                       1, "stk",   46.75, "jemogfix.dk",    "",                                  URL_JF_SAMLESTYKKE),
-    ("Vandhåndtering", "Endebund tagrende 110 mm",                   2, "stk",   43.75, "jemogfix.dk",    "",                                  URL_JF_ENDEBUND),
-    ("Vandhåndtering", "Bladsamler",                                 1, "stk",   19.95, "jemogfix.dk",    "",                                  URL_JF_BLADSAMLER),
-    ("Vandhåndtering", "Nedløbsrør Ø75 mm × 3 m",                    1, "stk",  210.00, "jemogfix.dk",    "Stål",                              URL_JF_NEDLOEBSROER),
-    ("Vandhåndtering", "Nedløbsbøjning",                             1, "stk",   78.75, "jemogfix.dk",    "",                                  URL_JF_NEDLOEBSBOEJ),
-    ("Vandhåndtering", "Tudstykke til tagrende",                     1, "stk",  105.00, "jemogfix.dk",    "Ø75 mm",                            URL_JF_TUDSTYKKE),
-    ("Beslag",         "Paslode vinkelbeslag 90×90×40 (20-pak)",     3, "pak",   None,  "wood-online.dk", "TBD pris — enkelt ~8,48 kr",        URL_WOOD_VINKEL),
-    ("Beslag",         "OSB/spær-skruer 5×80 mm",                  250, "stk",   None,  "jemogfix.dk",    "TBD pris",                          None),
-    ("Beslag",         "Rustfri tagskruer m. EPDM-pakning",       None, "stk",   None,  "jemogfix.dk",    "TBD antal + pris",                  None),
-    ("Beslag",         "Galvaniseret tagpapsøm 2,6×25 mm (100-pak)", 1, "pk.",   69.95, "jemogfix.dk",    "Alusøm",                            URL_JF_ALUSOEM),
+    ("Træværk",        "Spær 47×100×3000 C24 gran (hus)",            4, "stk",   53.25, "jemogfix.dk",    "X=-220, 0, 600, 1200 (incl. vindskede V)", URL_JF_REGLAR_47_3000, "Hus"),
+    ("Træværk",        "Spær 47×100×3000 C24 gran (yard)",           9, "stk",   53.25, "jemogfix.dk",    "X=1800..5400 + V4 gable + vindskede H",    URL_JF_REGLAR_47_3000, "Yard"),
+    ("Træværk",        "OSB-3 TG4 18 mm 2397×600 mm (hus)",          5, "stk",  129.00, "jemogfix.dk",    "Plade 1 i hver række — dækker [-220..2177]", URL_JF_OSB,           "Hus"),
+    ("Træværk",        "OSB-3 TG4 18 mm 2397×600 mm (yard)",        10, "stk",  129.00, "jemogfix.dk",    "Plade 2+3 i hver række — dækker [2177..6220]",URL_JF_OSB,          "Yard"),
+    ("Træværk",        "Sternbræt imp. 21×120×3600 gran (hus)",      2, "stk",   92.70, "jemogfix.dk",    "Venstre side + del af front/bag (~6,4 m)",  URL_JF_STERN,          "Hus"),
+    ("Træværk",        "Sternbræt imp. 21×120×3600 gran (yard)",     4, "stk",   92.70, "jemogfix.dk",    "Højre side + resten af front/bag (~12,4 m)", URL_JF_STERN,         "Yard"),
+    ("Tagdækning",     "Phoenix Selvbyggerpap 1×5 m (hus)",          2, "stk",  579.00, "jemogfix.dk",    "~5 m² hus + spild",                         URL_JF_TAGPAP,         "Hus"),
+    ("Tagdækning",     "Phoenix Selvbyggerpap 1×5 m (yard)",         4, "stk",  579.00, "jemogfix.dk",    "~14 m² yard + spild",                       URL_JF_TAGPAP,         "Yard"),
+    ("Tagdækning",     "Phoenix klæbeasfalt 310 ml (hus)",           1, "stk",   69.95, "jemogfix.dk",    "",                                          URL_JF_KLAEBEASFALT,   "Hus"),
+    ("Tagdækning",     "Phoenix klæbeasfalt 310 ml (yard)",          2, "stk",   69.95, "jemogfix.dk",    "",                                          URL_JF_KLAEBEASFALT,   "Yard"),
+    ("Tagdækning",     "Phoenix murpap til tagfod 15 cm × 20 m",     1, "stk",  149.00, "jemogfix.dk",    "Én rulle dækker begge zoner",               URL_JF_MURPAP_15,      "Fælles"),
+    ("Aluinddækning",  "Alu tagfod sort 55×80×1000 mm (hus)",        2, "stk",   39.75, "jemogfix.dk",    "Front+bag hus-segment + ende-trim",         URL_JF_ALU_TAGFOD,     "Hus"),
+    ("Aluinddækning",  "Alu tagfod sort 55×80×1000 mm (yard)",       5, "stk",   39.75, "jemogfix.dk",    "Front+bag yard-segment + ende-trim",        URL_JF_ALU_TAGFOD,     "Yard"),
+    ("Aluinddækning",  "Alu sternkapsel sort 35×25×1000 mm (hus)",   3, "stk",   59.95, "jemogfix.dk",    "Venstre side + front+bag hus",              URL_JF_STERNKAPSEL,    "Hus"),
+    ("Aluinddækning",  "Alu sternkapsel sort 35×25×1000 mm (yard)", 10, "stk",   59.95, "jemogfix.dk",    "Højre side + front+bag yard",               URL_JF_STERNKAPSEL,    "Yard"),
+    ("Beslag",         "Paslode vinkelbeslag 90×90×40 (20-pak) (hus)",1,"pak",   None,  "wood-online.dk", "TBD pris — ~14 stk på hus-spær",            URL_WOOD_VINKEL,       "Hus"),
+    ("Beslag",         "Paslode vinkelbeslag 90×90×40 (20-pak) (yard)",2,"pak",  None,  "wood-online.dk", "TBD pris — ~34 stk på yard-spær",           URL_WOOD_VINKEL,       "Yard"),
+    ("Beslag",         "OSB/spær-skruer 5×80 mm",                  250, "stk",   None,  "jemogfix.dk",    "TBD pris — én pakke dækker begge",          None,                  "Fælles"),
+    ("Beslag",         "Rustfri tagskruer m. EPDM-pakning",       None, "stk",   None,  "jemogfix.dk",    "TBD antal + pris",                          None,                  "Fælles"),
+    ("Beslag",         "Galvaniseret tagpapsøm 2,6×25 mm (100-pak)", 1, "pk.",   69.95, "jemogfix.dk",    "Alusøm — én pakke dækker begge",            URL_JF_ALUSOEM,        "Fælles"),
 ]
 
-# Eternit-B7 variant. Items marked "est." in noter have prices that come from
-# docs/tagkonstruktion_eternit.md as rough estimates — please verify before
-# ordering. Shared items (vandhåndtering, vinkelbeslag) reuse the tagpap URLs.
+# Eternit-B7 variant. hl=1500 and RH_OH_SIDE=220 give 1720 mm = 10×B7_PITCH,
+# so wave phase aligns at the partition line — house+yard plates tile
+# seamlessly. Per row: house needs 2 plates × 7 rows ≈ 14; yard 5 × 7 ≈ 35.
+# Plus 5 % spild. Battens split per row: house 1 stick (1720 < 4200) +
+# yard 2 sticks (4720 > 4200) per row × 6 batten rows.
 TAG_ETERNIT = [
-    ("Træværk",        "Spær 47×100×3000 C24 gran",                 13, "stk",   85.00, "Stark",          "est. — Stark; tungere end tagpap",  URL_JF_REGLAR_47_3000),
-    ("Træværk",        "C18 taglægte 38×73×4200 mm",                11, "stk",   52.50, "10-4.dk",        "6 rækker à ~6,44 m + spild",        URL_104_LAEGTE),
-    ("Træværk",        "Imp. sternbræt 25×125×3600 gran",            6, "stk",   82.60, "xl-byg.dk",      "Hele perimeter ~19 m",              URL_XLBYG_STERN),
-    ("Tagdækning",     "Swisspearl B7 bølgeplade FK 1100×570 sortblå", 52, "stk", 95.00, "bygxtra.dk",     "49 hele + 5 % spild",               URL_BYGXTRA_B7),
-    ("Tagdækning",     "Swisspearl 100 Tagskrue 6×100 (100-pak)",    2, "pak",  425.00, "davidsen.dk",    "2 pr. plade × 49 + spild ~108",     URL_DAVIDSEN_SKRUE),
-    ("Tagdækning",     "Swisspearl PVC skumstrimmel 4,5 mm",         1, "rl.",   None,  "Cembrit",        "TBD pris — overlap-tætning",        None),
-    ("Vandhåndtering", "Tagrende 110 mm (4+3 m)",                    7, "m",     49.95, "jemogfix.dk",    "",                                  URL_JF_TAGRENDE),
-    ("Vandhåndtering", "Tagrende-beslag (konsoljern)",              12, "stk",   24.95, "jemogfix.dk",    "c/c 550 mm",                        URL_JF_KONSOLJERN),
-    ("Vandhåndtering", "Endebund tagrende 110 mm",                   2, "stk",   43.75, "jemogfix.dk",    "",                                  URL_JF_ENDEBUND),
-    ("Vandhåndtering", "Bladsamler",                                 1, "stk",   19.95, "jemogfix.dk",    "",                                  URL_JF_BLADSAMLER),
-    ("Vandhåndtering", "Nedløbsrør Ø75 mm × 3 m",                    1, "stk",  210.00, "jemogfix.dk",    "",                                  URL_JF_NEDLOEBSROER),
-    ("Vandhåndtering", "Nedløbsbøjning",                             2, "stk",   78.75, "jemogfix.dk",    "",                                  URL_JF_NEDLOEBSBOEJ),
-    ("Beslag",         "Paslode vinkelbeslag 90×90×40 (20-pak)",     3, "pak",   None,  "wood-online.dk", "TBD pris — enkelt ~8,48 kr",        URL_WOOD_VINKEL),
-    ("Beslag",         "Lægtesøm varmforzinket 2,8×60",            None, "stk",   None,  "jemogfix.dk",    "TBD antal + pris",                  None),
+    ("Træværk",        "Spær 47×100×3000 C24 gran (hus)",            4, "stk",   85.00, "Stark",          "est. — X<=1200 (incl. vindskede V)",        URL_JF_REGLAR_47_3000, "Hus"),
+    ("Træværk",        "Spær 47×100×3000 C24 gran (yard)",           9, "stk",   85.00, "Stark",          "est. — X>=1800",                            URL_JF_REGLAR_47_3000, "Yard"),
+    ("Træværk",        "C18 taglægte 38×73×4200 mm (hus)",           6, "stk",   52.50, "10-4.dk",        "6 batten-rækker × 1 stk hus-segment",       URL_104_LAEGTE,        "Hus"),
+    ("Træværk",        "C18 taglægte 38×73×4200 mm (yard)",         12, "stk",   52.50, "10-4.dk",        "6 batten-rækker × 2 stk yard-segment",      URL_104_LAEGTE,        "Yard"),
+    ("Træværk",        "Imp. sternbræt 25×125×3600 gran (hus)",      2, "stk",   82.60, "xl-byg.dk",      "Venstre side + del af front/bag (~6,4 m)",  URL_XLBYG_STERN,       "Hus"),
+    ("Træværk",        "Imp. sternbræt 25×125×3600 gran (yard)",     4, "stk",   82.60, "xl-byg.dk",      "Højre side + resten af front/bag (~12,4 m)", URL_XLBYG_STERN,      "Yard"),
+    ("Tagdækning",     "Swisspearl B7 bølgeplade FK 1100×570 sortblå (hus)", 15, "stk", 95.00, "bygxtra.dk", "2 plader × 7 rækker + 5 % spild",          URL_BYGXTRA_B7,        "Hus"),
+    ("Tagdækning",     "Swisspearl B7 bølgeplade FK 1100×570 sortblå (yard)",37, "stk", 95.00, "bygxtra.dk", "5 plader × 7 rækker + 5 % spild",          URL_BYGXTRA_B7,        "Yard"),
+    ("Tagdækning",     "Swisspearl 100 Tagskrue 6×100 (100-pak) (hus)", 1, "pak", 425.00, "davidsen.dk",    "2 pr. plade × 14 + spild",                  URL_DAVIDSEN_SKRUE,    "Hus"),
+    ("Tagdækning",     "Swisspearl 100 Tagskrue 6×100 (100-pak) (yard)",2, "pak", 425.00, "davidsen.dk",    "2 pr. plade × 35 + spild",                  URL_DAVIDSEN_SKRUE,    "Yard"),
+    ("Tagdækning",     "Swisspearl PVC skumstrimmel 4,5 mm",         1, "rl.",   None,  "Cembrit",        "TBD pris — overlap-tætning, én rulle deler", None,                 "Fælles"),
+    ("Beslag",         "Paslode vinkelbeslag 90×90×40 (20-pak) (hus)",1,"pak",   None,  "wood-online.dk", "TBD pris — ~14 stk på hus-spær",            URL_WOOD_VINKEL,       "Hus"),
+    ("Beslag",         "Paslode vinkelbeslag 90×90×40 (20-pak) (yard)",2,"pak",  None,  "wood-online.dk", "TBD pris — ~34 stk på yard-spær",           URL_WOOD_VINKEL,       "Yard"),
+    ("Beslag",         "Lægtesøm varmforzinket 2,8×60",            None, "stk",   None,  "jemogfix.dk",    "TBD antal + pris",                          None,                  "Fælles"),
 ]
 
-# Klink variant — preserved exactly as the original master rows 48-54 (incl.
-# items where the user had no price yet).
+# Klink variant. Voliernet + klamper are on the YARD walls (front/back/right);
+# klink + housewrap + battens + corner trim + isolering are on the 4 HOUSE
+# walls only.
 CLAD_KLINK = [
-    ("Voliere",    "Voliernet welded 13×13 mm",                         2, "stk", 1350.00, "(ukendt)",    "1×10 m + 1×25 m",                              None),
-    ("Voliere",    "Klamper til voliernet",                          None, "stk",  None,   "jemogfix.dk", "TBD antal + pris",                            None),
-    ("Beklædning", "Klinkbeklædning sortmalet gran 25×125×4200 (pak)",   6, "pak",  497.70, "jemogfix.dk", "Frøslev klink; sortmalet gran",                URL_JF_KLINK),
-    ("Beklædning", "Vindpap (housewrap)",                                1, "rl.",  299.00, "jemogfix.dk", "20 m² pr. rulle; behov ~17,5 m²",              URL_JF_VINDPAP),
-    ("Beklædning", "Klemmelister 25×50×4200 mm",                       10, "stk",   28.35, "jemogfix.dk", "Lodrette afstandslister c/c 600",              URL_JF_KLEMMELISTE),
-    ("Beklædning", "Hjørnetrim 45×45×2400 mm",                          4, "stk",   29.25, "jemogfix.dk", "4 udvendige hjørner",                          URL_JF_HJORNETRIM_45),
-    ("Beklædning", "Isolering mineraluld 95 mm",                       20, "m²",    29.61, "jemogfix.dk", "I stud-rum, 2 vægge ~6 m² + 2 vægge ~4 m²",   URL_JF_ISOLERING),
+    ("Voliere",    "Voliernet welded 13×13 mm",                         2, "stk", 1350.00, "(ukendt)",    "1×10 m + 1×25 m — yard front+back+right",        None,                "Yard"),
+    ("Voliere",    "Klamper til voliernet",                          None, "stk",  None,   "jemogfix.dk", "TBD antal + pris",                                 None,                "Yard"),
+    ("Beklædning", "Klinkbeklædning sortmalet gran 25×125×4200 (pak)",   6, "pak",  497.70, "jemogfix.dk", "Frøslev klink; 4 hus-vægge",                       URL_JF_KLINK,        "Hus"),
+    ("Beklædning", "Vindpap (housewrap)",                                1, "rl.",  299.00, "jemogfix.dk", "20 m² pr. rulle; behov ~17,5 m² på 4 hus-vægge",   URL_JF_VINDPAP,      "Hus"),
+    ("Beklædning", "Klemmelister 25×50×4200 mm",                       10, "stk",   28.35, "jemogfix.dk", "Lodrette afstandslister c/c 600 på hus-vægge",     URL_JF_KLEMMELISTE,  "Hus"),
+    ("Beklædning", "Hjørnetrim 45×45×2400 mm",                          4, "stk",   29.25, "jemogfix.dk", "4 udvendige hus-hjørner",                          URL_JF_HJORNETRIM_45,"Hus"),
+    ("Beklædning", "Isolering mineraluld 95 mm",                       20, "m²",    29.61, "jemogfix.dk", "I hus-stud-rum (4 vægge)",                          URL_JF_ISOLERING,    "Hus"),
 ]
 
-# Board-on-board variant. Aros Savværk price er real source; alt andet med
-# "est." i noter er gæt og bør verificeres.
+# Board-on-board variant. Same zone split as klink — voliernet yard, alt
+# andet hus.
 CLAD_BOB = [
-    ("Voliere",    "Voliernet welded 13×13 mm",                         2, "stk", 1350.00, "(ukendt)",         "1×10 m + 1×25 m",                            None),
-    ("Voliere",    "Klamper til voliernet",                          None, "stk",  None,   "jemogfix.dk",      "TBD antal + pris",                          None),
-    ("Beklædning", "1-på-2 svensk gran 25×150 savskåret",              16, "m²",   160.00, "arossavvaerk.dk",  "Aros tilbudspris; normal 225 kr/m²",         URL_AROS_1PA2),
-    ("Beklædning", "Træolie/maling til naturligt træ",                  3, "L",     None,  "(vælg selv)",      "TBD — Gori/Cuprinol/Pinotex; klink er sortmalet", None),
-    ("Beklædning", "Vindpap (housewrap)",                                1, "rl.",  299.00, "jemogfix.dk",      "Samme som klink",                            URL_JF_VINDPAP),
-    ("Beklædning", "Klemmelister 25×50×4200 mm",                       10, "stk",   28.35, "jemogfix.dk",      "Vandrette afstandslister c/c 600",           URL_JF_KLEMMELISTE),
-    ("Beklædning", "Hjørnetrim 70×70×2400 trykimp.",                    4, "stk",   None,  "jemogfix.dk",      "TBD — større end klink (bob stickout 50 mm)",None),
-    ("Beklædning", "Isolering mineraluld 95 mm",                       20, "m²",    29.61, "jemogfix.dk",      "Samme som klink",                            URL_JF_ISOLERING),
-    ("Beklædning", "Rustfri A4 facadeskruer 4×60",                   None, "pk.",   None,  "jemogfix.dk",      "TBD antal + pris — flere end klink (2 lag)", None),
+    ("Voliere",    "Voliernet welded 13×13 mm",                         2, "stk", 1350.00, "(ukendt)",         "1×10 m + 1×25 m — yard front+back+right",         None,                "Yard"),
+    ("Voliere",    "Klamper til voliernet",                          None, "stk",  None,   "jemogfix.dk",      "TBD antal + pris",                                None,                "Yard"),
+    ("Beklædning", "1-på-2 svensk gran 25×150 savskåret",              16, "m²",   160.00, "arossavvaerk.dk",  "Aros tilbudspris; normal 225 kr/m² — hus-vægge",  URL_AROS_1PA2,       "Hus"),
+    ("Beklædning", "Træolie/maling til naturligt træ",                  3, "L",     None,  "(vælg selv)",      "TBD — Gori/Cuprinol/Pinotex; klink er sortmalet", None,                "Hus"),
+    ("Beklædning", "Vindpap (housewrap)",                                1, "rl.",  299.00, "jemogfix.dk",      "Samme som klink — hus-vægge",                     URL_JF_VINDPAP,      "Hus"),
+    ("Beklædning", "Klemmelister 25×50×4200 mm",                       10, "stk",   28.35, "jemogfix.dk",      "Vandrette afstandslister c/c 600 på hus-vægge",   URL_JF_KLEMMELISTE,  "Hus"),
+    ("Beklædning", "Hjørnetrim 70×70×2400 trykimp.",                    4, "stk",   None,  "jemogfix.dk",      "TBD — større end klink (bob stickout 50 mm)",     None,                "Hus"),
+    ("Beklædning", "Isolering mineraluld 95 mm",                       20, "m²",    29.61, "jemogfix.dk",      "Samme som klink — hus-stud-rum",                  URL_JF_ISOLERING,    "Hus"),
+    ("Beklædning", "Rustfri A4 facadeskruer 4×60",                   None, "pk.",   None,  "jemogfix.dk",      "TBD antal + pris — flere end klink (2 lag)",      None,                "Hus"),
 ]
 
 # ---------------------------------------------------------------------------
 # Sheet writers
 # ---------------------------------------------------------------------------
 HEADERS = ["Kategori", "Vare", "Antal", "Enhed", "Pris pr. enhed (DKK)",
-           "I alt (DKK)", "Leverandør", "Noter"]
-COL_WIDTHS = [18, 50, 8, 8, 16, 14, 24, 60]
+           "I alt (DKK)", "Leverandør", "Noter", "Zone"]
+COL_WIDTHS = [18, 50, 8, 8, 16, 14, 24, 60, 10]
+
+ZONE_COLORS = {
+    "Hus":    "FBE5D6",  # peach — matches konstruktion accent
+    "Yard":   "E2EFDA",  # light green — matches yard mesh / open-air feel
+    "Fælles": "F2F2F2",  # neutral light gray
+}
 
 def write_header(ws):
     for col, (h, w) in enumerate(zip(HEADERS, COL_WIDTHS), start=1):
@@ -240,14 +268,15 @@ def write_header(ws):
     ws.freeze_panes = "A2"
 
 def write_rows(ws, rows, sheet_color, start_row=2):
-    """rows = list of 8-tuples: (kat, vare, antal, enhed, pris, lev, noter, url).
+    """rows = list of 9-tuples:
+       (kat, vare, antal, enhed, pris, lev, noter, url, zone).
     sheet_color = hex (no #) for column A fill on this sheet."""
     cat_fill = PatternFill("solid", fgColor=sheet_color)
     voliere_fill = PatternFill("solid", fgColor=COL_VOLIERE)
     r = start_row
     last_kategori = None
     for row in rows:
-        kat, vare, antal, enhed, pris, lev, noter, url = row
+        kat, vare, antal, enhed, pris, lev, noter, url, zone = row
         if kat != last_kategori and last_kategori is not None:
             r += 1   # blank separator
 
@@ -273,7 +302,12 @@ def write_rows(ws, rows, sheet_color, start_row=2):
 
         ws.cell(row=r, column=8, value=noter).alignment = Alignment(wrap_text=False, vertical="center")
 
-        for c in range(1, 9):
+        z = ws.cell(row=r, column=9, value=zone)
+        z.alignment = Alignment(horizontal="center")
+        z.fill = PatternFill("solid", fgColor=ZONE_COLORS.get(zone, "FFFFFF"))
+        z.font = BOLD
+
+        for c in range(1, 10):
             ws.cell(row=r, column=c).border = THIN_BORDER
 
         last_kategori = kat
@@ -281,9 +315,10 @@ def write_rows(ws, rows, sheet_color, start_row=2):
     return r   # next free row
 
 def write_total(ws, last_row, sheet_color):
-    """TOTAL in column H so summary's SUM(F:F) doesn't double-count."""
-    r = last_row + 1
+    """TOTAL row + per-zone subtotals (Hus / Yard / Fælles)."""
     cat_fill = PatternFill("solid", fgColor=sheet_color)
+
+    r = last_row + 1
     ws.cell(row=r, column=1, value="").fill = cat_fill
     label = ws.cell(row=r, column=5, value="TOTAL")
     label.font = BOLD
@@ -293,9 +328,24 @@ def write_total(ws, last_row, sheet_color):
     total_cell.font = Font(bold=True, size=11)
     total_cell.fill = TOTAL_FILL
     total_cell.number_format = '#,##0.00 "kr"'
-    for c in range(1, 9):
+    for c in range(1, 10):
         ws.cell(row=r, column=c).border = THIN_BORDER
-    return r
+
+    # Per-zone subtotals using SUMIF on column I.
+    for i, zone in enumerate(("Hus", "Yard", "Fælles")):
+        rr = r + 1 + i
+        z_label = ws.cell(row=rr, column=5, value=f"heraf {zone}")
+        z_label.font = BOLD
+        z_label.alignment = Alignment(horizontal="right")
+        z_label.fill = PatternFill("solid", fgColor=ZONE_COLORS[zone])
+        z_total = ws.cell(row=rr, column=8,
+                          value=f'=SUMIF(I2:I{last_row-1},"{zone}",F2:F{last_row-1})')
+        z_total.font = BOLD
+        z_total.fill = PatternFill("solid", fgColor=ZONE_COLORS[zone])
+        z_total.number_format = '#,##0.00 "kr"'
+        for c in range(1, 10):
+            ws.cell(row=rr, column=c).border = THIN_BORDER
+    return r + 3
 
 def write_data_sheet(wb, name, rows):
     if name in wb.sheetnames:

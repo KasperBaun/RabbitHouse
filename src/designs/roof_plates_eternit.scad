@@ -11,10 +11,17 @@
 //   screws:        2 per plate in wave crests at the top edge
 //   min pitch:     14 deg (the default 4.6 deg is NOT buildable; use
 //                  roof_cover = "eternit_14" for spec-correct geometry)
+//
+// Two entry forms:
+//   render_roof_plates_eternit(cover)                       — full footprint
+//   render_roof_plates_eternit_segment(cover, x_lo, x_hi)   — zone segment
+//
+// hl=1500 and RH_OH_SIDE=220 give x_lo→hl distance = 1720 = 10*B7_PITCH, so
+// the wave phase aligns at X=hl: house+yard rendered separately tile
+// seamlessly in combined view.
 
 include <../lib/defaults.scad>
 include <config.scad>
-use <roof_structure.scad>
 use <../lib/primitives/roof.scad>
 
 BATTEN_T   = 38;
@@ -30,23 +37,15 @@ B7_OVERLAP       = 110;
 B7_EAVE_OVERHANG = 60;
 B7_A_MAAL        = 510;
 
-B7_COLOR     = [0.10, 0.13, 0.18];     // Cembrit "sortblå" (slate-blue)
+B7_COLOR     = [0.10, 0.13, 0.18];
 SCREW_HEAD_D = 20;
 SCREW_HEAD_H = 6;
 SCREW_COLOR  = [0.20, 0.21, 0.24];
 
 // ============================================================================
-// Battens — one per plate top edge. Bottom plate hangs 60 mm in the gutter
-// without a batten; top plate is cut to fit and rests on the next-to-top
-// batten (short overhang < 460 mm, no separate top batten needed).
-// Result for our geometry: 6 battens, c/c exactly 460 mm, first batten
-// 510 mm inside the back fascia outer face.
+// Battens — one per plate top edge. Restricted to [x_lo..x_hi].
 // ============================================================================
-module render_battens(eh_back, palette = DEFAULT_PALETTE) {
-    ll = RH_LENGTH;
-    x_start = -RH_OH_SIDE;
-    x_end   = ll + RH_OH_SIDE;
-
+module _render_battens_segment(eh_back, x_lo, x_hi, palette) {
     y_back_eave    = RH_WIDTH + RH_OH_BACK + RH_FASCIA_T;
     y_front_eave   = -RH_OH_FRONT - RH_FASCIA_T;
     y_first_batten = y_back_eave - B7_A_MAAL;
@@ -55,47 +54,34 @@ module render_battens(eh_back, palette = DEFAULT_PALETTE) {
     color(pal_post(palette))
     for (i = [0 : n_intervals]) {
         y_i = y_first_batten - i * BATTEN_C2C;
-        z   = roof_underside_for(eh_back, y_i);   // rafter top = batten bottom
-        translate([x_start, y_i - BATTEN_W/2, z])
-            cube([x_end - x_start, BATTEN_W, BATTEN_T]);
+        z   = roof_underside_for(eh_back, y_i);
+        translate([x_lo, y_i - BATTEN_W/2, z])
+            cube([x_hi - x_lo, BATTEN_W, BATTEN_T]);
     }
 }
 
 // ============================================================================
-// B7 plates — drawn as separate rows with visible overlaps.
-//
-// Each row spans 570 mm. Row N+1 (higher on roof) sits on top of row N in
-// the overlap zone (110 mm), so row N+1's bottom 110 mm lies 6.5 mm
-// (= plate thickness) higher than row N's top 110 mm. That gives the
-// visible row edges that are characteristic of a B7 install.
-//
-// Each plate (except the bottom and top-cut) renders as two strips:
-//   • top portion (460 mm) rests on its own batten   (z_offset = 0)
-//   • bottom portion (110 mm) rests on the plate below (z_offset = B7_THICK)
-// The transition between them lands at the next batten's Y position.
+// One plate strip across [x_lo..x_hi] × [y_start..y_end].
 // ============================================================================
-module _eternit_strip(eh_back, y_start, y_end, z_offset) {
+module _eternit_strip_segment(eh_back, y_start, y_end, z_offset, x_lo, x_hi) {
     if (y_end > y_start) {
-        ll        = RH_LENGTH;
         drop_full = total_drop_for(eh_back);
         span_y    = RH_WIDTH + RH_OH_FRONT + RH_OH_BACK;
         strip_len = y_end - y_start;
 
-        x_start    = -RH_OH_SIDE;
-        x_end      = ll + RH_OH_SIDE;
-        total_x    = x_end - x_start;
+        total_x    = x_hi - x_lo;
         n_per_wave = 12;
         n_waves    = floor(total_x / B7_PITCH);
         n_total    = n_waves * n_per_wave;
 
         top_pts = [for (i = [0 : n_total])
-            let (x = x_start + i * (total_x / n_total),
+            let (x = x_lo + i * (total_x / n_total),
                  t = 360 * i / n_per_wave,
                  z = B7_THICK + B7_AMP * (1 + cos(t)) / 2)
             [x, z]
         ];
         bot_pts = [for (i = [n_total : -1 : 0])
-            let (x = x_start + i * (total_x / n_total),
+            let (x = x_lo + i * (total_x / n_total),
                  t = 360 * i / n_per_wave,
                  z = B7_AMP * (1 + cos(t)) / 2)
             [x, z]
@@ -118,72 +104,59 @@ module _eternit_strip(eh_back, y_start, y_end, z_offset) {
     }
 }
 
-module render_eternit_plates(eh_back, palette = DEFAULT_PALETTE) {
+module _render_eternit_plates_segment(eh_back, x_lo, x_hi, palette) {
     y_back_eave    = RH_WIDTH + RH_OH_BACK + RH_FASCIA_T;
     y_front_eave   = -RH_OH_FRONT - RH_FASCIA_T;
     y_first_batten = y_back_eave - B7_A_MAAL;
     n_intervals    = floor((y_first_batten - y_front_eave) / BATTEN_C2C);
 
-    // Plate 1 (bottom, at the gutter) — entire plate on slope_z. Hangs
-    // 60 mm past the back fascia outer face.
     y_p1_top = y_first_batten;
     y_p1_bot = y_back_eave + B7_EAVE_OVERHANG;
-    _eternit_strip(eh_back, y_p1_top, y_p1_bot, 0);
+    _eternit_strip_segment(eh_back, y_p1_top, y_p1_bot, 0, x_lo, x_hi);
 
-    // Plates 2..(n+1) — top portion on slope_z, bottom portion (= overlap
-    // onto plate below) on slope_z + B7_THICK.
     for (i = [1 : n_intervals]) {
         y_top  = y_first_batten - i * BATTEN_C2C;
         y_kink = y_top + BATTEN_C2C;
         y_bot  = y_top + B7_PLATE_LEN;
-        _eternit_strip(eh_back, y_top,  y_kink, 0);
-        _eternit_strip(eh_back, y_kink, y_bot,  B7_THICK);
+        _eternit_strip_segment(eh_back, y_top,  y_kink, 0,        x_lo, x_hi);
+        _eternit_strip_segment(eh_back, y_kink, y_bot,  B7_THICK, x_lo, x_hi);
     }
 
-    // Top-cut plate at the front eave — entirely in overlap with the
-    // plate below (lies B7_THICK higher than plate n).
     y_last_batten = y_first_batten - n_intervals * BATTEN_C2C;
-    y_cut_top     = y_front_eave;
-    y_cut_bot     = y_last_batten + B7_OVERLAP;
-    _eternit_strip(eh_back, y_cut_top, y_cut_bot, B7_THICK);
+    _eternit_strip_segment(eh_back, y_front_eave,
+                           y_last_batten + B7_OVERLAP, B7_THICK, x_lo, x_hi);
 }
 
-// ============================================================================
-// Swisspearl 100 tek screws — 6x100 mm hardened steel with EPDM washer.
-// Spec: 2 per plate in wave crests. Modelled here as one every other
-// crest per batten — visually regular pattern matching real installation.
-// ============================================================================
-module render_screws(eh_back, palette = DEFAULT_PALETTE) {
-    ll = RH_LENGTH;
-    x_start = -RH_OH_SIDE;
-    x_end   = ll + RH_OH_SIDE;
-
+module _render_screws_segment(eh_back, x_lo, x_hi, palette) {
     y_back_eave    = RH_WIDTH + RH_OH_BACK + RH_FASCIA_T;
-    y_front_eave   = -RH_OH_FRONT - RH_FASCIA_T;
     y_first_batten = y_back_eave - B7_A_MAAL;
-    n_intervals    = floor((y_first_batten - y_front_eave) / BATTEN_C2C);
-
-    n_crests = floor((x_end - x_start) / B7_PITCH);
+    n_intervals    = floor((y_first_batten - (-RH_OH_FRONT - RH_FASCIA_T)) / BATTEN_C2C);
+    n_crests = floor((x_hi - x_lo) / B7_PITCH);
 
     color(SCREW_COLOR)
     for (i = [0 : n_intervals]) {
         y_i = y_first_batten - i * BATTEN_C2C;
-        // Screws pass through both plates in the overlap zone (= plate
-        // above + plate below + into the batten). Head sits on the TOP
-        // plate, which is B7_THICK above batten top due to overlap kick-up.
         z_top = roof_underside_for(eh_back, y_i) + BATTEN_T + 2*B7_THICK + B7_AMP;
         for (j = [0 : 2 : n_crests]) {
-            x_j = x_start + j * B7_PITCH;
+            x_j = x_lo + j * B7_PITCH;
             translate([x_j, y_i, z_top])
                 cylinder(d = SCREW_HEAD_D, h = SCREW_HEAD_H, $fn = 14);
         }
     }
 }
 
-// Entry point — battens + plates + screws.
-module render_roof_plates_eternit(cover, palette = DEFAULT_PALETTE) {
+// Segment renderer — used by zone dispatchers.
+module render_roof_plates_eternit_segment(cover, x_lo, x_hi,
+                                           palette = DEFAULT_PALETTE) {
     eh_back = back_eave_height_for(cover);
-    render_battens(eh_back, palette);
-    render_eternit_plates(eh_back, palette);
-    render_screws(eh_back, palette);
+    _render_battens_segment(eh_back, x_lo, x_hi, palette);
+    _render_eternit_plates_segment(eh_back, x_lo, x_hi, palette);
+    _render_screws_segment(eh_back, x_lo, x_hi, palette);
+}
+
+// Full-footprint renderer — backward-compat for `RenderRoofPlates`.
+module render_roof_plates_eternit(cover, palette = DEFAULT_PALETTE) {
+    ll = RH_LENGTH;
+    render_roof_plates_eternit_segment(cover, -RH_OH_SIDE, ll + RH_OH_SIDE,
+                                        palette);
 }

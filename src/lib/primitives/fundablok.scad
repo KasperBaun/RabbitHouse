@@ -51,6 +51,28 @@ module _fb_strip_y(origin, length, z, start_offset) {
     }
 }
 
+// Multi-course fundablok strip — one segment of a ring, oriented along X
+// or Y. Halvstensforbandt offsets are applied automatically across courses.
+//   orientation = "X" or "Y"
+//   origin      = [x, y] outer-bottom corner of the strip
+//   length      = strip length along the chosen axis
+//   courses     = number of vertical courses (default 3)
+//   top_z       = Z of the top course's top face
+module fundablok_strip(orientation, origin, length, courses = 3, top_z = 0) {
+    h_per   = FUNDABLOK_H;
+    total_h = courses * h_per;
+    z_bot   = top_z - total_h;
+    color(FUNDABLOK_COLOR)
+    for (c = [0 : courses - 1]) {
+        z   = z_bot + c * h_per;
+        off = (c % 2 == 0) ? 0 : -FUNDABLOK_L / 2;
+        if (orientation == "X")
+            _fb_strip_x(origin, length, z, off);
+        else
+            _fb_strip_y(origin, length, z, off);
+    }
+}
+
 // Continuous fundablok ring around a [ll × ww] rectangle with optional
 // cross-walls at the X positions in `partitions_x`. The ring outer face
 // is flush with [0,0]..[ll,ww] (the building outer line); the ring extends

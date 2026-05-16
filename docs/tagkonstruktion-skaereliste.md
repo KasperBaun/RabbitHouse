@@ -1,8 +1,18 @@
 # Skæreliste — Tagkonstruktion
 
-> Implementeret i `src/designs/v3/tagkonstruktion_tagpap.scad` og `tagkonstruktion_eternit.scad` (delt framing i `tagkonstruktion_faelles.scad`). Materialelister i [tagkonstruktion_eternit.md](tagkonstruktion_eternit.md) og [tagkonstruktion_tagpap.md](tagkonstruktion_tagpap.md). Variant-sammenligning: [tagkonstruktion.md](tagkonstruktion.md).
+> Implementeret i `src/designs/roof_structure.scad` (`RenderHouseRoof()` + `RenderYardRoof()`) + `roof_plates_tagpap.scad` / `roof_plates_eternit.scad`. Materialelister i [tagkonstruktion_eternit.md](tagkonstruktion_eternit.md) og [tagkonstruktion_tagpap.md](tagkonstruktion_tagpap.md). Variant-sammenligning: [tagkonstruktion.md](tagkonstruktion.md).
 
 Skæreliste pr. element. Mål er millimeter; positioner er i bygningens koordinatsystem (X = længde-akse, Y = front→bag).
+
+## Zone-opdeling
+
+Tag-spær og lookouts opdeles ved X=1500 (partition-linjen). Cover-lagene (OSB-dæk, tagpap, eternit) er én sammenhængende dæk — de straddler hl og holdes "fælles" i materialelisten.
+
+| Zone | Tag-elementer der hører til                                                                  | Render-modul         |
+| ---- | --------------------------------------------------------------------------------------------- | -------------------- |
+| Hus  | Spær X ≤ 1200 (4 stk) + venstre vindskede + venstre lookouts (3) + venstre side-fascia/soffit + front+bag fascia/soffit [0..hl] | `RenderHouseRoof()`  |
+| Yard | Spær X ≥ 1800 (9 stk) + højre vindskede + højre lookouts (3) + højre side-fascia/soffit + front+bag fascia/soffit [hl..ll] | `RenderYardRoof()`   |
+| Fælles | OSB-dæk (15 plader straddler hl); tagpap baner; alu-inddækning; eternit B7 plader + skruer (bølger straddler hl); C18 lægter | `RenderRoofPlates(cover)` |
 
 ## Konventioner
 
@@ -13,30 +23,23 @@ Skæreliste pr. element. Mål er millimeter; positioner er i bygningens koordina
 
 ## Sammendrag
 
-| Vare                                            | Antal | Brug                                                  |
-| ----------------------------------------------- | ----- | ----------------------------------------------------- |
-| **Træværk**                                     |       |                                                       |
-| Reglar 47×100×3000 mm gran C24                  | 13    | Spær (11 regulære + 2 vindskede)                      |
-| OSB-3 plade TG4 18 mm 2397×600 mm               | 15    | Tagdæk ~19 m² — 600 mm bredde matcher spær c/c 600    |
-| Imp. stern 25×125×3600 mm gran                  | 6     | Sternbræt hele perimeter — stikker 7 mm over tagpap   |
-| **Tagdækning**                                  |       |                                                       |
-| Phønix Selvbyggerpap 1×5 m                      | 5     | Selvklæbende, ~5 m²/rulle (~19 m² + overlap)          |
-| TagSealer 300 ml Phønix                         | 3     | Bitumen-fugemasse til alu/pap-overgang                |
-| **Sternkapsler (cap over sternbræt-top)**       |       |                                                       |
-| Sternkapsel lige alu 35×25×1000 mm              | 13    | Front + bag eaves (vandret, ~13 m)                    |
-| Sternkapsel skrå kant alu 35×25×1000 mm         | 6     | Venstre + højre sider (skrå med taget, ~6 m)          |
-| **Vandhåndtering**                              |       |                                                       |
-| Tagrende 110 mm sæt                             | 1     | Bag-eave 6,5 m                                        |
-| Tagrende-beslag                                 | 12    | c/c 550 mm langs bag-eave                             |
-| Endebund tagrende                               | 2     | Lukker tagrendens to ender                            |
-| Bladsamler 75-82 mm                             | 1     | Filter ved nedløbsudgang                              |
-| Nedløbsrør Ø75 mm × 3 m                         | 1     | Fra tagrende til faldsten                             |
-| Nedløbsbøjning Ø75 mm                           | 2     | Knæ-stykker (top + bund)                              |
-| **Beslag og fastgørelse**                       |       |                                                       |
-| Vinkelbeslag 90×90×40 mm 20-pak                 | 3     | 48 nødvendige (44 regulære + 4 vindskede)             |
-| OSB/spær-skruer 5×80 mm                         | 250   | OSB på spær + vinkelbeslag-fastgørelse                |
-| Rustfri tagskruer m. EPDM-pakning               | 1 pk  | Alu-profiler på OSB (~50 stk)                         |
-| Galvaniseret tagpapsøm                          | 1 æsk | Selvbyggerpap på OSB (~150 stk)                       |
+| Vare                                            | Antal | Hus | Yard | Fælles | Brug                                                  |
+| ----------------------------------------------- | ----- | --- | ---- | ------ | ----------------------------------------------------- |
+| **Træværk**                                     |       |     |      |        |                                                       |
+| Reglar 47×100×3000 mm gran C24                  | 13    | 4   | 9    |        | Spær (11 regulære + 2 vindskede)                      |
+| OSB-3 plade TG4 18 mm 2397×600 mm               | 15    |     |      | 15     | Tagdæk ~19 m² — plader straddler hl                   |
+| Imp. stern 25×125×3600 mm gran                  | 6     | 1   | 3    | 2      | Sternbræt hele perimeter — front+bag straddler hl     |
+| **Tagdækning**                                  |       |     |      |        |                                                       |
+| Phønix Selvbyggerpap 1×5 m                      | 5     |     |      | 5      | Selvklæbende, ~5 m²/rulle                             |
+| TagSealer 300 ml Phønix                         | 3     |     |      | 3      | Bitumen-fugemasse                                     |
+| **Sternkapsler (cap over sternbræt-top)**       |       |     |      |        |                                                       |
+| Sternkapsel lige alu 35×25×1000 mm              | 13    |     |      | 13     | Front + bag eaves — sektioner straddler hl            |
+| Sternkapsel skrå kant alu 35×25×1000 mm         | 6     | 3   | 3    |        | Venstre side (hus) + højre side (yard)                |
+| **Beslag og fastgørelse**                       |       |     |      |        |                                                       |
+| Vinkelbeslag 90×90×40 mm 20-pak                 | 3     | 1   | 2    |        | ~14 brackets på hus-spær, ~34 på yard-spær            |
+| OSB/spær-skruer 5×80 mm                         | 250   |     |      | 250    | OSB på spær + vinkelbeslag-fastgørelse                |
+| Rustfri tagskruer m. EPDM-pakning               | 1 pk  |     |      | 1 pk   | Alu-profiler på OSB (~50 stk)                         |
+| Galvaniseret tagpapsøm                          | 1 æsk |     |      | 1 æsk  | Selvbyggerpap på OSB (~150 stk)                       |
 
 ---
 
@@ -67,13 +70,14 @@ Ved V1-bæringen er det den indre kant (mod bygningen, position 315 mm) der er 7
 
 **X-positioner for de 13 spær (på tværs af bygningen):**
 
-| Type        | Antal | X-positioner                                                  |
-| ----------- | ----- | ------------------------------------------------------------- |
-| Vindskede V | 1     | X = -220                                                      |
-| Gable V3    | 1     | X = 0 (hviler også fladt på V3's skrå toprem hele vejen)      |
-| Indre       | 9     | X = 600, 1200, 1800, 2400, 3000, 3600, 4200, 4800, 5400       |
-| Gable V4    | 1     | X = 5955 (hviler også fladt på V4's skrå toprem)              |
-| Vindskede H | 1     | X = 6175                                                      |
+| Type        | Antal | Zone | X-positioner                                                  |
+| ----------- | ----- | ---- | ------------------------------------------------------------- |
+| Vindskede V | 1     | Hus  | X = -220                                                      |
+| Gable V3    | 1     | Hus  | X = 0 (hviler også fladt på V3's skrå toprem hele vejen)      |
+| Indre (hus) | 2     | Hus  | X = 600, 1200                                                 |
+| Indre (yard)| 7     | Yard | X = 1800, 2400, 3000, 3600, 4200, 4800, 5400                  |
+| Gable V4    | 1     | Yard | X = 5955 (hviler også fladt på V4's skrå toprem)              |
+| Vindskede H | 1     | Yard | X = 6175                                                      |
 
 **Vinkelbeslag pr. spær:**
 
@@ -159,23 +163,6 @@ Cap'er der glider ned over sternbræt-toppen + den oprullede tagpap-kant. Beskyt
 | Højre-eave   | 2910 mm | 3   |
 
 Glides ned over sternbræt-toppen (25 mm kapsel-bredde matcher 25 mm sternbræt-tykkelse). Skrues fast gennem topfladen ind i sternbræt-toppen med rustfri tagskruer c/c ~500 mm. **VIGTIGT:** Læg en stribe TagSealer (bitumen-fugemasse, IKKE silikone) UNDER sternkapselen før montering — tætningslag mellem den oprullede tagpap og alu-cap'en. Overlap mellem to sternkapsler: 50 mm, topstykket OVENPÅ bundstykket i vand-strømmens retning.
-
----
-
-## Tagrende 110 mm + nedløb Ø75 mm (kun bag-eave)
-
-Tagrende monteres KUN på bag-eaven (LAV side, hvor vandet løber). Front-eave er højeste punkt — der løber ingen vand der.
-
-| Element                           | Antal | Detalje                                                  |
-| --------------------------------- | ----- | -------------------------------------------------------- |
-| Tagrende-stykker 110 mm           | 1 sæt | 6,5 m langs bag-eaven                                    |
-| Tagrende-beslag                   | 12 stk | c/c 550 mm — fastgjort i sternbræt-bag                  |
-| Endebund                          | 2 stk | Lukker tagrendens venstre + højre ende                   |
-| Bladsamler 75-82 mm               | 1 stk | Filter mellem tagrende og nedløb (højre ende)            |
-| Nedløbsrør Ø75 mm × 3 m           | 1 stk | Fra tagrende-bund ned forbi sternbræt                    |
-| Nedløbsbøjning Ø75 mm             | 2 stk | 1 ved toppen (tagrende → lodret rør), 1 i bunden (ud mod faldsten) |
-
-Nedløb placeres i højre ende af tagrenden (ved X = 6220). Føres ned langs V4-væggens udvendige side til faldsten eller regnvandsfaskine — IKKE direkte mod jorden ved fundamentet (underminerer soklen over tid).
 
 ---
 

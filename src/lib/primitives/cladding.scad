@@ -144,63 +144,6 @@ module clad_wall_mono_pitch_with_cutout(origin, len, h_high, h_low, axis="X",
     }
 }
 
-// Gable end wall: a rectangle of cladding clipped to a gable triangle.
-// The gable peak sits at `len/2` along the wall axis. `eave_h` is the wall
-// height at the eaves; `ridge_h` is the height at the peak.
-module clad_wall_gable(origin, len, eave_h, ridge_h, axis="X",
-                       palette=DEFAULT_PALETTE, clad=DEFAULT_CLAD) {
-    ox = origin[0]; oy = origin[1]; oz = origin[2];
-    full_h = ridge_h + cs_board_h(clad);
-    th = cs_thick(clad);
-    difference() {
-        clad_wall_rect(origin, len, full_h, axis, palette, clad);
-        // Two wedges, one each side of the ridge.
-        if (axis == "X") {
-            // Left wedge: at X=ox the cut starts at eave_h; at X=ox+len/2 it
-            // reaches ridge_h.
-            hull() {
-                translate([ox - 10, oy - 10, oz + eave_h])
-                    cube([10, th + 20, 2000]);
-                translate([ox + len/2, oy - 10, oz + ridge_h])
-                    cube([10, th + 20, 2000]);
-            }
-            // Right wedge: from ridge at center down to eave at X=ox+len.
-            hull() {
-                translate([ox + len/2, oy - 10, oz + ridge_h])
-                    cube([10, th + 20, 2000]);
-                translate([ox + len, oy - 10, oz + eave_h])
-                    cube([10, th + 20, 2000]);
-            }
-        } else {
-            hull() {
-                translate([ox - 10, oy - 10, oz + eave_h])
-                    cube([th + 20, 10, 2000]);
-                translate([ox - 10, oy + len/2, oz + ridge_h])
-                    cube([th + 20, 10, 2000]);
-            }
-            hull() {
-                translate([ox - 10, oy + len/2, oz + ridge_h])
-                    cube([th + 20, 10, 2000]);
-                translate([ox - 10, oy + len, oz + eave_h])
-                    cube([th + 20, 10, 2000]);
-            }
-        }
-    }
-}
-
-// L-shaped corner trim post — used at v1's back-right exterior corner.
-module corner_trim_post(pos, height, trim_w=50, trim_t=22,
-                        palette=DEFAULT_PALETTE) {
-    color(pal_trim(palette)) {
-        translate([pos[0] - trim_t, pos[1] - trim_t, pos[2]])
-            cube([trim_t, trim_t, height]);
-        translate([pos[0] - trim_w, pos[1] - trim_t, pos[2]])
-            cube([trim_w, trim_t, height]);
-        translate([pos[0] - trim_t, pos[1] - trim_w, pos[2]])
-            cube([trim_t, trim_w, height]);
-    }
-}
-
 // ============================================================================
 // Board-on-board (1-på-2) cladding primitives.
 // Vertical orientation — boards run along +Z. Two layers:

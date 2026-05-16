@@ -1,0 +1,160 @@
+// YARD framing — DPC + sill + studs + yard-door framed opening + top plate
+// for the yard segment (X = hl..ll). Self-contained: all helpers are local
+// to this file so the yard folder is independent of house. The junction stud
+// at X=hl belongs to HOUSE; yard's V1/V2 segments start clean at X=hl.
+
+include <../../lib/defaults.scad>
+include <../config.scad>
+
+DPC_COLOR    = [0.10, 0.10, 0.12];
+DPC_T        = 2;
+DPC_W        = 100;
+
+PLATE_DEPTH  = RH_POST_W;
+PLATE_HEIGHT = RH_SILL_H;
+
+STUD_DEPTH   = 95;
+STUD_THICK   = 45;
+STUD_C2C     = 600;
+
+WALL_TOP_HIGH = RH_BASE_H + RH_EH_FRONT;
+WALL_TOP_LOW  = RH_BASE_H + RH_EH_BACK;
+STUD_BOTTOM_Z = RH_BASE_H + DPC_T + PLATE_HEIGHT;
+
+JAMB_BUFFER = 300;
+function _jamb_bx() = STUD_THICK + JAMB_BUFFER;
+
+function wall_top_z(y) =
+    WALL_TOP_HIGH - (WALL_TOP_HIGH - WALL_TOP_LOW) * y / RH_WIDTH;
+function stud_top_z(y) = wall_top_z(y) - PLATE_HEIGHT;
+
+function _in_any_skip(c, ranges) =
+    len([for (r = ranges) if (c >= r[0] && c <= r[1]) 1]) > 0;
+
+module _sloped_stud_y(x, y) {
+    z_top_front = stud_top_z(y);
+    z_top_back  = stud_top_z(y + STUD_THICK);
+    hull() {
+        translate([x, y, STUD_BOTTOM_Z])
+            cube([STUD_DEPTH, STUD_THICK, 0.1]);
+        translate([x, y, z_top_front - 0.1])
+            cube([STUD_DEPTH, 0.1, 0.1]);
+        translate([x, y + STUD_THICK - 0.1, z_top_back - 0.1])
+            cube([STUD_DEPTH, 0.1, 0.1]);
+    }
+}
+
+module _sloped_top_plate(x, y0, y1) {
+    sw = PLATE_HEIGHT;
+    z0 = wall_top_z(y0) - sw;
+    z1 = wall_top_z(y1) - sw;
+    hull() {
+        translate([x, y0, z0])        cube([STUD_DEPTH, 0.01, sw]);
+        translate([x, y1 - 0.01, z1]) cube([STUD_DEPTH, 0.01, sw]);
+    }
+}
+
+module _studs_one_wall(origin, length, axis, stud_height,
+                       skip_ranges=[], palette=DEFAULT_PALETTE) {
+    z = STUD_BOTTOM_Z;
+    end_stud_x = length - STUD_THICK;
+    last_loop_x     = floor(end_stud_x / STUD_C2C) * STUD_C2C;
+    last_loop_right = last_loop_x + STUD_THICK;
+    emit_end_stud   = (end_stud_x - last_loop_right) >= 100;
+
+    color(pal_post(palette))
+    if (axis == "X") {
+        for (x = [0 : STUD_C2C : end_stud_x])
+            if (!_in_any_skip(origin[0] + x + STUD_THICK/2, skip_ranges))
+                translate([origin[0] + x, origin[1], z])
+                    cube([STUD_THICK, STUD_DEPTH, stud_height]);
+        if (emit_end_stud)
+            translate([origin[0] + end_stud_x, origin[1], z])
+                cube([STUD_THICK, STUD_DEPTH, stud_height]);
+    } else {
+        for (y = [0 : STUD_C2C : end_stud_x])
+            if (!_in_any_skip(origin[1] + y + STUD_THICK/2, skip_ranges))
+                _sloped_stud_y(origin[0], origin[1] + y);
+        if (emit_end_stud)
+            _sloped_stud_y(origin[0], origin[1] + end_stud_x);
+    }
+}
+
+// Framed yard door (axis X, flat HIGH top, no sill).
+module _render_yard_door_framing(palette = DEFAULT_PALETTE) {
+    opening_pos = RH_YARD_DOOR_X;
+    opening_w   = RH_YARD_DOOR_W;
+    opening_z   = STUD_BOTTOM_Z;
+    opening_h   = RH_YARD_DOOR_H;
+    z_header_bot = opening_z + opening_h;
+    z_header_top = z_header_bot + PLATE_HEIGHT;
+    crip_above_h = WALL_TOP_HIGH - PLATE_HEIGHT - z_header_top;
+
+    color(pal_post(palette)) {
+        translate([opening_pos, 0, z_header_bot])
+            cube([opening_w, STUD_DEPTH, PLATE_HEIGHT]);
+        if (crip_above_h > 50)
+            for (cx = [STUD_C2C/2 : STUD_C2C : opening_w - STUD_THICK/2])
+                translate([opening_pos + cx - STUD_THICK/2, 0, z_header_top])
+                    cube([STUD_THICK, STUD_DEPTH, crip_above_h]);
+    }
+}
+
+// ============================================================================
+// YARD entry — X=hl..ll segment of V1/V2 + V4. No junction stud (house owns it).
+// ============================================================================
+module RenderYardFraming(palette = DEFAULT_PALETTE) {
+    ll = RH_LENGTH; ww = RH_WIDTH; hl = RH_HOUSE_LEN;
+    h_high = WALL_TOP_HIGH - STUD_BOTTOM_Z - PLATE_HEIGHT;
+    h_low  = WALL_TOP_LOW  - STUD_BOTTOM_Z - PLATE_HEIGHT;
+    bx     = _jamb_bx();
+    butt_y0  = STUD_DEPTH;
+    butt_len = ww - 2 * STUD_DEPTH;
+    sd = PLATE_DEPTH; sw = PLATE_HEIGHT;
+
+    // DPC — V1 + V2 segments [hl..ll] + V4 cross at X=ll.
+    color(DPC_COLOR) {
+        translate([hl, 0, RH_BASE_H])         cube([ll - hl, DPC_W, DPC_T]);
+        translate([hl, ww - DPC_W, RH_BASE_H]) cube([ll - hl, DPC_W, DPC_T]);
+        translate([ll - DPC_W, DPC_W, RH_BASE_H])
+            cube([DPC_W, ww - 2*DPC_W, DPC_T]);
+    }
+
+    // Sill plate.
+    color(pal_post(palette)) {
+        translate([hl, 0, RH_BASE_H + DPC_T])         cube([ll - hl, sd, sw]);
+        translate([hl, ww - sd, RH_BASE_H + DPC_T])   cube([ll - hl, sd, sw]);
+        translate([ll - sd, sd, RH_BASE_H + DPC_T])
+            cube([sd, ww - 2*sd, sw]);
+    }
+
+    // Top plate — V1/V2 flat segments + sloped V4.
+    color(pal_post(palette)) {
+        translate([hl, 0, WALL_TOP_HIGH - sw])      cube([ll - hl, sd, sw]);
+        translate([hl, ww - sd, WALL_TOP_LOW - sw]) cube([ll - hl, sd, sw]);
+        _sloped_top_plate(ll - sd, butt_y0, ww - sd);
+    }
+
+    // V1[hl..ll] studs — flat HIGH. Yard door at RH_YARD_DOOR_X.
+    front_skip = [[RH_YARD_DOOR_X - bx, RH_YARD_DOOR_X + RH_YARD_DOOR_W + bx]];
+    _studs_one_wall([hl, 0, 0], ll - hl, "X", h_high,
+                    skip_ranges=front_skip, palette=palette);
+
+    // V2[hl..ll] studs — flat LOW.
+    _studs_one_wall([hl, ww - STUD_DEPTH, 0], ll - hl, "X", h_low,
+                    palette=palette);
+
+    // V4 — sloped Y wall, no openings.
+    _studs_one_wall([ll - STUD_DEPTH, butt_y0, 0], butt_len, "Y", h_low,
+                    palette=palette);
+
+    // Yard-door jamb studs.
+    color(pal_post(palette)) {
+        translate([RH_YARD_DOOR_X - STUD_THICK, 0, STUD_BOTTOM_Z])
+            cube([STUD_THICK, STUD_DEPTH, h_high]);
+        translate([RH_YARD_DOOR_X + RH_YARD_DOOR_W, 0, STUD_BOTTOM_Z])
+            cube([STUD_THICK, STUD_DEPTH, h_high]);
+    }
+
+    _render_yard_door_framing(palette);
+}
