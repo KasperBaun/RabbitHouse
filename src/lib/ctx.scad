@@ -1,6 +1,4 @@
-// Context vectors and accessors. Things that travel together get bundled,
-// so library modules don't grow 15-arg signatures.
-//
+// Context vectors and accessors.
 // Conventions:
 //  - dims:      basic geometric envelope (length, width, eave height, ...)
 //  - palette:   colors used by every module
@@ -82,7 +80,7 @@ function cs_step(c)    = c[0] - c[1];
 
 // --- bob_spec (board-on-board cladding) -------------------------------------
 //
-// Vertical 1-på-2 cladding: two layers of boards. Back layer stepped at
+// Vertical board-on-board cladding: two layers of boards. Back layer stepped at
 // pitch = board_w + back_gap; front layer centred on the gaps, overlapping
 // each adjacent back board by `overlap` mm per side.
 //   board_w  = board width along the wall (e.g. 150 mm)

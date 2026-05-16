@@ -7,14 +7,49 @@
 // sits in a frostfri trench (~80 cm dig, 20 cm stabilgrus bottom layer,
 // top of blocks at grade Z=0).
 //
-// fundablok_ring() renders a simplified solid extrusion in concrete
-// colour; individual blocks and forbandt joints are not visualised.
-// Block counts are tracked in docs/version 3/materialeliste.csv.
+// fundablok_ring() renders each block individually with halvstensforbandt
+// offsets — odd courses are shifted ½ block (250 mm) along the wall axis
+// so vertical seams stagger between courses. Strips whose clear span
+// isn't a multiple of 500 mm get a clipped end block (same as real
+// practice — cut block on site).
 
-FUNDABLOK_L      = 500;
-FUNDABLOK_W      = 150;
-FUNDABLOK_H      = 200;
-FUNDABLOK_COLOR  = [0.78, 0.76, 0.72];
+FUNDABLOK_L         = 500;
+FUNDABLOK_W         = 150;
+FUNDABLOK_H         = 200;
+FUNDABLOK_COLOR     = [0.78, 0.76, 0.72];
+FUNDABLOK_JOINT     = 3;     // visible seam between blocks in a course
+FUNDABLOK_JOINT_Z   = 2;     // visible seam between courses
+
+// One row of fundabloks along +X within a strip of given length.
+//   origin       = [x, y] of strip's outer-bottom corner
+//   length       = strip length along X
+//   z            = block bottom Z
+//   start_offset = X position of first joint (0 for even courses, -L/2
+//                  for odd courses to stagger seams)
+module _fb_strip_x(origin, length, z, start_offset) {
+    bl = FUNDABLOK_L; bw = FUNDABLOK_W; bh = FUNDABLOK_H;
+    j  = FUNDABLOK_JOINT;
+    for (raw_x = [start_offset - bl : bl : length]) {
+        x0 = max(raw_x, 0);
+        x1 = min(raw_x + bl, length);
+        if (x1 - x0 > 1)
+            translate([origin[0] + x0 + j/2, origin[1] + j/2, z])
+                cube([x1 - x0 - j, bw - j, bh - FUNDABLOK_JOINT_Z]);
+    }
+}
+
+// One row of fundabloks along +Y within a strip of given length.
+module _fb_strip_y(origin, length, z, start_offset) {
+    bl = FUNDABLOK_L; bw = FUNDABLOK_W; bh = FUNDABLOK_H;
+    j  = FUNDABLOK_JOINT;
+    for (raw_y = [start_offset - bl : bl : length]) {
+        y0 = max(raw_y, 0);
+        y1 = min(raw_y + bl, length);
+        if (y1 - y0 > 1)
+            translate([origin[0] + j/2, origin[1] + y0 + j/2, z])
+                cube([bw - j, y1 - y0 - j, bh - FUNDABLOK_JOINT_Z]);
+    }
+}
 
 // Continuous fundablok ring around a [ll × ww] rectangle with optional
 // cross-walls at the X positions in `partitions_x`. The ring outer face
@@ -33,22 +68,26 @@ FUNDABLOK_COLOR  = [0.78, 0.76, 0.72];
 //   top_z         — Z of the top course's top face (sokkel level)
 module fundablok_ring(ll, ww, courses = 3, partitions_x = [], top_z = 0) {
     bw      = FUNDABLOK_W;
+    bl      = FUNDABLOK_L;
     h_per   = FUNDABLOK_H;
     total_h = courses * h_per;
     z_bot   = top_z - total_h;
 
-    color(FUNDABLOK_COLOR) {
-        // Outer perimeter ring: solid rectangle minus inner cavity.
-        // Outer face flush at [0,0]..[ll,ww]; ring extends inward by bw.
-        difference() {
-            translate([0, 0, z_bot])
-                cube([ll, ww, total_h]);
-            translate([bw, bw, z_bot - 1])
-                cube([ll - 2*bw, ww - 2*bw, total_h + 2]);
-        }
-        // Interior cross-walls under load-bearing partitions
+    color(FUNDABLOK_COLOR)
+    for (c = [0 : courses - 1]) {
+        z   = z_bot + c * h_per;
+        off = (c % 2 == 0) ? 0 : -bl/2;
+
+        // Front + back strips run the full ring length along X.
+        _fb_strip_x([0, 0],         ll, z, off);
+        _fb_strip_x([0, ww - bw],   ll, z, off);
+
+        // Left + right strips fill the clear span between front and back.
+        _fb_strip_y([0, bw],         ww - 2*bw, z, off);
+        _fb_strip_y([ll - bw, bw],   ww - 2*bw, z, off);
+
+        // Interior cross-walls under load-bearing partitions.
         for (px = partitions_x)
-            translate([px - bw/2, bw, z_bot])
-                cube([bw, ww - 2*bw, total_h]);
+            _fb_strip_y([px - bw/2, bw], ww - 2*bw, z, off);
     }
 }

@@ -1,4 +1,4 @@
-// Default ctx values. Each library file `include`s this so its module
+// Default values. Each library file `include`s this so its module
 // signatures can reference DEFAULT_* as default arg values.
 
 include <ctx.scad>

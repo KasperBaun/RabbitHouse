@@ -1,5 +1,3 @@
-// Foundation: fundablok ring + anchor screws.
-
 include <../lib/defaults.scad>
 include <config.scad>
 use <../lib/primitives/fundablok.scad>
