@@ -16,9 +16,11 @@
 //   render_roof_plates_eternit(cover)                       — full footprint
 //   render_roof_plates_eternit_segment(cover, x_lo, x_hi)   — zone segment
 //
-// hl=1500 and RH_OH_SIDE=220 give x_lo→hl distance = 1720 = 10*B7_PITCH, so
-// the wave phase aligns at X=hl: house+yard rendered separately tile
-// seamlessly in combined view.
+// NOTE: previous hl=1500 + RH_OH_SIDE=220 gav 1720 = 10*B7_PITCH og perfekt
+// fase-alignment ved X=hl. Med hl=2000 + RH_OH_SIDE=220 = 2220 mm passer
+// ikke længere som heltal × B7_PITCH (172) — fasen springer en lille smule
+// ved partition-linjen i combined view. Acceptabel da hus pt. bruger skifer
+// (gable roof); B7-eternit kan stadig vælges som yard-cover.
 
 include <../lib/defaults.scad>
 include <config.scad>

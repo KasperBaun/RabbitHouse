@@ -12,6 +12,7 @@ use <../roof_plates_tagpap.scad>
 use <../roof_plates_eternit.scad>
 use <../roof_plates_polycarb.scad>
 use <../roof_plates_shingles.scad>
+use <../roof_plates_skifer.scad>
 
 module RenderHouseRoofPlates(cover = "tagpap_osb", standalone = false,
                               palette = DEFAULT_PALETTE) {
@@ -21,7 +22,9 @@ module RenderHouseRoofPlates(cover = "tagpap_osb", standalone = false,
     // owned by house, so the cover fully shields it.
     x_hi  = standalone ? hl + RH_OH_SIDE : hl + RH_POST_W/2;
 
-    if (cover == "tagpap_osb" || cover == "tagpap")
+    if (cover == "skifer")
+        render_roof_plates_skifer_gable(palette);
+    else if (cover == "tagpap_osb" || cover == "tagpap")
         render_roof_plates_tagpap_segment(x_lo, x_hi,
                                            has_left_side  = true,
                                            has_right_side = standalone,

@@ -30,9 +30,11 @@ use <designs/yard/roof.scad>
 use <designs/yard/roof_plates.scad>
 use <designs/yard/mesh.scad>
 
-// House gets a real roof — bitumen shingles on OSB:
-//   tagpap_osb | eternit_b7 | eternit_10 | eternit_14 | polycarb | shingles
-house_roof_cover = "shingles";
+// House gets a real roof. "skifer" gives a saddeltag (gable) with ridge
+// along Y — water sheds onto V3 (left) and V5 (partition). All other
+// covers keep the original mono-pitch front-to-back slope.
+//   tagpap_osb | eternit_b7 | eternit_10 | eternit_14 | polycarb | shingles | skifer
+house_roof_cover = "skifer";
 
 // Yard gets a transparent, lower roof — polycarb direct on rafters.
 yard_roof_cover  = "polycarb";
@@ -52,11 +54,11 @@ RenderHouseRoofPlates(house_roof_cover);
 RenderHouseCladding(cladding_type);
 
 // yard (uses lower RH_YARD_EH_* eave heights — separate structure)
-//RenderYardFoundation();
-//RenderYardFraming();
-//RenderYardOpenings();
-//RenderYardRoof(yard_roof_cover);
-//RenderYardRoofPlates(yard_roof_cover);
-//RenderYardMesh();
+RenderYardFoundation();
+RenderYardFraming();
+RenderYardOpenings();
+RenderYardRoof(yard_roof_cover);
+RenderYardRoofPlates(yard_roof_cover);
+RenderYardMesh();
 
 //RenderInterior();

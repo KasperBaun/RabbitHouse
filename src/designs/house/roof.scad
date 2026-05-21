@@ -6,6 +6,7 @@
 include <../../lib/defaults.scad>
 include <../config.scad>
 use <../../lib/primitives/beslag.scad>
+use <roof_gable.scad>
 
 SOFFIT_T = 18;
 
@@ -136,10 +137,14 @@ module _render_fascia_house(eh_back, fascia_top_offset, palette) {
 }
 
 module RenderHouseRoof(roof_cover, palette = DEFAULT_PALETTE) {
-    eh_back           = back_eave_height_for(roof_cover);
-    fascia_top_offset = fascia_top_offset_for(roof_cover);
-    _render_rafters_house(eh_back, palette);
-    _render_lookouts_house(eh_back, palette);
-    _render_soffit_house(eh_back, palette);
-    _render_fascia_house(eh_back, fascia_top_offset, palette);
+    if (is_gable_roof(roof_cover)) {
+        RenderHouseGableRoof(palette);
+    } else {
+        eh_back           = back_eave_height_for(roof_cover);
+        fascia_top_offset = fascia_top_offset_for(roof_cover);
+        _render_rafters_house(eh_back, palette);
+        _render_lookouts_house(eh_back, palette);
+        _render_soffit_house(eh_back, palette);
+        _render_fascia_house(eh_back, fascia_top_offset, palette);
+    }
 }

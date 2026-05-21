@@ -1,21 +1,21 @@
 // Rabbit-house constants. All dimensions in mm.
 //
 // Layout:
-//   X 0..1500    = solid mono-pitch house (rabbit shelter + insulated nest box)
-//   X 1500..6000 = mesh-walled yard (human entry via door on front)
+//   X 0..2000    = solid mono-pitch house (rabbit shelter + insulated nest box)
+//   X 2000..6000 = mesh-walled yard (human entry via door on front)
 //   Y 0          = front (open garden face / human entry / high eave)
-//   Y 2500       = back (prevailing-wind side / low eave / gutter)
+//   Y 3000       = back (prevailing-wind side / low eave / gutter)
 //
 // Roof: ONE continuous mono-pitch slab over the entire footprint, sloping
 // front-to-back. Slope depends on the chosen cover (see RH_EH_BACK and
 // back_eave_height_for(cover) below).
 
 RH_LENGTH       = 6000;
-RH_WIDTH        = 2500;
+RH_WIDTH        = 3000;
 RH_BASE_H       = 120;
 RH_WALL_T       = 100;
-RH_HOUSE_LEN    = 1500;
-RH_RUN_LEN      = 4500;
+RH_HOUSE_LEN    = 2000;
+RH_RUN_LEN      = 4000;
 
 // Wall heights from sokkel-top (Z=RH_BASE_H) to roof underside at the wall
 // face. Drop 200 over 2500 = 4.6 deg, 8 % fall — adequate for tagpap_osb
@@ -155,6 +155,27 @@ function fascia_top_offset_for(cover) =
     : cover == "polycarb" ? (12 + 7)
     : cover == "shingles" ? (18 + 3 + 5) + 7
     : 0;
+
+// ----- Gable roof geometry (used when cover is "skifer" — and future
+// "tagsten"). Ridge runs along Y (parallel to V3 / V5, the 2,5 m walls);
+// water sheds onto V3 (left) and V5 (partition / yard side). Eave Z is
+// flat at the high wall-top so the front door clearance is unchanged.
+G_PITCH_DEG   = 35;
+G_OH_EAVE     = 350;                      // overhang over V3 / V5
+G_OH_RAKE     = 150;                      // overhang past V1 / V2 gables
+G_RIDGE_X     = RH_HOUSE_LEN / 2;         // = 750
+G_EAVE_Z      = RH_BASE_H + RH_EH_FRONT;  // = 2520, flat eave on V3 + V5
+
+function is_gable_roof(cover) = cover == "skifer" || cover == "tagsten";
+
+// Rafter geometry as a function of X. The plane mirrors at G_RIDGE_X.
+// Rafter bottom sits at G_EAVE_Z at the wall edges (x=0, x=RH_HOUSE_LEN).
+function g_rafter_top_z(x) =
+    G_EAVE_Z + RH_RAFTER_H +
+    (G_RIDGE_X - abs(x - G_RIDGE_X)) * tan(G_PITCH_DEG);
+function g_rafter_bottom_z(x)  = g_rafter_top_z(x) - RH_RAFTER_H;
+function g_ridge_top_z()       = g_rafter_top_z(G_RIDGE_X);
+function g_ridge_bottom_z()    = g_rafter_bottom_z(G_RIDGE_X);
 
 // ----- Generic roof-geometry helpers parameterised by (eh_front, eh_back).
 // Use these from any zone renderer; pass house heights for the house and

@@ -18,7 +18,7 @@ include <../config.scad>
 include <../../lib/primitives/fundablok.scad>
 use <../../lib/primitives/beslag.scad>
 
-COURSES = 3;
+COURSES = 4;
 
 module RenderYardFoundation(standalone = false, palette = DEFAULT_PALETTE) {
     ll = RH_LENGTH; ww = RH_WIDTH; bh = RH_BASE_H; hl = RH_HOUSE_LEN;

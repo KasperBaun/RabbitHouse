@@ -137,20 +137,21 @@ URL_AROS_1PA2          = "https://arossavvaerk.dk/vare/1-paa-2-beklaedning-svens
 # Foundation split: house owns perimeter [0..hl] front+back + V3 left + V5
 # partition cross. Yard owns perimeter [hl..ll] front+back + V4 right.
 # In COMBINED build, V5 is shared (house renders it). Linear-meter share:
-# house ~8 m (41 %), yard ~11.5 m (59 %).
+# house 10 m (48 %), yard 11 m (52 %). Begge zoner har 4 skifter (80 cm høj
+# ring, frostfri).
 FUNDAMENT = [
-    ("Fundament", "Stabilgrus 0-32 mm (hus)",       420, "kg",  0.55,  "materialepladsen.dk", "Under hus-strips (~0,25 m³)",                 URL_MATPLADS_STABILGRUS, "Hus"),
-    ("Fundament", "Stabilgrus 0-32 mm (yard)",      605, "kg",  0.55,  "materialepladsen.dk", "Under yard-strips (~0,35 m³)",                URL_MATPLADS_STABILGRUS, "Yard"),
-    ("Fundament", "Fundablok 50x20x15 cm (hus)",     70, "stk", 15.75, "jemogfix.dk",         "1500x2500 ring, 4 skifter halvstensforbandt — 64 + buffer", URL_JF_FUNDABLOK, "Hus"),
-    ("Fundament", "Fundablok 50x20x15 cm (yard)",    75, "stk", 15.75, "jemogfix.dk",         "3-sidet ring (V5 = hus), 3 skifter halvstensforbandt — 69 + buffer", URL_JF_FUNDABLOK, "Yard"),
-    ("Fundament", "Kamstål Ø10 mm × 3 m (hus)",      14, "stk", 45.00, "jemogfix.dk",         "est. — 2 bund + 2 top + lodrette",            URL_JF_ARMERING,         "Hus"),
-    ("Fundament", "Kamstål Ø10 mm × 3 m (yard)",     18, "stk", 45.00, "jemogfix.dk",         "est. — 2 bund + 2 top + lodrette",            URL_JF_ARMERING,         "Yard"),
-    ("Fundament", "Cement 25 kg (hus)",               8, "stk", 75.00, "jemogfix.dk",         "1:4 blanding, ~240 L beton",                  URL_JF_CEMENT,           "Hus"),
-    ("Fundament", "Cement 25 kg (yard)",              9, "stk", 75.00, "jemogfix.dk",         "1:4 blanding, ~260 L beton",                  URL_JF_CEMENT,           "Yard"),
-    ("Fundament", "Støbemix 0-16 mm (hus)",         500, "kg",  0.66,  "materialepladsen.dk", "ca. 0,30 m³",                                 URL_MATPLADS_STOEBEMIX,  "Hus"),
-    ("Fundament", "Støbemix 0-16 mm (yard)",        700, "kg",  0.66,  "materialepladsen.dk", "ca. 0,42 m³",                                 URL_MATPLADS_STOEBEMIX,  "Yard"),
-    ("Fundament", "Ankerskrue M10 × 120 mm (hus)",    6, "stk", 14.95, "jemogfix.dk",         "est. — bundrem-fast: 1 på V1, 1 på V2, 2 på V3, 2 på V5", URL_JF_GEVINDSTANG, "Hus"),
-    ("Fundament", "Ankerskrue M10 × 120 mm (yard)",  10, "stk", 14.95, "jemogfix.dk",         "est. — 4 på V1, 4 på V2, 2 på V4",            URL_JF_GEVINDSTANG,      "Yard"),
+    ("Fundament", "Stabilgrus 0-32 mm (hus)",       510, "kg",  0.55,  "materialepladsen.dk", "Under hus-strips (~0,30 m³)",                 URL_MATPLADS_STABILGRUS, "Hus"),
+    ("Fundament", "Stabilgrus 0-32 mm (yard)",      560, "kg",  0.55,  "materialepladsen.dk", "Under yard-strips (~0,33 m³)",                URL_MATPLADS_STABILGRUS, "Yard"),
+    ("Fundament", "Fundablok 50x20x15 cm (hus)",     86, "stk", 15.75, "jemogfix.dk",         "2000x3000 ring, 4 skifter halvstensforbandt — 80 + buffer", URL_JF_FUNDABLOK, "Hus"),
+    ("Fundament", "Fundablok 50x20x15 cm (yard)",    94, "stk", 15.75, "jemogfix.dk",         "3-sidet ring (V5 = hus), 4 skifter halvstensforbandt — 88 + buffer", URL_JF_FUNDABLOK, "Yard"),
+    ("Fundament", "Kamstål Ø10 mm × 3 m (hus)",      18, "stk", 45.00, "jemogfix.dk",         "est. — 2 bund (8 stk for 10 m) + 2 top (8 stk) + 2 lodrette", URL_JF_ARMERING, "Hus"),
+    ("Fundament", "Kamstål Ø10 mm × 3 m (yard)",     18, "stk", 45.00, "jemogfix.dk",         "est. — 2 bund (8 stk for 11 m) + 2 top (8 stk) + 2 lodrette", URL_JF_ARMERING, "Yard"),
+    ("Fundament", "Cement 25 kg (hus)",              10, "stk", 75.00, "jemogfix.dk",         "1:4 blanding, ~300 L beton",                  URL_JF_CEMENT,           "Hus"),
+    ("Fundament", "Cement 25 kg (yard)",             11, "stk", 75.00, "jemogfix.dk",         "1:4 blanding, ~330 L beton",                  URL_JF_CEMENT,           "Yard"),
+    ("Fundament", "Støbemix 0-16 mm (hus)",         625, "kg",  0.66,  "materialepladsen.dk", "ca. 0,38 m³",                                 URL_MATPLADS_STOEBEMIX,  "Hus"),
+    ("Fundament", "Støbemix 0-16 mm (yard)",        705, "kg",  0.66,  "materialepladsen.dk", "ca. 0,43 m³",                                 URL_MATPLADS_STOEBEMIX,  "Yard"),
+    ("Fundament", "Ankerskrue M10 × 120 mm (hus)",   10, "stk", 14.95, "jemogfix.dk",         "est. — bundrem-fast: 2 på V1, 2 på V2, 3 på V3, 3 på V5", URL_JF_GEVINDSTANG, "Hus"),
+    ("Fundament", "Ankerskrue M10 × 120 mm (yard)",  11, "stk", 14.95, "jemogfix.dk",         "est. — 4 på V1, 4 på V2, 3 på V4",            URL_JF_GEVINDSTANG,      "Yard"),
     ("Fundament", "M10 møtrikker + skiver (12-pak)",  2, "pk.", 28.95, "jemogfix.dk",         "Fastgør bundrem til ankerskrue ovenfra (1 pak pr. zone)", URL_JF_M10_MOETRIK, "Fælles"),
 ]
 

@@ -1,5 +1,5 @@
 // HOUSE foundation — fundablok perimeter ring under the 4 house walls.
-// Outer dimensions 1500 × 2500 mm (X=0..hl, Y=0..ww).
+// Outer dimensions 2000 × 3000 mm (X=0..hl, Y=0..ww).
 //
 // Halvstensforbandt with alternating corner ownership per course (the way a
 // real bricklayer lays it):
