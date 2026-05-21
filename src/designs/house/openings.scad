@@ -1,5 +1,5 @@
-// HOUSE openings — human door in the partition (V5) and the side window
-// in V3. Self-contained: zone-specific geometry only.
+// HOUSE openings — human door in the partition (V5). Self-contained:
+// zone-specific geometry only.
 
 include <../../lib/defaults.scad>
 include <../config.scad>
@@ -15,9 +15,6 @@ PARTITION_X   = RH_HOUSE_LEN;
 // frame's inner X face = wall inner face = hl - WALL_DEPTH.
 PART_INNER_X  = PARTITION_X - WALL_DEPTH;
 
-PLEXI_T       = 6;
-PLEXI_OVERLAP = 30;
-PLEXI_C       = [0.88, 0.94, 0.96, 0.50];
 HINGE_C       = [0.30, 0.30, 0.32];
 HANDLE_C      = [0.85, 0.85, 0.88];
 
@@ -65,18 +62,6 @@ module _render_human_door(palette) {
             cube([15, 8, 100]);
 }
 
-// Side window — 6 mm plexi screwed outside V3's rough opening.
-module _render_side_window() {
-    y0 = RH_SIDE_WIN_Y - PLEXI_OVERLAP;
-    y1 = RH_SIDE_WIN_Y + RH_SIDE_WIN_W + PLEXI_OVERLAP;
-    z0 = FLOOR_Z + RH_SIDE_WIN_Z - PLEXI_OVERLAP;
-    z1 = FLOOR_Z + RH_SIDE_WIN_Z + RH_SIDE_WIN_H + PLEXI_OVERLAP;
-    color(PLEXI_C)
-    translate([-PLEXI_T, y0, z0])
-        cube([PLEXI_T, y1 - y0, z1 - z0]);
-}
-
 module RenderHouseOpenings(palette = DEFAULT_PALETTE) {
     _render_human_door(palette);
-    _render_side_window();
 }

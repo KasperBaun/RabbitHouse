@@ -1,17 +1,22 @@
 // YARD roof-plate dispatcher — renders the cover over the yard's roof
-// segment. Three options: "tagpap", "eternit", "polycarb". Passes yard
-// depth + Y-offset + yard eave heights to the shared segment renderers.
+// segment. Four options: "tagpap", "eternit", "polycarb", "mesh".
+// Passes yard depth + Y-offset + yard eave heights to the shared segment
+// renderers.
 //   standalone = false (combined build): plates cover X = hl..ll+OH_SIDE;
 //                                        no left-side fascia cap (house
 //                                        provides that).
 //   standalone = true  (yard alone)    : plates cover X = hl-OH_SIDE..ll+OH_SIDE;
 //                                        full left + right overhang.
+//
+// "mesh" is an open-top aviary lid — wire stops inside the enclosure
+// (X=hl..ll), no overhang. Predator-proof, no weather barrier.
 
 include <../../lib/defaults.scad>
 include <../config.scad>
 use <../roof_plates_tagpap.scad>
 use <../roof_plates_eternit.scad>
 use <../roof_plates_polycarb.scad>
+use <../roof_plates_mesh.scad>
 
 module RenderYardRoofPlates(cover = "polycarb", standalone = false,
                              palette = DEFAULT_PALETTE) {
@@ -51,6 +56,15 @@ module RenderYardRoofPlates(cover = "polycarb", standalone = false,
                                              depth    = yard_depth,
                                              y_offset = yard_y_offset,
                                              palette  = palette);
+    else if (cover == "mesh")
+        // Wire lid only covers enclosed area (X=hl..ll); overhangs stay open.
+        render_roof_plates_mesh_segment(hl, ll,
+                                         eh_front = RH_YARD_EH_FRONT,
+                                         eh_back  = RH_YARD_EH_BACK,
+                                         depth    = yard_depth,
+                                         y_offset = yard_y_offset,
+                                         mesh     = RH_MESH,
+                                         palette  = palette);
     else
         assert(false, str("Unknown cover: ", cover));
 }

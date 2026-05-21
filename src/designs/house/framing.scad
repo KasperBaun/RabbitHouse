@@ -207,24 +207,20 @@ module RenderHouseFraming(palette = DEFAULT_PALETTE) {
     _studs_one_wall([0, ww - STUD_DEPTH, 0], hl, "X", h_low,
                     palette=palette, emit_end=false);
 
-    // V3 — sloped Y wall with side-window cutout.
-    left_skip = [[RH_SIDE_WIN_Y - bx, RH_SIDE_WIN_Y + RH_SIDE_WIN_W + bx]];
-    _studs_one_wall([0, butt_y0, 0], butt_len, "Y", h_low,
-                    skip_ranges=left_skip, palette=palette);
+    // V3 — solid Y wall, no openings (window removed; gable rafters above).
+    _studs_one_wall([0, butt_y0, 0], butt_len, "Y", h_high,
+                    palette=palette);
 
-    // V5 partition — sloped Y wall with human-door + pet-door cutouts.
+    // V5 partition — Y wall with human-door + pet-door cutouts.
     partition_skip = [
         [RH_HOUSE_DOOR_Y - bx, RH_HOUSE_DOOR_Y + RH_HOUSE_DOOR_W + bx],
         [RH_PET_DOOR_Y   - bx, RH_PET_DOOR_Y   + RH_PET_DOOR_W   + bx]
     ];
-    _studs_one_wall([hl - STUD_DEPTH, butt_y0, 0], butt_len, "Y", h_low,
+    _studs_one_wall([hl - STUD_DEPTH, butt_y0, 0], butt_len, "Y", h_high,
                     skip_ranges=partition_skip, palette=palette);
 
-    // Jamb studs for house openings.
+    // Jamb studs for V5 openings.
     color(pal_post(palette)) {
-        _sloped_stud_y(0, RH_SIDE_WIN_Y - STUD_THICK);
-        _sloped_stud_y(0, RH_SIDE_WIN_Y + RH_SIDE_WIN_W);
-
         _sloped_stud_y(hl - STUD_DEPTH, RH_HOUSE_DOOR_Y - STUD_THICK);
         _sloped_stud_y(hl - STUD_DEPTH, RH_HOUSE_DOOR_Y + RH_HOUSE_DOOR_W);
 
@@ -238,24 +234,20 @@ module RenderHouseFraming(palette = DEFAULT_PALETTE) {
         translate([hl - STUD_THICK, 0, STUD_BOTTOM_Z])
             cube([STUD_THICK, STUD_DEPTH, h_high]);
         translate([hl - STUD_THICK, ww - STUD_DEPTH, STUD_BOTTOM_Z])
-            cube([STUD_THICK, STUD_DEPTH, h_low]);
+            cube([STUD_THICK, STUD_DEPTH, h_high]);
     }
 
-    // Framed openings.
-    _render_framed_opening(wall_origin = [0, 0, 0], axis = "Y",
-                           opening_pos = RH_SIDE_WIN_Y, opening_w = RH_SIDE_WIN_W,
-                           opening_z = STUD_BOTTOM_Z + RH_SIDE_WIN_Z,
-                           opening_h = RH_SIDE_WIN_H,
-                           has_sill = true, wall_top = WALL_TOP_LOW,
-                           sloped = true, palette = palette);
+    // Framed openings — V5 doors only. With h_high == 2000 the top plate
+    // doubles as the door header; the _render_framed_opening helper emits
+    // a header beam that coincides with the top plate (visually one beam).
     _render_framed_opening(wall_origin = [hl - STUD_DEPTH, 0, 0], axis = "Y",
                            opening_pos = RH_HOUSE_DOOR_Y, opening_w = RH_HOUSE_DOOR_W,
                            opening_z = STUD_BOTTOM_Z, opening_h = RH_HOUSE_DOOR_H,
-                           has_sill = false, wall_top = WALL_TOP_LOW,
+                           has_sill = false, wall_top = WALL_TOP_HIGH,
                            sloped = true, palette = palette);
     _render_framed_opening(wall_origin = [hl - STUD_DEPTH, 0, 0], axis = "Y",
                            opening_pos = RH_PET_DOOR_Y, opening_w = RH_PET_DOOR_W,
                            opening_z = RH_FLOOR_TOP + 60, opening_h = RH_PET_DOOR_H,
-                           has_sill = false, wall_top = WALL_TOP_LOW,
+                           has_sill = false, wall_top = WALL_TOP_HIGH,
                            sloped = true, palette = palette);
 }

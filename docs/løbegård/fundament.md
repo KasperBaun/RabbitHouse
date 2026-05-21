@@ -11,8 +11,9 @@ løbegårdens venstre side — så løbegårdens egen ring har KUN 3 sider. I
 **standalone-build** (`standalone = true`) renderes også en venstre strip
 ved X = hl så løbegården står alene.
 
-Ringen er 4000 × 3000 mm udvendigt og 80 cm høj (4 skifter à 20 cm). 12 cm
-sokkel over jord, 68 cm under jord — samme dybde som hus-fundamentet.
+Ringen er 4000 × 2000 mm udvendigt (yard sidder ved Y = 1000..3000 så hus'ets
+front rager 1000 mm forbi yard-fronten) og 80 cm høj (4 skifter à 20 cm).
+12 cm sokkel over jord, 68 cm under jord — samme dybde som hus-fundamentet.
 
 ```
         Y
@@ -20,11 +21,11 @@ sokkel over jord, 68 cm under jord — samme dybde som hus-fundamentet.
    Y=3000 ┌─────────────────────────────────────────┐  ← V2 bag (yard-segment)
           │                                         │
           │                                         │V4
-          │       Løbegård X = 2000..6000           │  ← 3000 mm
-          │       Y = 0..3000                       │    (V4 højre)
+          │       Løbegård X = 2000..6000           │  ← 2000 mm
+          │       Y = 1000..3000                    │    (V4 højre)
           │                                         │
           │       (V5 = husets højre væg → fælles)  │
-   Y=0    └─────────────────────────────────────────┘  ← V1 front (yard-segment)
+   Y=1000 └─────────────────────────────────────────┘  ← V1 front (yard-segment)
           X=2000                                X=6000
                        4000 mm
                   (V1, V2 yard-segment)
@@ -35,7 +36,7 @@ sokkel over jord, 68 cm under jord — samme dybde som hus-fundamentet.
 
 | Egenskab | Værdi |
 |---|---|
-| Løbegård-footprint udvendigt | 4000 × 3000 mm (X = 2000..6000, Y = 0..3000) |
+| Løbegård-footprint udvendigt | 4000 × 2000 mm (X = 2000..6000, Y = 1000..3000) |
 | Antal skifter | 4 |
 | Total ringhøjde | 800 mm (4 × 200) |
 | Sokkel-højde over jord | 120 mm (Z = +120 mm = RH_BASE_H) |

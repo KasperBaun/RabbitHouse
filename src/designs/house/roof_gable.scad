@@ -30,21 +30,6 @@ function _gr_clad_stickout() =
     RH_HOUSEWRAP_T + RH_COUNTER_BATTEN_T + cs_thick(RH_CLAD);
 
 // ============================================================================
-// Flat top plates (rem) on V3 and V5 — these replace the sloped plates in
-// gable mode by sitting above them. 45x95 lying flat.
-// ============================================================================
-module _gr_top_plates(palette) {
-    sd = RH_POST_W;     // 95
-    sw = RH_SILL_H;     // 45
-    color(pal_post(palette)) {
-        translate([0, 0, G_EAVE_Z - sw])
-            cube([sd, RH_HOUSE_DEPTH, sw]);
-        translate([RH_HOUSE_LEN - sd, 0, G_EAVE_Z - sw])
-            cube([sd, RH_HOUSE_DEPTH, sw]);
-    }
-}
-
-// ============================================================================
 // One full rafter pair (left half + right half) at Y position y0.
 // ============================================================================
 module _gr_rafter_pair(y0, palette) {
@@ -236,20 +221,6 @@ module _gr_gable_triangle(y_outer, y_inner, palette) {
     );
 }
 
-// V2 has its existing klink cladding 200 mm below the new flat eave. Render
-// additional klink boards from the existing cladding top up to the eave so
-// the wall reads as one continuous lap-board face — no smooth brown patch.
-module _gr_gable_knevaeg_v2(palette) {
-    s        = RH_HOUSEWRAP_T + RH_COUNTER_BATTEN_T;   // 23
-    z_clad   = RH_BASE_H + RH_EH_BACK;                 // 2320
-    z_eave   = G_EAVE_Z;                               // 2520
-    // Cladding origin Y matches the existing V2 klink (clad_wall_rect adds
-    // thickness in +Y, so origin Y is the back of the boards).
-    clad_wall_rect([0, RH_HOUSE_DEPTH + s, z_clad],
-                    RH_HOUSE_LEN, z_eave - z_clad, "X",
-                    palette, RH_CLAD);
-}
-
 module _gr_gable_v1(palette) {
     so = _gr_clad_stickout();
     _gr_gable_triangle(-so, 0, palette);
@@ -257,73 +228,13 @@ module _gr_gable_v1(palette) {
 
 module _gr_gable_v2(palette) {
     so = _gr_clad_stickout();
-    _gr_gable_knevaeg_v2(palette);
     _gr_gable_triangle(RH_HOUSE_DEPTH + so, RH_HOUSE_DEPTH, palette);
-}
-
-// ============================================================================
-// Knevæg gap-fill on V3 and V5 — the existing sloped wall top is up to
-// 200 mm below the new flat eave at the back. Render thin triangular
-// trim panels at the outer cladding face filling the gap so the eave reads
-// as a clean flat horizontal line.
-// ============================================================================
-module _gr_knevaeg_v3(palette) {
-    so      = _gr_clad_stickout();
-    x_outer = -so;
-    x_inner = -so + 10;
-    z_lo    = RH_BASE_H + RH_EH_BACK;   // 2320
-    z_hi    = G_EAVE_Z;                 // 2520
-    color(pal_panel1(palette))
-    polyhedron(
-        points = [
-            [x_outer, 0,        z_hi],
-            [x_outer, RH_HOUSE_DEPTH, z_hi],
-            [x_outer, RH_HOUSE_DEPTH, z_lo],
-            [x_inner, 0,        z_hi],
-            [x_inner, RH_HOUSE_DEPTH, z_hi],
-            [x_inner, RH_HOUSE_DEPTH, z_lo]
-        ],
-        faces = [
-            [0, 1, 2],
-            [5, 4, 3],
-            [0, 3, 4, 1],
-            [1, 4, 5, 2],
-            [2, 5, 3, 0]
-        ]
-    );
-}
-
-module _gr_knevaeg_v5(palette) {
-    so      = _gr_clad_stickout();
-    x_outer = RH_HOUSE_LEN + so;
-    x_inner = x_outer - 10;
-    z_lo    = RH_BASE_H + RH_EH_BACK;
-    z_hi    = G_EAVE_Z;
-    color(pal_panel1(palette))
-    polyhedron(
-        points = [
-            [x_outer, 0,        z_hi],
-            [x_outer, RH_HOUSE_DEPTH, z_hi],
-            [x_outer, RH_HOUSE_DEPTH, z_lo],
-            [x_inner, 0,        z_hi],
-            [x_inner, RH_HOUSE_DEPTH, z_hi],
-            [x_inner, RH_HOUSE_DEPTH, z_lo]
-        ],
-        faces = [
-            [2, 1, 0],
-            [3, 4, 5],
-            [1, 4, 3, 0],
-            [2, 5, 4, 1],
-            [0, 3, 5, 2]
-        ]
-    );
 }
 
 // ============================================================================
 // Top-level entry.
 // ============================================================================
 module RenderHouseGableRoof(palette = DEFAULT_PALETTE) {
-    _gr_top_plates(palette);
     _gr_rafters(palette);
     _gr_ridge_beam(palette);
     _gr_eave_soffit(palette);
@@ -332,6 +243,4 @@ module RenderHouseGableRoof(palette = DEFAULT_PALETTE) {
     _gr_rake_fascia(palette);
     _gr_gable_v1(palette);
     _gr_gable_v2(palette);
-    _gr_knevaeg_v3(palette);
-    _gr_knevaeg_v5(palette);
 }

@@ -37,6 +37,35 @@ module voliere_y(y_start, length, z_base, height, x_pos,
     }
 }
 
+// Horizontal mesh "lid" sloped along Y. Bar plane sits at z = linear
+// interpolation between z_at_y0 (at y_start) and z_at_y1 (at y_start +
+// y_length). Bar thickness grows downward from that plane so the top is a
+// crisp sloped line — useful as an aviary-style mesh top.
+//   x_start, x_length = X extent
+//   y_start, y_length = Y extent
+module voliere_top_sloped(x_start, x_length, y_start, y_length,
+                          z_at_y0, z_at_y1,
+                          palette=DEFAULT_PALETTE, mesh=DEFAULT_MESH) {
+    sp = ms_spacing(mesh);
+    mb = ms_bar(mesh);
+    color(pal_mesh(palette)) {
+        // X-running bars — one per Y row, each at the row's interpolated z.
+        for (yy = [y_start + sp/2 : sp : y_start + y_length - sp/2]) {
+            zz = z_at_y0 + (z_at_y1 - z_at_y0) * (yy - y_start) / y_length;
+            translate([x_start, yy - mb/2, zz - mb])
+                cube([x_length, mb, mb]);
+        }
+        // Y-running bars — one per X column, sloped from z_at_y0 to z_at_y1.
+        for (xx = [x_start + sp/2 : sp : x_start + x_length - sp/2])
+            hull() {
+                translate([xx - mb/2, y_start, z_at_y0 - mb])
+                    cube([mb, 0.01, mb]);
+                translate([xx - mb/2, y_start + y_length - 0.01, z_at_y1 - mb])
+                    cube([mb, 0.01, mb]);
+            }
+    }
+}
+
 // Y-axis run with a sloped top following two corner Z values. Net is
 // rendered at full max height then trimmed by an `intersection()` against
 // a wedge whose top face linearly interpolates from z_top_y0 (at y_start)

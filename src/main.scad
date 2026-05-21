@@ -32,8 +32,10 @@ use <designs/yard/mesh.scad>
 // Choose between 'skifer', 'tagpap' or 'eternit'
 house_roof_cover = "skifer";
 
-// Yard gets a transparent, lower roof — polycarb direct on rafters.
-yard_roof_cover  = "polycarb";
+// Yard is an open-top run — welded-wire lid stretched across the rafters
+// (predator-proof, no weather barrier). Other options: "polycarb",
+// "tagpap", "eternit".
+yard_roof_cover  = "mesh";
 
 // klink | board_on_board | vertical_120
 cladding_type    = "vertical_120";
@@ -50,9 +52,9 @@ RenderHouseFraming();
 //RenderHouseCladding(cladding_type);
 
 // yard (uses lower RH_YARD_EH_* eave heights — separate structure)
-//RenderYardFoundation();
-//RenderYardFraming();
-//RenderYardOpenings();
-//RenderYardRoof(yard_roof_cover);
-//RenderYardRoofPlates(yard_roof_cover);
-//RenderYardMesh();
+RenderYardFoundation();
+RenderYardFraming();
+RenderYardOpenings();
+RenderYardRoof(yard_roof_cover);
+RenderYardRoofPlates(yard_roof_cover);
+RenderYardMesh();

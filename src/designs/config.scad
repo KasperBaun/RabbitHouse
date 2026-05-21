@@ -1,34 +1,35 @@
 // Rabbit-house constants. All dimensions in mm.
 //
-// Layout (L-shape — house front sticks out 500 mm past yard front):
+// Layout (L-shape — house front sticks out 1000 mm past yard front):
 //   X 0..2000    = house  (gable roof, skifer)            Y 0..3000
-//   X 2000..6000 = yard   (monopitch roof, polycarb)      Y 500..3000
+//   X 2000..6000 = yard   (mesh-top run)                  Y 1000..3000
 //   Y 3000       = shared back wall (continuous X=0..6000)
-//   Y 0..500     = house-only zone (yard does not extend here)
+//   Y 0..1000    = house-only zone (yard does not extend here)
 //
 // House and yard have DIFFERENT Y-depths:
 //   RH_HOUSE_DEPTH = 3000 (Y=0..3000)
-//   RH_YARD_DEPTH  = 2500 (Y=500..3000) — offset by RH_YARD_Y_OFFSET=500
+//   RH_YARD_DEPTH  = 2000 (Y=1000..3000) — offset by RH_YARD_Y_OFFSET=1000
 
 RH_LENGTH        = 6000;
 RH_HOUSE_DEPTH   = 3000;             // hus Y-dybde
-RH_YARD_DEPTH    = 2500;             // yard Y-dybde
-RH_YARD_Y_OFFSET = 500;              // yard front-væg's Y-koordinat
+RH_YARD_DEPTH    = 2000;             // yard Y-dybde
+RH_YARD_Y_OFFSET = 1000;             // yard front-væg's Y-koordinat
 RH_BASE_H        = 120;
 RH_WALL_T        = 100;
 RH_HOUSE_LEN     = 2000;
 RH_RUN_LEN       = RH_LENGTH - RH_HOUSE_LEN;  // 4000
 
-// Wall heights from sokkel-top (Z=RH_BASE_H) to roof underside at the wall
-// face. Drop 200 over 2500 = 4.6 deg, 8 % fall — adequate for tagpap
-// (min 2.5 % per spec). Eternit lowers RH_EH_BACK further (see
-// back_eave_height_for()).
+// House wall height from sokkel-top to top-plate top. All 4 walls share
+// this single eave — the gable rafters in roof_gable.scad sit on top and
+// create the pitch. Stack: DPC 2 + bundrem 45 + 2m C24 stud + toprem 45
+// = 2092 mm, so a stud is exactly 2000 mm. RH_EH_BACK kept equal to
+// RH_EH_FRONT so the legacy mono-pitch helpers (yard still uses them via
+// its own RH_YARD_EH_*) degenerate to flat for the house.
 //
-// Heights chosen so standard Danish doors fit:
-//   front (RH_EH_FRONT=2400) takes a 95x205 outdoor door (rough 1070x2120)
-//   partition (RH_EH_BACK=2200) takes a 80x200 internal door (rough 870x2050)
-RH_EH_FRONT     = 2400;
-RH_EH_BACK      = 2200;
+// V5 partition door (RH_HOUSE_DOOR_H=2000) uses the top plate as its
+// header — no separate header + cripple above the rough opening.
+RH_EH_FRONT     = 2092;
+RH_EH_BACK      = 2092;
 
 // Yard walls are shorter than the house so the two roofs read as separate
 // structures (yard reads as a "lean-to" against V5). Front 2100 keeps room
@@ -46,8 +47,9 @@ RH_ROOF_THICK   = 80;
 // Rough opening for a standard 80x200 cm internal door.
 // Y=1500 centres door in partition zone (yard only meets V5 at Y=500..3000).
 // Door spans Y=1500..2370.
+// Door height matches stud length (2000) — top plate doubles as header.
 RH_HOUSE_DOOR_W = 870;
-RH_HOUSE_DOOR_H = 2050;
+RH_HOUSE_DOOR_H = 2000;
 RH_HOUSE_DOOR_Y = 1500;
 
 // Rabbit pet door in the partition (faces +X into yard).
@@ -173,7 +175,7 @@ G_PITCH_DEG   = 35;
 G_OH_EAVE     = 220;                      // overhang over V3 / V5 — tilpasset 133 stk skifer 30×60 (var 350)
 G_OH_RAKE     = 150;                      // overhang past V1 / V2 gables
 G_RIDGE_X     = RH_HOUSE_LEN / 2;         // = 1000
-G_EAVE_Z      = RH_BASE_H + RH_EH_FRONT;  // = 2520, flat eave on V3 + V5
+G_EAVE_Z      = RH_BASE_H + RH_EH_FRONT;  // = 2212, flat eave on all 4 walls
 
 function is_gable_roof(cover) = cover == "skifer";
 
