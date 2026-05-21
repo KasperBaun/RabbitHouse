@@ -52,9 +52,12 @@ RenderHouseFraming();
 //RenderHouseCladding(cladding_type);
 
 // yard (uses lower RH_YARD_EH_* eave heights — separate structure)
+// RenderYardRoof builds spær/lookouts/soffit/sternbrædder — only needed
+// for tagpap/eternit/polycarb covers. With cover="mesh" the lid sits
+// straight on the top plates, so the whole roof skeleton is skipped.
 RenderYardFoundation();
 RenderYardFraming();
 RenderYardOpenings();
-RenderYardRoof(yard_roof_cover);
+if (yard_roof_cover != "mesh") RenderYardRoof(yard_roof_cover);
 RenderYardRoofPlates(yard_roof_cover);
 RenderYardMesh();
