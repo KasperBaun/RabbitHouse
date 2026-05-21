@@ -1,5 +1,6 @@
-// HOUSE roof-plate dispatcher — renders the cover (tagpap or eternit) over
-// the house's roof segment.
+// HOUSE roof-plate dispatcher — renders the cover over the house's roof
+// segment. Three options: "skifer" (gable, gable roof in roof_gable.scad),
+// "tagpap" (mono-pitch OSB + felt), "eternit" (mono-pitch C18 + Cembrit B7).
 //   standalone = false (combined build): plates cover X = -OH_SIDE..hl;
 //                                        no right-side fascia cap (yard
 //                                        provides that).
@@ -10,11 +11,9 @@ include <../../lib/defaults.scad>
 include <../config.scad>
 use <../roof_plates_tagpap.scad>
 use <../roof_plates_eternit.scad>
-use <../roof_plates_polycarb.scad>
-use <../roof_plates_shingles.scad>
 use <../roof_plates_skifer.scad>
 
-module RenderHouseRoofPlates(cover = "tagpap_osb", standalone = false,
+module RenderHouseRoofPlates(cover = "tagpap", standalone = false,
                               palette = DEFAULT_PALETTE) {
     hl    = RH_HOUSE_LEN;
     x_lo  = -RH_OH_SIDE;
@@ -24,17 +23,15 @@ module RenderHouseRoofPlates(cover = "tagpap_osb", standalone = false,
 
     if (cover == "skifer")
         render_roof_plates_skifer_gable(palette);
-    else if (cover == "tagpap_osb" || cover == "tagpap")
+    else if (cover == "tagpap")
         render_roof_plates_tagpap_segment(x_lo, x_hi,
                                            has_left_side  = true,
                                            has_right_side = standalone,
                                            palette = palette);
-    else if (cover == "eternit_b7" || cover == "eternit_10" || cover == "eternit_14")
-        render_roof_plates_eternit_segment(cover, x_lo, x_hi, palette);
-    else if (cover == "polycarb")
-        render_roof_plates_polycarb_segment(x_lo, x_hi, palette);
-    else if (cover == "shingles")
-        render_roof_plates_shingles_segment(x_lo, x_hi, palette);
+    else if (cover == "eternit")
+        render_roof_plates_eternit_segment(x_lo, x_hi,
+                                            eh_back = back_eave_height_for("eternit"),
+                                            palette = palette);
     else
         assert(false, str("Unknown cover: ", cover));
 }

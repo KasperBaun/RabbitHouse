@@ -1,45 +1,40 @@
-# `designs/` — Active design source layout
+# `designs/` — Active design source
 
-Build a 6 × 2,5 m rabbit house + run with a continuous mono-pitch roof. Each file below covers ONE building system so it can be reviewed alone.
+L-shaped rabbit house + run. House gets a gable roof; yard gets a mono-pitch.
+See `CLAUDE.md` (repo root) for full architecture, conventions, and zone split rules.
 
-## Build order
+## Layout
 
 ```
-config.scad                    # constants — read first
-build.scad                     # composes the systems below
-
-fundament.scad                 # ↓ what the tømrer builds first
-konstruktions-skelet.scad      # ↓ then this (træ-skelet over fundamentet)
-tagkonstruktion_faelles.scad   # ↓ spær + lookouts + sofitt (cover-uafhængigt)
-tagkonstruktion_tagpap.scad    # ↓ cover A: OSB + tagpap + alu-sternkapsler
-tagkonstruktion_eternit.scad   # ↓ cover B: undertag + C18 lægter + B7 eternit
-beklaedning.scad               # ↓ then this (visual layer)
-aabninger.scad                 # ↓ then this (doors / window)
-inventar.scad                  # last — nest box, bowls, decor
+designs/
+  config.scad                # constants (RH_*) + roof-geometry helpers — read first
+  ground.scad                # SHARED — grass / terrain
+  roof_plates_skifer.scad    # cover: gable slate (house only)
+  roof_plates_tagpap.scad    # cover: OSB + tagpap (house + yard)
+  roof_plates_eternit.scad   # cover: C18 + Cembrit B7 (house + yard)
+  roof_plates_polycarb.scad  # cover: polycarb slab (yard only)
+  house/                     # HUS-zone (X=0..2000, Y=0..3000) — gable roof
+    foundation.scad framing.scad openings.scad
+    roof.scad roof_gable.scad roof_plates.scad
+    cladding/cladding.scad + 4 variants
+  yard/                      # YARD-zone (X=2000..6000, Y=500..3000) — mono-pitch
+    foundation.scad framing.scad openings.scad
+    roof.scad roof_plates.scad mesh.scad
 ```
 
-## Files
+## House cover options (`house_roof_cover` in `main.scad`)
 
-| File | Building system | Key materials |
-|---|---|---|
-| `config.scad` | Constants (`RH_*`) & geometry helpers | — |
-| `build.scad` | Top dispatcher (~30 lines) | — |
-| `fundament.scad` | Fundablok ring + ankerskruer | Fundablok 50×20×15, beton, ankerskrue M10 |
-| `konstruktions-skelet.scad` | DPC + bundrem + reglar + framed openings + toprem | Murpap, 45×95 reglar (PT/gran C24) |
-| `tagkonstruktion_faelles.scad` | Spær + lookouts + sofitt + cover-layer helper (delt mellem cover-varianter) | 45×95 spær, 18 mm krydsfiner sofitt |
-| `tagkonstruktion_tagpap.scad` | Cover A: OSB-dæk + underpap + tagpap + alu-sternkapsler | 18 mm OSB, 4 mm tagpap, 35×25 alu cap |
-| `tagkonstruktion_eternit.scad` | Cover B: C18 lægter + Cembrit B7 sortblå | 38×73 C18 lægter c/c 460, 1100×570 B7 |
-| `beklaedning.scad` | Klink cladding + afstandsliste + hjørnetrim | 22 mm klinkbrædder + 22×45 lægter |
-| `aabninger.scad` | 4 openings: human dør (partition), pet dør, yard dør, sidevindue | Trä karm, hængsler, beslag |
-| `inventar.scad` | Nest box, hay rack, bowls, rabbits, outdoor dressing | — |
+| Cover     | Roof shape          | Slope    | Materials |
+|-----------|---------------------|----------|-----------|
+| `skifer`  | Gable (35°)         | n/a      | 30×60 cm fiber-cement slates on 25×38 lægter |
+| `tagpap`  | Mono-pitch (4,6°)   | 8 % fald | 18 mm OSB + 4 mm tagpap + alu sternkapsler |
+| `eternit` | Mono-pitch (~14°)   | 25 % fald (steeper eh_back) | 38×73 C18 lægter + Cembrit B7 |
 
-## Toggles in `build.scad`
+## Yard cover options (`yard_roof_cover` in `main.scad`)
 
-- `show_cladding=false` — hide klink, doors, window so framing is visible
-- `show_ground=false` — hide grass / path / yard fill so foundation is visible
-- `show_cover=false` — hide cover-lag (vis kun spær + lookouts)
-- `roof_cover` — switch tag-dækning mellem `"tagpap_osb"` (alias `"tagpap"`), `"eternit_b7"` (flad — kun layout), `"eternit_10"` (10°) eller `"eternit_14"` (14°). Dispatcher i `build.scad` vælger den rigtige `tagkonstruktion_*.scad` per cover.
+`polycarb` (default — transparent slab), `tagpap`, or `eternit`.
 
-## Phase 1 spec
+## Toggles
 
-`docs/superpowers/specs/2026-05-09-v3-buildable-phase1-design.md` (historical — work is implemented).
+Top of `main.scad`: set `house_roof_cover`, `yard_roof_cover`, `cladding_type`.
+Comment/uncomment individual `Render*()` calls below to isolate a building system.

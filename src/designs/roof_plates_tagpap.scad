@@ -7,13 +7,10 @@
 //   21..25    roofing felt   (welded or glued to underlayment)
 // + 2 mm aluminium fascia caps on all four eaves.
 //
-// Two entry forms:
-//   render_roof_plates_tagpap()                              — full footprint
-//   render_roof_plates_tagpap_segment(x_lo, x_hi, ...)       — zone segment
-//
-// The segment accepts (eh_front, eh_back, depth, y_offset) so callers in
-// either zone can render at the right elevation and Y range. Defaults are
-// the HOUSE values; the YARD dispatcher overrides them.
+// Entry: render_roof_plates_tagpap_segment(x_lo, x_hi, ...). The segment
+// accepts (eh_front, eh_back, depth, y_offset) so callers in either zone
+// can render at the right elevation and Y range. Defaults are HOUSE values;
+// the YARD dispatcher overrides them.
 
 include <../lib/defaults.scad>
 include <config.scad>
@@ -124,7 +121,7 @@ module render_roof_plates_tagpap_segment(x_lo, x_hi,
                                           depth    = RH_HOUSE_DEPTH,
                                           y_offset = 0,
                                           palette  = DEFAULT_PALETTE) {
-    fascia_top_offset = fascia_top_offset_for("tagpap_osb");
+    fascia_top_offset = fascia_top_offset_for("tagpap");
     _roof_layer(eh_front, eh_back, depth, y_offset,
                 0,                              OSB_T,          OSB_COLOR,          x_lo, x_hi);
     _roof_layer(eh_front, eh_back, depth, y_offset,
@@ -136,9 +133,3 @@ module render_roof_plates_tagpap_segment(x_lo, x_hi,
                                 x_lo, x_hi, has_left_side, has_right_side);
 }
 
-// Full-footprint renderer — backward-compat for the combined `RenderRoofPlates`.
-module render_roof_plates_tagpap(palette = DEFAULT_PALETTE) {
-    ll = RH_LENGTH;
-    render_roof_plates_tagpap_segment(-RH_OH_SIDE, ll + RH_OH_SIDE,
-                                       true, true, palette = palette);
-}

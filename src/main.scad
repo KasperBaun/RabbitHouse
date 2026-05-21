@@ -11,8 +11,6 @@ include <designs/config.scad>
 
 // shared
 use <designs/ground.scad>
-use <designs/roof_plates.scad>
-use <designs/interior.scad>
 
 // house
 use <designs/house/foundation.scad>
@@ -30,23 +28,18 @@ use <designs/yard/roof.scad>
 use <designs/yard/roof_plates.scad>
 use <designs/yard/mesh.scad>
 
-// House gets a real roof. "skifer" gives a saddeltag (gable) with ridge
-// along Y — water sheds onto V3 (left) and V5 (partition). All other
-// covers keep the original mono-pitch front-to-back slope.
-//   tagpap_osb | eternit_b7 | eternit_10 | eternit_14 | polycarb | shingles | skifer
+// House roof.
+// Choose between 'skifer', 'tagpap' or 'eternit'
 house_roof_cover = "skifer";
 
 // Yard gets a transparent, lower roof — polycarb direct on rafters.
 yard_roof_cover  = "polycarb";
 
 // klink | board_on_board | vertical_120
-// vertical_120: lodret 25×150 savskåret gran i 1200mm kurser med 25×100
-// dækbrædder på samlinger. Renderer pt. KUN V3 (venstre væg) — andre
-// vægge tilføjes efter godkendelse.
 cladding_type    = "vertical_120";
 
 // shared
-//RenderGround();
+RenderGround();
 
 // house
 RenderHouseFoundation();
@@ -57,11 +50,9 @@ RenderHouseFraming();
 //RenderHouseCladding(cladding_type);
 
 // yard (uses lower RH_YARD_EH_* eave heights — separate structure)
-RenderYardFoundation();
-RenderYardFraming();
-RenderYardOpenings();
+//RenderYardFoundation();
+//RenderYardFraming();
+//RenderYardOpenings();
 //RenderYardRoof(yard_roof_cover);
 //RenderYardRoofPlates(yard_roof_cover);
 //RenderYardMesh();
-
-//RenderInterior();

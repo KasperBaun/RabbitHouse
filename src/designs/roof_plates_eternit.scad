@@ -9,18 +9,17 @@
 //   a-measurement: 510 mm (fascia outer face -> first batten, at eave)
 //   eave drip:     plate hangs 60 mm past fascia outer face
 //   screws:        2 per plate in wave crests at the top edge
-//   min pitch:     14 deg (the default 4.6 deg is NOT buildable; use
-//                  roof_cover = "eternit_14" for spec-correct geometry)
+//   min pitch:     14 deg (back-eave height comes from back_eave_height_for
+//                  ("eternit") = 1976 mm, giving the 14° spec pitch).
 //
 // Two entry forms:
-//   render_roof_plates_eternit(cover)                       — full footprint
-//   render_roof_plates_eternit_segment(cover, x_lo, x_hi, ...) — zone segment
+//   render_roof_plates_eternit()                            — full footprint
+//   render_roof_plates_eternit_segment(x_lo, x_hi, ...)     — zone segment
 //
-// NOTE: previous hl=1500 + RH_OH_SIDE=220 gav 1720 = 10*B7_PITCH og perfekt
-// fase-alignment ved X=hl. Med hl=2000 + RH_OH_SIDE=220 = 2220 mm passer
-// ikke længere som heltal × B7_PITCH (172) — fasen springer en lille smule
-// ved partition-linjen i combined view. Acceptabel da hus pt. bruger skifer
-// (gable roof); B7-eternit kan stadig vælges som yard-cover.
+// NOTE: hl=2000 + RH_OH_SIDE=220 = 2220 mm passer ikke som heltal × B7_PITCH
+// (172) — fasen springer en lille smule ved partition-linjen i combined
+// view. Acceptabel da hus pt. bruger skifer (gable roof); eternit kan stadig
+// vælges som yard-cover.
 
 include <../lib/defaults.scad>
 include <config.scad>
@@ -159,24 +158,16 @@ module _render_screws_segment(eh_front, eh_back, depth, y_offset,
 }
 
 // Segment renderer — used by zone dispatchers.
-module render_roof_plates_eternit_segment(cover, x_lo, x_hi,
+module render_roof_plates_eternit_segment(x_lo, x_hi,
                                            eh_front = RH_EH_FRONT,
-                                           eh_back  = undef,
+                                           eh_back  = 1976,
                                            depth    = RH_HOUSE_DEPTH,
                                            y_offset = 0,
                                            palette  = DEFAULT_PALETTE) {
-    eh_b = is_undef(eh_back) ? back_eave_height_for(cover) : eh_back;
-    _render_battens_segment(eh_front, eh_b, depth, y_offset,
+    _render_battens_segment(eh_front, eh_back, depth, y_offset,
                              x_lo, x_hi, palette);
-    _render_eternit_plates_segment(eh_front, eh_b, depth, y_offset,
+    _render_eternit_plates_segment(eh_front, eh_back, depth, y_offset,
                                     x_lo, x_hi, palette);
-    _render_screws_segment(eh_front, eh_b, depth, y_offset,
+    _render_screws_segment(eh_front, eh_back, depth, y_offset,
                             x_lo, x_hi, palette);
-}
-
-// Full-footprint renderer — backward-compat for `RenderRoofPlates`.
-module render_roof_plates_eternit(cover, palette = DEFAULT_PALETTE) {
-    ll = RH_LENGTH;
-    render_roof_plates_eternit_segment(cover, -RH_OH_SIDE, ll + RH_OH_SIDE,
-                                        palette = palette);
 }

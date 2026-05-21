@@ -20,8 +20,9 @@ RH_HOUSE_LEN     = 2000;
 RH_RUN_LEN       = RH_LENGTH - RH_HOUSE_LEN;  // 4000
 
 // Wall heights from sokkel-top (Z=RH_BASE_H) to roof underside at the wall
-// face. Drop 200 over 2500 = 4.6 deg, 8 % fall — adequate for tagpap_osb
-// (min 2.5 % per spec). Eternit and steel covers lower RH_EH_BACK further.
+// face. Drop 200 over 2500 = 4.6 deg, 8 % fall — adequate for tagpap
+// (min 2.5 % per spec). Eternit lowers RH_EH_BACK further (see
+// back_eave_height_for()).
 //
 // Heights chosen so standard Danish doors fit:
 //   front (RH_EH_FRONT=2400) takes a 95x205 outdoor door (rough 1070x2120)
@@ -147,37 +148,34 @@ function roof_oz() =
 function roof_underside_at(y) =
     roof_oz() - (RH_OH_FRONT + y) * total_drop() / _span_total(RH_HOUSE_DEPTH);
 
-// Cover-aware slope: eternit B7 needs steeper pitch. Lowering eh_back
-// without re-fitting the doors is fine because the front-wall door (high
-// eave) is the constrained one. Polycarbonate works at the default 4,6°.
+// Cover-aware slope: eternit needs a steeper pitch (14° to be spec-correct
+// per Cembrit B7 installation guide). Lowering eh_back without re-fitting
+// the doors is fine because the front-wall door (high eave) is the
+// constrained one.
 function back_eave_height_for(cover) =
-      cover == "eternit_10" ? 2160
-    : cover == "eternit_14" ? 1976
-    : RH_EH_BACK;
+      cover == "eternit" ? 1976 : RH_EH_BACK;
 
 // Fascia top z-offset above rafter top, per cover.
 //   tagpap   : OSB 18 + underlay 3 + felt 4 + STERN_LIP 7 = 32
 //   eternit  : BATTEN_T 38 - clearance 8 = 30
-//   polycarb : plate 12 + STERN_LIP 7 = 19
-//   shingles : OSB 18 + underlay 3 + shingle 5 + STERN_LIP 7 = 33
+//   polycarb : plate 12 + STERN_LIP 7 = 19   (yard only)
 function fascia_top_offset_for(cover) =
-      cover == "tagpap_osb" || cover == "tagpap" ? (18 + 3 + 4) + 7
-    : cover == "eternit_b7" || cover == "eternit_10" || cover == "eternit_14" ? (38 - 8)
+      cover == "tagpap"   ? (18 + 3 + 4) + 7
+    : cover == "eternit"  ? (38 - 8)
     : cover == "polycarb" ? (12 + 7)
-    : cover == "shingles" ? (18 + 3 + 5) + 7
     : 0;
 
-// ----- Gable roof geometry (used when cover is "skifer" — and future
-// "tagsten"). Ridge runs along Y (parallel to V3 / V5, the 2,5 m walls);
-// water sheds onto V3 (left) and V5 (partition / yard side). Eave Z is
-// flat at the high wall-top so the front door clearance is unchanged.
+// ----- Gable roof geometry (used when cover is "skifer"). Ridge runs along
+// Y (parallel to V3 / V5); water sheds onto V3 (left) and V5 (partition /
+// yard side). Eave Z is flat at the high wall-top so the front door
+// clearance is unchanged.
 G_PITCH_DEG   = 35;
 G_OH_EAVE     = 220;                      // overhang over V3 / V5 — tilpasset 133 stk skifer 30×60 (var 350)
 G_OH_RAKE     = 150;                      // overhang past V1 / V2 gables
 G_RIDGE_X     = RH_HOUSE_LEN / 2;         // = 1000
 G_EAVE_Z      = RH_BASE_H + RH_EH_FRONT;  // = 2520, flat eave on V3 + V5
 
-function is_gable_roof(cover) = cover == "skifer" || cover == "tagsten";
+function is_gable_roof(cover) = cover == "skifer";
 
 // Rafter geometry as a function of X. The plane mirrors at G_RIDGE_X.
 // Rafter bottom sits at G_EAVE_Z at the wall edges (x=0, x=RH_HOUSE_LEN).

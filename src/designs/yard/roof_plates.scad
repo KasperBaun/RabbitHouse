@@ -1,6 +1,6 @@
-// YARD roof-plate dispatcher — renders the cover (tagpap or eternit) over
-// the yard's roof segment. Passes yard depth + Y-offset + yard eave heights
-// to the shared segment renderers.
+// YARD roof-plate dispatcher — renders the cover over the yard's roof
+// segment. Three options: "tagpap", "eternit", "polycarb". Passes yard
+// depth + Y-offset + yard eave heights to the shared segment renderers.
 //   standalone = false (combined build): plates cover X = hl..ll+OH_SIDE;
 //                                        no left-side fascia cap (house
 //                                        provides that).
@@ -13,7 +13,7 @@ use <../roof_plates_tagpap.scad>
 use <../roof_plates_eternit.scad>
 use <../roof_plates_polycarb.scad>
 
-module RenderYardRoofPlates(cover = "tagpap_osb", standalone = false,
+module RenderYardRoofPlates(cover = "polycarb", standalone = false,
                              palette = DEFAULT_PALETTE) {
     hl   = RH_HOUSE_LEN;
     ll   = RH_LENGTH;
@@ -28,7 +28,7 @@ module RenderYardRoofPlates(cover = "tagpap_osb", standalone = false,
     yard_depth    = RH_YARD_DEPTH;
     yard_y_offset = RH_YARD_Y_OFFSET;
 
-    if (cover == "tagpap_osb" || cover == "tagpap")
+    if (cover == "tagpap")
         render_roof_plates_tagpap_segment(x_lo, x_hi,
                                            has_left_side  = standalone,
                                            has_right_side = true,
@@ -37,8 +37,8 @@ module RenderYardRoofPlates(cover = "tagpap_osb", standalone = false,
                                            depth    = yard_depth,
                                            y_offset = yard_y_offset,
                                            palette  = palette);
-    else if (cover == "eternit_b7" || cover == "eternit_10" || cover == "eternit_14")
-        render_roof_plates_eternit_segment(cover, x_lo, x_hi,
+    else if (cover == "eternit")
+        render_roof_plates_eternit_segment(x_lo, x_hi,
                                             eh_front = RH_YARD_EH_FRONT,
                                             eh_back  = RH_YARD_EH_BACK,
                                             depth    = yard_depth,

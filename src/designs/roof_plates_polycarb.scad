@@ -1,19 +1,15 @@
 // Polycarbonate cover — single translucent slab mounted DIRECTLY on the
 // rafters (no battens, no OSB deck). Plate sits at z = rafter top with
 // 12 mm thickness; secured with self-drilling screws + neoprene washers
-// through every other rafter crest.
+// through every other rafter crest. Yard-only cover.
 //
 // Pitch: works at the default 4,6° per Plastmo / Acryltec specs (min
 // recommended 5°; we're close enough for a rabbit shed, and the corrugation
 // profile would normally accept lower pitches than smooth polycarb).
 //
-// Two entry forms:
-//   render_roof_plates_polycarb()                              — full footprint
-//   render_roof_plates_polycarb_segment(x_lo, x_hi, ...)       — zone segment
-//
-// The segment accepts (eh_front, eh_back, depth, y_offset) so callers in
-// either zone can render at the right elevation and Y range. Defaults are
-// the HOUSE values; the YARD dispatcher overrides all four.
+// Entry: render_roof_plates_polycarb_segment(x_lo, x_hi, ...). Accepts
+// (eh_front, eh_back, depth, y_offset). Defaults are HOUSE values; the YARD
+// dispatcher overrides all four.
 
 include <../lib/defaults.scad>
 include <config.scad>
@@ -50,8 +46,3 @@ module render_roof_plates_polycarb_segment(x_lo, x_hi,
     _polycarb_slab(x_lo, x_hi, eh_front, eh_back, depth, y_offset, palette);
 }
 
-module render_roof_plates_polycarb(palette = DEFAULT_PALETTE) {
-    render_roof_plates_polycarb_segment(-RH_OH_SIDE,
-                                         RH_LENGTH + RH_OH_SIDE,
-                                         palette = palette);
-}
