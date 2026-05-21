@@ -85,6 +85,27 @@ RH_SIDE_WIN_H   = 600;
 RH_SIDE_WIN_Y   = 900;
 RH_SIDE_WIN_Z   = 1100;
 
+// Front entry door on V1 (Y=0, faces -Y). Centred on the 2 m front wall:
+// X=550..1450 = 900 mm leaf opening. Header doubles as top plate (same
+// pattern as V5 partition door, since RH_FRONT_DOOR_H=2000 leaves exactly
+// PLATE_HEIGHT=45 + cripple stack to wall_top).
+RH_FRONT_DOOR_W = 900;
+RH_FRONT_DOOR_H = 2000;
+RH_FRONT_DOOR_X = (RH_HOUSE_LEN - RH_FRONT_DOOR_W) / 2;  // = 550
+
+// Front windows on V1 — square lights flanking the front door. Each window
+// has its own dedicated full-height jamb stud on the door side (not fused
+// with the door jamb). Outer side reuses the corner / junction stud as the
+// king, with cripples below the sill and above the header at the opening's
+// outer edge. Header + sill span the 415 mm opening; visible glass area
+// between outer cripple and inner jamb is 370 mm.
+// Sill at door-midpoint (RH_FRONT_DOOR_H / 2) above floor.
+RH_FRONT_WIN_W       = 415;
+RH_FRONT_WIN_H       = 450;
+RH_FRONT_WIN_Z       = RH_FRONT_DOOR_H / 2;   // 1000 mm above floor
+RH_FRONT_WIN_X_LEFT  = 45;     // opening starts here (right face of corner stud)
+RH_FRONT_WIN_X_RIGHT = 1540;   // opening starts here (right face of right-window inner jamb)
+
 // Standard Danish timber sizes.
 //   95x180 glulam   — yard top beams sloping under roof
 //   45x195 reglar   — interior collar tie

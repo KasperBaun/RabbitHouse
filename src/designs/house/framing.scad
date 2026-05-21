@@ -95,6 +95,43 @@ module _studs_one_wall(origin, length, axis, stud_height,
     }
 }
 
+// V1 window framing — header + sill across the opening, an outer cripple
+// below the sill and above the header at the corner/junction-stud side,
+// and a dedicated FULL-HEIGHT inner jamb stud on the door side (so the
+// window is structurally independent of the door jamb). `inner_side` is
+// "right" when the door-facing edge is the right face of the opening
+// (i.e., left window) and "left" for the right window.
+module _frame_v1_window(x0, inner_side, palette = DEFAULT_PALETTE) {
+    w           = RH_FRONT_WIN_W;
+    z_floor     = RH_FLOOR_TOP;
+    z_sill_top  = z_floor + RH_FRONT_WIN_Z;
+    z_sill_bot  = z_sill_top - PLATE_HEIGHT;
+    z_head_bot  = z_sill_top + RH_FRONT_WIN_H;
+    z_head_top  = z_head_bot + PLATE_HEIGHT;
+    z_plate_bot = WALL_TOP_HIGH - PLATE_HEIGHT;
+    h_below     = z_sill_bot - STUD_BOTTOM_Z;
+    h_above     = z_plate_bot - z_head_top;
+    h_full      = WALL_TOP_HIGH - STUD_BOTTOM_Z - PLATE_HEIGHT;
+
+    inner_jamb_x   = inner_side == "right" ? x0 + w           : x0 - STUD_THICK;
+    outer_cripple_x = inner_side == "right" ? x0               : x0 + w - STUD_THICK;
+
+    color(pal_post(palette)) {
+        translate([x0, 0, z_head_bot])
+            cube([w, STUD_DEPTH, PLATE_HEIGHT]);
+        translate([x0, 0, z_sill_bot])
+            cube([w, STUD_DEPTH, PLATE_HEIGHT]);
+        if (h_below > 50)
+            translate([outer_cripple_x, 0, STUD_BOTTOM_Z])
+                cube([STUD_THICK, STUD_DEPTH, h_below]);
+        if (h_above > 50)
+            translate([outer_cripple_x, 0, z_head_top])
+                cube([STUD_THICK, STUD_DEPTH, h_above]);
+        translate([inner_jamb_x, 0, STUD_BOTTOM_Z])
+            cube([STUD_THICK, STUD_DEPTH, h_full]);
+    }
+}
+
 module _render_framed_opening(wall_origin, axis,
                               opening_pos, opening_w,
                               opening_z, opening_h,
@@ -200,12 +237,41 @@ module RenderHouseFraming(palette = DEFAULT_PALETTE) {
     }
 
     // V1[0..hl] studs — flat HIGH. Skip end stud (junction stud handles it).
+    // Skip-ranges use raw opening bounds (no JAMB_BUFFER pad) so the corner
+    // stud at X=0 survives next to the close-set left window jamb.
+    v1_skip = [
+        [RH_FRONT_DOOR_X,       RH_FRONT_DOOR_X       + RH_FRONT_DOOR_W],
+        [RH_FRONT_WIN_X_LEFT,   RH_FRONT_WIN_X_LEFT   + RH_FRONT_WIN_W],
+        [RH_FRONT_WIN_X_RIGHT,  RH_FRONT_WIN_X_RIGHT  + RH_FRONT_WIN_W]
+    ];
     _studs_one_wall([0, 0, 0], hl, "X", h_high,
+                    skip_ranges=v1_skip,
                     palette=palette, emit_end=false);
 
     // V2[0..hl] studs — flat LOW.
     _studs_one_wall([0, ww - STUD_DEPTH, 0], hl, "X", h_low,
                     palette=palette, emit_end=false);
+
+    // Jamb studs for V1 door — windows reuse the adjacent corner / door
+    // jamb / junction stud as their jamb (side panel = 460, window = 450,
+    // so 5 mm clearance leaves no room for separate window jambs).
+    color(pal_post(palette)) {
+        translate([RH_FRONT_DOOR_X - STUD_THICK, 0, STUD_BOTTOM_Z])
+            cube([STUD_THICK, STUD_DEPTH, h_high]);
+        translate([RH_FRONT_DOOR_X + RH_FRONT_DOOR_W, 0, STUD_BOTTOM_Z])
+            cube([STUD_THICK, STUD_DEPTH, h_high]);
+    }
+
+    // Framed openings — V1 door uses the shared helper (no sill); V1
+    // windows use a custom helper with explicit jamb cripples at each
+    // opening edge (no off-center center cripple).
+    _render_framed_opening(wall_origin = [0, 0, 0], axis = "X",
+                           opening_pos = RH_FRONT_DOOR_X, opening_w = RH_FRONT_DOOR_W,
+                           opening_z = STUD_BOTTOM_Z, opening_h = RH_FRONT_DOOR_H,
+                           has_sill = false, wall_top = WALL_TOP_HIGH,
+                           palette = palette);
+    _frame_v1_window(RH_FRONT_WIN_X_LEFT,  inner_side = "right", palette = palette);
+    _frame_v1_window(RH_FRONT_WIN_X_RIGHT, inner_side = "left",  palette = palette);
 
     // V3 — solid Y wall, no openings (window removed; gable rafters above).
     _studs_one_wall([0, butt_y0, 0], butt_len, "Y", h_high,

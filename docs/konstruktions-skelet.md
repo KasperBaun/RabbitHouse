@@ -1,99 +1,145 @@
 # Konstruktions-skelet
 
-> Implementeret i `src/designs/v3/konstruktions-skelet.scad`.
+> Implementeret i `src/designs/house/framing.scad` (`RenderHouseFraming()`)
+> + `src/designs/yard/framing.scad` (`RenderYardFraming()`).
 
-Træ-skelettet sidder oven på fundamentet og består af 4 lag.
+Træ-skelettet sidder oven på fundamentet (`src/designs/{house,yard}/foundation.scad`)
+og består af 4 lag pr. væg:
 
 1. DPC (murpap)
-2. Bundrem
-3. Reglar
-4. Toprem  
+2. Bundrem (45 × 95 mm trykimprægneret)
+3. Reglar / studs (45 × 95 mm gran C24)
+4. Toprem (45 × 95 mm gran C24)
 
-Bygningen har 5 vægge.
+## L-formet grundplan
 
-- Front (V1)
-- Bag(V2)
-- Venstre(V3)
-- Højre(V4)
-- Tværgående(V5).  
-  Tag-hældning er 4,6° (8 % fald).
+Huset stikker 1000 mm længere ud mod -Y end yarden gør:
 
 ```
-                    V2 (bag, LAV — 2,2 m)
-        ┌────────────┬────────────────────────────────────┐
-        │            │                                    │
-        │            │                                    │
-   V3   │  hus-rum   │           yard-rum                 │   V4
-   2,2m │  X=0..1500 │        X=1500..6000                │  2,2m
-        │            │                                    │
-        │       V5 (partition, LAV)                       │
-        │            │                                    │
-        └────────────┴──────────────────[ yard-dør ]──────┘
-                    V1 (front, HØJ — 2,4 m)
-        ←── 1500 ───→ ←───────────── 4500 ────────────────→
-                              (set ovenfra)
+                                V2 (bag) — Y=3000
+        ┌───────────────────┬───────────────────────────────────────┐
+        │                   │                                       │
+        │                   │                                       │
+        │   hus-zone        │              yard-zone                │   
+        │   X=0..2000       │ V5              X=2000..6000          │  V4
+        │                   │                                       │
+   V3   │                   │                                       │
+        │                   │                                       │
+        │  V1 (hus, Y=0)    ┌────────────[ yard-dør ]───────────────┘
+        │                   │
+        │ hus-only zone     │ V1 (yard, Y=1000)
+        └───────────────────┘
+        ←────── 2000 ───────→ ←───────────── 4000 ──────────────────→
+                          (set ovenfra)
 ```
 
+V1 (front) og V2 (bag) er logisk én væg pr. side men splittes ved X=hl=2000 fordi
+yard-front sidder i Y=1000 (ikke Y=0 som hus-front). Det giver en L-form med
+1000 mm "knæk" ved partitionen.
+
+## Stak gennem en hus-væg
+
 ```
-        ┌─── toprem 45×95 ───┐  z=2,52 m (V1) / 2,32 m (V2) / 2,52→2,32 m (V3-V5)
+        ┌─── toprem 45×95 ───┐    z=2,412 m (alle hus-vægge)
         │                    │
-        │                    │
-        │  reglar 45×95      │  studs 2108-2308 mm (skåret til hver position)
+        │  stud 45×95 C24    │    h = 2200 mm præcis
         │  c/c 600 mm        │
         │                    │
-        │                    │
-        ├─── bundrem 45×95 ──┤  z=0,17 m (= gulv-top)
-        ├═══ murpap (DPC) ═══┤  z=0,12 m
-        ▒▒▒▒▒ sokkel-ring ▒▒▒▒
-                              (lag-stak gennem en væg)
+        ├─── bundrem 45×95 ──┤    z=0,167 m (= gulv-top)
+        ├═══ murpap (DPC) ═══┤    z=0,122 m
+        ▒▒▒▒▒ sokkel-ring ▒▒▒▒    z=0,120 m
 ```
+
+Tilsvarende stak i yarden, men med kortere studs (2008 mm) → toprem-top i
+z = 2,220 m. Yarden er 192 mm lavere end huset.
 
 ## Mål
 
-| Egenskab       | Værdi                                                          |
-| -------------- | -------------------------------------------------------------- |
-| V1 (front)     | 2,4 m flat (rummer std 95×205 udhusdør)                        |
-| V2 (bag)       | 2,2 m flat                                                     |
-| V3, V4, V5     | 2,4 → 2,2 m skrå (følger taget; V5 rummer std 80×200 hus-dør)  |
-| Tag-hældning   | 4,6° / 8 % fald (drop 200 over 2500 mm)                        |
-| Reglar-afstand | 600 mm c/c                                                     |
+| Egenskab          | Hus              | Yard             |
+| ----------------- | ---------------- | ---------------- |
+| Vægge             | V1, V2, V3, V5   | V1, V2, V4       |
+| Eave over sokkel  | 2292 mm          | 2100 mm          |
+| Toprem-top over grade | 2412 mm      | 2220 mm          |
+| Stud-længde       | 2200 mm præcis   | 2008 mm præcis   |
+| Stud c/c          | 600 mm           | 600 mm           |
+| Top-plade form    | Flad (vandret)   | Flad (vandret)   |
+| Tag der sidder ovenpå | Gable / skifer | Mesh-rist      |
 
-## Konstruktion
+Yardens lavere væg betyder at V5-partition stikker 192 mm op over yardens
+toprem — den 192 mm "knæg" lukkes af gable-tagets sternplade (eller forbliver
+synlig hvis man vil have lys ind ovenfra).
 
-V1 (front) og V2 (bag) løber kontinuert hele bygningens 6 m længde. Toprem (men ikke bundrem) forlænges yderligere 220 mm i hver ende = 6440 mm total — kantilevrer forbi V3/V4 for at bære side-overhangets barge rafters (se [tagkonstruktion.md](tagkonstruktion.md)).  
-V3, V4 (sidemæg) og V5 (partition) BUTTER mod V1/V2's inderflade.  
-Reglar 45 × 95 mm c/c 600 mm med jamb-reglar ved hver dør/vindue og junction-reglar i V1+V2 hvor V5 møder dem.  
-Header (vandret 45 × 95) over hver dør/vindue. V3-vinduet har også rough sill under sig.
+## Konstruktion — hus
 
-V3, V4 og V5 løber parallelt med tagets hældning. Deres toprem skrår fra HØJ ved front til LAV ved bag, og hver stud er skåret til varierende højde (2108-2308 mm) så toprem hviler fladt på alle studs — ingen separat gavlfyld.
+V1 (front) og V2 (bag) løber X=0..hl=2000 i Y=0..95 / Y=2905..3000.  
+V3 (venstre) og V5 (partition/højre) BUTTER mellem V1 og V2's inderfladser
+i Y=95..2905, og deres ydersige flugter med fundamentet på X=0 / X=hl.
 
-## Materialeliste
+V5 deler en 95 × 95 hjørne-stud med V1 og V2 (én pr. ende) — kaldes
+**junction-studs** i koden og sidder ved X=1955..2000 (=hl-STUD_THICK..hl).
+V1 og V2 har derfor `emit_end=false` — de stopper kort før hl, og junction-studen
+fylder hjørnet.
 
-Maks længde 3600 mm. V1+V2 *bundrem* (6 m hver) splejses af 1× 3600 + 1× 2400. V1+V2 *toprem* er forlænget til 6440 mm (= 6000 + 2× V3_OH_SIDE) for at bære side-overhangets barge rafters — splejses af 2× 3600 stykker (3220+3220, eller 3600+2840). Stykkevis skæreliste pr. væg: [skaereliste-skelet.md](skaereliste-skelet.md).
+Åbninger i hus-skelettet:
+- **Hus-dør** (rough 870 × 2000 mm) i V5 ved Y=1500..2370
+- **Pet-dør** (rough 250 × 300 mm) i V5 ved Y=2700..2950, sokkel 60 mm over gulv
+- Ingen vinduer (V3 er solid; sidevindue fjernet)
 
-| #   | Vare                     | Beskrivelse                                                                   | Antal | Enhed      | Pris/enh  | I alt   |
-| --- | ------------------------ | ----------------------------------------------------------------------------- | ----- | ---------- | --------- | ------- |
-| 1   | Reglar 45 × 95 × 2400 mm | Gran C24 — studs (37 stk, skæres 2108-2308 mm) + skrå toprem til V3/V4/V5 (5) | 42    | stk        |           |         |
-| 2   | Reglar 45 × 95 × 3600 mm | Gran C24 — toprem til V1 + V2 (forlænget 6440 mm hver, splejses af 2 stykker) | 4     | stk        |           |         |
-| 3   | Reglar 45 × 95 × 2400 mm | PT NTR-AB — bundrem til V3/V4/V5 + splejs-stykker på V1+V2                    | 5     | stk        |           |         |
-| 4   | Reglar 45 × 95 × 3600 mm | PT NTR-AB — bundrem til V1 + V2 (splejses med 2400-stykker fra #3)            | 2     | stk        |           |         |
-| 5   | Bitumen-tape 100 mm bred | Murpap mellem sokkel og bundrem                                               | 1     | rulle 25 m |           |         |
-|     |                          |                                                                               |       |            | **Total** | **kr.** |
+Header over begge V5-døre falder sammen med topremmen — der er ingen separat
+header/cripple-stak (`RH_HOUSE_DOOR_H = 2000` = stud-længde, så toprem ER
+overliggeren).
 
-Header, cripples og rough sill (~5,6 m i alt) skæres af spild fra studs (~7,2 m fra 2400-stokken). Toprem-spild ~720 mm pr. væg går også til spild-pulje.
+## Konstruktion — yard
+
+V1[hl..ll] og V2[hl..ll] løber 4000 mm i Y=yo..yo+95 / Y=yo+yd-95..yo+yd
+(yo=1000, yd=2000). V4 (højre) butter mellem dem ved X=ll-95..ll=5905..6000.
+
+Yard-skelettet butter direkte mod V5 fra +X-siden ved X=hl. Yarden har INGEN
+junction-stud — den fælles stud sidder i hus-skelettet (V5's junction-studs).
+
+Åbninger i yard:
+- **Yard-dør** (rough 1070 × 2008 mm) i V1 ved X=3465..4535 — centreret på
+  yardens 4 m front. Header = toprem (samme princip som V5-døren).
 
 ## Bygge-rækkefølge
 
-1. Læg murpap-tape oven på sokkel — hele perimeteren + cross-wall under partition
-2. Bor gennemgangshuller i bundrem-plankerne til ankerskruerne; læg på plads og spænd møtrikkerne
-3. Sæt corner-reglar og jamb-reglar lodret med vinkelbeslag
-4. Sæt grid-reglar c/c 600 mm + junction-reglar i V1/V2 hvor V5 møder dem
-5. Sæt header over hver åbning + rough sill under V3-vinduet
-6. Læg toprem oven på studs — V1 flat HØJ, V2 flat LAV, V3/V4/V5 skrå (følger taget)
+1. Læg DPC (bitumen-tape 100 mm) ovenpå hele sokkel-ringen — hus perimeter +
+   V5-cross + yard 3-side perimeter
+2. Bor gennemgangshuller i bundrem-stykkerne til ankerskruerne; læg på plads
+   og spænd møtrikkerne (M10 c/c 1000 mm)
+3. Sæt hus-skelettet først:
+   - V3 (venstre) først — fuld 2200 mm studs + flad toprem
+   - V1 og V2 (front + bag) hus-segmenter — 2200 mm studs c/c 600, junction-studs
+     ved X=1955..2000
+   - V5 (partition) — 2200 mm studs med åbninger til hus-dør og pet-dør
+4. Sæt yard-skelettet:
+   - V4 (højre) — 2008 mm studs
+   - V1 og V2 (front + bag) yard-segmenter — 2008 mm studs c/c 600
+   - Yard-dør jamb-studs ved X=3420 og X=4535
+5. Headers: yard-dør header (2008 sidder direkte under topremmen så topremmen
+   ER overligger — bare et ekstra 45×95 stykke der overlapper); V5 hus-dør og
+   pet-dør på samme måde
+
+## Materialeliste
+
+Se [skaereliste-skelet.md](skaereliste-skelet.md) for stykkevis skæreliste
+pr. væg og samlet count pr. stok-længde.
+
+| #   | Vare                       | Beskrivelse                                      |
+| --- | -------------------------- | ------------------------------------------------ |
+| 1   | Reglar 45 × 95 mm gran C24 | Studs hus (2200 mm) + studs yard (2008 mm) + topremme |
+| 2   | Reglar 45 × 95 mm gran C24 PT NTR-AB | Bundremme (hus + yard, hele perimeter)  |
+| 3   | Bitumen-tape 100 mm bred   | Murpap mellem sokkel og bundrem                  |
+| 4   | Ankerskruer M10 × 120      | Bundrem-til-fundament c/c 1000 mm                |
 
 ## Rendering / verificering
 
-```powershell
-pwsh src/scripts/audit_renders.ps1
-# → _renders/v3/audit/02_konstruktions-skelet.png
-```
+`src/main.scad` rendrer hele skelettet når `RenderHouseFraming()` og
+`RenderYardFraming()` er enabled. Inspicer:
+
+- V3, V5 har VANDRETTE topremme (ikke skrå)
+- Hus-toprem og yard-toprem ligger i forskellige højder (192 mm step ved V5)
+- Junction-studs ved X=1955..2000 i V5/V1 og V5/V2 hjørnerne
+- V3 er solid (ingen vinduescutout)
+- V5 har 2 cutouts (hus-dør + pet-dør)
+- Yard V1 har 1 cutout (yard-dør)
