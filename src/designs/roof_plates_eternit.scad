@@ -14,7 +14,7 @@
 //
 // Two entry forms:
 //   render_roof_plates_eternit(cover)                       — full footprint
-//   render_roof_plates_eternit_segment(cover, x_lo, x_hi)   — zone segment
+//   render_roof_plates_eternit_segment(cover, x_lo, x_hi, ...) — zone segment
 //
 // NOTE: previous hl=1500 + RH_OH_SIDE=220 gav 1720 = 10*B7_PITCH og perfekt
 // fase-alignment ved X=hl. Med hl=2000 + RH_OH_SIDE=220 = 2220 mm passer
@@ -47,16 +47,17 @@ SCREW_COLOR  = [0.20, 0.21, 0.24];
 // ============================================================================
 // Battens — one per plate top edge. Restricted to [x_lo..x_hi].
 // ============================================================================
-module _render_battens_segment(eh_back, x_lo, x_hi, palette) {
-    y_back_eave    = RH_WIDTH + RH_OH_BACK + RH_FASCIA_T;
-    y_front_eave   = -RH_OH_FRONT - RH_FASCIA_T;
+module _render_battens_segment(eh_front, eh_back, depth, y_offset,
+                                x_lo, x_hi, palette) {
+    y_back_eave    = y_offset + depth + RH_OH_BACK + RH_FASCIA_T;
+    y_front_eave   = y_offset - RH_OH_FRONT - RH_FASCIA_T;
     y_first_batten = y_back_eave - B7_A_MAAL;
     n_intervals    = floor((y_first_batten - y_front_eave) / BATTEN_C2C);
 
     color(pal_post(palette))
     for (i = [0 : n_intervals]) {
         y_i = y_first_batten - i * BATTEN_C2C;
-        z   = roof_underside_for(eh_back, y_i);
+        z   = _roof_underside(eh_front, eh_back, depth, y_offset, y_i);
         translate([x_lo, y_i - BATTEN_W/2, z])
             cube([x_hi - x_lo, BATTEN_W, BATTEN_T]);
     }
@@ -65,10 +66,11 @@ module _render_battens_segment(eh_back, x_lo, x_hi, palette) {
 // ============================================================================
 // One plate strip across [x_lo..x_hi] × [y_start..y_end].
 // ============================================================================
-module _eternit_strip_segment(eh_back, y_start, y_end, z_offset, x_lo, x_hi) {
+module _eternit_strip_segment(eh_front, eh_back, depth, y_offset,
+                               y_start, y_end, z_offset, x_lo, x_hi) {
     if (y_end > y_start) {
-        drop_full = total_drop_for(eh_back);
-        span_y    = RH_WIDTH + RH_OH_FRONT + RH_OH_BACK;
+        drop_full = _roof_drop(eh_front, eh_back, depth);
+        span_y    = _span_total(depth);
         strip_len = y_end - y_start;
 
         total_x    = x_hi - x_lo;
@@ -89,7 +91,8 @@ module _eternit_strip_segment(eh_back, y_start, y_end, z_offset, x_lo, x_hi) {
             [x, z]
         ];
 
-        z_base = roof_underside_for(eh_back, y_start) + BATTEN_T + z_offset;
+        z_base = _roof_underside(eh_front, eh_back, depth, y_offset, y_start)
+                 + BATTEN_T + z_offset;
 
         color(B7_COLOR)
         translate([0, y_start, z_base])
@@ -106,39 +109,47 @@ module _eternit_strip_segment(eh_back, y_start, y_end, z_offset, x_lo, x_hi) {
     }
 }
 
-module _render_eternit_plates_segment(eh_back, x_lo, x_hi, palette) {
-    y_back_eave    = RH_WIDTH + RH_OH_BACK + RH_FASCIA_T;
-    y_front_eave   = -RH_OH_FRONT - RH_FASCIA_T;
+module _render_eternit_plates_segment(eh_front, eh_back, depth, y_offset,
+                                       x_lo, x_hi, palette) {
+    y_back_eave    = y_offset + depth + RH_OH_BACK + RH_FASCIA_T;
+    y_front_eave   = y_offset - RH_OH_FRONT - RH_FASCIA_T;
     y_first_batten = y_back_eave - B7_A_MAAL;
     n_intervals    = floor((y_first_batten - y_front_eave) / BATTEN_C2C);
 
     y_p1_top = y_first_batten;
     y_p1_bot = y_back_eave + B7_EAVE_OVERHANG;
-    _eternit_strip_segment(eh_back, y_p1_top, y_p1_bot, 0, x_lo, x_hi);
+    _eternit_strip_segment(eh_front, eh_back, depth, y_offset,
+                            y_p1_top, y_p1_bot, 0, x_lo, x_hi);
 
     for (i = [1 : n_intervals]) {
         y_top  = y_first_batten - i * BATTEN_C2C;
         y_kink = y_top + BATTEN_C2C;
         y_bot  = y_top + B7_PLATE_LEN;
-        _eternit_strip_segment(eh_back, y_top,  y_kink, 0,        x_lo, x_hi);
-        _eternit_strip_segment(eh_back, y_kink, y_bot,  B7_THICK, x_lo, x_hi);
+        _eternit_strip_segment(eh_front, eh_back, depth, y_offset,
+                                y_top,  y_kink, 0,        x_lo, x_hi);
+        _eternit_strip_segment(eh_front, eh_back, depth, y_offset,
+                                y_kink, y_bot,  B7_THICK, x_lo, x_hi);
     }
 
     y_last_batten = y_first_batten - n_intervals * BATTEN_C2C;
-    _eternit_strip_segment(eh_back, y_front_eave,
-                           y_last_batten + B7_OVERLAP, B7_THICK, x_lo, x_hi);
+    _eternit_strip_segment(eh_front, eh_back, depth, y_offset,
+                            y_front_eave,
+                            y_last_batten + B7_OVERLAP, B7_THICK, x_lo, x_hi);
 }
 
-module _render_screws_segment(eh_back, x_lo, x_hi, palette) {
-    y_back_eave    = RH_WIDTH + RH_OH_BACK + RH_FASCIA_T;
+module _render_screws_segment(eh_front, eh_back, depth, y_offset,
+                               x_lo, x_hi, palette) {
+    y_back_eave    = y_offset + depth + RH_OH_BACK + RH_FASCIA_T;
+    y_front_eave   = y_offset - RH_OH_FRONT - RH_FASCIA_T;
     y_first_batten = y_back_eave - B7_A_MAAL;
-    n_intervals    = floor((y_first_batten - (-RH_OH_FRONT - RH_FASCIA_T)) / BATTEN_C2C);
+    n_intervals    = floor((y_first_batten - y_front_eave) / BATTEN_C2C);
     n_crests = floor((x_hi - x_lo) / B7_PITCH);
 
     color(SCREW_COLOR)
     for (i = [0 : n_intervals]) {
         y_i = y_first_batten - i * BATTEN_C2C;
-        z_top = roof_underside_for(eh_back, y_i) + BATTEN_T + 2*B7_THICK + B7_AMP;
+        z_top = _roof_underside(eh_front, eh_back, depth, y_offset, y_i)
+                + BATTEN_T + 2*B7_THICK + B7_AMP;
         for (j = [0 : 2 : n_crests]) {
             x_j = x_lo + j * B7_PITCH;
             translate([x_j, y_i, z_top])
@@ -149,16 +160,23 @@ module _render_screws_segment(eh_back, x_lo, x_hi, palette) {
 
 // Segment renderer — used by zone dispatchers.
 module render_roof_plates_eternit_segment(cover, x_lo, x_hi,
-                                           palette = DEFAULT_PALETTE) {
-    eh_back = back_eave_height_for(cover);
-    _render_battens_segment(eh_back, x_lo, x_hi, palette);
-    _render_eternit_plates_segment(eh_back, x_lo, x_hi, palette);
-    _render_screws_segment(eh_back, x_lo, x_hi, palette);
+                                           eh_front = RH_EH_FRONT,
+                                           eh_back  = undef,
+                                           depth    = RH_HOUSE_DEPTH,
+                                           y_offset = 0,
+                                           palette  = DEFAULT_PALETTE) {
+    eh_b = is_undef(eh_back) ? back_eave_height_for(cover) : eh_back;
+    _render_battens_segment(eh_front, eh_b, depth, y_offset,
+                             x_lo, x_hi, palette);
+    _render_eternit_plates_segment(eh_front, eh_b, depth, y_offset,
+                                    x_lo, x_hi, palette);
+    _render_screws_segment(eh_front, eh_b, depth, y_offset,
+                            x_lo, x_hi, palette);
 }
 
 // Full-footprint renderer — backward-compat for `RenderRoofPlates`.
 module render_roof_plates_eternit(cover, palette = DEFAULT_PALETTE) {
     ll = RH_LENGTH;
     render_roof_plates_eternit_segment(cover, -RH_OH_SIDE, ll + RH_OH_SIDE,
-                                        palette);
+                                        palette = palette);
 }

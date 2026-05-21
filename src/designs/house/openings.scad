@@ -11,7 +11,9 @@ WALL_DEPTH    = RH_POST_W;
 FLOOR_Z       = RH_FLOOR_TOP;
 
 PARTITION_X   = RH_HOUSE_LEN;
-PART_INNER_X  = PARTITION_X - WALL_DEPTH/2;
+// V5 wall sits inside the foundation (X=hl-WALL_DEPTH..hl), so the door
+// frame's inner X face = wall inner face = hl - WALL_DEPTH.
+PART_INNER_X  = PARTITION_X - WALL_DEPTH;
 
 PLEXI_T       = 6;
 PLEXI_OVERLAP = 30;
@@ -40,7 +42,9 @@ module _render_human_door(palette) {
     leaf_y1 = y1 - FRAME_T;
     leaf_w  = leaf_y1 - leaf_y0;
     leaf_h  = RH_HOUSE_DOOR_H - FRAME_T;
-    leaf_x  = PARTITION_X - LEAF_T/2;
+    // Leaf hung flush with V5's yard-facing face (X=PARTITION_X), opening
+    // outward into the yard.
+    leaf_x  = PARTITION_X - LEAF_T;
 
     color(pal_door(palette))
     translate([leaf_x, leaf_y0, z0])

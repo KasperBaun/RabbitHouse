@@ -24,7 +24,7 @@ use <../../lib/primitives/beslag.scad>
 COURSES = 4;
 
 module RenderHouseFoundation(palette = DEFAULT_PALETTE) {
-    ww = RH_WIDTH; bh = RH_BASE_H; hl = RH_HOUSE_LEN;
+    ww = RH_HOUSE_DEPTH; bh = RH_BASE_H; hl = RH_HOUSE_LEN;
     bw = FUNDABLOK_W;       // 150
     h_per = FUNDABLOK_H;    // 200
 

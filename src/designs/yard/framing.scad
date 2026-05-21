@@ -1,7 +1,8 @@
 // YARD framing — DPC + sill + studs + yard-door framed opening + top plate
-// for the yard segment (X = hl..ll). Self-contained: all helpers are local
-// to this file so the yard folder is independent of house. The junction stud
-// at X=hl belongs to HOUSE; yard's V1/V2 segments start clean at X=hl.
+// for the yard segment (X = hl..ll, Y = yo..yo+yd where yo=RH_YARD_Y_OFFSET
+// and yd=RH_YARD_DEPTH). Self-contained: all helpers are local to this file
+// so the yard folder is independent of house. The junction stud at X=hl
+// belongs to HOUSE; yard's V1/V2 segments start clean at X=hl.
 
 include <../../lib/defaults.scad>
 include <../config.scad>
@@ -26,8 +27,11 @@ STUD_BOTTOM_Z = RH_BASE_H + DPC_T + PLATE_HEIGHT;
 JAMB_BUFFER = 300;
 function _jamb_bx() = STUD_THICK + JAMB_BUFFER;
 
+// y is absolute world Y. Yard front eave at y=RH_YARD_Y_OFFSET (high),
+// back eave at y=RH_YARD_Y_OFFSET+RH_YARD_DEPTH (low).
 function wall_top_z(y) =
-    WALL_TOP_HIGH - (WALL_TOP_HIGH - WALL_TOP_LOW) * y / RH_WIDTH;
+    WALL_TOP_HIGH - (WALL_TOP_HIGH - WALL_TOP_LOW)
+                    * (y - RH_YARD_Y_OFFSET) / RH_YARD_DEPTH;
 function stud_top_z(y) = wall_top_z(y) - PLATE_HEIGHT;
 
 function _in_any_skip(c, ranges) =
@@ -82,8 +86,10 @@ module _studs_one_wall(origin, length, axis, stud_height,
     }
 }
 
-// Framed yard door (axis X, flat HIGH top, no sill).
+// Framed yard door (axis X, flat HIGH top, no sill). Sits on V1 front wall
+// at world Y=yo (= RH_YARD_Y_OFFSET).
 module _render_yard_door_framing(palette = DEFAULT_PALETTE) {
+    yo = RH_YARD_Y_OFFSET;
     opening_pos = RH_YARD_DOOR_X;
     opening_w   = RH_YARD_DOOR_W;
     opening_z   = STUD_BOTTOM_Z;
@@ -93,57 +99,60 @@ module _render_yard_door_framing(palette = DEFAULT_PALETTE) {
     crip_above_h = WALL_TOP_HIGH - PLATE_HEIGHT - z_header_top;
 
     color(pal_post(palette)) {
-        translate([opening_pos, 0, z_header_bot])
+        translate([opening_pos, yo, z_header_bot])
             cube([opening_w, STUD_DEPTH, PLATE_HEIGHT]);
         if (crip_above_h > 50)
             for (cx = [STUD_C2C/2 : STUD_C2C : opening_w - STUD_THICK/2])
-                translate([opening_pos + cx - STUD_THICK/2, 0, z_header_top])
+                translate([opening_pos + cx - STUD_THICK/2, yo, z_header_top])
                     cube([STUD_THICK, STUD_DEPTH, crip_above_h]);
     }
 }
 
 // ============================================================================
 // YARD entry — X=hl..ll segment of V1/V2 + V4. No junction stud (house owns it).
+// Y range: yo..yo+yd (= 500..3000 i nuværende config).
 // ============================================================================
 module RenderYardFraming(palette = DEFAULT_PALETTE) {
-    ll = RH_LENGTH; ww = RH_WIDTH; hl = RH_HOUSE_LEN;
+    ll = RH_LENGTH; yd = RH_YARD_DEPTH; hl = RH_HOUSE_LEN;
+    yo = RH_YARD_Y_OFFSET;
+    y_back = yo + yd;             // V2 outer edge in world Y
     h_high = WALL_TOP_HIGH - STUD_BOTTOM_Z - PLATE_HEIGHT;
     h_low  = WALL_TOP_LOW  - STUD_BOTTOM_Z - PLATE_HEIGHT;
     bx     = _jamb_bx();
-    butt_y0  = STUD_DEPTH;
-    butt_len = ww - 2 * STUD_DEPTH;
+    butt_y0  = yo + STUD_DEPTH;
+    butt_len = yd - 2 * STUD_DEPTH;
     sd = PLATE_DEPTH; sw = PLATE_HEIGHT;
 
     // DPC — V1 + V2 segments [hl..ll] + V4 cross at X=ll.
     color(DPC_COLOR) {
-        translate([hl, 0, RH_BASE_H])         cube([ll - hl, DPC_W, DPC_T]);
-        translate([hl, ww - DPC_W, RH_BASE_H]) cube([ll - hl, DPC_W, DPC_T]);
-        translate([ll - DPC_W, DPC_W, RH_BASE_H])
-            cube([DPC_W, ww - 2*DPC_W, DPC_T]);
+        translate([hl, yo,            RH_BASE_H])  cube([ll - hl, DPC_W, DPC_T]);
+        translate([hl, y_back - DPC_W, RH_BASE_H]) cube([ll - hl, DPC_W, DPC_T]);
+        translate([ll - DPC_W, yo + DPC_W, RH_BASE_H])
+            cube([DPC_W, yd - 2*DPC_W, DPC_T]);
     }
 
     // Sill plate.
     color(pal_post(palette)) {
-        translate([hl, 0, RH_BASE_H + DPC_T])         cube([ll - hl, sd, sw]);
-        translate([hl, ww - sd, RH_BASE_H + DPC_T])   cube([ll - hl, sd, sw]);
-        translate([ll - sd, sd, RH_BASE_H + DPC_T])
-            cube([sd, ww - 2*sd, sw]);
+        translate([hl, yo,            RH_BASE_H + DPC_T]) cube([ll - hl, sd, sw]);
+        translate([hl, y_back - sd,   RH_BASE_H + DPC_T]) cube([ll - hl, sd, sw]);
+        translate([ll - sd, yo + sd,  RH_BASE_H + DPC_T])
+            cube([sd, yd - 2*sd, sw]);
     }
 
     // Top plate — V1/V2 flat segments + sloped V4.
     color(pal_post(palette)) {
-        translate([hl, 0, WALL_TOP_HIGH - sw])      cube([ll - hl, sd, sw]);
-        translate([hl, ww - sd, WALL_TOP_LOW - sw]) cube([ll - hl, sd, sw]);
-        _sloped_top_plate(ll - sd, butt_y0, ww - sd);
+        translate([hl, yo,            WALL_TOP_HIGH - sw]) cube([ll - hl, sd, sw]);
+        translate([hl, y_back - sd,   WALL_TOP_LOW  - sw]) cube([ll - hl, sd, sw]);
+        _sloped_top_plate(ll - sd, butt_y0, y_back - sd);
     }
 
     // V1[hl..ll] studs — flat HIGH. Yard door at RH_YARD_DOOR_X.
     front_skip = [[RH_YARD_DOOR_X - bx, RH_YARD_DOOR_X + RH_YARD_DOOR_W + bx]];
-    _studs_one_wall([hl, 0, 0], ll - hl, "X", h_high,
+    _studs_one_wall([hl, yo, 0], ll - hl, "X", h_high,
                     skip_ranges=front_skip, palette=palette);
 
     // V2[hl..ll] studs — flat LOW.
-    _studs_one_wall([hl, ww - STUD_DEPTH, 0], ll - hl, "X", h_low,
+    _studs_one_wall([hl, y_back - STUD_DEPTH, 0], ll - hl, "X", h_low,
                     palette=palette);
 
     // V4 — sloped Y wall, no openings.
@@ -152,9 +161,9 @@ module RenderYardFraming(palette = DEFAULT_PALETTE) {
 
     // Yard-door jamb studs.
     color(pal_post(palette)) {
-        translate([RH_YARD_DOOR_X - STUD_THICK, 0, STUD_BOTTOM_Z])
+        translate([RH_YARD_DOOR_X - STUD_THICK, yo, STUD_BOTTOM_Z])
             cube([STUD_THICK, STUD_DEPTH, h_high]);
-        translate([RH_YARD_DOOR_X + RH_YARD_DOOR_W, 0, STUD_BOTTOM_Z])
+        translate([RH_YARD_DOOR_X + RH_YARD_DOOR_W, yo, STUD_BOTTOM_Z])
             cube([STUD_THICK, STUD_DEPTH, h_high]);
     }
 

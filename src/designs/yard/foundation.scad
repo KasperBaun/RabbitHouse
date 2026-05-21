@@ -5,13 +5,15 @@
 // Standalone (standalone=true): adds a V5 left strip at X=hl so yard has
 // its own complete 4-side ring.
 //
+// Yard spans world Y=yo..yo+yd hvor yo=RH_YARD_Y_OFFSET, yd=RH_YARD_DEPTH.
+//
 // Halvstensforbandt med vekslende hjørne-ejerskab per skifte (samme mønster
 // som hus-fundamentet):
 //   lige skifter (0, 2): KORTE vægge (V4 + evt. V5) ejer hjørner — fulde
-//                        Y=0..ww. De lange V1, V2 sidder mellem.
+//                        Y=yo..yo+yd. De lange V1, V2 sidder mellem.
 //   ulige skifter (1, 3): LANGE vægge (V1, V2) ejer hjørner — fulde
 //                         X=hl..ll. V4 (og evt. V5) sidder mellem
-//                         Y=bw..ww-bw.
+//                         Y=yo+bw..yo+yd-bw.
 
 include <../../lib/defaults.scad>
 include <../config.scad>
@@ -21,7 +23,8 @@ use <../../lib/primitives/beslag.scad>
 COURSES = 4;
 
 module RenderYardFoundation(standalone = false, palette = DEFAULT_PALETTE) {
-    ll = RH_LENGTH; ww = RH_WIDTH; bh = RH_BASE_H; hl = RH_HOUSE_LEN;
+    ll = RH_LENGTH; yd = RH_YARD_DEPTH; bh = RH_BASE_H; hl = RH_HOUSE_LEN;
+    yo = RH_YARD_Y_OFFSET;
     bw = FUNDABLOK_W;
     h_per = FUNDABLOK_H;
 
@@ -31,35 +34,35 @@ module RenderYardFoundation(standalone = false, palette = DEFAULT_PALETTE) {
     for (c = [0 : COURSES - 1]) {
         z = bh - (COURSES - c) * h_per;
         if (c % 2 == 0) {
-            // Lige skifte — korte vægge ejer hjørner. V4 fuld Y=0..ww.
+            // Lige skifte — korte vægge ejer hjørner. V4 fuld Y=yo..yo+yd.
             // V1, V2 mellem V4 (på højre) og venstre væg/V5/åben kant.
-            _fb_strip_y([ll - bw, 0],          ww,  z, 0);
+            _fb_strip_y([ll - bw, yo],          yd, z, 0);
             v12_start = standalone ? hl + bw : hl;
             v12_end   = ll - bw;
-            _fb_strip_x([v12_start, 0],        v12_end - v12_start, z, 0);
-            _fb_strip_x([v12_start, ww - bw],  v12_end - v12_start, z, 0);
+            _fb_strip_x([v12_start, yo],            v12_end - v12_start, z, 0);
+            _fb_strip_x([v12_start, yo + yd - bw],  v12_end - v12_start, z, 0);
             if (standalone)
-                _fb_strip_y([hl, 0],           ww,  z, 0);
+                _fb_strip_y([hl, yo],           yd, z, 0);
         } else {
             // Ulige skifte — lange vægge ejer hjørner. V1, V2 fuld X=hl..ll.
-            // V4 (og evt. V5) mellem Y=bw..ww-bw.
-            _fb_strip_x([hl, 0],               yard_len,  z, 0);
-            _fb_strip_x([hl, ww - bw],         yard_len,  z, 0);
-            _fb_strip_y([ll - bw, bw],         ww - 2*bw, z, 0);
+            // V4 (og evt. V5) mellem Y=yo+bw..yo+yd-bw.
+            _fb_strip_x([hl, yo],              yard_len, z, 0);
+            _fb_strip_x([hl, yo + yd - bw],    yard_len, z, 0);
+            _fb_strip_y([ll - bw, yo + bw],    yd - 2*bw, z, 0);
             if (standalone)
-                _fb_strip_y([hl, bw],          ww - 2*bw, z, 0);
+                _fb_strip_y([hl, yo + bw],     yd - 2*bw, z, 0);
         }
     }
 
     // M10 anchors c/c 1000 mm. Skip x=hl since house owns that anchor.
     cl = bw / 2;
     for (x = [2500 : 1000 : ll - 500])
-        ankerskrue_m10([x, cl],       top_z = bh);
+        ankerskrue_m10([x, yo + cl],          top_z = bh);
     for (x = [2500 : 1000 : ll - 500])
-        ankerskrue_m10([x, ww - cl],  top_z = bh);
-    for (y = [500 : 1000 : ww - 500])
-        ankerskrue_m10([ll - cl, y],  top_z = bh);
+        ankerskrue_m10([x, yo + yd - cl],     top_z = bh);
+    for (y = [yo + 500 : 1000 : yo + yd - 500])
+        ankerskrue_m10([ll - cl, y],          top_z = bh);
     if (standalone)
-        for (y = [500 : 1000 : ww - 500])
-            ankerskrue_m10([hl, y],   top_z = bh);
+        for (y = [yo + 500 : 1000 : yo + yd - 500])
+            ankerskrue_m10([hl, y],           top_z = bh);
 }

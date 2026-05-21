@@ -10,7 +10,7 @@ BATTEN_COLOR    = [0.78, 0.65, 0.45];
 
 // Top-plate Z at any Y on a roof-sloped wall (V3, V4, V5).
 function wall_height_at(y) =
-    RH_EH_FRONT - (RH_EH_FRONT - RH_EH_BACK) * y / RH_WIDTH;
+    RH_EH_FRONT - (RH_EH_FRONT - RH_EH_BACK) * y / RH_HOUSE_DEPTH;
 
 function in_any_skip(c, ranges) =
     len([for (r = ranges) if (c >= r[0] && c <= r[1]) 1]) > 0;

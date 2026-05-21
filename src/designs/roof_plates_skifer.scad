@@ -159,7 +159,7 @@ module _sk_ridge_cap(y_lo, y_hi) {
 // ============================================================================
 module render_roof_plates_skifer_gable(palette = DEFAULT_PALETTE) {
     y_lo = -G_OH_RAKE;
-    y_hi = RH_WIDTH + G_OH_RAKE;
+    y_hi = RH_HOUSE_DEPTH + G_OH_RAKE;
     x_lo = -G_OH_EAVE;
     x_hi = RH_HOUSE_LEN + G_OH_EAVE;
 

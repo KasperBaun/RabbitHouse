@@ -9,9 +9,11 @@
 //
 // Two entry forms:
 //   render_roof_plates_tagpap()                              — full footprint
-//   render_roof_plates_tagpap_segment(x_lo, x_hi,
-//                                     has_left_side,
-//                                     has_right_side, ...)   — zone segment
+//   render_roof_plates_tagpap_segment(x_lo, x_hi, ...)       — zone segment
+//
+// The segment accepts (eh_front, eh_back, depth, y_offset) so callers in
+// either zone can render at the right elevation and Y range. Defaults are
+// the HOUSE values; the YARD dispatcher overrides them.
 
 include <../lib/defaults.scad>
 include <config.scad>
@@ -28,21 +30,23 @@ FELT_COLOR         = [0.08, 0.08, 0.08];
 ALU_COLOR          = [0.78, 0.78, 0.80];
 
 // Sloped slab parallel to roof underside, restricted to [x_lo..x_hi].
-module _roof_layer(eh_back, offset_z, thick, color_rgb, x_lo, x_hi) {
-    ww = RH_WIDTH;
-    drop_full = total_drop_for(eh_back);
-    roof_oz   = roof_oz_for(eh_back);
+module _roof_layer(eh_front, eh_back, depth, y_offset,
+                   offset_z, thick, color_rgb, x_lo, x_hi) {
+    drop_full = _roof_drop(eh_front, eh_back, depth);
+    roof_oz   = _roof_oz(eh_front, eh_back, depth);
+    y_lo = y_offset - RH_OH_FRONT;
+    y_hi = y_offset + depth + RH_OH_BACK;
     color(color_rgb)
     polyhedron(
         points = [
-            [x_lo, -RH_OH_FRONT,        roof_oz + offset_z],
-            [x_hi, -RH_OH_FRONT,        roof_oz + offset_z],
-            [x_hi, ww + RH_OH_BACK,     roof_oz - drop_full + offset_z],
-            [x_lo, ww + RH_OH_BACK,     roof_oz - drop_full + offset_z],
-            [x_lo, -RH_OH_FRONT,        roof_oz + offset_z + thick],
-            [x_hi, -RH_OH_FRONT,        roof_oz + offset_z + thick],
-            [x_hi, ww + RH_OH_BACK,     roof_oz - drop_full + offset_z + thick],
-            [x_lo, ww + RH_OH_BACK,     roof_oz - drop_full + offset_z + thick]
+            [x_lo, y_lo, roof_oz + offset_z],
+            [x_hi, y_lo, roof_oz + offset_z],
+            [x_hi, y_hi, roof_oz - drop_full + offset_z],
+            [x_lo, y_hi, roof_oz - drop_full + offset_z],
+            [x_lo, y_lo, roof_oz + offset_z + thick],
+            [x_hi, y_lo, roof_oz + offset_z + thick],
+            [x_hi, y_hi, roof_oz - drop_full + offset_z + thick],
+            [x_lo, y_hi, roof_oz - drop_full + offset_z + thick]
         ],
         faces = [[0,1,2,3], [4,7,6,5], [0,4,5,1], [1,5,6,2], [2,6,7,3], [3,7,4,0]]
     );
@@ -50,20 +54,22 @@ module _roof_layer(eh_back, offset_z, thick, color_rgb, x_lo, x_hi) {
 
 // Fascia caps for an X segment. Front + back caps span [x_lo..x_hi]; left
 // and right side caps render only when the corresponding flag is set.
-module _render_fascia_caps_segment(eh_back, fascia_top_offset,
+module _render_fascia_caps_segment(eh_front, eh_back, depth, y_offset,
+                                   fascia_top_offset,
                                    x_lo, x_hi,
                                    has_left_side, has_right_side) {
-    ww = RH_WIDTH;
-    drop_full = total_drop_for(eh_back);
-    roof_oz   = roof_oz_for(eh_back);
+    drop_full = _roof_drop(eh_front, eh_back, depth);
+    roof_oz   = _roof_oz(eh_front, eh_back, depth);
     z_front = roof_oz + fascia_top_offset;
     z_back  = roof_oz - drop_full + fascia_top_offset;
 
     CAP_DROP = 35;
     CAP_T    = 2;
 
-    y_front_outer = -RH_OH_FRONT - RH_FASCIA_T;
-    y_back_outer  = ww + RH_OH_BACK + RH_FASCIA_T;
+    y_front_inner = y_offset - RH_OH_FRONT;
+    y_back_inner  = y_offset + depth + RH_OH_BACK;
+    y_front_outer = y_front_inner - RH_FASCIA_T;
+    y_back_outer  = y_back_inner  + RH_FASCIA_T;
     fx_lo = has_left_side  ? x_lo - RH_FASCIA_T : x_lo;
     fx_hi = has_right_side ? x_hi + RH_FASCIA_T : x_hi;
 
@@ -74,7 +80,7 @@ module _render_fascia_caps_segment(eh_back, fascia_top_offset,
         translate([fx_lo, y_front_outer - CAP_T, z_front - CAP_DROP])
             cube([fx_hi - fx_lo, CAP_T, CAP_DROP + CAP_T]);
         // Back-eave horizontal cap.
-        translate([fx_lo, ww + RH_OH_BACK, z_back])
+        translate([fx_lo, y_back_inner, z_back])
             cube([fx_hi - fx_lo, RH_FASCIA_T, CAP_T]);
         translate([fx_lo, y_back_outer, z_back - CAP_DROP])
             cube([fx_hi - fx_lo, CAP_T, CAP_DROP + CAP_T]);
@@ -113,13 +119,20 @@ module _render_fascia_caps_segment(eh_back, fascia_top_offset,
 // Segment renderer — used by zone dispatchers.
 module render_roof_plates_tagpap_segment(x_lo, x_hi,
                                           has_left_side, has_right_side,
-                                          palette = DEFAULT_PALETTE) {
-    eh_back           = back_eave_height_for("tagpap_osb");
+                                          eh_front = RH_EH_FRONT,
+                                          eh_back  = RH_EH_BACK,
+                                          depth    = RH_HOUSE_DEPTH,
+                                          y_offset = 0,
+                                          palette  = DEFAULT_PALETTE) {
     fascia_top_offset = fascia_top_offset_for("tagpap_osb");
-    _roof_layer(eh_back, 0,                              OSB_T,          OSB_COLOR,          x_lo, x_hi);
-    _roof_layer(eh_back, OSB_T,                          UNDERLAYMENT_T, UNDERLAYMENT_COLOR, x_lo, x_hi);
-    _roof_layer(eh_back, OSB_T + UNDERLAYMENT_T,         FELT_T,         FELT_COLOR,         x_lo, x_hi);
-    _render_fascia_caps_segment(eh_back, fascia_top_offset,
+    _roof_layer(eh_front, eh_back, depth, y_offset,
+                0,                              OSB_T,          OSB_COLOR,          x_lo, x_hi);
+    _roof_layer(eh_front, eh_back, depth, y_offset,
+                OSB_T,                          UNDERLAYMENT_T, UNDERLAYMENT_COLOR, x_lo, x_hi);
+    _roof_layer(eh_front, eh_back, depth, y_offset,
+                OSB_T + UNDERLAYMENT_T,         FELT_T,         FELT_COLOR,         x_lo, x_hi);
+    _render_fascia_caps_segment(eh_front, eh_back, depth, y_offset,
+                                fascia_top_offset,
                                 x_lo, x_hi, has_left_side, has_right_side);
 }
 
@@ -127,5 +140,5 @@ module render_roof_plates_tagpap_segment(x_lo, x_hi,
 module render_roof_plates_tagpap(palette = DEFAULT_PALETTE) {
     ll = RH_LENGTH;
     render_roof_plates_tagpap_segment(-RH_OH_SIDE, ll + RH_OH_SIDE,
-                                       true, true, palette);
+                                       true, true, palette = palette);
 }

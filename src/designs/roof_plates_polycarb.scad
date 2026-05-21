@@ -9,40 +9,45 @@
 //
 // Two entry forms:
 //   render_roof_plates_polycarb()                              — full footprint
-//   render_roof_plates_polycarb_segment(x_lo, x_hi)            — zone segment
+//   render_roof_plates_polycarb_segment(x_lo, x_hi, ...)       — zone segment
+//
+// The segment accepts (eh_front, eh_back, depth, y_offset) so callers in
+// either zone can render at the right elevation and Y range. Defaults are
+// the HOUSE values; the YARD dispatcher overrides all four.
 
 include <../lib/defaults.scad>
 include <config.scad>
 
 POLYCARB_T = 12;
 
-module _polycarb_slab(x_lo, x_hi, eh_front, eh_back, palette) {
-    ww        = RH_WIDTH;
-    drop_full = _roof_drop(eh_front, eh_back);
-    roof_oz   = _roof_oz(eh_front, eh_back);
+module _polycarb_slab(x_lo, x_hi, eh_front, eh_back, depth, y_offset, palette) {
+    drop_full = _roof_drop(eh_front, eh_back, depth);
+    roof_oz   = _roof_oz(eh_front, eh_back, depth);
+    y_lo = y_offset - RH_OH_FRONT;
+    y_hi = y_offset + depth + RH_OH_BACK;
     color(pal_polycarb(palette))
     polyhedron(
         points = [
-            [x_lo, -RH_OH_FRONT,        roof_oz],
-            [x_hi, -RH_OH_FRONT,        roof_oz],
-            [x_hi, ww + RH_OH_BACK,     roof_oz - drop_full],
-            [x_lo, ww + RH_OH_BACK,     roof_oz - drop_full],
-            [x_lo, -RH_OH_FRONT,        roof_oz + POLYCARB_T],
-            [x_hi, -RH_OH_FRONT,        roof_oz + POLYCARB_T],
-            [x_hi, ww + RH_OH_BACK,     roof_oz - drop_full + POLYCARB_T],
-            [x_lo, ww + RH_OH_BACK,     roof_oz - drop_full + POLYCARB_T]
+            [x_lo, y_lo, roof_oz],
+            [x_hi, y_lo, roof_oz],
+            [x_hi, y_hi, roof_oz - drop_full],
+            [x_lo, y_hi, roof_oz - drop_full],
+            [x_lo, y_lo, roof_oz + POLYCARB_T],
+            [x_hi, y_lo, roof_oz + POLYCARB_T],
+            [x_hi, y_hi, roof_oz - drop_full + POLYCARB_T],
+            [x_lo, y_hi, roof_oz - drop_full + POLYCARB_T]
         ],
         faces = [[0,1,2,3], [4,7,6,5], [0,4,5,1], [1,5,6,2], [2,6,7,3], [3,7,4,0]]
     );
 }
 
-// Segment renderer — caller passes (eh_front, eh_back) so house and yard
-// can render at different elevations.
 module render_roof_plates_polycarb_segment(x_lo, x_hi,
                                             eh_front = RH_EH_FRONT,
                                             eh_back  = RH_EH_BACK,
+                                            depth    = RH_HOUSE_DEPTH,
+                                            y_offset = 0,
                                             palette  = DEFAULT_PALETTE) {
-    _polycarb_slab(x_lo, x_hi, eh_front, eh_back, palette);
+    _polycarb_slab(x_lo, x_hi, eh_front, eh_back, depth, y_offset, palette);
 }
 
 module render_roof_plates_polycarb(palette = DEFAULT_PALETTE) {

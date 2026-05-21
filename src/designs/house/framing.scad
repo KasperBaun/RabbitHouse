@@ -24,7 +24,7 @@ JAMB_BUFFER = 300;
 function _jamb_bx() = STUD_THICK + JAMB_BUFFER;
 
 function wall_top_z(y) =
-    WALL_TOP_HIGH - (WALL_TOP_HIGH - WALL_TOP_LOW) * y / RH_WIDTH;
+    WALL_TOP_HIGH - (WALL_TOP_HIGH - WALL_TOP_LOW) * y / RH_HOUSE_DEPTH;
 function stud_top_z(y) = wall_top_z(y) - PLATE_HEIGHT;
 
 function _in_any_skip(c, ranges) =
@@ -160,7 +160,7 @@ module _render_framed_opening(wall_origin, axis,
 // HOUSE entry — X=0..hl segment of V1/V2 + V3 + V5 + junction stud at X=hl.
 // ============================================================================
 module RenderHouseFraming(palette = DEFAULT_PALETTE) {
-    ww = RH_WIDTH; hl = RH_HOUSE_LEN;
+    ww = RH_HOUSE_DEPTH; hl = RH_HOUSE_LEN;
     h_high = WALL_TOP_HIGH - STUD_BOTTOM_Z - PLATE_HEIGHT;
     h_low  = WALL_TOP_LOW  - STUD_BOTTOM_Z - PLATE_HEIGHT;
     bx     = _jamb_bx();
@@ -175,8 +175,9 @@ module RenderHouseFraming(palette = DEFAULT_PALETTE) {
         // V3 at X=0
         translate([0, DPC_W, RH_BASE_H])
             cube([DPC_W, ww - 2*DPC_W, DPC_T]);
-        // V5 partition centred at hl
-        translate([hl - DPC_W/2, DPC_W, RH_BASE_H])
+        // V5 — sits inside the foundation strip (X=hl-bw..hl), outer face
+        // flush with hl so it matches the foundation outer edge.
+        translate([hl - DPC_W, DPC_W, RH_BASE_H])
             cube([DPC_W, ww - 2*DPC_W, DPC_T]);
     }
 
@@ -186,7 +187,7 @@ module RenderHouseFraming(palette = DEFAULT_PALETTE) {
         translate([0, ww - sd, RH_BASE_H + DPC_T])   cube([hl, sd, sw]);
         translate([0, sd, RH_BASE_H + DPC_T])
             cube([sd, ww - 2*sd, sw]);
-        translate([hl - sd/2, sd, RH_BASE_H + DPC_T])
+        translate([hl - sd, sd, RH_BASE_H + DPC_T])
             cube([sd, ww - 2*sd, sw]);
     }
 
@@ -195,7 +196,7 @@ module RenderHouseFraming(palette = DEFAULT_PALETTE) {
         translate([0, 0, WALL_TOP_HIGH - sw])      cube([hl, sd, sw]);
         translate([0, ww - sd, WALL_TOP_LOW - sw]) cube([hl, sd, sw]);
         _sloped_top_plate(0,           butt_y0, ww - sd);
-        _sloped_top_plate(hl - sd/2,   butt_y0, ww - sd);
+        _sloped_top_plate(hl - sd,     butt_y0, ww - sd);
     }
 
     // V1[0..hl] studs — flat HIGH. Skip end stud (junction stud handles it).
@@ -216,7 +217,7 @@ module RenderHouseFraming(palette = DEFAULT_PALETTE) {
         [RH_HOUSE_DOOR_Y - bx, RH_HOUSE_DOOR_Y + RH_HOUSE_DOOR_W + bx],
         [RH_PET_DOOR_Y   - bx, RH_PET_DOOR_Y   + RH_PET_DOOR_W   + bx]
     ];
-    _studs_one_wall([hl - STUD_DEPTH/2, butt_y0, 0], butt_len, "Y", h_low,
+    _studs_one_wall([hl - STUD_DEPTH, butt_y0, 0], butt_len, "Y", h_low,
                     skip_ranges=partition_skip, palette=palette);
 
     // Jamb studs for house openings.
@@ -224,18 +225,19 @@ module RenderHouseFraming(palette = DEFAULT_PALETTE) {
         _sloped_stud_y(0, RH_SIDE_WIN_Y - STUD_THICK);
         _sloped_stud_y(0, RH_SIDE_WIN_Y + RH_SIDE_WIN_W);
 
-        _sloped_stud_y(hl - STUD_DEPTH/2, RH_HOUSE_DOOR_Y - STUD_THICK);
-        _sloped_stud_y(hl - STUD_DEPTH/2, RH_HOUSE_DOOR_Y + RH_HOUSE_DOOR_W);
+        _sloped_stud_y(hl - STUD_DEPTH, RH_HOUSE_DOOR_Y - STUD_THICK);
+        _sloped_stud_y(hl - STUD_DEPTH, RH_HOUSE_DOOR_Y + RH_HOUSE_DOOR_W);
 
-        _sloped_stud_y(hl - STUD_DEPTH/2, RH_PET_DOOR_Y - STUD_THICK);
-        _sloped_stud_y(hl - STUD_DEPTH/2, RH_PET_DOOR_Y + RH_PET_DOOR_W);
+        _sloped_stud_y(hl - STUD_DEPTH, RH_PET_DOOR_Y - STUD_THICK);
+        _sloped_stud_y(hl - STUD_DEPTH, RH_PET_DOOR_Y + RH_PET_DOOR_W);
     }
 
-    // Junction studs at X=hl supporting the partition.
+    // Junction studs at the V5/V1 and V5/V2 corners — V5's outer face is
+    // at X=hl, so the corner stud is flush with hl on the right.
     color(pal_post(palette)) {
-        translate([hl - STUD_THICK/2, 0, STUD_BOTTOM_Z])
+        translate([hl - STUD_THICK, 0, STUD_BOTTOM_Z])
             cube([STUD_THICK, STUD_DEPTH, h_high]);
-        translate([hl - STUD_THICK/2, ww - STUD_DEPTH, STUD_BOTTOM_Z])
+        translate([hl - STUD_THICK, ww - STUD_DEPTH, STUD_BOTTOM_Z])
             cube([STUD_THICK, STUD_DEPTH, h_low]);
     }
 
@@ -246,12 +248,12 @@ module RenderHouseFraming(palette = DEFAULT_PALETTE) {
                            opening_h = RH_SIDE_WIN_H,
                            has_sill = true, wall_top = WALL_TOP_LOW,
                            sloped = true, palette = palette);
-    _render_framed_opening(wall_origin = [hl - STUD_DEPTH/2, 0, 0], axis = "Y",
+    _render_framed_opening(wall_origin = [hl - STUD_DEPTH, 0, 0], axis = "Y",
                            opening_pos = RH_HOUSE_DOOR_Y, opening_w = RH_HOUSE_DOOR_W,
                            opening_z = STUD_BOTTOM_Z, opening_h = RH_HOUSE_DOOR_H,
                            has_sill = false, wall_top = WALL_TOP_LOW,
                            sloped = true, palette = palette);
-    _render_framed_opening(wall_origin = [hl - STUD_DEPTH/2, 0, 0], axis = "Y",
+    _render_framed_opening(wall_origin = [hl - STUD_DEPTH, 0, 0], axis = "Y",
                            opening_pos = RH_PET_DOOR_Y, opening_w = RH_PET_DOOR_W,
                            opening_z = RH_FLOOR_TOP + 60, opening_h = RH_PET_DOOR_H,
                            has_sill = false, wall_top = WALL_TOP_LOW,

@@ -1,7 +1,11 @@
-// YARD roof — rafters X>=1800 + right-side lookouts + front+back fascia/
+// YARD roof — rafters X>=2400 + right-side lookouts + front+back fascia/
 // soffit [hl..x_right] + right-side fascia. Self-contained. Uses yard's
 // own (lower) eave heights — RH_YARD_EH_FRONT / RH_YARD_EH_BACK — so the
 // yard reads as a separate structure from the (taller) house.
+//
+// Yard footprint spans world Y=yo..yo+yd where yo=RH_YARD_Y_OFFSET and
+// yd=RH_YARD_DEPTH. yard_roof_underside(y) in config.scad takes ABSOLUTE
+// world Y.
 
 include <../../lib/defaults.scad>
 include <../config.scad>
@@ -9,23 +13,30 @@ use <../../lib/primitives/beslag.scad>
 
 SOFFIT_T = 18;
 
-// Rafters owned by YARD — 7 inner + V4 gable + right barge.
+// Rafters owned by YARD — 6 inner spær c/c 600 + V4 gable + right barge.
+// First inner rafter at X=hl+400 (400 mm right of V5 partition); last gap
+// to V4 = 555 mm (5400 → 5955).
 function _yard_rafter_xs() = [
-    1800, 2400, 3000, 3600, 4200, 4800, 5400,
-    RH_LENGTH - RH_RAFTER_W,           // V4 gable, 5955
-    RH_LENGTH + RH_OH_SIDE - RH_RAFTER_W  // right barge, 6175
+    RH_HOUSE_LEN + 400,                       // 2400
+    RH_HOUSE_LEN + 1000,                      // 3000
+    RH_HOUSE_LEN + 1600,                      // 3600
+    RH_HOUSE_LEN + 2200,                      // 4200
+    RH_HOUSE_LEN + 2800,                      // 4800
+    RH_HOUSE_LEN + 3400,                      // 5400
+    RH_LENGTH - RH_RAFTER_W,                  // V4 gable, 5955
+    RH_LENGTH + RH_OH_SIDE - RH_RAFTER_W      // right barge, 6175
 ];
 
 module _render_rafters_yard(palette) {
-    ww = RH_WIDTH; sd = 95;
-    y_start = -RH_OH_FRONT;
-    y_end   = ww + RH_OH_BACK;
+    yo = RH_YARD_Y_OFFSET; yd = RH_YARD_DEPTH; sd = 95;
+    y_start = yo - RH_OH_FRONT;
+    y_end   = yo + yd + RH_OH_BACK;
     z_start = yard_roof_underside(y_start) - RH_RAFTER_H;
     z_end   = yard_roof_underside(y_end)   - RH_RAFTER_H;
     z_v1_top = RH_BASE_H + RH_YARD_EH_FRONT;
     z_v2_top = RH_BASE_H + RH_YARD_EH_BACK;
-    y_brk_f = sd / 2;
-    y_brk_b = ww - sd / 2;
+    y_brk_f = yo + sd / 2;
+    y_brk_b = yo + yd - sd / 2;
     BRK_W = 50; BRK_LEG = 90; BRK_T = 2;
 
     xs = _yard_rafter_xs();
@@ -60,8 +71,9 @@ module _render_rafters_yard(palette) {
 }
 
 module _render_lookouts_yard(palette) {
+    yo = RH_YARD_Y_OFFSET; yd = RH_YARD_DEPTH;
     LOOKOUT_LEN = RH_OH_SIDE - RH_RAFTER_W;
-    LOOKOUT_YS  = [47.5, RH_WIDTH/2, RH_WIDTH - 47.5];
+    LOOKOUT_YS  = [yo + 47.5, yo + yd/2, yo + yd - 47.5];
     color(pal_post(palette))
     for (yc = LOOKOUT_YS) {
         z_top = yard_roof_underside(yc);
@@ -92,16 +104,20 @@ module _soffit_panel(x0, x1, y0, y1, palette) {
 }
 
 module _render_soffit_yard(palette) {
-    hl = RH_HOUSE_LEN; ll = RH_LENGTH; ww = RH_WIDTH;
-    x_left  = hl + RH_POST_W/2;     // starts past V5 yard-side face
+    hl = RH_HOUSE_LEN; ll = RH_LENGTH;
+    yo = RH_YARD_Y_OFFSET; yd = RH_YARD_DEPTH;
+    x_left  = hl;
     x_right = ll + RH_OH_SIDE + RH_FASCIA_T;
-    _soffit_panel(x_left, x_right, -RH_OH_FRONT, 0, palette);
-    _soffit_panel(x_left, x_right, ww, ww + RH_OH_BACK, palette);
-    _soffit_panel(ll, x_right, 0, ww, palette);
+    y_front_eave = yo - RH_OH_FRONT;
+    y_back_eave  = yo + yd + RH_OH_BACK;
+    _soffit_panel(x_left, x_right, y_front_eave, yo, palette);
+    _soffit_panel(x_left, x_right, yo + yd, y_back_eave, palette);
+    _soffit_panel(ll, x_right, yo, yo + yd, palette);
 }
 
 module _render_fascia_yard(fascia_top_offset, palette) {
-    hl = RH_HOUSE_LEN; ll = RH_LENGTH; ww = RH_WIDTH;
+    hl = RH_HOUSE_LEN; ll = RH_LENGTH;
+    yo = RH_YARD_Y_OFFSET; yd = RH_YARD_DEPTH;
     drop_full = yard_total_drop();
     roof_oz   = yard_roof_oz();
     z_front_top = roof_oz + fascia_top_offset;
@@ -109,10 +125,10 @@ module _render_fascia_yard(fascia_top_offset, palette) {
     fascia_h = 140;
     fascia_t = RH_FASCIA_T;
 
-    fx_lo = hl + RH_POST_W/2;
+    fx_lo = hl;
     fx_hi = ll + RH_OH_SIDE + fascia_t;
-    y0 = -RH_OH_FRONT;
-    y1 = ww + RH_OH_BACK;
+    y0 = yo - RH_OH_FRONT;
+    y1 = yo + yd + RH_OH_BACK;
 
     color(pal_trim(palette)) {
         translate([fx_lo, y0, z_front_top - fascia_h])

@@ -39,8 +39,11 @@ house_roof_cover = "skifer";
 // Yard gets a transparent, lower roof — polycarb direct on rafters.
 yard_roof_cover  = "polycarb";
 
-// klink | board_on_board
-cladding_type    = "klink";
+// klink | board_on_board | vertical_120
+// vertical_120: lodret 25×150 savskåret gran i 1200mm kurser med 25×100
+// dækbrædder på samlinger. Renderer pt. KUN V3 (venstre væg) — andre
+// vægge tilføjes efter godkendelse.
+cladding_type    = "vertical_120";
 
 // shared
 //RenderGround();
@@ -49,16 +52,16 @@ cladding_type    = "klink";
 RenderHouseFoundation();
 RenderHouseFraming();
 //RenderHouseOpenings();
-RenderHouseRoof(house_roof_cover);
-RenderHouseRoofPlates(house_roof_cover);
-RenderHouseCladding(cladding_type);
+//RenderHouseRoof(house_roof_cover);
+//RenderHouseRoofPlates(house_roof_cover);
+//RenderHouseCladding(cladding_type);
 
 // yard (uses lower RH_YARD_EH_* eave heights — separate structure)
 RenderYardFoundation();
 RenderYardFraming();
 RenderYardOpenings();
-RenderYardRoof(yard_roof_cover);
-RenderYardRoofPlates(yard_roof_cover);
-RenderYardMesh();
+//RenderYardRoof(yard_roof_cover);
+//RenderYardRoofPlates(yard_roof_cover);
+//RenderYardMesh();
 
 //RenderInterior();

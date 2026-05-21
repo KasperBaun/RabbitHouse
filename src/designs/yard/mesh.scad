@@ -1,17 +1,18 @@
 // Yard mesh — frameless welded wire stretched on the OUTER face of the
 // 45x95 yard reglar. 1/2" x 1" ~ 13 mm x 1 mm wire (RH_MESH_*). Three walls:
-//   front (Y=0)  — two bands, one on each side of the yard door
-//   back  (Y=ww) — single band, flat LOW
-//   right (X=ll) — sloped top, HIGH (Y=0) to LOW (Y=ww)
+//   front (Y=yo)    — two bands, one on each side of the yard door
+//   back  (Y=yo+yd) — single band, flat LOW
+//   right (X=ll)    — sloped top, HIGH (Y=yo) to LOW (Y=yo+yd)
 // Mesh stops at top-plate underside; anything above (between rafters) is
-// the roof's territory.
+// the roof's territory. yo=RH_YARD_Y_OFFSET, yd=RH_YARD_DEPTH.
 
 include <../../lib/defaults.scad>
 include <../config.scad>
 use <../../lib/primitives/mesh.scad>
 
 module RenderYardMesh(mesh = RH_MESH, palette = DEFAULT_PALETTE) {
-    ll = RH_LENGTH; ww = RH_WIDTH; hl = RH_HOUSE_LEN;
+    ll = RH_LENGTH; yd = RH_YARD_DEPTH; hl = RH_HOUSE_LEN;
+    yo = RH_YARD_Y_OFFSET;
     bh = RH_BASE_H;
 
     OUT = 1;   // mesh plane 1 mm outside the stud face
@@ -27,17 +28,18 @@ module RenderYardMesh(mesh = RH_MESH, palette = DEFAULT_PALETTE) {
     // Front (faces -Y) — two bands around the yard door
     door_x0 = RH_YARD_DOOR_X;
     door_x1 = RH_YARD_DOOR_X + RH_YARD_DOOR_W;
-    voliere_x(hl,      door_x0 - hl, z_base, h_front, -OUT,
+    voliere_x(hl,      door_x0 - hl, z_base, h_front, yo - OUT,
               palette=palette, mesh=mesh);
-    voliere_x(door_x1, ll - door_x1, z_base, h_front, -OUT,
+    voliere_x(door_x1, ll - door_x1, z_base, h_front, yo - OUT,
               palette=palette, mesh=mesh);
 
     // Back (faces +Y) — single band, flat LOW
-    voliere_x(hl, ll - hl, z_base, h_back, ww + OUT,
+    voliere_x(hl, ll - hl, z_base, h_back, yo + yd + OUT,
               palette=palette, mesh=mesh);
 
-    // Right (faces +X) — sloped top HIGH -> LOW. Studs butt between
-    // Y=95..ww-95 but mesh stretches the full Y=0..ww along the outside.
-    voliere_y_sloped(0, ww, z_base, z_top_front, z_top_back, ll + OUT,
+    // Right (faces +X) — sloped top HIGH -> LOW. Mesh stretches the full
+    // yard Y-range yo..yo+yd along the outside; voliere_y_sloped takes
+    // (y_start, length).
+    voliere_y_sloped(yo, yd, z_base, z_top_front, z_top_back, ll + OUT,
                      palette=palette, mesh=mesh);
 }

@@ -1,21 +1,23 @@
 // Rabbit-house constants. All dimensions in mm.
 //
-// Layout:
-//   X 0..2000    = solid mono-pitch house (rabbit shelter + insulated nest box)
-//   X 2000..6000 = mesh-walled yard (human entry via door on front)
-//   Y 0          = front (open garden face / human entry / high eave)
-//   Y 3000       = back (prevailing-wind side / low eave / gutter)
+// Layout (L-shape — house front sticks out 500 mm past yard front):
+//   X 0..2000    = house  (gable roof, skifer)            Y 0..3000
+//   X 2000..6000 = yard   (monopitch roof, polycarb)      Y 500..3000
+//   Y 3000       = shared back wall (continuous X=0..6000)
+//   Y 0..500     = house-only zone (yard does not extend here)
 //
-// Roof: ONE continuous mono-pitch slab over the entire footprint, sloping
-// front-to-back. Slope depends on the chosen cover (see RH_EH_BACK and
-// back_eave_height_for(cover) below).
+// House and yard have DIFFERENT Y-depths:
+//   RH_HOUSE_DEPTH = 3000 (Y=0..3000)
+//   RH_YARD_DEPTH  = 2500 (Y=500..3000) — offset by RH_YARD_Y_OFFSET=500
 
-RH_LENGTH       = 6000;
-RH_WIDTH        = 3000;
-RH_BASE_H       = 120;
-RH_WALL_T       = 100;
-RH_HOUSE_LEN    = 2000;
-RH_RUN_LEN      = 4000;
+RH_LENGTH        = 6000;
+RH_HOUSE_DEPTH   = 3000;             // hus Y-dybde
+RH_YARD_DEPTH    = 2500;             // yard Y-dybde
+RH_YARD_Y_OFFSET = 500;              // yard front-væg's Y-koordinat
+RH_BASE_H        = 120;
+RH_WALL_T        = 100;
+RH_HOUSE_LEN     = 2000;
+RH_RUN_LEN       = RH_LENGTH - RH_HOUSE_LEN;  // 4000
 
 // Wall heights from sokkel-top (Z=RH_BASE_H) to roof underside at the wall
 // face. Drop 200 over 2500 = 4.6 deg, 8 % fall — adequate for tagpap_osb
@@ -41,14 +43,18 @@ RH_ROOF_THICK   = 80;
 
 // Internal door in the partition wall (X=RH_HOUSE_LEN, faces +X into yard).
 // Rough opening for a standard 80x200 cm internal door.
+// Y=1500 centres door in partition zone (yard only meets V5 at Y=500..3000).
+// Door spans Y=1500..2370.
 RH_HOUSE_DOOR_W = 870;
 RH_HOUSE_DOOR_H = 2050;
-RH_HOUSE_DOOR_Y = 200;
+RH_HOUSE_DOOR_Y = 1500;
 
 // Rabbit pet door in the partition (faces +X into yard).
+// Y=2700 clears the human door (Y=1500..2370) by 330 mm; pet door spans
+// Y=2700..2950, ending 50 mm before the back wall at Y=3000.
 RH_PET_DOOR_W   = 250;
 RH_PET_DOOR_H   = 300;
-RH_PET_DOOR_Y   = 1500;
+RH_PET_DOOR_Y   = 2700;
 
 // Yard outdoor door on the front (Y=0, opens outward).
 // Rough opening sized to fit under the lower yard front eave (RH_YARD_EH_FRONT
@@ -127,14 +133,19 @@ RH_FASCIA_T   = 25;
 // wall-plate top. So:
 //   rafter bottom @ y = wall-plate top      (rafter sits on top plate)
 //   rafter top    @ y = roof_underside_at(y) (cover sits on rafter top)
-function span_total() = RH_OH_FRONT + RH_WIDTH + RH_OH_BACK;
+//
+// All helpers below are parameterised by zone DEPTH (RH_HOUSE_DEPTH or
+// RH_YARD_DEPTH) and Y_OFFSET (0 for hus, RH_YARD_Y_OFFSET for yard).
+// `y` arguments are absolute world-Y in all wrappers.
+function _span_total(depth) = RH_OH_FRONT + depth + RH_OH_BACK;
+function span_total() = _span_total(RH_HOUSE_DEPTH);
 function total_drop() =
-    (RH_EH_FRONT - RH_EH_BACK) * span_total() / RH_WIDTH;
+    (RH_EH_FRONT - RH_EH_BACK) * _span_total(RH_HOUSE_DEPTH) / RH_HOUSE_DEPTH;
 function roof_oz() =
     RH_BASE_H + RH_EH_FRONT + RH_RAFTER_H +
-    RH_OH_FRONT * total_drop() / span_total();
+    RH_OH_FRONT * total_drop() / _span_total(RH_HOUSE_DEPTH);
 function roof_underside_at(y) =
-    roof_oz() - (RH_OH_FRONT + y) * total_drop() / span_total();
+    roof_oz() - (RH_OH_FRONT + y) * total_drop() / _span_total(RH_HOUSE_DEPTH);
 
 // Cover-aware slope: eternit B7 needs steeper pitch. Lowering eh_back
 // without re-fitting the doors is fine because the front-wall door (high
@@ -161,9 +172,9 @@ function fascia_top_offset_for(cover) =
 // water sheds onto V3 (left) and V5 (partition / yard side). Eave Z is
 // flat at the high wall-top so the front door clearance is unchanged.
 G_PITCH_DEG   = 35;
-G_OH_EAVE     = 350;                      // overhang over V3 / V5
+G_OH_EAVE     = 220;                      // overhang over V3 / V5 — tilpasset 133 stk skifer 30×60 (var 350)
 G_OH_RAKE     = 150;                      // overhang past V1 / V2 gables
-G_RIDGE_X     = RH_HOUSE_LEN / 2;         // = 750
+G_RIDGE_X     = RH_HOUSE_LEN / 2;         // = 1000
 G_EAVE_Z      = RH_BASE_H + RH_EH_FRONT;  // = 2520, flat eave on V3 + V5
 
 function is_gable_roof(cover) = cover == "skifer" || cover == "tagsten";
@@ -177,27 +188,36 @@ function g_rafter_bottom_z(x)  = g_rafter_top_z(x) - RH_RAFTER_H;
 function g_ridge_top_z()       = g_rafter_top_z(G_RIDGE_X);
 function g_ridge_bottom_z()    = g_rafter_bottom_z(G_RIDGE_X);
 
-// ----- Generic roof-geometry helpers parameterised by (eh_front, eh_back).
-// Use these from any zone renderer; pass house heights for the house and
-// yard heights for the yard.
-function _roof_drop(eh_front, eh_back) =
-    (eh_front - eh_back) * span_total() / RH_WIDTH;
-function _roof_oz(eh_front, eh_back) =
+// ----- Generic roof-geometry helpers parameterised by (eh_front, eh_back,
+// depth). `y_offset` shifts the entire roof along Y so the yard (whose
+// front eave is at world Y=RH_YARD_Y_OFFSET) gets correct Z back from
+// absolute-world Y inputs.
+function _roof_drop(eh_front, eh_back, depth) =
+    (eh_front - eh_back) * _span_total(depth) / depth;
+function _roof_oz(eh_front, eh_back, depth) =
     RH_BASE_H + eh_front + RH_RAFTER_H +
-    RH_OH_FRONT * _roof_drop(eh_front, eh_back) / span_total();
-function _roof_underside(eh_front, eh_back, y) =
-    _roof_oz(eh_front, eh_back) -
-    (RH_OH_FRONT + y) * _roof_drop(eh_front, eh_back) / span_total();
+    RH_OH_FRONT * _roof_drop(eh_front, eh_back, depth) / _span_total(depth);
+function _roof_underside(eh_front, eh_back, depth, y_offset, y) =
+    _roof_oz(eh_front, eh_back, depth) -
+    (RH_OH_FRONT + (y - y_offset)) * _roof_drop(eh_front, eh_back, depth)
+                                   / _span_total(depth);
 
-// House-friendly wrappers — pin eh_front to RH_EH_FRONT.
-function total_drop_for(eh_back)       = _roof_drop(RH_EH_FRONT, eh_back);
-function roof_oz_for(eh_back)          = _roof_oz(RH_EH_FRONT, eh_back);
-function roof_underside_for(eh_back, y)= _roof_underside(RH_EH_FRONT, eh_back, y);
+// House-friendly wrappers — pin eh_front, depth, y_offset.
+function total_drop_for(eh_back)       =
+    _roof_drop(RH_EH_FRONT, eh_back, RH_HOUSE_DEPTH);
+function roof_oz_for(eh_back)          =
+    _roof_oz(RH_EH_FRONT, eh_back, RH_HOUSE_DEPTH);
+function roof_underside_for(eh_back, y)=
+    _roof_underside(RH_EH_FRONT, eh_back, RH_HOUSE_DEPTH, 0, y);
 
-// Yard helpers — pin eh_front to RH_YARD_EH_FRONT, eh_back to RH_YARD_EH_BACK.
-function yard_total_drop()       = _roof_drop(RH_YARD_EH_FRONT, RH_YARD_EH_BACK);
-function yard_roof_oz()          = _roof_oz(RH_YARD_EH_FRONT, RH_YARD_EH_BACK);
-function yard_roof_underside(y)  = _roof_underside(RH_YARD_EH_FRONT, RH_YARD_EH_BACK, y);
+// Yard helpers — pin eh_front, eh_back, depth, y_offset.
+function yard_total_drop()       =
+    _roof_drop(RH_YARD_EH_FRONT, RH_YARD_EH_BACK, RH_YARD_DEPTH);
+function yard_roof_oz()          =
+    _roof_oz(RH_YARD_EH_FRONT, RH_YARD_EH_BACK, RH_YARD_DEPTH);
+function yard_roof_underside(y)  =
+    _roof_underside(RH_YARD_EH_FRONT, RH_YARD_EH_BACK, RH_YARD_DEPTH,
+                    RH_YARD_Y_OFFSET, y);
 
 // DPC tape thickness between sokkel ring and sill plate. The sill plate sits
 // ON the DPC band, not directly on the ring — so floor level is 2 mm higher

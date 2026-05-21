@@ -14,22 +14,24 @@ FLOOR_Z       = RH_FLOOR_TOP;
 HINGE_C       = [0.30, 0.30, 0.32];
 HANDLE_C      = [0.85, 0.85, 0.88];
 
-// Yard door — mesh-in-frame leaf with a mid-rail.
+// Yard door — mesh-in-frame leaf with a mid-rail. Sits on V1 front wall at
+// world Y=yo (= RH_YARD_Y_OFFSET); leaf hangs ~5 mm in +Y from the wall.
 module _render_yard_door(mesh, palette) {
+    yo = RH_YARD_Y_OFFSET;
     x0 = RH_YARD_DOOR_X;
     x1 = x0 + RH_YARD_DOOR_W;
     z0 = FLOOR_Z;
     z1 = z0 + RH_YARD_DOOR_H;
 
     color(pal_post(palette)) {
-        translate([x0, 0, z0])
+        translate([x0, yo, z0])
             cube([RH_YARD_DOOR_W, WALL_DEPTH, THRESHOLD_H]);
-        translate([x0, 0, z1 - FRAME_T])
+        translate([x0, yo, z1 - FRAME_T])
             cube([RH_YARD_DOOR_W, WALL_DEPTH, FRAME_T]);
         side_h = RH_YARD_DOOR_H - THRESHOLD_H - FRAME_T;
-        translate([x0, 0, z0 + THRESHOLD_H])
+        translate([x0, yo, z0 + THRESHOLD_H])
             cube([FRAME_T, WALL_DEPTH, side_h]);
-        translate([x1 - FRAME_T, 0, z0 + THRESHOLD_H])
+        translate([x1 - FRAME_T, yo, z0 + THRESHOLD_H])
             cube([FRAME_T, WALL_DEPTH, side_h]);
     }
 
@@ -39,7 +41,7 @@ module _render_yard_door(mesh, palette) {
     leaf_z0 = z0 + THRESHOLD_H;
     leaf_z1 = z1 - FRAME_T;
     leaf_h  = leaf_z1 - leaf_z0;
-    leaf_y  = 5;
+    leaf_y  = yo + 5;
     fr      = 50;
     mid_z   = leaf_z0 + RH_MID_RAIL_Z_OFFSET;
 

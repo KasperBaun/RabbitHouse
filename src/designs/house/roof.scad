@@ -21,7 +21,7 @@ _HOUSE_RAFTER_XS = [
 ];
 
 module _render_rafters_house(eh_back, palette) {
-    ww = RH_WIDTH; sd = 95;
+    ww = RH_HOUSE_DEPTH; sd = 95;
     y_start = -RH_OH_FRONT;
     y_end   = ww + RH_OH_BACK;
     z_start = roof_underside_for(eh_back, y_start) - RH_RAFTER_H;
@@ -66,7 +66,7 @@ module _render_rafters_house(eh_back, palette) {
 // Left-side lookouts — 3 stk, between barge and V3 gable rafter.
 module _render_lookouts_house(eh_back, palette) {
     LOOKOUT_LEN = RH_OH_SIDE - RH_RAFTER_W;
-    LOOKOUT_YS  = [47.5, RH_WIDTH/2, RH_WIDTH - 47.5];
+    LOOKOUT_YS  = [47.5, RH_HOUSE_DEPTH/2, RH_HOUSE_DEPTH - 47.5];
     color(pal_post(palette))
     for (yc = LOOKOUT_YS) {
         z_top = roof_underside_for(eh_back, yc);
@@ -97,11 +97,11 @@ module _soffit_panel(x0, x1, y0, y1, eh_back, palette) {
 }
 
 module _render_soffit_house(eh_back, palette) {
-    hl = RH_HOUSE_LEN; ww = RH_WIDTH;
+    hl = RH_HOUSE_LEN; ww = RH_HOUSE_DEPTH;
     x_left  = -RH_OH_SIDE - RH_FASCIA_T;
-    // Soffit extends to V5's yard-side face so the partition is fully
+    // Soffit extends to V5's yard-side face (=hl) so the partition is fully
     // tucked under the house roof eave.
-    x_right = hl + RH_POST_W/2;
+    x_right = hl;
     _soffit_panel(x_left, x_right, -RH_OH_FRONT, 0, eh_back, palette);
     _soffit_panel(x_left, x_right, ww, ww + RH_OH_BACK, eh_back, palette);
     _soffit_panel(x_left, 0, 0, ww, eh_back, palette);
@@ -109,7 +109,7 @@ module _render_soffit_house(eh_back, palette) {
 
 // Fascia only — no gutter / downspout. Front+back [x_left..hl] + left side.
 module _render_fascia_house(eh_back, fascia_top_offset, palette) {
-    hl = RH_HOUSE_LEN; ww = RH_WIDTH;
+    hl = RH_HOUSE_LEN; ww = RH_HOUSE_DEPTH;
     drop_full = total_drop_for(eh_back);
     roof_oz   = roof_oz_for(eh_back);
     z_front_top = roof_oz + fascia_top_offset;
@@ -118,7 +118,7 @@ module _render_fascia_house(eh_back, fascia_top_offset, palette) {
     fascia_t = RH_FASCIA_T;
 
     fx_lo = -RH_OH_SIDE - fascia_t;
-    fx_hi = hl + RH_POST_W/2;
+    fx_hi = hl;
     y0 = -RH_OH_FRONT;
     y1 = ww + RH_OH_BACK;
 

@@ -8,7 +8,7 @@ use <cladding_common.scad>
 
 module render_cladding_board_on_board(bob = RH_CLAD_BOB,
                                        palette = DEFAULT_PALETTE) {
-    hl  = RH_HOUSE_LEN; ww = RH_WIDTH; bh = RH_BASE_H;
+    hl  = RH_HOUSE_LEN; ww = RH_HOUSE_DEPTH; bh = RH_BASE_H;
     ehf = RH_EH_FRONT;  ehb = RH_EH_BACK;
     sd  = RH_POST_W;    pl  = RH_SILL_H;
 
@@ -16,7 +16,7 @@ module render_cladding_board_on_board(bob = RH_CLAD_BOB,
     s       = RH_HOUSEWRAP_T + RH_COUNTER_BATTEN_T;
     trim_w  = 70;
     o       = s + ct;                             // outer-corner offset
-    part_x  = hl + sd / 2;                        // V5 yard-side outer face
+    part_x  = hl;                                 // V5 yard-side outer face
 
     butt_y0  = sd;
     butt_len = ww - 2 * sd;

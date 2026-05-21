@@ -7,7 +7,7 @@ use <../../../lib/primitives/cladding.scad>
 use <cladding_common.scad>
 
 module render_cladding_klink(clad = RH_CLAD, palette = DEFAULT_PALETTE) {
-    hl  = RH_HOUSE_LEN; ww = RH_WIDTH; bh = RH_BASE_H;
+    hl  = RH_HOUSE_LEN; ww = RH_HOUSE_DEPTH; bh = RH_BASE_H;
     ehf = RH_EH_FRONT;  ehb = RH_EH_BACK;
     sd  = RH_POST_W;    pl  = RH_SILL_H;
 
@@ -15,7 +15,8 @@ module render_cladding_klink(clad = RH_CLAD, palette = DEFAULT_PALETTE) {
     s       = RH_HOUSEWRAP_T + RH_COUNTER_BATTEN_T;
     trim_w  = 45;
     o       = s + ct;
-    part_x  = hl + sd / 2;
+    // V5 outer face is flush with hl (wall sits inside the house footprint).
+    part_x  = hl;
 
     butt_y0  = sd;
     butt_len = ww - 2 * sd;

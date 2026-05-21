@@ -22,7 +22,7 @@ GR_GABLE_COLOR = [0.18, 0.20, 0.23];
 // Rafter Y positions: gable rafters at the wall faces + intermediate ones
 // at c/c 625 + barge rafters on the rake overhangs.
 _GR_INNER_YS = [0, 600, 1200, 1800, 2400, 3000];
-_GR_BARGE_YS = [-G_OH_RAKE, RH_WIDTH + G_OH_RAKE - RH_RAFTER_W];
+_GR_BARGE_YS = [-G_OH_RAKE, RH_HOUSE_DEPTH + G_OH_RAKE - RH_RAFTER_W];
 
 // Cladding-stack stickout — needed to align gable-triangle outer face with
 // the existing klink cladding outer face on V1 / V2.
@@ -38,9 +38,9 @@ module _gr_top_plates(palette) {
     sw = RH_SILL_H;     // 45
     color(pal_post(palette)) {
         translate([0, 0, G_EAVE_Z - sw])
-            cube([sd, RH_WIDTH, sw]);
-        translate([RH_HOUSE_LEN - sd/2, 0, G_EAVE_Z - sw])
-            cube([sd, RH_WIDTH, sw]);
+            cube([sd, RH_HOUSE_DEPTH, sw]);
+        translate([RH_HOUSE_LEN - sd, 0, G_EAVE_Z - sw])
+            cube([sd, RH_HOUSE_DEPTH, sw]);
     }
 }
 
@@ -87,7 +87,7 @@ module _gr_ridge_beam(palette) {
     translate([G_RIDGE_X - GR_RIDGE_W/2, -G_OH_RAKE,
                z_top - GR_RIDGE_H])
         cube([GR_RIDGE_W,
-              RH_WIDTH + 2 * G_OH_RAKE,
+              RH_HOUSE_DEPTH + 2 * G_OH_RAKE,
               GR_RIDGE_H]);
 }
 
@@ -102,7 +102,7 @@ module _gr_side_fascia(palette) {
     z_top_l   = g_rafter_top_z(x_l) + GR_COVER_T;
     z_top_r   = g_rafter_top_z(x_r) + GR_COVER_T;
     y_lo      = -G_OH_RAKE - GR_FASCIA_T;
-    y_hi      = RH_WIDTH + G_OH_RAKE + GR_FASCIA_T;
+    y_hi      = RH_HOUSE_DEPTH + G_OH_RAKE + GR_FASCIA_T;
     color(pal_trim(palette)) {
         translate([x_l - GR_FASCIA_T, y_lo, z_top_l - GR_FASCIA_H])
             cube([GR_FASCIA_T, y_hi - y_lo, GR_FASCIA_H]);
@@ -141,7 +141,7 @@ module _gr_rake_fascia_one(y_translate, palette) {
 
 module _gr_rake_fascia(palette) {
     _gr_rake_fascia_one(-G_OH_RAKE, palette);                       // V1
-    _gr_rake_fascia_one(RH_WIDTH + G_OH_RAKE + GR_FASCIA_T, palette);  // V2
+    _gr_rake_fascia_one(RH_HOUSE_DEPTH + G_OH_RAKE + GR_FASCIA_T, palette);  // V2
 }
 
 // ============================================================================
@@ -150,7 +150,7 @@ module _gr_rake_fascia(palette) {
 // ============================================================================
 module _gr_eave_soffit_one(x_lo, x_hi, palette) {
     y_lo = -G_OH_RAKE;
-    y_hi = RH_WIDTH + G_OH_RAKE;
+    y_hi = RH_HOUSE_DEPTH + G_OH_RAKE;
     z_top_lo = g_rafter_bottom_z(x_lo);
     z_top_hi = g_rafter_bottom_z(x_hi);
     color(pal_panel1(palette))
@@ -204,8 +204,8 @@ module _gr_rake_soffit(palette) {
     _gr_rake_soffit_quad(0,             G_RIDGE_X,          -G_OH_RAKE, -so, palette);
     _gr_rake_soffit_quad(G_RIDGE_X,     RH_HOUSE_LEN,       -G_OH_RAKE, -so, palette);
     // V2 rake (back): mirror Y.
-    _gr_rake_soffit_quad(0,             G_RIDGE_X,          RH_WIDTH + so, RH_WIDTH + G_OH_RAKE, palette);
-    _gr_rake_soffit_quad(G_RIDGE_X,     RH_HOUSE_LEN,       RH_WIDTH + so, RH_WIDTH + G_OH_RAKE, palette);
+    _gr_rake_soffit_quad(0,             G_RIDGE_X,          RH_HOUSE_DEPTH + so, RH_HOUSE_DEPTH + G_OH_RAKE, palette);
+    _gr_rake_soffit_quad(G_RIDGE_X,     RH_HOUSE_LEN,       RH_HOUSE_DEPTH + so, RH_HOUSE_DEPTH + G_OH_RAKE, palette);
 }
 
 // ============================================================================
@@ -245,7 +245,7 @@ module _gr_gable_knevaeg_v2(palette) {
     z_eave   = G_EAVE_Z;                               // 2520
     // Cladding origin Y matches the existing V2 klink (clad_wall_rect adds
     // thickness in +Y, so origin Y is the back of the boards).
-    clad_wall_rect([0, RH_WIDTH + s, z_clad],
+    clad_wall_rect([0, RH_HOUSE_DEPTH + s, z_clad],
                     RH_HOUSE_LEN, z_eave - z_clad, "X",
                     palette, RH_CLAD);
 }
@@ -258,7 +258,7 @@ module _gr_gable_v1(palette) {
 module _gr_gable_v2(palette) {
     so = _gr_clad_stickout();
     _gr_gable_knevaeg_v2(palette);
-    _gr_gable_triangle(RH_WIDTH + so, RH_WIDTH, palette);
+    _gr_gable_triangle(RH_HOUSE_DEPTH + so, RH_HOUSE_DEPTH, palette);
 }
 
 // ============================================================================
@@ -277,11 +277,11 @@ module _gr_knevaeg_v3(palette) {
     polyhedron(
         points = [
             [x_outer, 0,        z_hi],
-            [x_outer, RH_WIDTH, z_hi],
-            [x_outer, RH_WIDTH, z_lo],
+            [x_outer, RH_HOUSE_DEPTH, z_hi],
+            [x_outer, RH_HOUSE_DEPTH, z_lo],
             [x_inner, 0,        z_hi],
-            [x_inner, RH_WIDTH, z_hi],
-            [x_inner, RH_WIDTH, z_lo]
+            [x_inner, RH_HOUSE_DEPTH, z_hi],
+            [x_inner, RH_HOUSE_DEPTH, z_lo]
         ],
         faces = [
             [0, 1, 2],
@@ -295,7 +295,7 @@ module _gr_knevaeg_v3(palette) {
 
 module _gr_knevaeg_v5(palette) {
     so      = _gr_clad_stickout();
-    x_outer = RH_HOUSE_LEN + RH_POST_W/2 + so;
+    x_outer = RH_HOUSE_LEN + so;
     x_inner = x_outer - 10;
     z_lo    = RH_BASE_H + RH_EH_BACK;
     z_hi    = G_EAVE_Z;
@@ -303,11 +303,11 @@ module _gr_knevaeg_v5(palette) {
     polyhedron(
         points = [
             [x_outer, 0,        z_hi],
-            [x_outer, RH_WIDTH, z_hi],
-            [x_outer, RH_WIDTH, z_lo],
+            [x_outer, RH_HOUSE_DEPTH, z_hi],
+            [x_outer, RH_HOUSE_DEPTH, z_lo],
             [x_inner, 0,        z_hi],
-            [x_inner, RH_WIDTH, z_hi],
-            [x_inner, RH_WIDTH, z_lo]
+            [x_inner, RH_HOUSE_DEPTH, z_hi],
+            [x_inner, RH_HOUSE_DEPTH, z_lo]
         ],
         faces = [
             [2, 1, 0],
