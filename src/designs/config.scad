@@ -31,12 +31,14 @@ RH_RUN_LEN       = RH_LENGTH - RH_HOUSE_LEN;  // 4000
 RH_EH_FRONT     = 2292;
 RH_EH_BACK      = 2292;
 
-// Yard walls are shorter than the house so the two roofs read as separate
-// structures (yard reads as a "lean-to" against V5). Front 2100 keeps room
-// for a 1950 rough opening yard door (~187 cm leaf height after threshold
-// and top frame); back 1800 gives a 6,9° slope.
+// Yard walls are shorter than the house so the run reads as a separate
+// (lower) cage against V5. With the mesh-top cover the yard no longer
+// sheds water — front and back share a single 2100 eave so V2 and V4
+// walls run flat instead of sloping. Front 2100 keeps room for a 1950
+// rough opening yard door (~187 cm leaf height after threshold and top
+// frame).
 RH_YARD_EH_FRONT = 2100;
-RH_YARD_EH_BACK  = 1800;
+RH_YARD_EH_BACK  = 2100;
 
 RH_OH_FRONT     = 220;
 RH_OH_BACK      = 180;
@@ -60,11 +62,14 @@ RH_PET_DOOR_H   = 300;
 RH_PET_DOOR_Y   = 2700;
 
 // Yard outdoor door on the front (Y=0, opens outward).
-// Rough opening sized to fit under the lower yard front eave (RH_YARD_EH_FRONT
-// = 2100): 1950 leaves 45 mm header + 105 mm cripple space.
+// Rough opening = full stud height (WALL_TOP_HIGH - PLATE_HEIGHT - STUD_BOTTOM_Z
+// = 2008). Top plate doubles as the header — no separate header + cripple
+// stack above the opening, same pattern as the V5 partition door. Leaf is
+// 2008 − 30 threshold − 50 top frame = 1928 mm.
+// X centred on the 4 m front wall: (hl + ll - W) / 2 = 3465.
 RH_YARD_DOOR_W  = 1070;
-RH_YARD_DOOR_H  = 1950;
-RH_YARD_DOOR_X  = 3000;
+RH_YARD_DOOR_H  = 2008;
+RH_YARD_DOOR_X  = 3465;
 
 // Insulated nest box (against the back wall, inside the house).
 RH_NEST_X       = 200;

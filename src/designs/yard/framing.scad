@@ -87,7 +87,9 @@ module _studs_one_wall(origin, length, axis, stud_height,
 }
 
 // Framed yard door (axis X, flat HIGH top, no sill). Sits on V1 front wall
-// at world Y=yo (= RH_YARD_Y_OFFSET).
+// at world Y=yo (= RH_YARD_Y_OFFSET). When the rough opening reaches the
+// top plate (RH_YARD_DOOR_H == stud height), the top plate is the header
+// — no separate header + cripple stack is rendered.
 module _render_yard_door_framing(palette = DEFAULT_PALETTE) {
     yo = RH_YARD_Y_OFFSET;
     opening_pos = RH_YARD_DOOR_X;
@@ -96,9 +98,11 @@ module _render_yard_door_framing(palette = DEFAULT_PALETTE) {
     opening_h   = RH_YARD_DOOR_H;
     z_header_bot = opening_z + opening_h;
     z_header_top = z_header_bot + PLATE_HEIGHT;
-    crip_above_h = WALL_TOP_HIGH - PLATE_HEIGHT - z_header_top;
+    z_plate_bot  = WALL_TOP_HIGH - PLATE_HEIGHT;
+    crip_above_h = z_plate_bot - z_header_top;
 
-    color(pal_post(palette)) {
+    color(pal_post(palette))
+    if (z_header_bot < z_plate_bot) {
         translate([opening_pos, yo, z_header_bot])
             cube([opening_w, STUD_DEPTH, PLATE_HEIGHT]);
         if (crip_above_h > 50)
@@ -139,11 +143,17 @@ module RenderYardFraming(palette = DEFAULT_PALETTE) {
             cube([sd, yd - 2*sd, sw]);
     }
 
-    // Top plate — V1/V2 flat segments + sloped V4.
+    // Top plate — V1/V2 flat segments + sloped V4 + interior cross-ribs.
+    // Cross-ribs at c/c 1000 (hl, hl+1000, hl+2000, hl+3000) plus V4 give
+    // the mesh lid support across the 4 m span and close the cage on the
+    // partition side. Each rib sits in the wall-top plane (top flush with
+    // mesh lid bottom), butted between V1 and V2 like V4.
     color(pal_post(palette)) {
         translate([hl, yo,            WALL_TOP_HIGH - sw]) cube([ll - hl, sd, sw]);
         translate([hl, y_back - sd,   WALL_TOP_LOW  - sw]) cube([ll - hl, sd, sw]);
         _sloped_top_plate(ll - sd, butt_y0, y_back - sd);
+        for (xx = [hl, hl + 1000, hl + 2000, hl + 3000])
+            _sloped_top_plate(xx, butt_y0, y_back - sd);
     }
 
     // V1[hl..ll] studs — flat HIGH. Yard door at RH_YARD_DOOR_X.
@@ -165,6 +175,24 @@ module RenderYardFraming(palette = DEFAULT_PALETTE) {
             cube([STUD_THICK, STUD_DEPTH, h_high]);
         translate([RH_YARD_DOOR_X + RH_YARD_DOOR_W, yo, STUD_BOTTOM_Z])
             cube([STUD_THICK, STUD_DEPTH, h_high]);
+    }
+
+    // Horizontal mid-rail through all three mesh walls. Z aligns with the
+    // yard door's internal mid-rail (leaf_z0 + RH_MID_RAIL_Z_OFFSET = 1197)
+    // so the line stays continuous across V1 through the door.
+    door_x0 = RH_YARD_DOOR_X;
+    door_x1 = RH_YARD_DOOR_X + RH_YARD_DOOR_W;
+    mid_z_center = RH_FLOOR_TOP + 30 + RH_MID_RAIL_Z_OFFSET;
+    mid_h        = RH_MID_RAIL_H;
+    color(pal_post(palette)) {
+        translate([hl, yo, mid_z_center - mid_h/2])
+            cube([door_x0 - hl, STUD_DEPTH, mid_h]);
+        translate([door_x1, yo, mid_z_center - mid_h/2])
+            cube([ll - door_x1, STUD_DEPTH, mid_h]);
+        translate([hl, y_back - STUD_DEPTH, mid_z_center - mid_h/2])
+            cube([ll - hl, STUD_DEPTH, mid_h]);
+        translate([ll - STUD_DEPTH, butt_y0, mid_z_center - mid_h/2])
+            cube([STUD_DEPTH, butt_len, mid_h]);
     }
 
     _render_yard_door_framing(palette);
