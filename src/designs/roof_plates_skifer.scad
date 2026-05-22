@@ -4,10 +4,14 @@
 //   3..28  mm  25x38 mm taglægter parallel to the ridge
 //   28..36 mm  Cembrit-style fiber-cement skifer plates (~8 mm visual thickness)
 //
-// Each plate is ~300 (Y) x 220 (X projected) mm, laid in halv-forbandt with
-// the next course offset by half a plate width. Plate seams are rendered as
-// shallow grooves on the slate surface so the roof actually reads as slate
-// rather than a painted slab.
+// 30×60 cm plates in halv-forbandt: 5 courses per half-slope, plate width
+// 300 mm along the ridge (Y), plate length 600 mm up-slope. Slope is
+// dimensioned so the math goes up exactly:
+//   slope = 4 × gauge(225 slope) + 600 = 1500 mm
+//   horizontal pitch = 225 × cos(35°) ≈ 184 mm — see SK_BATTEN_C2C
+//   lap = 600 − 2 × 225 = 150 mm (≥ 70 mm min for 35° pitch)
+// Plate seams are rendered as shallow grooves on the slate surface so the
+// roof reads as slate rather than a painted slab.
 
 include <../lib/defaults.scad>
 include <config.scad>
@@ -15,10 +19,15 @@ include <config.scad>
 SK_UNDERLAY_T   = 3;
 SK_BATTEN_T     = 25;
 SK_BATTEN_W     = 38;
-SK_BATTEN_C2C   = 220;          // course pitch along slope (X)
-SK_SLATE_T      = 8;            // visible plate thickness (read as slate)
+SK_PLATE_L      = 600;          // plate length up the slope
 SK_PLATE_W      = 300;          // plate width along the ridge (Y)
+SK_BATTEN_C2C   = 184;          // horizontal projection of slope-gauge 225 mm
+SK_SLATE_T      = 8;            // visible plate thickness (read as slate)
 SK_STACK_T      = SK_UNDERLAY_T + SK_BATTEN_T + SK_SLATE_T;
+
+// No rake overhang — slate slab terminates at the gable walls, so seams
+// and grooves run all the way to the edge.
+SK_RAKE_INSET   = 0;
 
 SK_UNDERLAY_COLOR = [0.14, 0.13, 0.12];
 SK_SLATE_COLOR    = [0.20, 0.22, 0.26];
@@ -71,23 +80,30 @@ module _sk_battens(y_lo, y_hi, palette) {
 // slate surface so it reads as the visible exposed plate edge of each row.
 // ============================================================================
 module _sk_course_grooves(y_lo, y_hi) {
-    // Each course butt-edge: a wide darker band stepping ~3 mm above the
-    // slate surface so it reads as the visible plate edge of each row.
-    z_top = SK_STACK_T;
-    groove_w = 8;     // wider so it shows from a distance
-    groove_h = 3;     // raised above slate top so it catches contrast
+    // Each course butt-edge: a dark band sitting INSIDE the slate top so
+    // it reads as the visible plate edge of each row without sticking up
+    // past the rake fascia. Cube sits 0..groove_h ABOVE rafter top inside
+    // the slate body (slate slab top is at rafter_top + SK_STACK_T) — the
+    // dark color shows through from above where the cube tops the slate
+    // surface, but the seam never rises ABOVE the slate so it can't
+    // protrude past the fascia at the rake.
+    groove_w = 10;
+    groove_h = 0.5;   // tiny lift over slate top — visible but flush
+    yd_lo  = y_lo + SK_RAKE_INSET;
+    yd_hi  = y_hi - SK_RAKE_INSET;
+    yd_len = yd_hi - yd_lo;
     color(SK_SEAM_COLOR) {
         for (x = [-G_OH_EAVE + SK_BATTEN_C2C/2 :
                    SK_BATTEN_C2C : G_RIDGE_X - 10]) {
-            z = g_rafter_top_z(x) + z_top - 0.5;
-            translate([x - groove_w/2, y_lo, z])
-                cube([groove_w, y_hi - y_lo, groove_h]);
+            z = g_rafter_top_z(x) + SK_STACK_T - 0.2;
+            translate([x - groove_w/2, yd_lo, z])
+                cube([groove_w, yd_len, groove_h]);
         }
         for (x = [G_RIDGE_X + SK_BATTEN_C2C/2 :
                    SK_BATTEN_C2C : RH_HOUSE_LEN + G_OH_EAVE - 10]) {
-            z = g_rafter_top_z(x) + z_top - 0.5;
-            translate([x - groove_w/2, y_lo, z])
-                cube([groove_w, y_hi - y_lo, groove_h]);
+            z = g_rafter_top_z(x) + SK_STACK_T - 0.2;
+            translate([x - groove_w/2, yd_lo, z])
+                cube([groove_w, yd_len, groove_h]);
         }
     }
 }
@@ -97,15 +113,17 @@ module _sk_course_grooves(y_lo, y_hi) {
 // course. Adjacent courses are staggered by half a plate width (halv-forbandt).
 // ============================================================================
 module _sk_plate_seams_one_half(x_start, x_end, y_lo, y_hi) {
-    z_top     = SK_STACK_T;
     n_courses = floor((x_end - x_start) / SK_BATTEN_C2C);
-    seam_w    = 5;
-    seam_h    = 3;
+    seam_w    = 7;
+    seam_h    = 0.5;     // flush with slate top — see _sk_course_grooves
+    // Inset so seam ends don't bump past the rake fascia.
+    yd_lo = y_lo + SK_RAKE_INSET;
+    yd_hi = y_hi - SK_RAKE_INSET;
     for (i = [0 : n_courses - 1]) {
         x_mid     = x_start + (i + 0.5) * SK_BATTEN_C2C;
         y_offset  = (i % 2 == 0) ? 0 : SK_PLATE_W / 2;
-        z         = g_rafter_top_z(x_mid) + z_top - 0.5;
-        for (y = [y_lo + y_offset : SK_PLATE_W : y_hi]) {
+        z         = g_rafter_top_z(x_mid) + SK_STACK_T - 0.2;
+        for (y = [yd_lo + y_offset : SK_PLATE_W : yd_hi]) {
             translate([x_mid - SK_BATTEN_C2C/2, y - seam_w/2, z])
                 cube([SK_BATTEN_C2C, seam_w, seam_h]);
         }

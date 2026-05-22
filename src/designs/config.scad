@@ -198,8 +198,15 @@ function fascia_top_offset_for(cover) =
 // yard side). Eave Z is flat at the high wall-top so the front door
 // clearance is unchanged.
 G_PITCH_DEG   = 35;
-G_OH_EAVE     = 220;                      // overhang over V3 / V5 — tilpasset 133 stk skifer 30×60 (var 350)
-G_OH_RAKE     = 150;                      // overhang past V1 / V2 gables
+// Eave overhang tuned so each half-slope is exactly 5 courses of 30×60 cm
+// skifer in halv-forbandt: slope = (G_RIDGE_X + G_OH_EAVE) / cos(35°) =
+// 1500 mm = 4 × gauge(225 slope) + 600. Lap = 150 mm (well over the
+// 70 mm min for 35° pitch). 229 mm also clears the yard wall top (Z=2220)
+// — rafter bottom at X=2229 sits at Z=2252, 32 mm clear.
+G_OH_EAVE     = 229;
+// No rake overhang — gables sit flush with V1 / V2. Slate slab and rafter
+// barge are aligned to the wall faces.
+G_OH_RAKE     = 0;
 G_RIDGE_X     = RH_HOUSE_LEN / 2;         // = 1000
 G_EAVE_Z      = RH_BASE_H + RH_EH_FRONT;  // = 2412, flat eave on all 4 walls
 

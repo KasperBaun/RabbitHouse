@@ -47,8 +47,8 @@ RenderGround();
 RenderHouseFoundation();
 RenderHouseFraming();
 //RenderHouseOpenings();
-//RenderHouseRoof(house_roof_cover);
-//RenderHouseRoofPlates(house_roof_cover);
+RenderHouseRoof(house_roof_cover);
+RenderHouseRoofPlates(house_roof_cover);
 //RenderHouseCladding(cladding_type);
 
 // yard (uses lower RH_YARD_EH_* eave heights — separate structure)
@@ -59,5 +59,5 @@ RenderYardFoundation();
 RenderYardFraming();
 RenderYardOpenings();
 if (yard_roof_cover != "mesh") RenderYardRoof(yard_roof_cover);
-RenderYardRoofPlates(yard_roof_cover);
-RenderYardMesh();
+//RenderYardRoofPlates(yard_roof_cover);
+//RenderYardMesh();

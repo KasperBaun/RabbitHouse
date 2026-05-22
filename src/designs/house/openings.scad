@@ -22,9 +22,13 @@ PART_INNER_X  = PARTITION_X - WALL_DEPTH;
 // weight loads down toward the hinges.
 PLANK_W       = 100;     // visible width of one vertical plank
 PLANK_GAP     = 3;       // v-groove between planks
-BATTEN_H      = 140;     // Z-brace batten width (perpendicular to length)
+BATTEN_H      = 120;     // horizontal batten height
+DIAG_W        = 80;      // diagonal batten visible width (perpendicular
+                         // to length) — smaller than BATTEN_H so the
+                         // legs of the inverted-V stay slender like
+                         // the inspiration image.
 BATTEN_T      = 20;      // batten stickout from leaf outer face
-BATTEN_INSET  = 80;      // top/bottom batten distance from leaf top/bottom
+BATTEN_INSET  = 70;      // top/bottom batten distance from leaf top/bottom
 
 HINGE_C       = [0.18, 0.18, 0.20];
 HANDLE_C      = [0.18, 0.18, 0.20];
@@ -133,39 +137,39 @@ module _barn_leaf(lx, ly, lz, w, h, hinge, palette) {
         _diag_batten(lx, lx + w, z_bb_t, z_tb_b, by, hinge);
     }
 
-    // Hinges — 3 strap hinges on the hinge-side outer face.
-    hinge_x = (hinge == "L") ? lx : lx + w - 240;
+    // Hinges — 2 short strap hinges on the hinge-side outer face,
+    // aligned roughly with the top + bottom battens.
+    hinge_x = (hinge == "L") ? lx : lx + w - 180;
     color(HINGE_C)
-    for (zh = [lz + 220, lz + h/2 - 30, lz + h - 320])
+    for (zh = [lz + BATTEN_INSET + 25, lz + h - BATTEN_INSET - 70])
         translate([hinge_x, by - 3, zh])
-            cube([240, 3, 55]);
+            cube([180, 3, 50]);
 
-    // Latch handle at the centre seam, ~mid-height (~1.05 m above floor).
+    // Latch — single dark knob at the centre seam, ~mid-height.
     handle_x = (hinge == "L") ? lx + w - 60 : lx + 25;
     color(HANDLE_C) {
-        translate([handle_x, by - 25, lz + 950])  cube([35, 25, 200]);
-        translate([handle_x - 15, by - 50, lz + 1030]) cube([65, 30, 40]);
+        translate([handle_x - 5, by - 35, lz + h/2 - 25])
+            cube([45, 35, 50]);
     }
 }
 
-// Diagonal Z-brace batten. Connects the inner edges of the two horizontal
-// battens — (x_lo, z_lo) at bottom and (x_hi, z_hi) at top — via the
-// corner appropriate for the hinge side. Batten cross-section is
-// BATTEN_T (-Y stickout) × BATTEN_H (perpendicular to the diagonal in
-// the leaf plane). The cube is centred on the connecting line, so the
-// rendered batten slightly overlaps the horizontal battens at the
-// corners — that overlap reads as the joint where they meet.
+// Diagonal Z-brace batten. Rendered as a parallelogram CENTRED on the
+// line from (x_start, z_lo) to (x_end, z_hi) — vertical thickness
+// DIAG_W in Z, vertical ends at the leaf X bounds so the brace can't
+// spill past the seam or jamb. The small overlap of the band with the
+// horizontal battens at the corners reads as the notched joint.
 module _diag_batten(x_lo, x_hi, z_lo, z_hi, by, hinge) {
     x_start = (hinge == "L") ? x_lo : x_hi;
     x_end   = (hinge == "L") ? x_hi : x_lo;
-    dx = x_end - x_start;
-    dz = z_hi  - z_lo;
-    L  = sqrt(dx * dx + dz * dz);
-    ang = atan2(dz, dx);    // OpenSCAD atan2 returns degrees
-    translate([x_start, by, z_lo])
-        rotate([0, -ang, 0])
-            translate([0, 0, -BATTEN_H / 2])
-                cube([L, BATTEN_T, BATTEN_H]);
+    translate([0, by + BATTEN_T, 0])
+        rotate([90, 0, 0])
+            linear_extrude(height = BATTEN_T)
+                polygon(points = [
+                    [x_start, z_lo + DIAG_W/2],
+                    [x_end,   z_hi + DIAG_W/2],
+                    [x_end,   z_hi - DIAG_W/2],
+                    [x_start, z_lo - DIAG_W/2]
+                ]);
 }
 
 // Generic V1 window — frame inside wall depth + glass pane.
