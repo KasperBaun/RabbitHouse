@@ -136,9 +136,9 @@ module _render_fascia_house(eh_back, fascia_top_offset, palette) {
     }
 }
 
-module RenderHouseRoof(roof_cover, palette = DEFAULT_PALETTE) {
+module RenderHouseRoof(roof_cover, truss = "haneband", palette = DEFAULT_PALETTE) {
     if (is_gable_roof(roof_cover)) {
-        RenderHouseGableRoof(palette);
+        RenderHouseGableRoof(truss, palette);
     } else {
         eh_back           = back_eave_height_for(roof_cover);
         fascia_top_offset = fascia_top_offset_for(roof_cover);

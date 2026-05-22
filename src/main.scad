@@ -32,6 +32,11 @@ use <designs/yard/mesh.scad>
 // Choose between 'skifer', 'tagpap' or 'eternit'
 house_roof_cover = "skifer";
 
+// Gable-roof truss pattern (only used when house_roof_cover = "skifer"):
+//   'haneband'    — spær med hanebånd, more loft space (recommended for 2 m span)
+//   'gitterspaer' — engineered king-post truss with W-struts (reusable module)
+house_truss      = "haneband";
+
 // Yard is an open-top run — welded-wire lid stretched across the rafters
 // (predator-proof, no weather barrier). Other options: "polycarb",
 // "tagpap", "eternit".
@@ -47,7 +52,7 @@ RenderGround();
 RenderHouseFoundation();
 RenderHouseFraming();
 //RenderHouseOpenings();
-RenderHouseRoof(house_roof_cover);
+RenderHouseRoof(house_roof_cover, house_truss);
 RenderHouseRoofPlates(house_roof_cover);
 //RenderHouseCladding(cladding_type);
 

@@ -75,67 +75,61 @@ module _sk_battens(y_lo, y_hi, palette) {
     }
 }
 
+// Course grooves and plate seams are rendered as thin tilted slabs that
+// follow the slate plane (via _sk_half_slab) — NOT as axis-aligned cubes.
+// An axis-aligned cube spanning a wide X range would diverge from the
+// slate plane by up to (Δx × tan(pitch)) at its ends, leaving the cube
+// sticking up into thin air at one corner and buried inside the slab at
+// the other. The tilted slabs sit flush on the slate top all along their
+// length.
+SK_GROOVE_W = 10;            // X-extent of course-edge groove
+SK_SEAM_W   = 7;             // Y-extent of plate seam
+SK_GROOVE_H = 0.5;           // raised-above-slate height (vertical)
+SK_N_COURSES = 5;            // courses per half-slope (slope = 1500 mm = 4G+600)
+
 // ============================================================================
-// Horizontal course grooves — one per batten line, sitting just above the
-// slate surface so it reads as the visible exposed plate edge of each row.
+// Horizontal course grooves — one per course bottom on each half-slope.
+// Each groove is a thin tilted slab (groove_w along slope) running the
+// full Y depth.
 // ============================================================================
 module _sk_course_grooves(y_lo, y_hi) {
-    // Each course butt-edge: a dark band sitting INSIDE the slate top so
-    // it reads as the visible plate edge of each row without sticking up
-    // past the rake fascia. Cube sits 0..groove_h ABOVE rafter top inside
-    // the slate body (slate slab top is at rafter_top + SK_STACK_T) — the
-    // dark color shows through from above where the cube tops the slate
-    // surface, but the seam never rises ABOVE the slate so it can't
-    // protrude past the fascia at the rake.
-    groove_w = 10;
-    groove_h = 0.5;   // tiny lift over slate top — visible but flush
-    yd_lo  = y_lo + SK_RAKE_INSET;
-    yd_hi  = y_hi - SK_RAKE_INSET;
-    yd_len = yd_hi - yd_lo;
-    color(SK_SEAM_COLOR) {
-        for (x = [-G_OH_EAVE + SK_BATTEN_C2C/2 :
-                   SK_BATTEN_C2C : G_RIDGE_X - 10]) {
-            z = g_rafter_top_z(x) + SK_STACK_T - 0.2;
-            translate([x - groove_w/2, yd_lo, z])
-                cube([groove_w, yd_len, groove_h]);
-        }
-        for (x = [G_RIDGE_X + SK_BATTEN_C2C/2 :
-                   SK_BATTEN_C2C : RH_HOUSE_LEN + G_OH_EAVE - 10]) {
-            z = g_rafter_top_z(x) + SK_STACK_T - 0.2;
-            translate([x - groove_w/2, yd_lo, z])
-                cube([groove_w, yd_len, groove_h]);
-        }
+    yd_lo = y_lo + SK_RAKE_INSET;
+    yd_hi = y_hi - SK_RAKE_INSET;
+    for (i = [0 : SK_N_COURSES - 1]) {
+        x_l = -G_OH_EAVE + SK_BATTEN_C2C/2 + i * SK_BATTEN_C2C;
+        _sk_half_slab(x_l - SK_GROOVE_W/2, x_l + SK_GROOVE_W/2,
+                      yd_lo, yd_hi,
+                      SK_STACK_T - 0.2, SK_GROOVE_H, SK_SEAM_COLOR);
+        x_r = G_RIDGE_X + SK_BATTEN_C2C/2 + i * SK_BATTEN_C2C;
+        _sk_half_slab(x_r - SK_GROOVE_W/2, x_r + SK_GROOVE_W/2,
+                      yd_lo, yd_hi,
+                      SK_STACK_T - 0.2, SK_GROOVE_H, SK_SEAM_COLOR);
     }
 }
 
 // ============================================================================
-// Vertical plate seams — short grooves between adjacent plates within each
-// course. Adjacent courses are staggered by half a plate width (halv-forbandt).
+// Vertical plate seams — between adjacent plates within each course.
+// Adjacent courses are staggered by half a plate width (halv-forbandt).
+// Each seam is a thin tilted slab spanning one course (c2c along slope)
+// at the plate boundary along Y.
 // ============================================================================
-module _sk_plate_seams_one_half(x_start, x_end, y_lo, y_hi) {
-    n_courses = floor((x_end - x_start) / SK_BATTEN_C2C);
-    seam_w    = 7;
-    seam_h    = 0.5;     // flush with slate top — see _sk_course_grooves
-    // Inset so seam ends don't bump past the rake fascia.
+module _sk_plate_seams_one_half(x_start, y_lo, y_hi) {
     yd_lo = y_lo + SK_RAKE_INSET;
     yd_hi = y_hi - SK_RAKE_INSET;
-    for (i = [0 : n_courses - 1]) {
-        x_mid     = x_start + (i + 0.5) * SK_BATTEN_C2C;
-        y_offset  = (i % 2 == 0) ? 0 : SK_PLATE_W / 2;
-        z         = g_rafter_top_z(x_mid) + SK_STACK_T - 0.2;
+    for (i = [0 : SK_N_COURSES - 1]) {
+        x_mid    = x_start + (i + 0.5) * SK_BATTEN_C2C;
+        y_offset = (i % 2 == 0) ? 0 : SK_PLATE_W / 2;
         for (y = [yd_lo + y_offset : SK_PLATE_W : yd_hi]) {
-            translate([x_mid - SK_BATTEN_C2C/2, y - seam_w/2, z])
-                cube([SK_BATTEN_C2C, seam_w, seam_h]);
+            _sk_half_slab(x_mid - SK_BATTEN_C2C/2, x_mid + SK_BATTEN_C2C/2,
+                          y - SK_SEAM_W/2, y + SK_SEAM_W/2,
+                          SK_STACK_T - 0.2, SK_GROOVE_H, SK_SEAM_COLOR);
         }
     }
 }
 
 module _sk_plate_seams(y_lo, y_hi) {
-    color(SK_SEAM_COLOR) {
-        _sk_plate_seams_one_half(-G_OH_EAVE, G_RIDGE_X, y_lo, y_hi);
-        _sk_plate_seams_one_half(G_RIDGE_X, RH_HOUSE_LEN + G_OH_EAVE,
-                                  y_lo, y_hi);
-    }
+    _sk_plate_seams_one_half(-G_OH_EAVE,  y_lo, y_hi);
+    _sk_plate_seams_one_half(G_RIDGE_X,   y_lo, y_hi);
 }
 
 // ============================================================================
