@@ -14,6 +14,7 @@ use <designs/ground.scad>
 
 // house
 use <designs/house/foundation.scad>
+use <designs/house/floor.scad>
 use <designs/house/framing.scad>
 use <designs/house/openings.scad>
 use <designs/house/roof.scad>
@@ -48,21 +49,23 @@ cladding_type    = "vertical_120";
 // shared
 RenderGround();
 
-// house
+// house — uncomment each step as it gets built
 RenderHouseFoundation();
-RenderHouseFraming();
+RenderHouseFloorJoists();   // bearing layer — strørem + strøer
+//RenderHouseFloorDeck();     // ~25 mm board deck
+//RenderHouseFraming();
 //RenderHouseOpenings();
-RenderHouseRoof(house_roof_cover, house_truss);
-RenderHouseRoofPlates(house_roof_cover);
+//RenderHouseRoof(house_roof_cover, house_truss);
+//RenderHouseRoofPlates(house_roof_cover);
 //RenderHouseCladding(cladding_type);
 
 // yard (uses lower RH_YARD_EH_* eave heights — separate structure)
 // RenderYardRoof builds spær/lookouts/soffit/sternbrædder — only needed
 // for tagpap/eternit/polycarb covers. With cover="mesh" the lid sits
 // straight on the top plates, so the whole roof skeleton is skipped.
-RenderYardFoundation();
-RenderYardFraming();
-RenderYardOpenings();
-if (yard_roof_cover != "mesh") RenderYardRoof(yard_roof_cover);
+//RenderYardFoundation();
+//RenderYardFraming();
+//RenderYardOpenings();
+//if (yard_roof_cover != "mesh") RenderYardRoof(yard_roof_cover);
 //RenderYardRoofPlates(yard_roof_cover);
 //RenderYardMesh();

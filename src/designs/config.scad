@@ -257,8 +257,10 @@ function yard_roof_underside(y)  =
 // than the ring top.
 RH_DPC_T = 2;
 
-// Floor finish (plywood top) flush with sill plate top so doors land at
-// floor level. Floor_top = ring_top + DPC + sill plate thickness.
+// Sill-plate top — the datum that doors and cladding key off (= bundrem top).
+// NOTE: the board floor itself is recessed lower (its top sits at the ring top,
+// see RH_FLOOR_DECK_TOP) so this level is ~47 mm above the floorboards — the
+// bundrem/walls form a lip around the floor.
 RH_FLOOR_TOP = RH_BASE_H + RH_DPC_T + RH_SILL_H;
 
 // Yard sill plate top — same level as house floor (also sits on DPC).
@@ -270,12 +272,14 @@ RH_YARD_SILL_TOP = RH_FLOOR_TOP;
 RH_HOUSEWRAP_T      = 1;     // wind barrier / housewrap membrane
 RH_COUNTER_BATTEN_T = 22;    // 22x45 vertical battens
 
-// House floor (joists + plywood inside the fundablok ring).
-RH_FLOOR_LEDGER_W   = 95;
-RH_FLOOR_LEDGER_H   = 45;
-RH_FLOOR_DECK_T     = 18;
-RH_FLOOR_JOIST_W    = 45;
-RH_FLOOR_JOIST_H    = 95;
-RH_FLOOR_JOIST_C2C  = 600;
-RH_FLOOR_DECK_Z     = RH_FLOOR_TOP - RH_FLOOR_DECK_T;
-RH_FLOOR_LEDGER_Z   = RH_FLOOR_DECK_Z - RH_FLOOR_JOIST_H;
+// House floor: 45×95 reglar laid as a frame hard against the inside of the
+// fundablok ring — one along each wall (V3, V5, V1, V2) screwed directly into
+// the ring — plus one transverse reglar across the middle (V3→V5 at Y≈1500).
+// Nothing is stacked. A ~25 mm sawn-board deck runs the short way (X) on top,
+// its TOP flush with the ring top (sokkel, RH_BASE_H=120).
+RH_FLOOR_DECK_T    = 25;
+RH_FLOOR_REGLAR_W  = 45;    // reglar width in plan
+RH_FLOOR_REGLAR_H  = 95;    // reglar height (on edge)
+RH_FLOOR_DECK_TOP  = RH_BASE_H;                           // 120 — flush with ring top
+RH_FLOOR_DECK_Z    = RH_FLOOR_DECK_TOP - RH_FLOOR_DECK_T; // 95  — deck underside = reglar top
+RH_FLOOR_REGLAR_Z  = RH_FLOOR_DECK_Z - RH_FLOOR_REGLAR_H; // 0   — reglar bottom (≈grade)

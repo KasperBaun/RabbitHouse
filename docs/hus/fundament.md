@@ -85,7 +85,7 @@ fastgør hus-bundremmen til ringen.
 |---|---|---|---|---|
 | 1 | Stabilgrus 0–32 mm | Bundlag 100 mm i frostfri grøft (~10 m perimeter × 30 cm × 10 cm) | ~0,30 | m³ (~510 kg) |
 | 2 | Fundablok 50 × 20 × 15 cm | 4 skifter halvstensforbandt på 2000 × 3000 ring. 20 blokke pr. skifte | 86 | stk (80 + 6 buffer) |
-| 3 | Kamstål Ø10 mm × 3 m | 2 bund (8 stk) + 2 top (8 stk) + lodrette (2 stk klippes til 600 mm) | 18 | stk |
+| 3 | Kamstål Ø10 mm × 3 m | 2 bund (8 stk) + 2 top (8 stk). Lodrette stykker = genbrug af egne metalstænger | 16 | stk |
 | 4 | Cement (Aalborg Portland CEM I/II, 25 kg-sæk) | Hulrumsudstøbning ~300 L beton ved 1:4 | 10 | sæk |
 | 5 | Støbemix 0–16 mm | Sand+grus til selvblanding | ~625 | kg |
 | 6 | Ankerskruer M10 × 120 | Bundrem-til-ring: 2 på V1, 2 på V2, 3 på V3, 3 på V5 | 10 | stk |
