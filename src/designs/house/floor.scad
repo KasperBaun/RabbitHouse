@@ -24,26 +24,40 @@ function _flr_rx1() = RH_HOUSE_LEN   - FUNDABLOK_W;   // 1850
 function _flr_ry0() = FUNDABLOK_W;                    // 150
 function _flr_ry1() = RH_HOUSE_DEPTH - FUNDABLOK_W;   // 2850
 
-// Bearing frame: one reglar along each ring inner face + a transverse mid reglar.
+// Bearing frame (ONE layer of 45×95 reglar). The board deck runs in X, so the
+// load-bearing reglar run in Y at c/c <=600: V3 + V5 at the ring inner faces +
+// two intermediate bearers (≈724, 1276) → 4 bearers, c/c ~552. V1 + V2 close the
+// front/back in X. Each floor hatch is boxed by a full reglar frame (two trimmer
+// reglar in Y + two veksler in X) that carries the bearers cut at the opening.
 module RenderHouseFloorJoists(palette = DEFAULT_PALETTE) {
     rx0 = _flr_rx0(); rx1 = _flr_rx1();
     ry0 = _flr_ry0(); ry1 = _flr_ry1();
     rw  = RH_FLOOR_REGLAR_W;         // 45
     rh  = RH_FLOOR_REGLAR_H;         // 95
     z0  = RH_FLOOR_REGLAR_Z;         // 0  (top at z0 + rh = 95)
-    mx0 = rx0 + rw;                  // 195  — X-run reglar sit between the long ones
-    mx1 = rx1 - rw;                  // 1805
-    ycross = RH_HOUSE_DEPTH / 2;     // 1500
+
+    bxs     = [rx0 + rw/2, 724, 1276, rx1 - rw/2];   // bearer X centrelines (run Y)
+    hatches = [RH_HATCH_FRONT, RH_HATCH_HUMAN];
 
     color(pal_post(palette)) {
-        // long reglar — full length along V3 and V5 inner faces (run in Y, 2700)
-        translate([rx0,      ry0, z0]) cube([rw, ry1 - ry0, rh]);   // V3
-        translate([rx1 - rw, ry0, z0]) cube([rw, ry1 - ry0, rh]);   // V5
-        // short reglar — along V1 and V2, between the long reglar (run in X, 1610)
-        translate([mx0, ry0,      z0]) cube([mx1 - mx0, rw, rh]);   // V1
-        translate([mx0, ry1 - rw, z0]) cube([mx1 - mx0, rw, rh]);   // V2
-        // transverse mid reglar — V3→V5 at Y≈1500
-        translate([mx0, ycross - rw/2, z0]) cube([mx1 - mx0, rw, rh]);
+        // Y-bearers, cut where they cross a hatch (the lem frame carries them).
+        difference() {
+            union()
+                for (xc = bxs)
+                    translate([xc - rw/2, ry0, z0]) cube([rw, ry1 - ry0, rh]);
+            for (h = hatches)
+                translate([h[0], h[1], z0 - 1]) cube([h[2]-h[0], h[3]-h[1], rh + 2]);
+        }
+        // Perimeter reglar along V1 (front) + V2 (back), run in X.
+        translate([rx0 + rw, ry0,      z0]) cube([rx1 - rx0 - 2*rw, rw, rh]);
+        translate([rx0 + rw, ry1 - rw, z0]) cube([rx1 - rx0 - 2*rw, rw, rh]);
+        // Full reglar frame around each hatch — holds the lem.
+        for (h = hatches) {
+            translate([h[0] - rw, h[1] - rw, z0]) cube([rw, (h[3]-h[1]) + 2*rw, rh]); // trimmer L
+            translate([h[2],      h[1] - rw, z0]) cube([rw, (h[3]-h[1]) + 2*rw, rh]); // trimmer R
+            translate([h[0],      h[1] - rw, z0]) cube([h[2]-h[0], rw, rh]);          // veksel (Y0)
+            translate([h[0],      h[3],      z0]) cube([h[2]-h[0], rw, rh]);          // veksel (Y1)
+        }
     }
 }
 
