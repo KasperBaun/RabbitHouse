@@ -48,3 +48,20 @@ module vinkelbeslag(p, leg=90, thick=2, width=undef,
         translate([0, -thick, 0]) cube([w, thick, leg]);
     }
 }
+
+// Joist hanger (stroesko / bjælkesko) — U-saddle that carries a floor strø /
+// veksel where it frames into a header or ledger. Canonical orientation: the
+// joist runs +Y away from the support; the support face is the X-Z plane at
+// Y=0; the joist bottom sits at Z=0, centred on X=0. Rotate/translate to place.
+//   w, h = joist section (width × height); seat = wrap length along the joist
+module stroesko(w=45, h=95, seat=60, t=3, system="gulv") {
+    color(BESLAG_COLOR) {
+        // back flange nailed to the support face
+        translate([-w/2 - t, -t, 0]) cube([w + 2*t, t, h*0.85]);
+        // bottom saddle under the joist
+        translate([-w/2 - t, 0, -t]) cube([w + 2*t, seat, t]);
+        // two side straps up the joist faces
+        translate([-w/2 - t, 0, 0]) cube([t, seat, h*0.70]);
+        translate([ w/2,     0, 0]) cube([t, seat, h*0.70]);
+    }
+}

@@ -17,9 +17,10 @@ Løbegården er en separat struktur og står til sidst.
 - [x] Læg fundablok-ring, 4 skifter halvstensforbandt
 - [x] Vandret armering bund + top, lodret i hjørner
 - [x] Udstøb hulrum med beton, lad hærde
-- [x] M10 ankerskruer i topskifte
+- [ ] Sokkelpuds på blokke. Kontroller om hele fundamentet er vandret, og ret evt. af med mørtel inden pudsning.
+- [ ] Støb klaplag i fundamentets indre.
 
-## 2. Gulv (gulv-overkant flugter sill, z=167)
+## 2. Gulv (gulv-overkant flugter sill, z=167) → [detaljer](docs/arbejdsplan/gulv-stroer-lem.md)
 
 - [ ] Strørem/strøsko 95×45 langs ringens inderside (overkant ~z47)
 - [ ] Strøer 45×95 c/c 600 på strørem (overkant z=142)
@@ -27,8 +28,7 @@ Løbegården er en separat struktur og står til sidst.
 
 ## 3. Konstruktions-skelet (vægge)
 
-- [ ] DPC murpap på sokkel-ring
-- [ ] Bundrem fastgjort til ankerskruer
+- [ ] Monter bundrem, murpap og ankerbolte → [detaljer](docs/arbejdsplan/bundrem-murpap-ankerbolte.md)
 - [ ] Rejs V3 (venstre)
 - [ ] Rejs V1 (front, m. dør- + 2 vindue-åbninger)
 - [ ] Rejs V2 (bag)

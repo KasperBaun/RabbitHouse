@@ -14,6 +14,7 @@ use <designs/ground.scad>
 
 // house
 use <designs/house/foundation.scad>
+use <designs/house/basement.scad>
 use <designs/house/floor.scad>
 use <designs/house/framing.scad>
 use <designs/house/openings.scad>
@@ -51,8 +52,10 @@ RenderGround();
 
 // house — uncomment each step as it gets built
 RenderHouseFoundation();
-RenderHouseFloorJoists();   // bearing layer — strørem + strøer
-//RenderHouseFloorDeck();     // ~25 mm board deck
+RenderHouseBasementFloor();  // concrete kælder slab (z=-680)
+RenderHouseFloorJoists();    // bearing layer — strørem + strøer
+//wRenderHouseFloorDeck();      // ~25 mm board deck (with hatches)
+RenderHouseStairs();         // kælder staircases + hinged lids
 //RenderHouseFraming();
 //RenderHouseOpenings();
 //RenderHouseRoof(house_roof_cover, house_truss);

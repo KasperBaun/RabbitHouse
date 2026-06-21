@@ -48,6 +48,8 @@ module RenderHouseFloorJoists(palette = DEFAULT_PALETTE) {
 }
 
 // Board deck: ~25 mm boards running the SHORT way (X), top flush with ring top.
+// Two hatch openings ("lem") are cut for the basement staircases — both sit
+// clear of the reglar frame, so no reglar is notched (see RH_HATCH_* in config).
 module RenderHouseFloorDeck(palette = DEFAULT_PALETTE) {
     rx0 = _flr_rx0(); rx1 = _flr_rx1();
     ry0 = _flr_ry0(); ry1 = _flr_ry1();
@@ -56,9 +58,14 @@ module RenderHouseFloorDeck(palette = DEFAULT_PALETTE) {
     n    = floor(span / FLOOR_PLANK_W);
     w    = span / n;                              // exact-fill plank pitch
     color(pal_floor(palette))
-    for (i = [0 : n - 1])
-        translate([rx0, ry0 + i * w, RH_FLOOR_DECK_Z])
-            cube([rx1 - rx0, w - FLOOR_PLANK_GAP, RH_FLOOR_DECK_T]);
+    difference() {
+        for (i = [0 : n - 1])
+            translate([rx0, ry0 + i * w, RH_FLOOR_DECK_Z])
+                cube([rx1 - rx0, w - FLOOR_PLANK_GAP, RH_FLOOR_DECK_T]);
+        for (h = [RH_HATCH_FRONT, RH_HATCH_HUMAN])
+            translate([h[0], h[1], RH_FLOOR_DECK_Z - 5])
+                cube([h[2] - h[0], h[3] - h[1], RH_FLOOR_DECK_T + 10]);
+    }
 }
 
 module RenderHouseFloor(palette = DEFAULT_PALETTE) {

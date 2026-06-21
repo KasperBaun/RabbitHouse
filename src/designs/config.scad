@@ -283,3 +283,21 @@ RH_FLOOR_REGLAR_H  = 95;    // reglar height (on edge)
 RH_FLOOR_DECK_TOP  = RH_BASE_H;                           // 120 — flush with ring top
 RH_FLOOR_DECK_Z    = RH_FLOOR_DECK_TOP - RH_FLOOR_DECK_T; // 95  — deck underside = reglar top
 RH_FLOOR_REGLAR_Z  = RH_FLOOR_DECK_Z - RH_FLOOR_REGLAR_H; // 0   — reglar bottom (≈grade)
+
+// Basement ("kælder"): the hollow fundablok ring is a usable pit. A concrete
+// floor slab sits at the ring bottom; floor hatches ("lem") with hinged lids +
+// staircases ("trappe") at the front + human doors give access down to it.
+RH_FOUNDATION_DEPTH = 800;                     // ring = 4 fundablok courses × 200 mm
+RH_BASEMENT_FLOOR_Z = RH_BASE_H - RH_FOUNDATION_DEPTH;   // -680 — concrete top = ring bottom
+RH_BASEMENT_SLAB_T  = 100;                     // slab thickness (on stabilgrus)
+
+// Floor hatch rects [x0, y0, x1, y1] — placed inside the reglar frame and clear
+// of the transverse mid-reglar (Y 1477.5..1522.5) so no reglar is cut.
+// Both hatches 700 (along their wall) × 900 (long axis INTO the room):
+RH_HATCH_FRONT = [650, 195, 1350, 1095];       // V1: 700 along X (wall) × 900 into +Y
+RH_HATCH_HUMAN = [905, 1585, 1805, 2285];      // V5: 900 into -X × 700 along Y, centred on hus-dør (Y1935)
+
+// Staircase (steep utility/ladder access). Drop = RH_FLOOR_DECK_TOP - RH_BASEMENT_FLOOR_Z.
+RH_STAIR_W      = 550;   // tread width
+RH_STAIR_RISERS = 6;     // number of risers (≈133 mm each over the 800 mm drop)
+RH_STAIR_GOING  = 100;   // tread depth — steep (~53°), run ≈ 600 mm so it doesn't fill the basement
