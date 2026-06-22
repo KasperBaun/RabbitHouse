@@ -17,13 +17,13 @@ Løbegården er en separat struktur og står til sidst.
 - [x] Læg fundablok-ring, 4 skifter halvstensforbandt
 - [x] Vandret armering bund + top, lodret i hjørner
 - [x] Udstøb hulrum med beton, lad hærde
-- [ ] Sokkelpuds på blokke. Kontroller om hele fundamentet er vandret, og ret evt. af med mørtel inden pudsning.
-- [ ] Støb klaplag i fundamentets indre.
+- [x] Sokkelpuds på blokke. Kontroller om hele fundamentet er vandret, og ret evt. af med mørtel inden pudsning.
+- [x] Støb klaplag i fundamentets indre.
 
 ## 2. Gulv (gulv-overkant flugter sokkel-top, z=120) → [detaljer](docs/arbejdsplan/gulv-stroer-lem.md)
 
 - [ ] Kant-bærereglar V3/V5 45×95 i Y (2700) på ringen (overkant z95)
-- [ ] 2 mellem-bærereglar i Y c/c ≤600 + for/bag-reglar + karm om de 2 lemme
+- [ ] 3 mellem-bærereglar i Y (lagt på lem-kanterne, c/c ≤490) + for/bag-reglar + 2 veksler pr. lem
 - [ ] ~25 mm gulvbrædder i X på reglarne (overkant z120, flugter sokkel-top)
 
 ## 3. Konstruktions-skelet (vægge)

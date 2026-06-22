@@ -30,13 +30,12 @@ use <designs/yard/roof.scad>
 use <designs/yard/roof_plates.scad>
 use <designs/yard/mesh.scad>
 
-// House roof.
-// Choose between 'skifer', 'tagpap' or 'eternit'
+// House roof. 
+// 'skifer', 'tagpap' or 'eternit'
 house_roof_cover = "skifer";
 
-// Gable-roof truss pattern (only used when house_roof_cover = "skifer"):
-//   'haneband'    — spær med hanebånd, more loft space (recommended for 2 m span)
-//   'gitterspaer' — engineered king-post truss with W-struts (reusable module)
+// Gable-roof truss pattern.
+// 'haneband' or 'gitterspaer'
 house_truss      = "haneband";
 
 // Yard is an open-top run — welded-wire lid stretched across the rafters
@@ -50,12 +49,13 @@ cladding_type    = "vertical_120";
 // shared
 RenderGround();
 
-// house — uncomment each step as it gets built
+// house
 RenderHouseFoundation();
-RenderHouseBasementFloor();  // concrete kælder slab (z=-680)
-RenderHouseFloorJoists();    // bearing layer — strørem + strøer
-//wRenderHouseFloorDeck();      // ~25 mm board deck (with hatches)
-RenderHouseStairs();         // kælder staircases + hinged lids
+RenderHouseBasementFloor(); 
+RenderHouseFloorJoists();
+RenderHouseFloorHangers();
+//RenderHouseFloorDeck();
+RenderHouseStairs();
 //RenderHouseFraming();
 //RenderHouseOpenings();
 //RenderHouseRoof(house_roof_cover, house_truss);
