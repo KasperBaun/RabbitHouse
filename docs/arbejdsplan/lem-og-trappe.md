@@ -1,31 +1,34 @@
-# Lem & trappe — sådan bygger du dem
+# Lem & trappe — byg med det træ du har
 
 > De to sværeste ting i gulvet. **Hvor** lemmene sidder står i
-> **[gulv-stroer-lem.md](gulv-stroer-lem.md)** — her er **hvordan** du bygger dem.
-> Alt i alm. gran / vejrbestandig krydsfiner — **ikke trykimprægneret**.
-> Byg typisk **trapperne først**, lemmene til sidst.
+> **[gulvkonstruktion-braedder.md](gulvkonstruktion-braedder.md)** — her er **hvordan** du bygger dem.
+> Hele guiden er skrevet til **genbrugstræ**: du køber ikke krydsfiner eller brede
+> planker, du **måler og skærer på stedet** ud fra det du finder. Alm. gran —
+> **ikke trykimprægneret**. Byg typisk **trapperne først**, lemmene til sidst.
 
-## Indkøb (kun til lem + trappe)
+## Kan jeg bruge dette stykke træ?
 
-| Vare | Mål | Antal | Til |
-|---|---|---|---|
-| Krydsfiner vejrbestandig | 25 mm | 2 plader-emner | Lågene (skåret ~0,5 cm mindre end åbningen) |
-| Anslagsliste | 45×45 mm | ~7 lbm | Falsen — hylde låget hviler på |
-| Revle | 45×45 mm | ~3 lbm | 2 stk under hvert låg (afstivning) |
-| Hængsel, mortiseret | — | 4 stk (2 pr. låg) | Hængselkant |
-| Planforsænket klapgreb | — | 2 stk | Løft uden snublekant |
-| Hold-åben strut/krog | — | 2 stk | Låser låget åbent på trappen |
-| Trin (plank) | 40 mm, 55 cm lange | 10 stk (5 pr. trappe) | Trappetrin |
-| Vange (regel) | 45×145–160, ~1,1 m | 4 stk (2 pr. trappe) | Trappevanger |
-| Skruer rustfri/forzinket | 5×60 + beslagskruer | 1 pk | Trin, vanger, fals, hængsler |
+Du behøver ikke regne baglæns. Hold stykket op mod tabellen — passer det med
+minimumskravet til en rolle, kan du bruge det:
+
+| Rolle | Min. tykkelse | Min. bredde/dybde | Længde du skal bruge | Ideelt / noter |
+|---|---|---|---|---|
+| **Trin** | ~22 mm (helst 40–45) | **~9–10 cm** (det er trin-dybden — en fod skal kunne stå) | **55 cm** pr. trin (= trappebredden) | **Reglar 45×95 lagt fladt er perfekt.** 5 trin pr. trappe |
+| **Vange** (side) | ~30 mm (helst 45) | **~95 mm** (helst 120–160 for stivhed over ~1 m) | start med **≥ 110 cm** rå, skæres til | 2 vanger pr. trappe |
+| **Låg-brædt** | = gulvbræddet (~25 mm) | hvad som helst | nok til at dække åbningen | brug **rester af gulvbrædderne** så låget flugter dækket |
+| **Tværrevle** (under låg) | ~30 mm | ~45 mm | passer inden for det frie hul | 2–3 pr. låg. ~45×45 er fint |
+| **Fals-liste** | ~30 mm | ~45 mm | hele åbningens omkreds | ~45×45. Hyldekant låget hviler på |
+
+Er et bræt for smalt til en vange, men tykt nok? → brug det som trin eller revle.
+Intet går til spilde.
 
 ---
 
 # DEL A — Lemmen (× 2)
 
-Lemmen er et **udtageligt/hængslet stykke gulv** i samme 25 mm tykkelse som dækket,
-så den flugter. To ting afgør det: en **fals** den hviler på, og et **greb** den
-løftes i.
+Lemmen er et **udtageligt/hængslet stykke gulv** i samme tykkelse som dækket, så
+den flugter. To ting afgør det: en **fals** den hviler på, og et **greb** den
+løftes i. Låget bygger du selv af gulvbræt-rester — **ingen krydsfiner.**
 
 ![Lem — fals + greb, vist åben](img/lem-3d.png)
 
@@ -49,32 +52,34 @@ Mål fra dækkets forreste venstre hjørne (se gulv-guiden):
 
 ## A2 · Falsen — så låget ikke kan falde ned
 
-Søm/skru **anslagsliste 45×45 hele vejen rundt på indersiden** af åbningen, med
+Søm/skru **fals-liste ~45×45 hele vejen rundt på indersiden** af åbningen, med
 **overkant 2,5 cm under dæk-overkant** (= i niveau med dæk-undersiden). Listen
-rager ~5 cm ind og danner en hylde. Låget (25 mm) lægges ned i den 2,5 cm dybe
-fals og **flugter dækket** — det er større end det frie hul og kan ikke falde
-igennem.
+rager ~5 cm ind og danner en hylde. Låget lægges ned i den 2,5 cm dybe fals og
+**flugter dækket** — det er større end det frie hul og kan ikke falde igennem.
 
 ```
    (gulv-side)                          (åbning / kælder)
    dæk 25 ───────┐   ~0,5 cm luft  ┌─────── låg 25 mm ─────────
    z12 .........│...............│.....................  ← overkant flugter dæk
    z9,5 ────────┤▓▓▓▓▓▓▓▓▓▓▓▓▓▓│  låget hviler på falsen
-   ramme-regel  │ anslagsliste │
-   45×95        │ 45×45 (fals) │
+   ramme-regel  │  fals-liste  │
+   45×95        │ ~45×45       │
    z0  ─────────┘              └──────  ▼  frit hul ned til trappen
 ```
 
-## A3 · Lågets mål (~0,5 cm luft hele vejen)
+## A3 · Byg låget af gulvbræt-rester (~0,5 cm luft hele vejen)
 
-| Lem | Åbning | **Låg** |
+| Lem | Åbning | **Låg (færdigt mål)** |
 |---|---|---|
 | LEM 1 | 70 × 90 cm | **~69,5 × 89,5 cm** |
 | LEM 2 | 90 × 70 cm | **~89,5 × 69,5 cm** |
 
-25 mm vejrbestandig krydsfiner. Skru **2 revler 45×45 på undersiden**, placeret
-*inden for* det frie hul — de afstiver mod en voksen-fod og **låser samtidig låget
-mod at skride sidelæns** når de stikker ned i hullet.
+1. Læg **rester af gulvbrædderne side om side**, til de dækker åbningen, og skær
+   dem så hele låget bliver ~0,5 cm mindre end åbningen i begge retninger.
+2. Skru **2–3 tværrevler (~45×45) på undersiden, på tværs af bræddesamlingerne** —
+   de holder brædderne sammen til ét stykke **og** afstiver mod en voksen-fod.
+3. Placér revlerne **inden for det frie hul** (ikke under falsen) — så de stikker
+   ned i hullet og **låser samtidig låget mod at skride sidelæns.**
 
 ## A4 · Hængsel + greb
 
@@ -86,38 +91,61 @@ mod at skride sidelæns** når de stikker ned i hullet.
 
 ---
 
-# DEL B — Trappen (× 2)
+# DEL B — Byg trappen (× 2)
 
 To stejle, lige trapper ned til betonslabben — én under hver lem. Begge har
-**samme mål**.
+**samme mål.** Du bygger dem **mål-og-skær på stedet**: sæt vangerne efter
+virkeligheden, markér trinene, skær dem til, skru fast.
 
 ![Trappe-snit med mål](img/trappe-snit.png)
 
-## Mål (begge trapper ens)
+## Mål at sigte efter (begge trapper ens)
+
+Det er **mål, ikke facit** — den endelige hældning kommer af hvor gulv og beton
+faktisk står. Stemmer noget ikke, så tro på skribér-stregen, ikke tabellen.
 
 | Størrelse | Værdi |
 |---|---|
 | Samlet fald (dæk → slab) | **80 cm** |
 | Stødtrin (riser) | **13,3 cm** × 6 |
-| Grund (going) | **10 cm** |
+| Grund / trin-dybde (going) | **10 cm** |
 | Trinbredde | **55 cm** |
 | Vandret udløb | **60 cm** |
 | Hældning | **~53°** (stejl — som en skibstrappe) |
-| Trin | 5 trin à 40 mm + **kælderdækket som 6. trin** |
+| Trin | 5 trin + **kælderdækket som 6. trin** |
 
-## B1 · Vanger
+## B1 · Skær vangerne (skribér på stedet)
 
-To **vanger 45×~150**, én i hver side (55 cm fra inderkant til inderkant). Topkant
-tuckes ind under dækket (z9,5), bund står på betonslabben (z−68). Skær trin-profilen
-ud i vangen, **eller** skru trekantklodser på som trinholdere. Hældning ~53°,
-vangelængde ~1,0–1,1 m.
+To vanger, én i hver side, **55 cm fra inderkant til inderkant.**
 
-## B2 · Trin
+1. Tag et bræt (se mål-tabellen) på **≥ 110 cm.** Hold det skråt: **topkanten op
+   under dæk-kanten ved lemmen**, **bundenden på betonslabben**, i den hældning
+   trappen skal have.
+2. **Tegn efter virkeligheden:** streg langs **gulvkanten foroven** og langs
+   **betonen forneden.** (Du måler ingen vinkel — den bliver ~53° af sig selv.)
+3. **Sav på stregerne.** Prøv at vangen sidder fladt mod både gulv og beton.
+4. **Brug den færdige vange som skabelon** til vange nr. 2, så de bliver ens.
 
-**5 trin à 40 mm, 55 cm brede**, skrues på vangerne med 13,3 cm mellem trin-overkanter
-og 10 cm grund. Det 6. "trin" er selve **kælderdækket**.
+## B2 · Markér og skær trinene
 
-## B3 · Hvor hver trappe lander (mål fra samme hjørne)
+1. Stil de to vanger på plads, 55 cm fra inderkant til inderkant.
+2. Markér trin-overkanterne **13,3 cm lodret** mellem hvert trin (eller del faldet
+   i 6 lige stykker), og **tegn en vandret streg** på indersiden af begge vanger.
+   Brug vaterpas — stregen skal være vandret, ikke vinkelret på vangen.
+3. Skær **5 trin på 55 cm** (= afstanden mellem vangernes inderkanter). Trin-dybden
+   skal være **mindst ~10 cm** så foden kan stå — **reglar 45×95 lagt fladt** er
+   perfekt.
+
+## B3 · Skru trinene fast
+
+- Læg hvert trin så **overkanten flugter din streg**, spændt mellem de to vanger.
+- Skru **2 skruer fra ydersiden af hver vange ind i trinets ende** (4 skruer pr.
+  trin). **Forbor** i vangen så enden ikke flækker; brug lange skruer (~5×80–100).
+- Det **6. "trin" er selve kælderdækket** — du skærer kun 5 trin.
+- Føles ét trin fjedrende når du står på det, så skru en lille klods på vangen
+  under trinet — men kun hvis du mærker behov.
+
+## B4 · Hvor hver trappe lander (mål fra samme hjørne)
 
 | Trappe | Under | Top (øverste trin) | Går ned mod | Bund lander | Centreret |
 |---|---|---|---|---|---|
@@ -132,7 +160,7 @@ Dvs. begge trapper starter i den **lem-kant der vender væk fra rummet** og løb
 ## Acceptkriterier
 
 - [ ] Begge åbninger skåret på mål, med støtte langs alle 4 kanter.
-- [ ] Fals 45×45 hele vejen rundt, overkant 2,5 cm under dæk → låget flugter dækket og kan **ikke** falde ned.
-- [ ] Låg ~0,5 cm mindre end åbningen, 2 revler under, planforsænket greb (ingen snublekant).
+- [ ] Fals ~45×45 hele vejen rundt, overkant 2,5 cm under dæk → låget flugter dækket og kan **ikke** falde ned.
+- [ ] Låg bygget af gulvbræt-rester, ~0,5 cm mindre end åbningen, 2–3 tværrevler under, planforsænket greb (ingen snublekant).
 - [ ] Hængsler mortiseret på rigtig kant (LEM 1 bagkant · LEM 2 mod V3) + hold-åben-sikring.
-- [ ] Begge trapper: 55 cm brede, 6 stødtrin à 13,3 cm, lander på slabben, vanger fast i top og bund.
+- [ ] Begge trapper: vanger skribéret så de står fladt mod gulv + beton, 55 cm brede, ~6 stødtrin à ~13,3 cm, 5 trin skruet fast i begge vanger, lander på slabben.
