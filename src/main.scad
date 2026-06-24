@@ -56,7 +56,7 @@ RenderHouseFloorJoists();
 RenderHouseFloorHangers();
 //RenderHouseFloorDeck();
 RenderHouseStairs();
-//RenderHouseFraming();
+RenderHouseFraming();
 //RenderHouseOpenings();
 //RenderHouseRoof(house_roof_cover, house_truss);
 //RenderHouseRoofPlates(house_roof_cover);
