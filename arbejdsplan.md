@@ -31,7 +31,7 @@ Løbegården er en separat struktur og står til sidst.
 - [ ] Rejs V3 (venstre)
 - [ ] Rejs V1 (front, m. dør- + 2 vindue-åbninger)
 - [ ] Rejs V2 (bag)
-- [ ] Rejs V5 (partition, m. hus-dør + pet-dør)
+- [ ] Rejs V4 (partition, m. hus-dør + pet-dør)
 - [ ] Læg topremme på alle 4 vægge
 - [ ] Vinkelbeslag i alle hjørner
 
@@ -94,7 +94,7 @@ Løbegården er en separat struktur og står til sidst.
 ## Løbegård (separat struktur)
 
 - [ ] Fundament
-- [ ] Skelet (V4 + V1/V2-segmenter)
+- [ ] Skelet (V5 + V1/V2-segmenter)
 - [ ] Voliere-net (front + bag + højre)
 - [ ] Yard-dør
 - [ ] Tag-låg (mesh)

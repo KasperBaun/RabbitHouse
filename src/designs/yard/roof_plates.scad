@@ -22,7 +22,7 @@ module RenderYardRoofPlates(cover = "polycarb", standalone = false,
                              palette = DEFAULT_PALETTE) {
     hl   = RH_HOUSE_LEN;
     ll   = RH_LENGTH;
-    // Yard plates start at V5's yard-side outer face (= hl) so they butt
+    // Yard plates start at V4's yard-side outer face (= hl) so they butt
     // against the partition wall without piercing it.
     x_lo = standalone ? hl - RH_OH_SIDE : hl;
     x_hi = ll + RH_OH_SIDE;

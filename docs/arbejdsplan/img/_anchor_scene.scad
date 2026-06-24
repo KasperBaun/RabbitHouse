@@ -23,7 +23,7 @@ module lbl(x, y, s, size = 150, a = "center")
 lbl(1000,  -360, "V1 — FRONT");
 lbl(1000,  3360, "V2 — BAG");
 lbl(-520,  1500, "V3");
-lbl(2520,  1500, "V5");
+lbl(2520,  1500, "V4");
 
 // Running scale along front (V1), cm from left corner, every 50 cm
 lbl(500,  -140, "50",  100);

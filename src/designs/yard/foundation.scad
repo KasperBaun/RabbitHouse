@@ -1,18 +1,18 @@
 // YARD foundation — fundablok perimeter under the yard walls.
 //
-// Combined mode (default): 3-sidet ring (V1 front, V2 back, V4 right). The
-// left side is open — house's V5 partition foundation closes that line.
-// Standalone (standalone=true): adds a V5 left strip at X=hl so yard has
+// Combined mode (default): 3-sidet ring (V1 front, V2 back, V5 right). The
+// left side is open — house's V4 partition foundation closes that line.
+// Standalone (standalone=true): adds a V4 left strip at X=hl so yard has
 // its own complete 4-side ring.
 //
 // Yard spans world Y=yo..yo+yd hvor yo=RH_YARD_Y_OFFSET, yd=RH_YARD_DEPTH.
 //
 // Halvstensforbandt med vekslende hjørne-ejerskab per skifte (samme mønster
 // som hus-fundamentet):
-//   lige skifter (0, 2): KORTE vægge (V4 + evt. V5) ejer hjørner — fulde
+//   lige skifter (0, 2): KORTE vægge (V5 + evt. V4) ejer hjørner — fulde
 //                        Y=yo..yo+yd. De lange V1, V2 sidder mellem.
 //   ulige skifter (1, 3): LANGE vægge (V1, V2) ejer hjørner — fulde
-//                         X=hl..ll. V4 (og evt. V5) sidder mellem
+//                         X=hl..ll. V5 (og evt. V4) sidder mellem
 //                         Y=yo+bw..yo+yd-bw.
 
 include <../../lib/defaults.scad>
@@ -34,8 +34,8 @@ module RenderYardFoundation(standalone = false, palette = DEFAULT_PALETTE) {
     for (c = [0 : COURSES - 1]) {
         z = bh - (COURSES - c) * h_per;
         if (c % 2 == 0) {
-            // Lige skifte — korte vægge ejer hjørner. V4 fuld Y=yo..yo+yd.
-            // V1, V2 mellem V4 (på højre) og venstre væg/V5/åben kant.
+            // Lige skifte — korte vægge ejer hjørner. V5 fuld Y=yo..yo+yd.
+            // V1, V2 mellem V5 (på højre) og venstre væg/V4/åben kant.
             _fb_strip_y([ll - bw, yo],          yd, z, 0);
             v12_start = standalone ? hl + bw : hl;
             v12_end   = ll - bw;
@@ -45,7 +45,7 @@ module RenderYardFoundation(standalone = false, palette = DEFAULT_PALETTE) {
                 _fb_strip_y([hl, yo],           yd, z, 0);
         } else {
             // Ulige skifte — lange vægge ejer hjørner. V1, V2 fuld X=hl..ll.
-            // V4 (og evt. V5) mellem Y=yo+bw..yo+yd-bw.
+            // V5 (og evt. V4) mellem Y=yo+bw..yo+yd-bw.
             _fb_strip_x([hl, yo],              yard_len, z, 0);
             _fb_strip_x([hl, yo + yd - bw],    yard_len, z, 0);
             _fb_strip_y([ll - bw, yo + bw],    yd - 2*bw, z, 0);

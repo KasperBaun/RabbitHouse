@@ -30,7 +30,7 @@ function stud_top_z(y) = wall_top_z(y) - PLATE_HEIGHT;
 function _in_any_skip(c, ranges) =
     len([for (r = ranges) if (c >= r[0] && c <= r[1]) 1]) > 0;
 
-// Sloped Y-axis stud (V3 and V5 have sloped tops).
+// Sloped Y-axis stud (V3 and V4 have sloped tops).
 module _sloped_stud_y(x, y) {
     z_top_front = stud_top_z(y);
     z_top_back  = stud_top_z(y + STUD_THICK);
@@ -194,7 +194,7 @@ module _render_framed_opening(wall_origin, axis,
 }
 
 // ============================================================================
-// HOUSE entry — X=0..hl segment of V1/V2 + V3 + V5 + junction stud at X=hl.
+// HOUSE entry — X=0..hl segment of V1/V2 + V3 + V4 + junction stud at X=hl.
 // ============================================================================
 module RenderHouseFraming(palette = DEFAULT_PALETTE) {
     ww = RH_HOUSE_DEPTH; hl = RH_HOUSE_LEN;
@@ -205,14 +205,14 @@ module RenderHouseFraming(palette = DEFAULT_PALETTE) {
     butt_len = ww - 2 * STUD_DEPTH;
     sd = PLATE_DEPTH; sw = PLATE_HEIGHT;
 
-    // DPC — V1 + V2 segments [0..hl] + V3 cross + V5 cross.
+    // DPC — V1 + V2 segments [0..hl] + V3 cross + V4 cross.
     color(DPC_COLOR) {
         translate([0, 0, RH_BASE_H])         cube([hl, DPC_W, DPC_T]);
         translate([0, ww - DPC_W, RH_BASE_H]) cube([hl, DPC_W, DPC_T]);
         // V3 at X=0
         translate([0, DPC_W, RH_BASE_H])
             cube([DPC_W, ww - 2*DPC_W, DPC_T]);
-        // V5 — sits inside the foundation strip (X=hl-bw..hl), outer face
+        // V4 — sits inside the foundation strip (X=hl-bw..hl), outer face
         // flush with hl so it matches the foundation outer edge.
         translate([hl - DPC_W, DPC_W, RH_BASE_H])
             cube([DPC_W, ww - 2*DPC_W, DPC_T]);
@@ -228,7 +228,7 @@ module RenderHouseFraming(palette = DEFAULT_PALETTE) {
             cube([sd, ww - 2*sd, sw]);
     }
 
-    // Top plate — V1/V2 flat segments + sloped on V3, V5.
+    // Top plate — V1/V2 flat segments + sloped on V3, V4.
     color(pal_post(palette)) {
         translate([0, 0, WALL_TOP_HIGH - sw])      cube([hl, sd, sw]);
         translate([0, ww - sd, WALL_TOP_LOW - sw]) cube([hl, sd, sw]);
@@ -277,7 +277,7 @@ module RenderHouseFraming(palette = DEFAULT_PALETTE) {
     _studs_one_wall([0, butt_y0, 0], butt_len, "Y", h_high,
                     palette=palette);
 
-    // V5 partition — Y wall with human-door + pet-door cutouts.
+    // V4 partition — Y wall with human-door + pet-door cutouts.
     partition_skip = [
         [RH_HOUSE_DOOR_Y - bx, RH_HOUSE_DOOR_Y + RH_HOUSE_DOOR_W + bx],
         [RH_PET_DOOR_Y   - bx, RH_PET_DOOR_Y   + RH_PET_DOOR_W   + bx]
@@ -285,7 +285,7 @@ module RenderHouseFraming(palette = DEFAULT_PALETTE) {
     _studs_one_wall([hl - STUD_DEPTH, butt_y0, 0], butt_len, "Y", h_high,
                     skip_ranges=partition_skip, palette=palette);
 
-    // Jamb studs for V5 openings.
+    // Jamb studs for V4 openings.
     color(pal_post(palette)) {
         _sloped_stud_y(hl - STUD_DEPTH, RH_HOUSE_DOOR_Y - STUD_THICK);
         _sloped_stud_y(hl - STUD_DEPTH, RH_HOUSE_DOOR_Y + RH_HOUSE_DOOR_W);
@@ -294,7 +294,7 @@ module RenderHouseFraming(palette = DEFAULT_PALETTE) {
         _sloped_stud_y(hl - STUD_DEPTH, RH_PET_DOOR_Y + RH_PET_DOOR_W);
     }
 
-    // Junction studs at the V5/V1 and V5/V2 corners — V5's outer face is
+    // Junction studs at the V4/V1 and V4/V2 corners — V4's outer face is
     // at X=hl, so the corner stud is flush with hl on the right.
     color(pal_post(palette)) {
         translate([hl - STUD_THICK, 0, STUD_BOTTOM_Z])
@@ -303,7 +303,7 @@ module RenderHouseFraming(palette = DEFAULT_PALETTE) {
             cube([STUD_THICK, STUD_DEPTH, h_high]);
     }
 
-    // Framed openings — V5 doors only. With h_high == 2000 the top plate
+    // Framed openings — V4 doors only. With h_high == 2000 the top plate
     // doubles as the door header; the _render_framed_opening helper emits
     // a header beam that coincides with the top plate (visually one beam).
     _render_framed_opening(wall_origin = [hl - STUD_DEPTH, 0, 0], axis = "Y",

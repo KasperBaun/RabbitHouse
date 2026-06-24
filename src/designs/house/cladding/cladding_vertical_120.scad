@@ -3,7 +3,7 @@
 // savskåret look; narrow cover boards (25×100) sit on every vertical seam
 // and on the horizontal kurs-seam at Z = bh + 1200.
 //
-// Iteration 1: renders V3 (left wall) only. Other walls (V1, V2, V5) get
+// Iteration 1: renders V3 (left wall) only. Other walls (V1, V2, V4) get
 // added once V3 is approved.
 //
 // Stickout: housewrap 1 + horizontal counter-batten 22 + main board 25 +

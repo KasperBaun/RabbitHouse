@@ -17,8 +17,8 @@ module RenderHouseRoofPlates(cover = "tagpap", standalone = false,
                               palette = DEFAULT_PALETTE) {
     hl    = RH_HOUSE_LEN;
     x_lo  = -RH_OH_SIDE;
-    // Boundary at V5's yard-side outer face (= hl, since V5 sits inside the
-    // house footprint). V5 is owned by house, so the cover fully shields it.
+    // Boundary at V4's yard-side outer face (= hl, since V4 sits inside the
+    // house footprint). V4 is owned by house, so the cover fully shields it.
     x_hi  = standalone ? hl + RH_OH_SIDE : hl;
 
     if (cover == "skifer")

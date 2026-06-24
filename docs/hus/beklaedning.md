@@ -7,7 +7,7 @@ Beklædningen dækker hus-zonen (X = 0..1500).
 | B1 | Hus front (V1, X=0..1500, Y=0) | klink + vindpapir + afstandsliste | vejrbeklædning HIGH |
 | B2 | Hus bag (V2, X=0..1500, Y=2500) | klink + vindpapir + afstandsliste | vejrbeklædning LOW |
 | B3 | Hus venstre (V3, X=0) | klink m. side-vindue-cutout + lag-stack | vejrbeklædning skrå |
-| B4 | Hus partition yard-side (V5, X=1547.5) | klink m. dør-cutouts + lag-stack | vejrbeklædning skrå yard-side |
+| B4 | Hus partition yard-side (V4, X=1547.5) | klink m. dør-cutouts + lag-stack | vejrbeklædning skrå yard-side |
 | B5 | 4 hjørnetrims | 45×45 lodret tømmer (klink) / 70×70 (bob) | dækker klink-end-grain |
 
 ## Lag-stack (snit gennem hus-væg, klink-variant)
@@ -78,17 +78,17 @@ Vægareal og rækker pr. væg (alle 4 hus-vægge):
 | Front V1 (flad HIGH) | 1500 × 2400 | 3,60 m² | 24 | 36 m |
 | Bag V2 (flad LOW) | 1500 × 2200 | 3,30 m² | 22 | 33 m |
 | Venstre V3 (skrå, max) | 2500 × 2400 | 5,33 m² (− vindue 700×600) | 24 | 60 m |
-| Partition V5 (skrå, max) | 2500 × 2400 | 3,89 m² (− dør 870×2050 − petdør 250×300) | 24 | 60 m |
+| Partition V4 (skrå, max) | 2500 × 2400 | 3,89 m² (− dør 870×2050 − petdør 250×300) | 24 | 60 m |
 | **Total** | | **16,12 m²** | | **189 m** |
 
 **Smart-cut strategi for 4200 mm brædder:**
 
 Hvert 4200 mm bræt skæres optimalt til **1× 2500 + 1× 1500 + 200 mm scrap**
-= 1 række på V3 eller V5 (2500 mm) + 1 række på V1 eller V2 (1500 mm) pr. bræt.
+= 1 række på V3 eller V4 (2500 mm) + 1 række på V1 eller V2 (1500 mm) pr. bræt.
 
 | Behov | Antal rækker | Skæres fra | Brædder |
 |---|---|---|---|
-| 2500 mm rækker (V3 + V5) | 48 | 48 brædder × 2500 mm | 48 |
+| 2500 mm rækker (V3 + V4) | 48 | 48 brædder × 2500 mm | 48 |
 | 1500 mm rækker (V1 + V2) | 46 | samme 48 brædder × 1500 mm | (gratis) |
 
 → **48 brædder min.** + 5 % safety for snit ved åbninger og skrå-cut
@@ -96,7 +96,7 @@ Hvert 4200 mm bræt skæres optimalt til **1× 2500 + 1× 1500 + 200 mm scrap**
 
 ## Materialeliste (klink-variant)
 
-Vindpapir-areal (uden fradrag for åbninger; cuttes efter): V1+V2+V3+V5 =
+Vindpapir-areal (uden fradrag for åbninger; cuttes efter): V1+V2+V3+V4 =
 3,6 + 3,3 + 5,75 + 5,75 = **18,4 m²** → en 1,5 × 50 m rulle (75 m²) er
 voldsom overdaekning, men er standardlager. Alternativ: 1,5 × 25 m rulle
 (37,5 m²) hvis den fås.
@@ -104,7 +104,7 @@ voldsom overdaekning, men er standardlager. Alternativ: 1,5 × 25 m rulle
 | # | Vare | Beskrivelse | Antal | Enhed |
 |---|---|---|---|---|
 | 1 | Vindpapir Tyvek HouseWrap | 1,5 m × 50 m rulle, hus-vægge ~18,4 m² (1 rulle giver overlap-buffer) | 1 | rulle |
-| 2 | Afstandsliste 22 × 45 × 2400 mm | Lodret klemmeliste c/c 600. V1+V2: 3+3 = 6 stk; V3+V5: 5+5 = 10 stk (skrå, kortes ned) | 16 | stk |
+| 2 | Afstandsliste 22 × 45 × 2400 mm | Lodret klemmeliste c/c 600. V1+V2: 3+3 = 6 stk; V3+V4: 5+5 = 10 stk (skrå, kortes ned) | 16 | stk |
 | 3 | Klink-brædder 25 × 125 × 4200 mm (gran/lærk) | Hus-vægge 16,12 m². Smart cut: 2500+1500+200 scrap pr. bræt → 48 stk + 5 % safety | 50 | stk |
 | 4 | Hjørnetrim 45 × 45 × 2400 mm | 4 hjørner, klink-end-grain dækning (front-trim 2400, bag-trim kortes til 2200) | 4 | stk |
 | 5 | Klamper 25 mm | Stifter til vindpapir, c/c 200 | 1 | pak |
@@ -125,11 +125,11 @@ Hvis `cladding_type = "board_on_board"` i `src/main.scad`:
 
 ## Bygge-rækkefølge
 
-1. Spænd vindpapir på stud-ydersiden af alle 4 hus-vægge (V1, V2, V3, V5-yard-side); stift c/c 200, overlap 100 mm i samlinger
-2. Cut åbninger ud i vindpapir ved side-vindue (V3) + hus-dør (V5) + petdør (V5)
+1. Spænd vindpapir på stud-ydersiden af alle 4 hus-vægge (V1, V2, V3, V4-yard-side); stift c/c 200, overlap 100 mm i samlinger
+2. Cut åbninger ud i vindpapir ved side-vindue (V3) + hus-dør (V4) + petdør (V4)
 3. Sæt afstandsliste 22 × 45 lodret c/c 600 — ovenpå hver stud, gennem vindpapir, skruet ind i stud
 4. Skær klink-brædder pr. skærelisten ovenfor (smart cut: 2500 + 1500 + 200 scrap pr. bræt)
-5. Søm klink-brædder vandret på afstandslisten, nederst først, hver overlapper det underliggende med 25 mm. Skrå-cut overkanten på V3 + V5 så top følger toprem-skrå
+5. Søm klink-brædder vandret på afstandslisten, nederst først, hver overlapper det underliggende med 25 mm. Skrå-cut overkanten på V3 + V4 så top følger toprem-skrå
 6. Skær klink rundt om karme på Å1 (hus-dør), Å2 (petdør) og Å3 (side-vindue) — klink butter direkte mod karm-yder
 7. Sæt 4 hjørnetrim-stykker (45×45) ved hus-hjørnerne — overlapper begge klink-flader
 
@@ -143,5 +143,5 @@ Inspect:
 - Klink-stack ligger UDEN PÅ studsene (ikke embedded i)
 - Hjørnetrims dækker klink-end-grain ved alle 4 hus-hjørner
 - Klink butter direkte mod dør-karm på Å1 og petdør Å2 (ingen arkitrav-liste)
-- 24 klink-rækker på front (2400 mm), 22 på bag (2200 mm), skrå på V3 + V5
+- 24 klink-rækker på front (2400 mm), 22 på bag (2200 mm), skrå på V3 + V4
 - Partition-væggen klædt kun på YARD-siden (X = 1547.5)

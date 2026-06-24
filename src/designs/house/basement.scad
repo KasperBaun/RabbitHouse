@@ -142,7 +142,7 @@ module RenderHouseStairs(palette = DEFAULT_PALETTE) {
            (RH_HATCH_FRONT[0] + RH_HATCH_FRONT[2]) / 2, palette);
     _lid(RH_HATCH_FRONT, "y1", palette);
 
-    // human door (V5) — hatch V5 edge at X=1805, descend -X, centred Y≈1947
+    // human door (V4) — hatch V4 edge at X=1805, descend -X, centred Y≈1947
     _lem_fals(RH_HATCH_HUMAN, palette);
     _stair("X", RH_HATCH_HUMAN[2], -1,
            (RH_HATCH_HUMAN[1] + RH_HATCH_HUMAN[3]) / 2, palette);

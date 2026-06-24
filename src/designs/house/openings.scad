@@ -1,5 +1,5 @@
 // HOUSE openings — front entry door + 2 windows on V1, human door in the
-// partition (V5). Self-contained: zone-specific geometry only.
+// partition (V4). Self-contained: zone-specific geometry only.
 
 include <../../lib/defaults.scad>
 include <../config.scad>
@@ -12,7 +12,7 @@ WALL_DEPTH    = RH_POST_W;
 FLOOR_Z       = RH_FLOOR_TOP;
 
 PARTITION_X   = RH_HOUSE_LEN;
-// V5 wall sits inside the foundation (X=hl-WALL_DEPTH..hl), so the door
+// V4 wall sits inside the foundation (X=hl-WALL_DEPTH..hl), so the door
 // frame's inner X face = wall inner face = hl - WALL_DEPTH.
 PART_INNER_X  = PARTITION_X - WALL_DEPTH;
 
@@ -34,7 +34,7 @@ HINGE_C       = [0.18, 0.18, 0.20];
 HANDLE_C      = [0.18, 0.18, 0.20];
 GLASS_C       = [0.55, 0.75, 0.85, 0.45];
 
-// Internal human door in V5, faces +X (into yard), opens into yard.
+// Internal human door in V4, faces +X (into yard), opens into yard.
 module _render_human_door(palette) {
     y0 = RH_HOUSE_DOOR_Y;
     y1 = y0 + RH_HOUSE_DOOR_W;
@@ -55,7 +55,7 @@ module _render_human_door(palette) {
     leaf_y1 = y1 - FRAME_T;
     leaf_w  = leaf_y1 - leaf_y0;
     leaf_h  = RH_HOUSE_DOOR_H - FRAME_T;
-    // Leaf hung flush with V5's yard-facing face (X=PARTITION_X), opening
+    // Leaf hung flush with V4's yard-facing face (X=PARTITION_X), opening
     // outward into the yard.
     leaf_x  = PARTITION_X - LEAF_T;
 

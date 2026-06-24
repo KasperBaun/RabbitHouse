@@ -134,39 +134,39 @@ URL_WOOD_VINKEL        = "https://wood-online.dk/shop/paslode-vinkelbeslag-542p.
 URL_AROS_1PA2          = "https://arossavvaerk.dk/vare/1-paa-2-beklaedning-svensk-gran/"
 
 
-# Foundation split: house owns perimeter [0..hl] front+back + V3 left + V5
-# partition cross. Yard owns perimeter [hl..ll] front+back + V4 right.
-# In COMBINED build, V5 is shared (house renders it). Linear-meter share:
+# Foundation split: house owns perimeter [0..hl] front+back + V3 left + V4
+# partition cross. Yard owns perimeter [hl..ll] front+back + V5 right.
+# In COMBINED build, V4 is shared (house renders it). Linear-meter share:
 # house 10 m (48 %), yard 11 m (52 %). Begge zoner har 4 skifter (80 cm høj
 # ring, frostfri).
 FUNDAMENT = [
     ("Fundament", "Stabilgrus 0-32 mm (hus)",       510, "kg",  0.55,  "materialepladsen.dk", "Under hus-strips (~0,30 m³)",                 URL_MATPLADS_STABILGRUS, "Hus"),
     ("Fundament", "Stabilgrus 0-32 mm (yard)",      560, "kg",  0.55,  "materialepladsen.dk", "Under yard-strips (~0,33 m³)",                URL_MATPLADS_STABILGRUS, "Yard"),
     ("Fundament", "Fundablok 50x20x15 cm (hus)",     86, "stk", 15.75, "jemogfix.dk",         "2000x3000 ring, 4 skifter halvstensforbandt — 80 + buffer", URL_JF_FUNDABLOK, "Hus"),
-    ("Fundament", "Fundablok 50x20x15 cm (yard)",    94, "stk", 15.75, "jemogfix.dk",         "3-sidet ring (V5 = hus), 4 skifter halvstensforbandt — 88 + buffer", URL_JF_FUNDABLOK, "Yard"),
+    ("Fundament", "Fundablok 50x20x15 cm (yard)",    94, "stk", 15.75, "jemogfix.dk",         "3-sidet ring (V4 = hus), 4 skifter halvstensforbandt — 88 + buffer", URL_JF_FUNDABLOK, "Yard"),
     ("Fundament", "Kamstål Ø10 mm × 3 m (hus)",      18, "stk", 45.00, "jemogfix.dk",         "est. — 2 bund (8 stk for 10 m) + 2 top (8 stk) + 2 lodrette", URL_JF_ARMERING, "Hus"),
     ("Fundament", "Kamstål Ø10 mm × 3 m (yard)",     18, "stk", 45.00, "jemogfix.dk",         "est. — 2 bund (8 stk for 11 m) + 2 top (8 stk) + 2 lodrette", URL_JF_ARMERING, "Yard"),
     ("Fundament", "Cement 25 kg (hus)",              10, "stk", 75.00, "jemogfix.dk",         "1:4 blanding, ~300 L beton",                  URL_JF_CEMENT,           "Hus"),
     ("Fundament", "Cement 25 kg (yard)",             11, "stk", 75.00, "jemogfix.dk",         "1:4 blanding, ~330 L beton",                  URL_JF_CEMENT,           "Yard"),
     ("Fundament", "Støbemix 0-16 mm (hus)",         625, "kg",  0.66,  "materialepladsen.dk", "ca. 0,38 m³",                                 URL_MATPLADS_STOEBEMIX,  "Hus"),
     ("Fundament", "Støbemix 0-16 mm (yard)",        705, "kg",  0.66,  "materialepladsen.dk", "ca. 0,43 m³",                                 URL_MATPLADS_STOEBEMIX,  "Yard"),
-    ("Fundament", "Ankerskrue M10 × 120 mm (hus)",   10, "stk", 14.95, "jemogfix.dk",         "est. — bundrem-fast: 2 på V1, 2 på V2, 3 på V3, 3 på V5", URL_JF_GEVINDSTANG, "Hus"),
-    ("Fundament", "Ankerskrue M10 × 120 mm (yard)",  11, "stk", 14.95, "jemogfix.dk",         "est. — 4 på V1, 4 på V2, 3 på V4",            URL_JF_GEVINDSTANG,      "Yard"),
+    ("Fundament", "Ankerskrue M10 × 120 mm (hus)",   10, "stk", 14.95, "jemogfix.dk",         "est. — bundrem-fast: 2 på V1, 2 på V2, 3 på V3, 3 på V4", URL_JF_GEVINDSTANG, "Hus"),
+    ("Fundament", "Ankerskrue M10 × 120 mm (yard)",  11, "stk", 14.95, "jemogfix.dk",         "est. — 4 på V1, 4 på V2, 3 på V5",            URL_JF_GEVINDSTANG,      "Yard"),
     ("Fundament", "M10 møtrikker + skiver (12-pak)",  2, "pk.", 28.95, "jemogfix.dk",         "Fastgør bundrem til ankerskrue ovenfra (1 pak pr. zone)", URL_JF_M10_MOETRIK, "Fælles"),
 ]
 
-# Konstruktion split: V3 + V5 (partition) + V1[0..hl] + V2[0..hl] = Hus.
-# V4 + V1[hl..ll] + V2[hl..ll] = Yard. The two long 3600 mm bundrem/toprem
+# Konstruktion split: V3 + V4 (partition) + V1[0..hl] + V2[0..hl] = Hus.
+# V5 + V1[hl..ll] + V2[hl..ll] = Yard. The two long 3600 mm bundrem/toprem
 # pieces on V1+V2 straddle hl and stay "Fælles".
 KONSTRUKTION = [
     ("Konstruktion", "Murpap (DPC)",                       1,  "stk", 99.00, "jemogfix.dk", "11 cm × 20 m — sokkel-isolering, hele perimeter + tværvæg", URL_JF_MURPAP_11,     "Fælles"),
     ("Konstruktion", "Bundrem 45×95×3600 PT NTR-AB",        2,  "stk", 71.10, "jemogfix.dk", "V1 + V2 lange stykker — straddler hl ved splejs",            URL_JF_REGLAR_45_3600, "Fælles"),
-    ("Konstruktion", "Bundrem 45×95×2400 PT NTR-AB (hus)",  2,  "stk", 47.40, "jemogfix.dk", "V3 + V5 bundrem",                                            URL_JF_REGLAR_45_2400, "Hus"),
-    ("Konstruktion", "Bundrem 45×95×2400 PT NTR-AB (yard)", 3,  "stk", 47.40, "jemogfix.dk", "V1[2] + V2[2] + V4 bundrem",                                 URL_JF_REGLAR_45_2400, "Yard"),
+    ("Konstruktion", "Bundrem 45×95×2400 PT NTR-AB (hus)",  2,  "stk", 47.40, "jemogfix.dk", "V3 + V4 bundrem",                                            URL_JF_REGLAR_45_2400, "Hus"),
+    ("Konstruktion", "Bundrem 45×95×2400 PT NTR-AB (yard)", 3,  "stk", 47.40, "jemogfix.dk", "V1[2] + V2[2] + V5 bundrem",                                 URL_JF_REGLAR_45_2400, "Yard"),
     ("Konstruktion", "Toprem 47×100×3600 C24 gran",         2,  "stk", 63.90, "jemogfix.dk", "V1 + V2 lange stykker — straddler hl",                       URL_JF_REGLAR_47_3600, "Fælles"),
     ("Konstruktion", "Toprem 47×100×3600 C24 gran (yard)",  2,  "stk", 63.90, "jemogfix.dk", "V1[2] + V2[2] yard-segment toprem",                          URL_JF_REGLAR_47_3600, "Yard"),
-    ("Konstruktion", "Reglar 47×100×2400 C24 gran (hus)",  22,  "stk", 42.60, "jemogfix.dk", "Studs V1[0..hl]+V2[0..hl]+V3+V5 + skrå toprem V3+V5 + headers/cripples", URL_JF_REGLAR_47_2400, "Hus"),
-    ("Konstruktion", "Reglar 47×100×2400 C24 gran (yard)", 20,  "stk", 42.60, "jemogfix.dk", "Studs V1[hl..ll]+V2[hl..ll]+V4 + skrå toprem V4 + yard-dør jamber", URL_JF_REGLAR_47_2400, "Yard"),
+    ("Konstruktion", "Reglar 47×100×2400 C24 gran (hus)",  22,  "stk", 42.60, "jemogfix.dk", "Studs V1[0..hl]+V2[0..hl]+V3+V4 + skrå toprem V3+V4 + headers/cripples", URL_JF_REGLAR_47_2400, "Hus"),
+    ("Konstruktion", "Reglar 47×100×2400 C24 gran (yard)", 20,  "stk", 42.60, "jemogfix.dk", "Studs V1[hl..ll]+V2[hl..ll]+V5 + skrå toprem V5 + yard-dør jamber", URL_JF_REGLAR_47_2400, "Yard"),
 ]
 
 # Tagpap variant. House owns roof segment X<=hl + left side; yard owns
@@ -174,7 +174,7 @@ KONSTRUKTION = [
 # segment, plates 2-3 in yard, so house 1 plate × 5 rows = 5, yard 2 × 5 = 10.
 TAG_TAGPAP = [
     ("Træværk",        "Spær 47×100×3000 C24 gran (hus)",            4, "stk",   53.25, "jemogfix.dk",    "X=-220, 0, 600, 1200 (incl. vindskede V)", URL_JF_REGLAR_47_3000, "Hus"),
-    ("Træværk",        "Spær 47×100×3000 C24 gran (yard)",           9, "stk",   53.25, "jemogfix.dk",    "X=1800..5400 + V4 gable + vindskede H",    URL_JF_REGLAR_47_3000, "Yard"),
+    ("Træværk",        "Spær 47×100×3000 C24 gran (yard)",           9, "stk",   53.25, "jemogfix.dk",    "X=1800..5400 + V5 gable + vindskede H",    URL_JF_REGLAR_47_3000, "Yard"),
     ("Træværk",        "OSB-3 TG4 18 mm 2397×600 mm (hus)",          5, "stk",  129.00, "jemogfix.dk",    "Plade 1 i hver række — dækker [-220..2177]", URL_JF_OSB,           "Hus"),
     ("Træværk",        "OSB-3 TG4 18 mm 2397×600 mm (yard)",        10, "stk",  129.00, "jemogfix.dk",    "Plade 2+3 i hver række — dækker [2177..6220]",URL_JF_OSB,          "Yard"),
     ("Træværk",        "Sternbræt imp. 21×120×3600 gran (hus)",      2, "stk",   92.70, "jemogfix.dk",    "Venstre side + del af front/bag (~6,4 m)",  URL_JF_STERN,          "Hus"),

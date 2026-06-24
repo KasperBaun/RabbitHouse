@@ -18,9 +18,9 @@ Code AND the BOM/skæreliste are split into two zones at **X = RH_HOUSE_LEN (150
 
 | Zone   | Footprint        | What it owns                                                                 |
 | ------ | ---------------- | ---------------------------------------------------------------------------- |
-| House  | X = 0..1500      | V3 (left), V5 (partition) — entire walls; V1+V2 segments [0..hl]; junction stud at X=hl; left-side roof overhang + lookouts + side fascia + soffit; human door + side window; cladding (all 4 house walls); foundation under house walls + V5 cross; cover plates over house segment. |
-| Yard   | X = 1500..6000   | V4 (right) — entire wall; V1+V2 segments [hl..ll]; right-side roof overhang + lookouts + side fascia + soffit; yard door; mesh on front/back/right; foundation under yard 3 sides (left side = V5 = house in combined); cover plates over yard segment. |
-| Shared | —                | Ground; murpap til tagfod; small fastener packages (skruer, søm). Foundation V5 cross-wall is owned by house (when standalone yard is built, set `RenderYardFoundation(standalone=true)` to add its own left strip). Cover plates split at X=hl with wave phase alignment for eternit (1720 mm = 10 × B7_PITCH). |
+| House  | X = 0..1500      | V3 (left), V4 (partition) — entire walls; V1+V2 segments [0..hl]; junction stud at X=hl; left-side roof overhang + lookouts + side fascia + soffit; human door + side window; cladding (all 4 house walls); foundation under house walls + V4 cross; cover plates over house segment. |
+| Yard   | X = 1500..6000   | V5 (right) — entire wall; V1+V2 segments [hl..ll]; right-side roof overhang + lookouts + side fascia + soffit; yard door; mesh on front/back/right; foundation under yard 3 sides (left side = V4 = house in combined); cover plates over yard segment. |
+| Shared | —                | Ground; murpap til tagfod; small fastener packages (skruer, søm). Foundation V4 cross-wall is owned by house (when standalone yard is built, set `RenderYardFoundation(standalone=true)` to add its own left strip). Cover plates split at X=hl with wave phase alignment for eternit (1720 mm = 10 × B7_PITCH). |
 
 Each zone folder (`designs/house/`, `designs/yard/`) exposes its own `RenderHouse*()` / `RenderYard*()` entry point per building system. Folders are independent — helpers are duplicated rather than shared. `RenderRoofPlates(cover)` stays at the root of `designs/` because the cover layers can't be cleanly split at the partition line.
 
@@ -43,8 +43,8 @@ src/
     roof_plates_eternit.scad         # variant — C18 lægter + eternit (parameterised x_lo/x_hi)
     interior.scad                    # SHARED — nest box, hay rack, bowls
     house/                           # HUS-zone (X = 0..1500) — buildable standalone
-      foundation.scad                # RenderHouseFoundation — perimeter + V5 cross
-      framing.scad                   # RenderHouseFraming — V1[0..hl] + V2[0..hl] + V3 + V5 + junction-stud
+      foundation.scad                # RenderHouseFoundation — perimeter + V4 cross
+      framing.scad                   # RenderHouseFraming — V1[0..hl] + V2[0..hl] + V3 + V4 + junction-stud
       openings.scad                  # RenderHouseOpenings — human-dør + side-vindue
       roof.scad                      # RenderHouseRoof — spær X<=1200 + venstre lookouts + venstre fascia/soffit
       roof_plates.scad               # RenderHouseRoofPlates(cover, standalone) — house cover segment
@@ -55,7 +55,7 @@ src/
         cladding_board_on_board.scad # board-on-board renderer + entry
     yard/                            # YARD-zone (X = 1500..6000) — standalone needs `standalone=true` flags
       foundation.scad                # RenderYardFoundation(standalone)
-      framing.scad                   # RenderYardFraming — V1[hl..ll] + V2[hl..ll] + V4
+      framing.scad                   # RenderYardFraming — V1[hl..ll] + V2[hl..ll] + V5
       openings.scad                  # RenderYardOpenings — yard-dør
       roof.scad                      # RenderYardRoof — spær X>=1800 + højre lookouts + højre fascia/soffit
       roof_plates.scad               # RenderYardRoofPlates(cover, standalone) — yard cover segment
@@ -96,7 +96,7 @@ Every library module takes **named arguments with sensible defaults**. Things th
 
 ONE continuous mono-pitch roof over the entire 6 m × 2,5 m footprint, sloping front-to-back (eh_front=2400, eh_back=2200, drop=200 over 2500 mm = 4,6° / 8 % fald for tagpap default; eh_back lowers further for eternit_10/14). The house occupies X=0..1500 (1.5 m); the yard occupies X=1500..6000 (4.5 m). Roof cover selected via the `roof_cover` parameter in `src/main.scad` (`"tagpap_osb"` | `"eternit_b7"` | `"eternit_10"` | `"eternit_14"`).
 
-Foundation is a continuous fundablok strip (50×20×15 cm blocks, 3 courses in halvstensforbandt = ~60 cm tall) under ALL walls — house perimeter + V5 partition cross + yard 3-side perimeter — sitting on stabilgrus in a frostfri trench (~80 cm dig). Drawn zone-by-zone via `RenderHouseFoundation()` + `RenderYardFoundation()` (each using the shared `fundablok_strip` primitive in `lib/primitives/fundablok.scad`); top of foundation at Z=`RH_BASE_H` (120 mm above grade — sokkel-niveau where bundrem of all walls sits), ring extends 600 mm down into the trench. Comment out `RenderGround()` in `main.scad` (under `// shared`) to inspect the buried foundation.
+Foundation is a continuous fundablok strip (50×20×15 cm blocks, 3 courses in halvstensforbandt = ~60 cm tall) under ALL walls — house perimeter + V4 partition cross + yard 3-side perimeter — sitting on stabilgrus in a frostfri trench (~80 cm dig). Drawn zone-by-zone via `RenderHouseFoundation()` + `RenderYardFoundation()` (each using the shared `fundablok_strip` primitive in `lib/primitives/fundablok.scad`); top of foundation at Z=`RH_BASE_H` (120 mm above grade — sokkel-niveau where bundrem of all walls sits), ring extends 600 mm down into the trench. Comment out `RenderGround()` in `main.scad` (under `// shared`) to inspect the buried foundation.
 
 House floor is `rh_stroer_floor`: 45×95 mm strøer laid flat at c/c 600 mm across the house footprint, with ~25 mm sawn boards nailed on top. The yard sits on grass at grade. The two right-end corner posts (yard NE and SE) sit on a steel post-base bracket (18 mm) directly on the fundablok ring. Yard sill plates run at Z=18..63.
 
@@ -114,4 +114,4 @@ House side and partition walls are mono-pitch cladded with a sloped top beam bel
 
 Design-level constants use the `RH_` prefix (Rabbit House) to avoid collision with library `DEFAULT_*` globals — e.g., `RH_LENGTH`, `RH_BASE_H`, `RH_OH_FRONT`. Module names use `rh_` lowercase prefix (e.g., `rh_spaer`, `rh_beklaedning`).
 
-Wall identifiers V1/V2/V3/V4/V5 in `framing.scad` refer to **physical walls** (front/back/sides/partition), not version numbers — preserve these labels.
+Wall identifiers V1–V5 refer to **physical walls**, numbered geometrically along X: **V1**=front, **V2**=back, **V3**=left gable (X=0), **V4**=partition (X=hl), **V5**=right gable (X=ll). House owns V1, V2, V3, V4; yard owns V1, V2, V5. These are physical-wall labels, not version numbers — preserve them.

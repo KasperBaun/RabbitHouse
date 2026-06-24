@@ -18,7 +18,7 @@ module render_cladding_board_on_board(bob = RH_CLAD_BOB,
     s       = RH_HOUSEWRAP_T + RH_COUNTER_BATTEN_T;
     trim_w  = 70;
     o       = s + ct;                             // outer-corner offset
-    part_x  = hl;                                 // V5 yard-side outer face
+    part_x  = hl;                                 // V4 yard-side outer face
 
     butt_y0  = sd;
     butt_len = ww - 2 * sd;

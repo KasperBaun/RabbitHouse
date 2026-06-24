@@ -113,7 +113,7 @@ module _render_yard_door_framing(palette = DEFAULT_PALETTE) {
 }
 
 // ============================================================================
-// YARD entry — X=hl..ll segment of V1/V2 + V4. No junction stud (house owns it).
+// YARD entry — X=hl..ll segment of V1/V2 + V5. No junction stud (house owns it).
 // Y range: yo..yo+yd (= 500..3000 i nuværende config).
 // ============================================================================
 module RenderYardFraming(palette = DEFAULT_PALETTE) {
@@ -127,7 +127,7 @@ module RenderYardFraming(palette = DEFAULT_PALETTE) {
     butt_len = yd - 2 * STUD_DEPTH;
     sd = PLATE_DEPTH; sw = PLATE_HEIGHT;
 
-    // DPC — V1 + V2 segments [hl..ll] + V4 cross at X=ll.
+    // DPC — V1 + V2 segments [hl..ll] + V5 cross at X=ll.
     color(DPC_COLOR) {
         translate([hl, yo,            RH_BASE_H])  cube([ll - hl, DPC_W, DPC_T]);
         translate([hl, y_back - DPC_W, RH_BASE_H]) cube([ll - hl, DPC_W, DPC_T]);
@@ -143,11 +143,11 @@ module RenderYardFraming(palette = DEFAULT_PALETTE) {
             cube([sd, yd - 2*sd, sw]);
     }
 
-    // Top plate — V1/V2 flat segments + sloped V4 + interior cross-ribs.
-    // Cross-ribs at c/c 1000 (hl, hl+1000, hl+2000, hl+3000) plus V4 give
+    // Top plate — V1/V2 flat segments + sloped V5 + interior cross-ribs.
+    // Cross-ribs at c/c 1000 (hl, hl+1000, hl+2000, hl+3000) plus V5 give
     // the mesh lid support across the 4 m span and close the cage on the
     // partition side. Each rib sits in the wall-top plane (top flush with
-    // mesh lid bottom), butted between V1 and V2 like V4.
+    // mesh lid bottom), butted between V1 and V2 like V5.
     color(pal_post(palette)) {
         translate([hl, yo,            WALL_TOP_HIGH - sw]) cube([ll - hl, sd, sw]);
         translate([hl, y_back - sd,   WALL_TOP_LOW  - sw]) cube([ll - hl, sd, sw]);
@@ -165,7 +165,7 @@ module RenderYardFraming(palette = DEFAULT_PALETTE) {
     _studs_one_wall([hl, y_back - STUD_DEPTH, 0], ll - hl, "X", h_low,
                     palette=palette);
 
-    // V4 — sloped Y wall, no openings.
+    // V5 — sloped Y wall, no openings.
     _studs_one_wall([ll - STUD_DEPTH, butt_y0, 0], butt_len, "Y", h_low,
                     palette=palette);
 

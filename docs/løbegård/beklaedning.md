@@ -9,7 +9,7 @@ Nettet sidder direkte på reglar-ydersiden. reglar (45×95 c/c 600) er rammen.
 |---|---|---|---|
 | B6 | Yard front (V1[hl..ll], Y=0) | voliernet i 2 bånd om døren | rovdyrsikring HIGH |
 | B7 | Yard bag (V2[hl..ll], Y=2500) | voliernet, 1 bane | rovdyrsikring + ventilation LOW |
-| B8 | Yard højre (V4, X=6000) | voliernet, skrå top (HIGH → LOW) | rovdyrsikring skrå |
+| B8 | Yard højre (V5, X=6000) | voliernet, skrå top (HIGH → LOW) | rovdyrsikring skrå |
 
 ## Mål
 
@@ -57,7 +57,7 @@ Hele bag-væggen er net — ingen åbninger.
 
 ### B8 — Yard højre (skrå)
 
-Skrå top der følger V4-toprem fra HIGH (Y=0, z=2175) til LOW (Y=2500,
+Skrå top der følger V5-toprem fra HIGH (Y=0, z=2175) til LOW (Y=2500,
 z=1875) — modelleres i kode med `voliere_y_sloped(...)` der intersector
 et rektangulært net mod en sloped wedge.
 
@@ -102,7 +102,7 @@ rovdyrsikring) — gå ikke under denne specifikation.
 
 ## Bygge-rækkefølge
 
-1. Verificer at yard-skelet er fuldt rejst (V1/V2 hl..ll segmenter, V4
+1. Verificer at yard-skelet er fuldt rejst (V1/V2 hl..ll segmenter, V5
    højre, alle reglar c/c 600, toprem på plads, yard-dør Å4 indsat med
    karm)
 2. Rul mesh ud langs første væg, marker midten, klip i passende længder
@@ -124,7 +124,7 @@ pwsh src/scripts/audit_renders.ps1
 
 Inspect:
 - Voliernet sidder på yard-perimeteret, ikke på hus-væggene (intet net
-  på partition V5)
+  på partition V4)
 - Mesh-top ligger ved toprem-underside (Z = 2175 front, 1875 bag)
-- Skrå top på B8 følger V4-toprem fra HIGH til LOW
+- Skrå top på B8 følger V5-toprem fra HIGH til LOW
 - B6 splittet i 2 bånd om yard-døren ved X = 3000..4070

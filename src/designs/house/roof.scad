@@ -99,7 +99,7 @@ module _soffit_panel(x0, x1, y0, y1, eh_back, palette) {
 module _render_soffit_house(eh_back, palette) {
     hl = RH_HOUSE_LEN; ww = RH_HOUSE_DEPTH;
     x_left  = -RH_OH_SIDE - RH_FASCIA_T;
-    // Soffit extends to V5's yard-side face (=hl) so the partition is fully
+    // Soffit extends to V4's yard-side face (=hl) so the partition is fully
     // tucked under the house roof eave.
     x_right = hl;
     _soffit_panel(x_left, x_right, -RH_OH_FRONT, 0, eh_back, palette);

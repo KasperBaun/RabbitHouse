@@ -26,14 +26,14 @@ RH_RUN_LEN       = RH_LENGTH - RH_HOUSE_LEN;  // 4000
 // RH_EH_FRONT so the legacy mono-pitch helpers (yard still uses them via
 // its own RH_YARD_EH_*) degenerate to flat for the house.
 //
-// V5 partition door (RH_HOUSE_DOOR_H=2000) has ~200 mm of header + cripple
+// V4 partition door (RH_HOUSE_DOOR_H=2000) has ~200 mm of header + cripple
 // space above the rough opening.
 RH_EH_FRONT     = 2292;
 RH_EH_BACK      = 2292;
 
 // Yard walls are shorter than the house so the run reads as a separate
-// (lower) cage against V5. With the mesh-top cover the yard no longer
-// sheds water — front and back share a single 2100 eave so V2 and V4
+// (lower) cage against V4. With the mesh-top cover the yard no longer
+// sheds water — front and back share a single 2100 eave so V2 and V5
 // walls run flat instead of sloping. Front 2100 keeps room for a 1950
 // rough opening yard door (~187 cm leaf height after threshold and top
 // frame).
@@ -47,7 +47,7 @@ RH_ROOF_THICK   = 80;
 
 // Internal door in the partition wall (X=RH_HOUSE_LEN, faces +X into yard).
 // Rough opening for a standard 80x200 cm internal door.
-// Y=1500 centres door in partition zone (yard only meets V5 at Y=500..3000).
+// Y=1500 centres door in partition zone (yard only meets V4 at Y=500..3000).
 // Door spans Y=1500..2370.
 // Rough opening for a 80x200 internal door (leaf 2000, opening +50).
 RH_HOUSE_DOOR_W = 870;
@@ -64,7 +64,7 @@ RH_PET_DOOR_Y   = 2700;
 // Yard outdoor door on the front (Y=0, opens outward).
 // Rough opening = full stud height (WALL_TOP_HIGH - PLATE_HEIGHT - STUD_BOTTOM_Z
 // = 2008). Top plate doubles as the header — no separate header + cripple
-// stack above the opening, same pattern as the V5 partition door. Leaf is
+// stack above the opening, same pattern as the V4 partition door. Leaf is
 // 2008 − 30 threshold − 50 top frame = 1928 mm.
 // X centred on the 4 m front wall: (hl + ll - W) / 2 = 3465.
 RH_YARD_DOOR_W  = 1070;
@@ -87,7 +87,7 @@ RH_SIDE_WIN_Z   = 1100;
 
 // Front entry door on V1 (Y=0, faces -Y). Centred on the 2 m front wall:
 // X=550..1450 = 900 mm leaf opening. Header doubles as top plate (same
-// pattern as V5 partition door, since RH_FRONT_DOOR_H=2000 leaves exactly
+// pattern as V4 partition door, since RH_FRONT_DOOR_H=2000 leaves exactly
 // PLATE_HEIGHT=45 + cripple stack to wall_top).
 RH_FRONT_DOOR_W = 900;
 RH_FRONT_DOOR_H = 2000;
@@ -194,7 +194,7 @@ function fascia_top_offset_for(cover) =
     : 0;
 
 // ----- Gable roof geometry (used when cover is "skifer"). Ridge runs along
-// Y (parallel to V3 / V5); water sheds onto V3 (left) and V5 (partition /
+// Y (parallel to V3 / V4); water sheds onto V3 (left) and V4 (partition /
 // yard side). Eave Z is flat at the high wall-top so the front door
 // clearance is unchanged.
 G_PITCH_DEG   = 35;
@@ -273,8 +273,8 @@ RH_HOUSEWRAP_T      = 1;     // wind barrier / housewrap membrane
 RH_COUNTER_BATTEN_T = 22;    // 22x45 vertical battens
 
 // House floor: 45×95 reglar laid as a frame hard against the inside of the
-// fundablok ring — one along each wall (V3, V5, V1, V2) screwed directly into
-// the ring — plus one transverse reglar across the middle (V3→V5 at Y≈1500).
+// fundablok ring — one along each wall (V3, V4, V1, V2) screwed directly into
+// the ring — plus one transverse reglar across the middle (V3→V4 at Y≈1500).
 // Nothing is stacked. A ~25 mm sawn-board deck runs the short way (X) on top,
 // its TOP flush with the ring top (sokkel, RH_BASE_H=120).
 RH_FLOOR_DECK_T    = 25;
@@ -295,7 +295,7 @@ RH_BASEMENT_SLAB_T  = 100;                     // slab thickness (on stabilgrus)
 // of the transverse mid-reglar (Y 1477.5..1522.5) so no reglar is cut.
 // Both hatches 700 (along their wall) × 900 (long axis INTO the room):
 RH_HATCH_FRONT = [650, 195, 1350, 1095];       // V1: 700 along X (wall) × 900 into +Y
-RH_HATCH_HUMAN = [905, 1585, 1805, 2285];      // V5: 900 into -X × 700 along Y, centred on hus-dør (Y1935)
+RH_HATCH_HUMAN = [905, 1585, 1805, 2285];      // V4: 900 into -X × 700 along Y, centred on hus-dør (Y1935)
 
 // Staircase (steep utility/ladder access). Drop = RH_FLOOR_DECK_TOP - RH_BASEMENT_FLOOR_Z.
 RH_STAIR_W      = 550;   // tread width

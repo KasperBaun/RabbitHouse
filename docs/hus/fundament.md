@@ -11,7 +11,7 @@ Ringen er 2000 × 3000 mm udvendigt og 80 cm høj (4 skifter à 20 cm).
         ↑
    Y=3000 ┌──────────────────────┐   ← V2 bag
           │ █ ░ █ ░ █ ░ █ ░ █ ░  │
-        V3│ ░                  ░ │V5  ←   3000 mm
+        V3│ ░                  ░ │V4  ←   3000 mm
           │ █                  █ │       (lange vægge)
    Y=0    └──────────────────────┘   ← V1 front
           X=0                  X=2000
@@ -35,7 +35,7 @@ Ringen er 2000 × 3000 mm udvendigt og 80 cm høj (4 skifter à 20 cm).
 Hvert skifte alternerer hvilken væg der "ejer" hjørneblokken, så lodrette samlinger forskydes 150 mm mellem skifter
 og hjørnerne låser perpendikulært.
 
-| Skifte | Lange vægge (V3, V5 — 3000 mm) | Korte vægge (V1, V2 — 2000 mm) |
+| Skifte | Lange vægge (V3, V4 — 3000 mm) | Korte vægge (V1, V2 — 2000 mm) |
 |--------|--------------------------------|--------------------------------|
 | Lige (0, 2)  | Fuld: Y = 0..3000 (6 × 500) | Mellem: X = 150..1850 (4 blokke: 3×500 + 200 cut) |
 | Ulige (1, 3) | Mellem: Y = 150..2850 (6 blokke: 5×500 + 200 cut) | Fuld: X = 0..2000 (4 × 500) |
@@ -88,7 +88,7 @@ fastgør hus-bundremmen til ringen.
 | 3 | Kamstål Ø10 mm × 3 m | 2 bund (8 stk) + 2 top (8 stk). Lodrette stykker = genbrug af egne metalstænger | 16 | stk |
 | 4 | Cement (Aalborg Portland CEM I/II, 25 kg-sæk) | Hulrumsudstøbning ~300 L beton ved 1:4 | 10 | sæk |
 | 5 | Støbemix 0–16 mm | Sand+grus til selvblanding | ~625 | kg |
-| 6 | Ankerskruer M10 × 120 | Bundrem-til-ring: 2 på V1, 2 på V2, 3 på V3, 3 på V5 | 10 | stk |
+| 6 | Ankerskruer M10 × 120 | Bundrem-til-ring: 2 på V1, 2 på V2, 3 på V3, 3 på V4 | 10 | stk |
 
 ## Bygge-rækkefølge
 
@@ -96,11 +96,11 @@ fastgør hus-bundremmen til ringen.
 2. Udgrav rendegrøft ~30 cm bred × ~80 cm dyb langs alle 4 vægge.
 3. Læg 100 mm stabilgrus i bunden, komprimer.
 4. Læg **1. skifte** (ulige — V1, V2 ejer hjørner): V1 og V2 fuld X = 0..2000,
-   V3 og V5 mellem Y = 150..2850.
+   V3 og V4 mellem Y = 150..2850.
 5. **Læg 2 stk Ø10 mm kamstål vandret** i hulrummet i 1. skifte hele
    perimeteren rundt (overlap 400 mm på lange strækninger, aldrig over et
    hjørne). Bind med bindetråd ved hjørner.
-6. Læg **2. skifte** (lige — V3, V5 ejer hjørner): V3 og V5 fuld Y = 0..3000,
+6. Læg **2. skifte** (lige — V3, V4 ejer hjørner): V3 og V4 fuld Y = 0..3000,
    V1 og V2 mellem X = 150..1850.
 7. Læg **3. skifte** (samme som 1.).
 8. **Sæt 4–6 lodrette Ø10 mm-stykker (~600 mm)** ned gennem hulrum i
@@ -114,4 +114,4 @@ fastgør hus-bundremmen til ringen.
     - V1 (front): x = 500, 1500
     - V2 (bag): x = 500, 1500
     - V3 (venstre): y = 500, 1500, 2500
-    - V5 (højre): y = 500, 1500, 2500
+    - V4 (højre): y = 500, 1500, 2500

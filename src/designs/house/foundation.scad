@@ -3,18 +3,18 @@
 //
 // Halvstensforbandt with alternating corner ownership per course (the way a
 // real bricklayer lays it):
-//   even courses (0, 2): long walls V3, V5 own the corners — V3 strip runs
-//                        full Y=0..ww, V5 strip runs full Y=0..ww, V1+V2
+//   even courses (0, 2): long walls V3, V4 own the corners — V3 strip runs
+//                        full Y=0..ww, V4 strip runs full Y=0..ww, V1+V2
 //                        strips sit between at X=bw..hl-bw.
 //   odd courses (1, 3) : short walls V1, V2 own the corners — V1 strip runs
-//                        full X=0..hl, V2 strip runs full X=0..hl, V3+V5
+//                        full X=0..hl, V2 strip runs full X=0..hl, V3+V4
 //                        strips sit between at Y=bw..ww-bw.
 // This interlocks the corners and offsets every vertical joint by bw=150 mm
 // between adjacent courses.
 //
-// V5 acts as the right exterior wall here (the partition becomes the right
+// V4 acts as the right exterior wall here (the partition becomes the right
 // perimeter when the house is built standalone). In combined builds the
-// yard foundation tiles up against V5 from the right without a duplicate.
+// yard foundation tiles up against V4 from the right without a duplicate.
 
 include <../../lib/defaults.scad>
 include <../config.scad>
@@ -34,7 +34,7 @@ module RenderHouseFoundation(palette = DEFAULT_PALETTE) {
         if (c % 2 == 0) {
             // Long walls own corners.
             _fb_strip_y([0,       0],       ww,        z, 0);   // V3 left, full
-            _fb_strip_y([hl - bw, 0],       ww,        z, 0);   // V5 right, full
+            _fb_strip_y([hl - bw, 0],       ww,        z, 0);   // V4 right, full
             _fb_strip_x([bw,      0],       hl - 2*bw, z, 0);   // V1 between
             _fb_strip_x([bw,      ww - bw], hl - 2*bw, z, 0);   // V2 between
         } else {
@@ -42,7 +42,7 @@ module RenderHouseFoundation(palette = DEFAULT_PALETTE) {
             _fb_strip_x([0,       0],       hl,        z, 0);   // V1 front, full
             _fb_strip_x([0,       ww - bw], hl,        z, 0);   // V2 back, full
             _fb_strip_y([0,       bw],      ww - 2*bw, z, 0);   // V3 between
-            _fb_strip_y([hl - bw, bw],      ww - 2*bw, z, 0);   // V5 between
+            _fb_strip_y([hl - bw, bw],      ww - 2*bw, z, 0);   // V4 between
         }
     }
 

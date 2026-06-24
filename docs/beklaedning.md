@@ -12,7 +12,7 @@ giver luft bag brædderne — typisk dansk præstebrik-ventileret klink.
 | B1 | Hus front (V1, X=0..hl, Y=0) | klink + vindpapir + afstandsliste | vejrbeklædning |
 | B2 | Hus bag (V2, X=0..hl, Y=ww) | klink + vindpapir + afstandsliste | vejrbeklædning |
 | B3 | Hus venstre (V3, X=0) | klink m. side-vindue-cutout + lag-stack | vejrbeklædning |
-| B4 | Hus partition yard-side (V5, X=hl+47.5) | klink m. dør-cutouts + lag-stack | vejrbeklædning yard-side |
+| B4 | Hus partition yard-side (V4, X=hl+47.5) | klink m. dør-cutouts + lag-stack | vejrbeklædning yard-side |
 | B5 | 4 hjørnetrims | 45×45 lodret tømmer | dækker klink-end-grain ved hjørner |
 | B6 | Yard front (X=hl..ll, Y=0) | voliernet i 2 bånd om døren | rovdyrsikring |
 | B7 | Yard bag (X=hl..ll, Y=ww) | voliernet, 1 bane | rovdyrsikring + ventilation |
@@ -120,16 +120,16 @@ Vægareal og rækker pr. væg:
 | Front V1 (flad HIGH) | 1500 × 2400 | 3,60 m² | 24 | 36 m |
 | Bag V2 (flad LOW) | 1500 × 2200 | 3,30 m² | 22 | 33 m |
 | Venstre V3 (skrå, max) | 2500 × 2400 | 5,33 m² (− vindue) | 24 | 60 m |
-| Partition V5 (skrå, max) | 2500 × 2400 | 3,89 m² (− døre) | 24 | 60 m |
+| Partition V4 (skrå, max) | 2500 × 2400 | 3,89 m² (− døre) | 24 | 60 m |
 | **Total** | | **16,1 m²** | | **189 m** |
 
 **Smart-cut strategi for 4200 mm brædder:**
 
-Hvert 4200 mm bræt skæres optimalt til **1× 2500 + 1× 1500 + 200 mm scrap** = 1 række på V3 eller V5 (2500 mm) + 1 række på front eller bag (1500 mm) per bræt.
+Hvert 4200 mm bræt skæres optimalt til **1× 2500 + 1× 1500 + 200 mm scrap** = 1 række på V3 eller V4 (2500 mm) + 1 række på front eller bag (1500 mm) per bræt.
 
 | Behov | Antal rækker | Skæres fra | Brædder |
 |---|---|---|---|
-| 2500 mm rækker (V3 + V5) | 48 | 48 brædder × 2500 mm | 48 |
+| 2500 mm rækker (V3 + V4) | 48 | 48 brædder × 2500 mm | 48 |
 | 1500 mm rækker (front + bag) | 46 | samme 48 brædder × 1500 mm | (gratis) |
 
 → **48 brædder min.** + 5 % safety for snit ved åbninger og skrå-cut = **50 stk** anbefalet.

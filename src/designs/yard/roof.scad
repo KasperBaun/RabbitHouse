@@ -13,9 +13,9 @@ use <../../lib/primitives/beslag.scad>
 
 SOFFIT_T = 18;
 
-// Rafters owned by YARD — 6 inner spær c/c 600 + V4 gable + right barge.
-// First inner rafter at X=hl+400 (400 mm right of V5 partition); last gap
-// to V4 = 555 mm (5400 → 5955).
+// Rafters owned by YARD — 6 inner spær c/c 600 + V5 gable + right barge.
+// First inner rafter at X=hl+400 (400 mm right of V4 partition); last gap
+// to V5 = 555 mm (5400 → 5955).
 function _yard_rafter_xs() = [
     RH_HOUSE_LEN + 400,                       // 2400
     RH_HOUSE_LEN + 1000,                      // 3000
@@ -23,7 +23,7 @@ function _yard_rafter_xs() = [
     RH_HOUSE_LEN + 2200,                      // 4200
     RH_HOUSE_LEN + 2800,                      // 4800
     RH_HOUSE_LEN + 3400,                      // 5400
-    RH_LENGTH - RH_RAFTER_W,                  // V4 gable, 5955
+    RH_LENGTH - RH_RAFTER_W,                  // V5 gable, 5955
     RH_LENGTH + RH_OH_SIDE - RH_RAFTER_W      // right barge, 6175
 ];
 

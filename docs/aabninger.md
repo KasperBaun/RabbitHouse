@@ -13,7 +13,7 @@ kommercielt produkt), der monteres direkte i åbningen.
 | Nr  | Åbning           | Væg              | Type                                  |
 | --- | ---------------- | ---------------- | ------------------------------------- |
 | Å1  | Yard udhusdør    | V1 (front, -Y)   | mesh-i-træramme, åbner udad           |
-| Å2  | Indvendig dør    | V5 (partition)   | massiv 80×200 cm, åbner ind i yard    |
+| Å2  | Indvendig dør    | V4 (partition)   | massiv 80×200 cm, åbner ind i yard    |
 | Å3  | Side-vindue      | V3 (venstre, -X) | 6 mm plexiglas udenpå rough opening   |
 
 Pet-åbningen står tom: skelet leverer 250 × 300 mm rough opening med
@@ -24,10 +24,10 @@ jamb-reglar og header — kattelem fyldes i bagefter.
         ┌────────────────────┬─────────────────────────────────────┐
         │                    │                                     │
         │                    │                                     │
-   V3   │   hus-rum          │           yard-rum                  │   V4
+   V3   │   hus-rum          │           yard-rum                  │   V5
    Å3 → │ ◾                  │                                     │   ingen
         │                    │                                     │
-        │     V5 (partition) │                                     │
+        │     V4 (partition) │                                     │
         │      Å2 ◾  ◽←pet-rough opening (bar)                     │
         │                    │                                     │
         └────────────────────┴───────────────────[ Å1 ]────────────┘

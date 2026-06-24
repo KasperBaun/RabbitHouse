@@ -1,7 +1,7 @@
 // HOUSE floor — split into two render modules so each layer can be inspected
 // on its own:
 //   RenderHouseFloorJoists() — bearing frame of 45×95 reglar laid hard against
-//        the inside of the fundablok ring: ONE reglar along V3 and ONE along V5
+//        the inside of the fundablok ring: ONE reglar along V3 and ONE along V4
 //        (run in Y) + THREE intermediate bearers (also run in Y), with V1/V2
 //        closing the front/back in X. The intermediate bearers are snapped to
 //        the lem trimmer lines so each one DOUBLES as a hatch trimmer — no
@@ -34,7 +34,7 @@ function _flr_ry1() = RH_HOUSE_DEPTH - FUNDABLOK_W;   // 2850
 // no near-parallel sliver beside the lem frame:
 //   172.5  V3 edge          |  627.5  LEM1 left  (= hf[0]-rw/2)
 //   882.5  LEM2 left        | 1372.5  LEM1 right (= hf[2]+rw/2)
-//   1827.5 V5 edge          (= LEM2 right trimmer)
+//   1827.5 V4 edge          (= LEM2 right trimmer)
 // → 5 bearers, deck spans 455/255/490/455 mm (all <=600 for the current hatch
 // coords). Bearers run full Y and are cut where they cross a hatch opening; the
 // veksler (X end pieces) box the remaining two sides. V1 + V2 close front/back.
@@ -110,7 +110,7 @@ module _strosko(axis, dir, run_at, cross_c) {
 }
 
 // Strøsko at every junction where a member is HUNG off a transverse one. The
-// kant-bearers (V3/V5) and V1/V2 rest on the ring, so they need none. All
+// kant-bearers (V3/V4) and V1/V2 rest on the ring, so they need none. All
 // coords derive from the hatch rectangles so they track RenderHouseFloorJoists.
 module RenderHouseFloorHangers() {
     hf = RH_HATCH_FRONT; hh = RH_HATCH_HUMAN;
@@ -133,9 +133,9 @@ module RenderHouseFloorHangers() {
     _strosko("X", +1, hf[0], hf[3] + rw/2);   // LEM1 back veksel → 627.5
     _strosko("X", -1, hf[2], hf[3] + rw/2);   // LEM1 back veksel → 1372.5
     _strosko("X", +1, hh[0], hh[1] - rw/2);   // LEM2 front veksel → 882.5
-    _strosko("X", -1, hh[2], hh[1] - rw/2);   // LEM2 front veksel → V5
+    _strosko("X", -1, hh[2], hh[1] - rw/2);   // LEM2 front veksel → V4
     _strosko("X", +1, hh[0], hh[3] + rw/2);   // LEM2 back veksel → 882.5
-    _strosko("X", -1, hh[2], hh[3] + rw/2);   // LEM2 back veksel → V5
+    _strosko("X", -1, hh[2], hh[3] + rw/2);   // LEM2 back veksel → V4
 }
 
 module RenderHouseFloor(palette = DEFAULT_PALETTE) {

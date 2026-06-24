@@ -22,7 +22,7 @@ GS_MEMBER_T      = 45;
 GS_MEMBER_H      = 95;
 GS_RIDGE_BOARD_T = 25;
 
-// Bottom chord (spændtræ) sits on the V3 / V5 top plates with top edge
+// Bottom chord (spændtræ) sits on the V3 / V4 top plates with top edge
 // flush with the rafter top at the wall. Top-chord and bottom-chord
 // meet at a clean wedge at the eave node.
 GS_BOT_CHORD_TOP = G_EAVE_Z + GS_MEMBER_H;        // 2412 + 95 = 2507
@@ -49,7 +49,7 @@ module _gs_top_chord(x_outer, x_inner, y0, palette) {
 }
 
 // ============================================================================
-// Bottom chord (spændtræ) — horizontal tie from V3 to V5 inner face.
+// Bottom chord (spændtræ) — horizontal tie from V3 to V4 inner face.
 // ============================================================================
 module _gs_bot_chord(y0, palette) {
     color(pal_post(palette))

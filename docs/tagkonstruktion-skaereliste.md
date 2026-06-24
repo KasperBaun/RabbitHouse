@@ -17,7 +17,7 @@ Tag-spær og lookouts opdeles ved X=1500 (partition-linjen). Cover-lagene (OSB-d
 ## Konventioner
 
 - **Fugleudskæring** (= bird's mouth): trekantet kile saves ud af spær-bunden ved bæreflader, så spæret får et fladt sæde på V1's og V2's *flade* toprem.
-- På V3 og V4's *skrå* toprem (kun gable-spæret rører dem) er der ingen udskæring — toprem er allerede skåret til samme hældning som spær-bunden, så de matcher fladt mod fladt.
+- På V3 og V5's *skrå* toprem (kun gable-spæret rører dem) er der ingen udskæring — toprem er allerede skåret til samme hældning som spær-bunden, så de matcher fladt mod fladt.
 - "Bæreflade" = de 95 mm hvor spæret krydser en toprem.
 - Sæde-snit = vandret savsnit, hæl-snit = lodret savsnit. Ved vores lave hældning (4,6°) er hæl-snittet 0 mm — det er reelt bare en lille kile.
 
@@ -76,7 +76,7 @@ Ved V1-bæringen er det den indre kant (mod bygningen, position 315 mm) der er 7
 | Gable V3    | 1     | Hus  | X = 0 (hviler også fladt på V3's skrå toprem hele vejen)      |
 | Indre (hus) | 2     | Hus  | X = 600, 1200                                                 |
 | Indre (yard)| 7     | Yard | X = 1800, 2400, 3000, 3600, 4200, 4800, 5400                  |
-| Gable V4    | 1     | Yard | X = 5955 (hviler også fladt på V4's skrå toprem)              |
+| Gable V5    | 1     | Yard | X = 5955 (hviler også fladt på V5's skrå toprem)              |
 | Vindskede H | 1     | Yard | X = 6175                                                      |
 
 **Vinkelbeslag pr. spær:**

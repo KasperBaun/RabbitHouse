@@ -17,7 +17,7 @@ module render_cladding_klink(clad = RH_CLAD, palette = DEFAULT_PALETTE) {
     s       = RH_HOUSEWRAP_T + RH_COUNTER_BATTEN_T;
     trim_w  = 45;
     o       = s + ct;
-    part_x  = hl;                                 // V5 outer face = hl
+    part_x  = hl;                                 // V4 outer face = hl
 
     butt_y0  = sd;
     butt_len = ww - 2 * sd;

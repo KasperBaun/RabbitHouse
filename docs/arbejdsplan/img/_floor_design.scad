@@ -34,7 +34,7 @@ module lbl(x, y, s, size = 130, a = "center")
 lbl(hl/2,  ww + 360, "V2 - BAG");
 lbl(hl/2,  -380,     "V1 - FRONT  (frontdor)");
 lbl(-470,  ww/2,     "V3");
-lbl(hl+490, ww/2,    "V5  (hus-dor)");
+lbl(hl+490, ww/2,    "V4  (hus-dor)");
 
 // LEM labels + størrelse
 lbl((RH_HATCH_FRONT[0]+RH_HATCH_FRONT[2])/2, (RH_HATCH_FRONT[1]+RH_HATCH_FRONT[3])/2 + 60, "LEM 1", 95);

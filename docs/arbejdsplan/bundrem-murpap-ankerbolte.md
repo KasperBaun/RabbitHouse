@@ -20,7 +20,7 @@ Du slipper for at måle huller op separat i murpap og bundrem, som alligevel ikk
 
 - **10 stk M10 × 120 mm**, c/c 1000 mm. **Bor midt i bundremmen.**
 - Korte vægge (V1 front, V2 bag): 2 stk — 50 cm fra hver ende.
-- Lange vægge (V3 venstre, V5 højre): 3 stk — 50 cm fra hver ende + 1 i midten.
+- Lange vægge (V3 venstre, V4 højre): 3 stk — 50 cm fra hver ende + 1 i midten.
 - Ryk en bolt et par cm, hvis den lander under en stolpe.
 
 ![Ankerbolte — plan](img/ankerskruer-plan.png)
