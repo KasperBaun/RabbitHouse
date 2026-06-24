@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="805" height="766" viewBox="0 0 805 766" font-family="Segoe UI, Arial, sans-serif">
+<rect x="0" y="0" width="805" height="766" fill="#fcfbf8"/>
+<text x="105" y="34" font-size="23" font-weight="700" fill="#222">V3 — VENSTRE GAVL</text>
+<text x="105" y="58" font-size="13" fill="#666">set udefra · mål i mm · 0 = hjørne mod V1 (Y=95) / bundrem-overkant</text>
+<rect x="105" y="82" width="14" height="12" fill="#e6c894" stroke="#9c7b4e"/>
+<text x="124" y="92" font-size="11" fill="#555">Stud 45×95</text>
+<rect x="206" y="82" width="14" height="12" fill="#a9be8e" stroke="#6f855a"/>
+<text x="225" y="92" font-size="11" fill="#555">Bundrem (PT)</text>
+<rect x="319" y="82" width="14" height="12" fill="#f1ddb0" stroke="#b89b63"/>
+<text x="338" y="92" font-size="11" fill="#555">Toprem (gran)</text>
+<rect x="438" y="82" width="14" height="12" fill="#d2a266" stroke="#946a35"/>
+<text x="457" y="92" font-size="11" fill="#555">Header/sål/cripple</text>
+<rect x="105.0" y="651.6" width="660.3" height="10.6" fill="#a9be8e" stroke="#6f855a" stroke-width="1" rx="0"/>
+<rect x="105.0" y="124.0" width="660.3" height="10.6" fill="#f1ddb0" stroke="#b89b63" stroke-width="1" rx="0"/>
+<rect x="105.0" y="134.6" width="10.6" height="517.0" fill="#e6c894" stroke="#9c7b4e" stroke-width="1" rx="0"/>
+<rect x="246.0" y="134.6" width="10.6" height="517.0" fill="#e6c894" stroke="#9c7b4e" stroke-width="1" rx="0"/>
+<rect x="387.0" y="134.6" width="10.6" height="517.0" fill="#e6c894" stroke="#9c7b4e" stroke-width="1" rx="0"/>
+<rect x="528.0" y="134.6" width="10.6" height="517.0" fill="#e6c894" stroke="#9c7b4e" stroke-width="1" rx="0"/>
+<rect x="669.0" y="134.6" width="10.6" height="517.0" fill="#e6c894" stroke="#9c7b4e" stroke-width="1" rx="0"/>
+<rect x="754.8" y="134.6" width="10.6" height="517.0" fill="#e6c894" stroke="#9c7b4e" stroke-width="1" rx="0"/>
+<text x="435.2" y="129.4" font-size="11" fill="#7a6533" text-anchor="middle">TOPREM 45×95 · 2810</text>
+<text x="435.2" y="656.7" font-size="11" fill="#4f6038" text-anchor="middle" dy="4">BUNDREM 95×45 · 2810 (PT)</text>
+<line x1="105.0" y1="696.1" x2="765.3" y2="696.1" stroke="#3a3a3a" stroke-width="1"/>
+<line x1="105.0" y1="662.1" x2="105.0" y2="701.1" stroke="#bbb" stroke-width="0.8"/>
+<line x1="105.0" y1="692.1" x2="105.0" y2="700.1" stroke="#3a3a3a" stroke-width="1"/>
+<line x1="246.0" y1="662.1" x2="246.0" y2="701.1" stroke="#bbb" stroke-width="0.8"/>
+<line x1="246.0" y1="692.1" x2="246.0" y2="700.1" stroke="#3a3a3a" stroke-width="1"/>
+<line x1="387.0" y1="662.1" x2="387.0" y2="701.1" stroke="#bbb" stroke-width="0.8"/>
+<line x1="387.0" y1="692.1" x2="387.0" y2="700.1" stroke="#3a3a3a" stroke-width="1"/>
+<line x1="528.0" y1="662.1" x2="528.0" y2="701.1" stroke="#bbb" stroke-width="0.8"/>
+<line x1="528.0" y1="692.1" x2="528.0" y2="700.1" stroke="#3a3a3a" stroke-width="1"/>
+<line x1="669.0" y1="662.1" x2="669.0" y2="701.1" stroke="#bbb" stroke-width="0.8"/>
+<line x1="669.0" y1="692.1" x2="669.0" y2="700.1" stroke="#3a3a3a" stroke-width="1"/>
+<line x1="765.3" y1="662.1" x2="765.3" y2="701.1" stroke="#bbb" stroke-width="0.8"/>
+<line x1="765.3" y1="692.1" x2="765.3" y2="700.1" stroke="#3a3a3a" stroke-width="1"/>
+<text x="175.5" y="690.1" font-size="11.5" fill="#3a3a3a" text-anchor="middle">600</text>
+<text x="316.5" y="690.1" font-size="11.5" fill="#3a3a3a" text-anchor="middle">600</text>
+<text x="457.5" y="690.1" font-size="11.5" fill="#3a3a3a" text-anchor="middle">600</text>
+<text x="598.5" y="690.1" font-size="11.5" fill="#3a3a3a" text-anchor="middle">600</text>
+<text x="717.2" y="690.1" font-size="11.5" fill="#3a3a3a" text-anchor="middle">410</text>
+<text x="105.0" y="714.1" font-size="10.5" fill="#777" text-anchor="middle">0</text>
+<text x="246.0" y="714.1" font-size="10.5" fill="#777" text-anchor="middle">600</text>
+<text x="387.0" y="714.1" font-size="10.5" fill="#777" text-anchor="middle">1200</text>
+<text x="528.0" y="714.1" font-size="10.5" fill="#777" text-anchor="middle">1800</text>
+<text x="669.0" y="714.1" font-size="10.5" fill="#777" text-anchor="middle">2400</text>
+<text x="765.3" y="714.1" font-size="10.5" fill="#777" text-anchor="middle">2810</text>
+<line x1="59.0" y1="651.6" x2="59.0" y2="134.6" stroke="#3a3a3a" stroke-width="1"/>
+<line x1="55.0" y1="651.6" x2="63.0" y2="651.6" stroke="#3a3a3a" stroke-width="1"/>
+<line x1="63.0" y1="651.6" x2="105.0" y2="651.6" stroke="#ddd" stroke-width="0.6"/>
+<text x="52.0" y="655.6" font-size="10.5" fill="#3a3a3a" text-anchor="end">0</text>
+<line x1="55.0" y1="134.6" x2="63.0" y2="134.6" stroke="#3a3a3a" stroke-width="1"/>
+<line x1="63.0" y1="134.6" x2="105.0" y2="134.6" stroke="#ddd" stroke-width="0.6"/>
+<text x="52.0" y="138.6" font-size="10.5" fill="#3a3a3a" text-anchor="end">2200</text>
+<text x="29.0" y="393.1" font-size="11" fill="#777" text-anchor="middle" transform="rotate(-90 29.0 393.1)">højde fra bundrem (mm)</text>
+<text x="105" y="754" font-size="11" fill="#555">Solid væg. 6 studs 45×95 · L=2200, c/c 600. Sidste stud (end-emit) ved 2765, mod V2-hjørne.</text>
+</svg>
