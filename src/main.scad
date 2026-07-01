@@ -43,8 +43,8 @@ house_truss      = "haneband";
 // "tagpap", "eternit".
 yard_roof_cover  = "mesh";
 
-// klink | board_on_board | vertical_120
-cladding_type    = "vertical_120";
+// klink | board_on_board
+cladding_type    = "klink";
 
 // shared
 RenderGround();
@@ -54,13 +54,13 @@ RenderHouseFoundation();
 RenderHouseBasementFloor(); 
 RenderHouseFloorJoists();
 RenderHouseFloorHangers();
-//RenderHouseFloorDeck();
-RenderHouseStairs();
+RenderHouseFloorDeck();
+//RenderHouseStairs();
 RenderHouseFraming();
-//RenderHouseOpenings();
-//RenderHouseRoof(house_roof_cover, house_truss);
-//RenderHouseRoofPlates(house_roof_cover);
-//RenderHouseCladding(cladding_type);
+RenderHouseOpenings();
+RenderHouseRoof(house_roof_cover, house_truss);
+RenderHouseRoofPlates(house_roof_cover);
+RenderHouseCladding(cladding_type);
 
 // yard (uses lower RH_YARD_EH_* eave heights — separate structure)
 // RenderYardRoof builds spær/lookouts/soffit/sternbrædder — only needed

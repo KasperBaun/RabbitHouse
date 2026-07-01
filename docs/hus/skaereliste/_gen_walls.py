@@ -172,13 +172,24 @@ gen("V2-bag.svg","V2 — BAG","set udefra · mål i mm · 0 = venstre hjørne / 
     "Solid væg, ingen åbninger. 5 studs 45×95 · L=2200, c/c 600 (venstre-kant ved 0/600/1200/1800).")
 
 # ---------------- V3 VENSTRE ----------------  p=Y-95
-v3_pieces=[(0,2810,-45,0,"bund"),(0,2810,2200,2245,"top")]+[
-    (p,p+45,0,2200,"stud") for p in (0,600,1200,1800,2400,2765)]
+# Sidevindue 700×600 centreret: Y=1150..1850 → p=1055..1755. Sål-top h=1100,
+# header-bund h=1700. Studs ved 1200/1800 udgår (skip-range); erstattet af
+# 2 vindue-jambs + header/sål + 1 cripple under sål + 1 cripple over header.
+v3_pieces=[(0,2810,-45,0,"bund"),(0,2810,2200,2245,"top"),
+    (0,45,0,2200,"stud"),(600,645,0,2200,"stud"),
+    (2400,2445,0,2200,"stud"),(2765,2810,0,2200,"stud"),
+    (1010,1055,0,2200,"stud"),(1755,1800,0,2200,"stud"),   # vindue-jambs
+    (1055,1755,1700,1745,"blk"),          # vindue-header 700
+    (1055,1755,1055,1100,"blk"),          # vindue-sål 700
+    (1332.5,1377.5,0,1055,"blk"),         # cripple under sål 1055
+    (1332.5,1377.5,1745,2200,"blk")]      # cripple over header 455
+v3_open=[(1055,1755,1100,1700,"VINDUE\n700×600")]
 gen("V3-venstre.svg","V3 — VENSTRE GAVL","set udefra · mål i mm · 0 = hjørne mod V1 (Y=95) / bundrem-overkant",2810,
-    v3_pieces,[],
-    [(0,"0"),(600,"600"),(1200,"1200"),(1800,"1800"),(2400,"2400"),(2810,"2810")],
-    [0,2200],
-    "Solid væg. 6 studs 45×95 · L=2200, c/c 600. Sidste stud (end-emit) ved 2765, mod V2-hjørne.")
+    v3_pieces,v3_open,
+    [(0,"0"),(600,"600"),(1055,"1055"),(1755,"1755"),(2400,"2400"),(2810,"2810")],
+    [0,1100,1700,2200],
+    "Sidevindue 700×600 centreret (Y=1150..1850). 6 studs 45×95 · L=2200: kant/600/2400/end-2765 + 2 vindue-jambs.",
+    opdims=[(1055,1755,1850,"vindue 1055→1755")])
 
 # ---------------- V4 PARTITION ----------------  p=Y-95
 v4_pieces=[(0,2810,-45,0,"bund"),(0,2810,2200,2245,"top"),

@@ -33,14 +33,14 @@ venstre/nedre hjørne (=0)**. Hægt tape i hjørnet og på bundremmen og sæt af
 | 45×95 PT NTR-AB | Bundrem (2×2000 + 2×2810) | 9,6 |
 | 45×95 gran/C24 | Toprem (2×2000 + 2×2810) | 9,6 |
 | 45×95 C24 | 22 studs à 2200 | 48,4 |
-| 45×95 C24 | Headers, sål, cripples | 7,3 |
+| 45×95 C24 | Headers, sål, cripples (inkl. V3-sidevindue) | 10,2 |
 
-**I alt 45×95 C24/gran ≈ 65 m + bundrem PT ≈ 10 m.** Studs er ens 2200 mm på alle vægge.
+**I alt 45×95 C24/gran ≈ 68 m + bundrem PT ≈ 10 m.** Studs er ens 2200 mm på alle vægge.
 
 ## Bygge-rækkefølge
 
 1. DPC på ringen → læg **bundrem** (bor M10 c/c ~1000, spænd ankerskruer).
-2. Rejs **V3** (venstre) → toprem.
+2. Rejs **V3** (venstre) m. sidevindue-ramme (700×600) → toprem.
 3. **V1** (front) m. dør- + vindue-rammer → toprem.
 4. **V2** (bag) → toprem.
 5. **V4** (partition) m. dør-rammer → toprem.

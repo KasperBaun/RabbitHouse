@@ -22,12 +22,12 @@ Løbegården er en separat struktur og står til sidst.
 
 ## 2. Gulv 
 
-- [ ] Gulv konstruktion (reglar + gulvbrædder) → [gulvkonstruktion-braedder.md](docs/arbejdsplan/gulvkonstruktion-braedder.md)
-- [ ] Lemme og trapper ned i kælder → [lem-og-trappe.md](docs/arbejdsplan/lem-og-trappe.md)
+- [x] Gulv konstruktion (reglar + gulvbrædder) → [gulvkonstruktion-braedder.md](docs/arbejdsplan/gulvkonstruktion-braedder.md)
+- [x] Lemme og trapper ned i kælder → [lem-og-trappe.md](docs/arbejdsplan/lem-og-trappe.md)
 
 ## 3. Konstruktions-skelet (vægge)
 
-- [ ] Monter bundrem, murpap og ankerbolte → [detaljer](docs/arbejdsplan/bundrem-murpap-ankerbolte.md)
+- [x] Monter bundrem, murpap og ankerbolte → [detaljer](docs/arbejdsplan/bundrem-murpap-ankerbolte.md)
 - [ ] Rejs V3 (venstre)
 - [ ] Rejs V1 (front, m. dør- + 2 vindue-åbninger)
 - [ ] Rejs V2 (bag)
@@ -55,7 +55,7 @@ Løbegården er en separat struktur og står til sidst.
 - [ ] Vindpapir på alle vægge, stift c/c 200
 - [ ] Cut åbninger i vindpapir
 - [ ] Afstandslister c/c 600
-- [ ] Beklædning (vertical_120)
+- [ ] Beklædning (klink)
 - [ ] Hjørnetrim ved 4 hjørner
 
 ## 7. Åbninger

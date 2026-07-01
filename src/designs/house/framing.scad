@@ -273,9 +273,23 @@ module RenderHouseFraming(palette = DEFAULT_PALETTE) {
     _frame_v1_window(RH_FRONT_WIN_X_LEFT,  inner_side = "right", palette = palette);
     _frame_v1_window(RH_FRONT_WIN_X_RIGHT, inner_side = "left",  palette = palette);
 
-    // V3 — solid Y wall, no openings (window removed; gable rafters above).
+    // Framed opening — V3 side window (has sill; sloped wall top above).
+    _render_framed_opening(wall_origin = [0, 0, 0], axis = "Y",
+                           opening_pos = RH_SIDE_WIN_Y, opening_w = RH_SIDE_WIN_W,
+                           opening_z = STUD_BOTTOM_Z + RH_SIDE_WIN_Z,
+                           opening_h = RH_SIDE_WIN_H,
+                           has_sill = true, wall_top = WALL_TOP_HIGH,
+                           sloped = true, palette = palette);
+
+    // V3 — Y wall with a side-window cutout. Skip studs across the opening,
+    // add dedicated jamb studs, and frame the opening (header + sill).
+    v3_skip = [[RH_SIDE_WIN_Y - bx, RH_SIDE_WIN_Y + RH_SIDE_WIN_W + bx]];
     _studs_one_wall([0, butt_y0, 0], butt_len, "Y", h_high,
-                    palette=palette);
+                    skip_ranges=v3_skip, palette=palette);
+    color(pal_post(palette)) {
+        _sloped_stud_y(0, RH_SIDE_WIN_Y - STUD_THICK);
+        _sloped_stud_y(0, RH_SIDE_WIN_Y + RH_SIDE_WIN_W);
+    }
 
     // V4 partition — Y wall with human-door + pet-door cutouts.
     partition_skip = [

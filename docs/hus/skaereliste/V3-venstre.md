@@ -1,6 +1,6 @@
 # V3 — Venstre gavl
 
-Venstre gavl, X=0, Y=95..2905 (2810 lang). Solid, ingen åbninger.
+Venstre gavl, X=0, Y=95..2905 (2810 lang). Åbning: sidevindue 700×600, centreret (Y=1150..1850), sål-top h=1100.
 
 ![V3 — Venstre gavl](V3-venstre.png)
 
@@ -12,4 +12,10 @@ Venstre gavl, X=0, Y=95..2905 (2810 lang). Solid, ingen åbninger.
 | --- | -------- | ------ | ------ |
 | 1 | 95×45 PT | 2810 | Bundrem |
 | 1 | 95×45 gran | 2810 | Toprem |
-| 6 | 45×95 C24 | 2200 | Studs — kant ved 0 / 600 / 1200 / 1800 / 2400 + end-emit 2765 (mod V2-hjørne) |
+| 6 | 45×95 C24 | 2200 | Studs — kant ved 0 / 600 / 2400 + end-emit 2765 + 2× vindue-jamb (kant ved 1010 / 1755) |
+| 1 | 45×95 C24 | 1055 | Cripple under vindue-sål |
+| 1 | 45×95 C24 | 455 | Cripple over vindue-header |
+| 1 | 95×45 C24 | 700 | Vindue-header |
+| 1 | 95×45 C24 | 700 | Vindue-sål |
+
+**Åbning (rough):** sidevindue Y=1150..1850 (p=1055..1755), sål-top h=1100, header-bund h=1700.

@@ -78,11 +78,11 @@ RH_NEST_W       = 800;
 RH_NEST_D       = 900;
 RH_NEST_H       = 600;
 
-// Side window on the left exterior wall (X=0, faces -X). Centred in Y;
-// sill at adult eye level (~1.1 m above floor).
+// Side window on the left exterior wall V3 (X=0, faces -X). Centred in the
+// 3 m house depth; sill at adult eye level (~1.1 m above floor).
 RH_SIDE_WIN_W   = 700;
 RH_SIDE_WIN_H   = 600;
-RH_SIDE_WIN_Y   = 900;
+RH_SIDE_WIN_Y   = (RH_HOUSE_DEPTH - RH_SIDE_WIN_W) / 2;   // = 1150, centred
 RH_SIDE_WIN_Z   = 1100;
 
 // Front entry door on V1 (Y=0, faces -Y). Centred on the 2 m front wall:
