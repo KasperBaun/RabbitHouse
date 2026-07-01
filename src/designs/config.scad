@@ -21,15 +21,16 @@ RH_RUN_LEN       = RH_LENGTH - RH_HOUSE_LEN;  // 4000
 
 // House wall height from sokkel-top to top-plate top. All 4 walls share
 // this single eave — the gable rafters in roof_gable.scad sit on top and
-// create the pitch. Stack: DPC 2 + bundrem 45 + 2,2m C24 stud + toprem 45
-// = 2292 mm, so a stud is exactly 2200 mm. RH_EH_BACK kept equal to
+// create the pitch. Stack: DPC 2 + bundrem 45 + 2,0m C24 stud + toprem 45
+// = 2092 mm, so a stud is exactly 2000 mm. RH_EH_BACK kept equal to
 // RH_EH_FRONT so the legacy mono-pitch helpers (yard still uses them via
 // its own RH_YARD_EH_*) degenerate to flat for the house.
 //
-// V4 partition door (RH_HOUSE_DOOR_H=2000) has ~200 mm of header + cripple
-// space above the rough opening.
-RH_EH_FRONT     = 2292;
-RH_EH_BACK      = 2292;
+// Walls lowered to 2000 mm studs: the 2000 mm doors (RH_*_DOOR_H) now equal
+// the stud height, so each door header coincides with the top plate (no
+// cripple course above the door). Windows keep a shorter cripple-over-header.
+RH_EH_FRONT     = 2092;
+RH_EH_BACK      = 2092;
 
 // Yard walls are shorter than the house so the run reads as a separate
 // (lower) cage against V4. With the mesh-top cover the yard no longer

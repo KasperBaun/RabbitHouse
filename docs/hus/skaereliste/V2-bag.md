@@ -12,4 +12,4 @@ Bag-væg, X=0..2000, Y=3000. Solid, ingen åbninger.
 | --- | -------- | ------ | ------ |
 | 1 | 95×45 PT | 2000 | Bundrem |
 | 1 | 95×45 gran | 2000 | Toprem |
-| 5 | 45×95 C24 | 2200 | Studs — venstre-kant ved 0 / 600 / 1200 / 1800 + junction 1955 |
+| 5 | 45×95 C24 | 2000 | Studs — venstre-kant ved 0 / 600 / 1200 / 1800 + junction 1955 |

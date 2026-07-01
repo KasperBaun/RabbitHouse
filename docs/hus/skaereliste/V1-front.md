@@ -11,12 +11,10 @@ Front-væg, X=0..2000, Y=0. Åbninger: dør 900×2000 + 2 vinduer 415×450.
 | Stk | Dim (mm) | Længde | Stykke |
 | --- | -------- | ------ | ------ |
 | 1 | 95×45 PT | 2000 | Bundrem |
-| 1 | 95×45 gran | 2000 | Toprem |
-| 6 | 45×95 C24 | 2200 | Studs (hjørne + junction + 2× dør-jamb + 2× vindue-jamb) |
+| 1 | 95×45 gran | 2000 | Toprem (fungerer også som dør-header — dør 2000 = væghøjde) |
+| 6 | 45×95 C24 | 2000 | Studs (hjørne + junction + 2× dør-jamb + 2× vindue-jamb) |
 | 2 | 45×95 C24 | 955 | Cripple under vindue-sål |
-| 2 | 45×95 C24 | 705 | Cripple over vindue-header |
-| 1 | 45×95 C24 | 155 | Cripple over dør-header |
-| 1 | 95×45 C24 | 900 | Dør-header |
+| 2 | 45×95 C24 | 505 | Cripple over vindue-header |
 | 2 | 95×45 C24 | 415 | Vindue-header |
 | 2 | 95×45 C24 | 415 | Vindue-sål |
 

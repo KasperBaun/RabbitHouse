@@ -20,7 +20,7 @@ venstre │                           │     hus-dør + pet-dør
 
 ```
   terræn → fundablok-ring TOP = 120 → DPC 2 → BUNDREM-TOP = 167  ← NULPUNKT
-         → stud 2200 → TOPREM-TOP = 2412
+         → stud 2000 → TOPREM-TOP = 2212
 ```
 
 I væg-tegningerne er **højder målt fra bundrem-overkant (h=0)** og **vandret fra
@@ -32,10 +32,10 @@ venstre/nedre hjørne (=0)**. Hægt tape i hjørnet og på bundremmen og sæt af
 | --------- | ---------- | ----------- |
 | 45×95 PT NTR-AB | Bundrem (2×2000 + 2×2810) | 9,6 |
 | 45×95 gran/C24 | Toprem (2×2000 + 2×2810) | 9,6 |
-| 45×95 C24 | 22 studs à 2200 | 48,4 |
-| 45×95 C24 | Headers, sål, cripples (inkl. V3-sidevindue) | 10,2 |
+| 45×95 C24 | 22 studs à 2000 | 44,0 |
+| 45×95 C24 | Headers, sål, cripples (inkl. V3-sidevindue) | 7,5 |
 
-**I alt 45×95 C24/gran ≈ 68 m + bundrem PT ≈ 10 m.** Studs er ens 2200 mm på alle vægge.
+**I alt 45×95 C24/gran ≈ 61 m + bundrem PT ≈ 10 m.** Studs er ens 2000 mm på alle vægge. Dørene (2000) = væghøjde, så toprem er dør-header (ingen cripple over dørene).
 
 ## Bygge-rækkefølge
 
