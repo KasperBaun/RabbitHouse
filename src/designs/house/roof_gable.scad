@@ -34,21 +34,25 @@ _GR_Y_SPAN = RH_HOUSE_DEPTH;
 // Gable-cladding outer-face offset (housewrap 1 + batten 22 + klink 25).
 _GR_VS_CLAD = RH_HOUSEWRAP_T + RH_COUNTER_BATTEN_T + 25;   // 48
 _GR_VS_T    = 25;                                          // vindskede thickness (Y)
+// Roof stack above the rafter top (undertag 3 + taglægte 25). The vindskede
+// top must reach past it (up under the slate) or the lægte ends poke out
+// over the barge at the rake.
+_GR_ROOF_STACK = 30;
 
 // Vindskede (barge board) — a board along both rake slopes on one gable,
-// capping the angle-cut klink board-ends where the horizontal cladding meets
-// the sloped roof. Sits on the gable outer face; top edge tucks under the
-// slate (rafter top), bottom laps ~50 mm over the cladding. `y_hi` = the
-// board's inner Y face (it extrudes _GR_VS_T outward).
+// capping the angle-cut klink board-ends AND the taglægte ends where the
+// horizontal cladding meets the sloped roof. Sits on the gable outer face;
+// top edge tucks up under the slate, bottom laps ~50 mm over the cladding.
+// `y_hi` = the board's inner Y face (it extrudes _GR_VS_T outward).
 module _gable_vindskede(y_hi, palette) {
     color(pal_trim(palette))
     translate([0, y_hi, 0])
         rotate([90, 0, 0])
             linear_extrude(height = _GR_VS_T)
                 polygon(points = [
-                    [0,            g_rafter_top_z(0)],
-                    [G_RIDGE_X,    g_rafter_top_z(G_RIDGE_X)],
-                    [RH_HOUSE_LEN, g_rafter_top_z(RH_HOUSE_LEN)],
+                    [0,            g_rafter_top_z(0)            + _GR_ROOF_STACK],
+                    [G_RIDGE_X,    g_rafter_top_z(G_RIDGE_X)    + _GR_ROOF_STACK],
+                    [RH_HOUSE_LEN, g_rafter_top_z(RH_HOUSE_LEN) + _GR_ROOF_STACK],
                     [RH_HOUSE_LEN, g_rafter_bottom_z(RH_HOUSE_LEN) - 50],
                     [G_RIDGE_X,    g_rafter_bottom_z(G_RIDGE_X) - 50],
                     [0,            g_rafter_bottom_z(0) - 50]
