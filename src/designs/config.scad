@@ -204,9 +204,10 @@ G_PITCH_DEG   = 35;
 // 70 mm min for 35° pitch). 229 mm also clears the yard wall top (Z=2220)
 // — rafter bottom at X=2229 sits at Z=2252, 32 mm clear.
 G_OH_EAVE     = 229;
-// No rake overhang — gables sit flush with V1 / V2. Slate slab and rafter
-// barge are aligned to the wall faces.
-G_OH_RAKE     = 0;
+// Rake (barge) overhang — the slate extends this far past each gable wall so
+// it covers the proud gable cladding (~48 mm out) and gives a real barge
+// overhang instead of the cladding ends poking past a flush roof edge.
+G_OH_RAKE     = 200;
 G_RIDGE_X     = RH_HOUSE_LEN / 2;         // = 1000
 G_EAVE_Z      = RH_BASE_H + RH_EH_FRONT;  // = 2412, flat eave on all 4 walls
 

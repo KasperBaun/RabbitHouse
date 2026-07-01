@@ -12,6 +12,7 @@ Beklædningen dækker hus-zonen (X = 0..2000). Eave er flad på alle 4 vægge
 | B5 | 4 hjørnetrims | 45×45 lodret tømmer (klink) / 70×70 (bob) | dækker klink-end-grain |
 | B6 | Indfatning om alle åbninger | 25×70 foring, står ~12 mm proud af klink | dækker klink-snit ved dør/vinduer |
 | B7 | Gavl-trekant V1 + V2 | klink ført op til kip, afkortet mod spær | lukker gavl-enden over eave |
+| B8 | Vindskede V1 + V2 (2 pr. gavl) | 25×145 barge langs skrå tag-kant | dækker klink-ender ved rake; tag har 200 mm udhæng |
 
 ## Lag-stack (snit gennem hus-væg, klink-variant)
 
@@ -121,6 +122,7 @@ er standardlager med god buffer.
 | 3 | Klink-brædder 25 × 125 × 4200 mm (gran/lærk) | Vægge + gavle 244 lin.m. Smart cut 3000 \| 2×2000, gavle af scrap → 69 stk + safety | 75 | stk |
 | 4 | Hjørnetrim 45 × 45 × 2400 mm | 4 hjørner, klink-end-grain dækning (flad eave 2292) | 4 | stk |
 | 5 | Indfatning/foring 25 × 70 × 2400 mm | Om åbninger: V1 dør + 2 vinduer, V3 vindue, V4 hus-dør + pet-dør (~17,5 lin.m) | 8 | stk |
+| 5b | Vindskede 25 × 145 × 2400 mm | Barge langs begge gavl-skrå (4 stk à ~1220 mm, V1 + V2) | 3 | stk |
 | 6 | Klamper 25 mm | Stifter til vindpapir, c/c 200 | 1 | pak |
 | 7 | Klink-søm 50 mm rustfri | ~4 søm pr. bræt × 230 lin.m / 1,5 m bræt-snit ≈ 600 stk | 1 | pak |
 | 8 | Skruer 4 × 60 mm | Afstandsliste + indfatning | 1 | pak |
