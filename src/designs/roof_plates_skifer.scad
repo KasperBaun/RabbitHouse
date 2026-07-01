@@ -58,21 +58,25 @@ module _sk_half_slab(x_lo, x_hi, y_lo, y_hi, offset_z, thick, color_rgb) {
     );
 }
 
+// Diffusion-open underlay (undertag) — a thin membrane draped on the rafter
+// tops, following the roof plane. One tilted slab per half-slope.
+module _sk_underlay(y_lo, y_hi) {
+    _sk_half_slab(-G_OH_EAVE, G_RIDGE_X,               y_lo, y_hi, 0, SK_UNDERLAY_T, SK_UNDERLAY_COLOR);
+    _sk_half_slab(G_RIDGE_X,  RH_HOUSE_LEN + G_OH_EAVE, y_lo, y_hi, 0, SK_UNDERLAY_T, SK_UNDERLAY_COLOR);
+}
+
+// Taglægter — 25×38, parallel to the ridge (run the full Y depth), at c/c up
+// each half-slope. Each is a slope-following slab (a flat cube would diverge
+// from the 35° plane and poke up through the slate at its up-slope edge).
 module _sk_battens(y_lo, y_hi, palette) {
-    color(pal_post(palette)) {
-        for (x = [-G_OH_EAVE + SK_BATTEN_W/2 :
-                   SK_BATTEN_C2C : G_RIDGE_X - SK_BATTEN_W]) {
-            z = g_rafter_top_z(x) + SK_UNDERLAY_T;
-            translate([x, y_lo, z])
-                cube([SK_BATTEN_W, y_hi - y_lo, SK_BATTEN_T]);
-        }
-        for (x = [G_RIDGE_X + SK_BATTEN_W/2 :
-                   SK_BATTEN_C2C : RH_HOUSE_LEN + G_OH_EAVE - SK_BATTEN_W]) {
-            z = g_rafter_top_z(x) + SK_UNDERLAY_T;
-            translate([x, y_lo, z])
-                cube([SK_BATTEN_W, y_hi - y_lo, SK_BATTEN_T]);
-        }
-    }
+    for (x = [-G_OH_EAVE + SK_BATTEN_W/2 :
+               SK_BATTEN_C2C : G_RIDGE_X - SK_BATTEN_W])
+        _sk_half_slab(x - SK_BATTEN_W/2, x + SK_BATTEN_W/2, y_lo, y_hi,
+                      SK_UNDERLAY_T - 0.5, SK_BATTEN_T, pal_post(palette));
+    for (x = [G_RIDGE_X + SK_BATTEN_W/2 :
+               SK_BATTEN_C2C : RH_HOUSE_LEN + G_OH_EAVE - SK_BATTEN_W])
+        _sk_half_slab(x - SK_BATTEN_W/2, x + SK_BATTEN_W/2, y_lo, y_hi,
+                      SK_UNDERLAY_T - 0.5, SK_BATTEN_T, pal_post(palette));
 }
 
 // Course grooves and plate seams are rendered as thin tilted slabs that
@@ -164,10 +168,11 @@ module _sk_ridge_cap(y_lo, y_hi) {
 }
 
 // ============================================================================
-// Top-level entry. Renders one unified slate slab per gable half — the
-// underlay + battens are buried under it in real construction, so they
-// are not drawn (otherwise they z-fight at the slate underside and bleed
-// through as visible wood-coloured stripes).
+// Top-level entry. Draws the full roof build-up as separate slope-following
+// layers on the rafters: undertag (diffusion-open underlay) → taglægter
+// 25×38 → skifer plates. Each layer occupies its own band of the stack so
+// nothing z-fights; the slate plates are only the top SK_SLATE_T (the
+// underlay + lægter are visible at the eave edge and from the underside).
 // ============================================================================
 module render_roof_plates_skifer_gable(palette = DEFAULT_PALETTE) {
     y_lo = -G_OH_RAKE;
@@ -175,12 +180,19 @@ module render_roof_plates_skifer_gable(palette = DEFAULT_PALETTE) {
     x_lo = -G_OH_EAVE;
     x_hi = RH_HOUSE_LEN + G_OH_EAVE;
 
-    // Slate slab pushed up 1 mm above the rafter top so it doesn't z-fight
-    // with the rafter / barge-rafter top edges.
+    // Underlay + lægter run only between the gable walls (not into the rake
+    // overhang), so their ends stay hidden behind the vindskede — the barge
+    // overhang reads as clean slate.
+    _sk_underlay(0, RH_HOUSE_DEPTH);
+    _sk_battens(0, RH_HOUSE_DEPTH, palette);
+
+    // Slate plates — only the top SK_SLATE_T of the stack, lapping ~1 mm over
+    // the lægte tops so no faces coincide.
+    slate_z0 = SK_UNDERLAY_T + SK_BATTEN_T - 1;
     _sk_half_slab(x_lo, G_RIDGE_X, y_lo, y_hi,
-                  1, SK_STACK_T - 1, SK_SLATE_COLOR);
+                  slate_z0, SK_STACK_T - slate_z0, SK_SLATE_COLOR);
     _sk_half_slab(G_RIDGE_X, x_hi, y_lo, y_hi,
-                  1, SK_STACK_T - 1, SK_SLATE_COLOR);
+                  slate_z0, SK_STACK_T - slate_z0, SK_SLATE_COLOR);
 
     _sk_course_grooves(y_lo, y_hi);
     _sk_plate_seams(y_lo, y_hi);
