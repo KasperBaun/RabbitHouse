@@ -11,6 +11,7 @@ Beklædningen dækker hus-zonen (X = 0..2000). Eave er flad på alle 4 vægge
 | B4 | Hus partition yard-side (V4, X=1548, hele Y=0..3000) | klink m. dør-cutouts + lag-stack | vejrbeklædning yard-side |
 | B5 | 4 hjørnetrims | 45×45 lodret tømmer (klink) / 70×70 (bob) | dækker klink-end-grain |
 | B6 | Indfatning om alle åbninger | 25×70 foring, står ~12 mm proud af klink | dækker klink-snit ved dør/vinduer |
+| B7 | Gavl-trekant V1 + V2 | klink ført op til kip, afkortet mod spær | lukker gavl-enden over eave |
 
 ## Lag-stack (snit gennem hus-væg, klink-variant)
 
@@ -87,31 +88,37 @@ Vægareal og rækker pr. væg (alle 4 hus-vægge):
 | Bag V2 | 2000 × 2292 | 4,58 m² | — | 23 | 46 m |
 | Venstre V3 | 3000 × 2292 | 6,88 m² | − vindue 0,7×0,6 | 23 | 69 m |
 | Partition V4 | 3000 × 2292 | 6,88 m² | − hus-dør 0,87×2,0 − petdør 0,25×0,3 | 23 | 69 m |
-| **Total** | | **22,9 m² brutto (~20,7 netto)** | | | **230 m** |
+| Gavl-trekant V1 + V2 | 2×(2000 × 700 ÷2) | 1,40 m² | — | ~7 pr. gavl | 14 m |
+| **Total** | | **24,3 m² brutto (~22 netto)** | | | **244 m** |
+
+V1 og V2 er **gavl-ender**: klink føres op i trekanten fra eave (z=2412) til
+kip (z≈3112, 35° fald), afkortet så toppen følger spærets underside.
 
 **Smart-cut strategi for 4200 mm brædder:**
 
 Hvert 4200 mm bræt skæres til **én 3000 mm række** (V3/V4, 1200 mm scrap)
-ELLER **to 2000 mm rækker** (V1/V2, 200 mm scrap).
+ELLER **to 2000 mm rækker** (V1/V2, 200 mm scrap). Gavl-trekanternes korte
+rækker skæres af 1200 mm-scrappen fra V3/V4-brædderne.
 
 | Behov | Antal rækker | Brædder |
 |---|---|---|
 | 3000 mm rækker (V3 + V4) | 46 | 46 (1 række pr. bræt) |
 | 2000 mm rækker (V1 + V2) | 46 | 23 (2 rækker pr. bræt) |
+| Gavl-trekant rækker (V1 + V2) | ~14 | (af 1200 mm scrap) |
 
-→ **69 brædder** + 5 % safety for snit ved åbninger = **73 stk** anbefalet.
+→ **69 brædder** + 5 % safety for snit ved åbninger + gavle = **75 stk** anbefalet.
 
 ## Materialeliste (klink-variant)
 
-Vindpapir-areal (uden fradrag for åbninger; cuttes efter): V1+V2+V3+V4 =
-4,58 + 4,58 + 6,88 + 6,88 = **22,9 m²** → en 1,5 × 25 m rulle (37,5 m²)
-rækker; 1,5 × 50 m er standardlager med god buffer.
+Vindpapir-areal (uden fradrag for åbninger; cuttes efter): vægge + gavle =
+22,9 + 1,4 = **24,3 m²** → en 1,5 × 25 m rulle (37,5 m²) rækker; 1,5 × 50 m
+er standardlager med god buffer.
 
 | # | Vare | Beskrivelse | Antal | Enhed |
 |---|---|---|---|---|
-| 1 | Vindpapir Tyvek HouseWrap | 1,5 m × 25/50 m rulle, hus-vægge ~22,9 m² | 1 | rulle |
+| 1 | Vindpapir Tyvek HouseWrap | 1,5 m × 25/50 m rulle, hus-vægge + gavle ~24,3 m² | 1 | rulle |
 | 2 | Afstandsliste 22 × 45 × 2400 mm | Lodret klemmeliste c/c 600. V1+V2: 4+4 = 8 stk; V3+V4: 6+6 = 12 stk | 20 | stk |
-| 3 | Klink-brædder 25 × 125 × 4200 mm (gran/lærk) | Hus-vægge 230 lin.m. Smart cut 3000 \| 2×2000 → 69 stk + 5 % safety | 73 | stk |
+| 3 | Klink-brædder 25 × 125 × 4200 mm (gran/lærk) | Vægge + gavle 244 lin.m. Smart cut 3000 \| 2×2000, gavle af scrap → 69 stk + safety | 75 | stk |
 | 4 | Hjørnetrim 45 × 45 × 2400 mm | 4 hjørner, klink-end-grain dækning (flad eave 2292) | 4 | stk |
 | 5 | Indfatning/foring 25 × 70 × 2400 mm | Om åbninger: V1 dør + 2 vinduer, V3 vindue, V4 hus-dør + pet-dør (~17,5 lin.m) | 8 | stk |
 | 6 | Klamper 25 mm | Stifter til vindpapir, c/c 200 | 1 | pak |

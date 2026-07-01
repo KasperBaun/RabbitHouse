@@ -8,6 +8,18 @@ include <../../config.scad>
 use <../../../lib/primitives/cladding.scad>
 use <cladding_common.scad>
 
+// Gable triangle as a Y-extruded prism (X-Z cross-section: eave corners at
+// x=0 / x=RH_HOUSE_LEN and apex at the ridge). Used to clip the gable-end
+// klink to the roof line. Spans Y = y0..y1.
+module _gable_prism(y0, y1) {
+    translate([0, y1, 0])
+        rotate([90, 0, 0])
+            linear_extrude(height = y1 - y0)
+                polygon([[0, G_EAVE_Z],
+                         [RH_HOUSE_LEN, G_EAVE_Z],
+                         [G_RIDGE_X, g_ridge_bottom_z()]]);
+}
+
 module render_cladding_klink(clad = RH_CLAD, palette = DEFAULT_PALETTE) {
     hl  = RH_HOUSE_LEN; ww = RH_HOUSE_DEPTH; bh = RH_BASE_H;
     eh  = RH_EH_FRONT;
@@ -90,6 +102,27 @@ module render_cladding_klink(clad = RH_CLAD, palette = DEFAULT_PALETTE) {
             cube([ct + 20, RH_HOUSE_DOOR_W + 2*km, RH_HOUSE_DOOR_H]);
         translate([part_x + s - 10, RH_PET_DOOR_Y - km, pet_dz])
             cube([ct + 20, RH_PET_DOOR_W + 2*km, RH_PET_DOOR_H]);
+    }
+
+    // -- Gable-end cladding — closes the triangle between the flat wall top
+    // (G_EAVE_Z) and the roof ridge on the two gable walls V1 (Y=0) + V2
+    // (Y=ww). Horizontal klink + housewrap clipped to the gable triangle;
+    // the triangle's sloped edges follow the rafter underside exactly.
+    // Assumes the flat-eave gable roof (same premise as the wall klink).
+    gh = g_ridge_bottom_z() - G_EAVE_Z;
+    intersection() {                                   // V1 front gable
+        union() {
+            render_housewrap([0, -RH_HOUSEWRAP_T, G_EAVE_Z], hl, gh, "X");
+            clad_wall_rect([0, -(s + ct), G_EAVE_Z], hl, gh, "X", palette, clad);
+        }
+        _gable_prism(-(s + ct) - 5, 5);
+    }
+    intersection() {                                   // V2 back gable
+        union() {
+            render_housewrap([0, ww, G_EAVE_Z], hl, gh, "X");
+            clad_wall_rect([0, ww + s, G_EAVE_Z], hl, gh, "X", palette, clad);
+        }
+        _gable_prism(ww - 5, ww + s + ct + 5);
     }
 
     // -- Corner trim posts.
