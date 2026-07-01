@@ -42,31 +42,32 @@ module _render_human_door(palette) {
             cube([WALL_DEPTH, FRAME_T, side_h]);
     }
 
-    leaf_y0 = y0 + FRAME_T;
-    leaf_y1 = y1 - FRAME_T;
-    leaf_w  = leaf_y1 - leaf_y0;
-    leaf_h  = RH_HOUSE_DOOR_H - FRAME_T;
-    // Leaf hung flush with V4's yard-facing face (X=PARTITION_X), opening
-    // outward into the yard.
-    leaf_x  = PARTITION_X - LEAF_T;
+    // Leaf fills the whole opening and sits just proud of the klink face
+    // (like the V1 front door), so the casing laps straight onto it — no
+    // recessed reveal. `w` = opening width. Faces +X, opens into the yard.
+    w       = RH_HOUSE_DOOR_W;
+    leaf_xf = PARTITION_X + CLAD_FACE + 2;   // outer (+X) face, just proud
 
     color(pal_door(palette))
-    translate([leaf_x, leaf_y0, z0])
-        cube([LEAF_T, leaf_w, leaf_h]);
+    translate([leaf_xf - LEAF_T, y0, z0])
+        cube([LEAF_T, w, RH_HOUSE_DOOR_H]);
 
+    // Horizontal batten strips on the outer face — same look as V1 door.
     color(pal_trim(palette))
-    for (i = [0 : 3])
-        translate([leaf_x + LEAF_T - 1, leaf_y0 + 50, z0 + 200 + i * 400])
-            cube([2, leaf_w - 100, 30]);
+    for (i = [0 : 4])
+        translate([leaf_xf - 1, y0 + 80, z0 + 200 + i * 400])
+            cube([2, w - 160, 30]);
 
+    // Handle — vertical bar near the latch (y1) edge, mid-height.
     color(HANDLE_C) {
-        translate([leaf_x + LEAF_T,     leaf_y1 - 100, z0 + 1050])  cube([25, 60, 25]);
-        translate([leaf_x + LEAF_T + 3, leaf_y1 - 110, z0 + 1000])  cube([ 8, 80, 110]);
+        translate([leaf_xf - 5, y1 - 110, z0 + 950])  cube([30, 25, 150]);
+        translate([leaf_xf,     y1 - 115, z0 + 990])  cube([12, 35, 70]);
     }
+    // Hinges — 2 straps on the y0 (hinge) edge.
     color(HINGE_C)
-    for (zh = [z0 + 200, z1 - 350])
-        translate([leaf_x - 5, leaf_y0 + 5, zh])
-            cube([15, 8, 100]);
+    for (zh = [z0 + 200, z1 - 300])
+        translate([leaf_xf - 3, y0 + 20, zh])
+            cube([8, 110, 40]);
 }
 
 // Front entry door on V1, faces -Y (out into garden). Single solid leaf,

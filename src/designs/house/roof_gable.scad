@@ -18,13 +18,18 @@ include <../config.scad>
 use <roof/haneband.scad>
 use <roof/gitterspaer.scad>
 
-// Truss Y positions — gable trusses at the wall faces + intermediates
-// at c/c 600.
-_GR_TRUSS_YS = [0, 600, 1200, 1800, 2400, 3000];
+// Gable-truss thickness along Y (both variants are 45 mm reglar).
+_GR_MEMBER_T = 45;
 
-// Ridge-board Y span (gitterspær only) covers the gable rafter at
-// Y=3000..3045.
-_GR_Y_SPAN = RH_HOUSE_DEPTH + 45;
+// Truss Y positions. Each truss extends +Y by _GR_MEMBER_T, so the two gable
+// trusses must sit flush INSIDE their wall faces: V1 at Y=0..45 and V2 at
+// (ww-45)..ww. Otherwise the V2 gable would poke 45 mm past the back wall
+// and the slate (Y=0..ww) would cover V1's barge but only reach V2's inner
+// face — the "one end flush, other end off" asymmetry.
+_GR_TRUSS_YS = [0, 600, 1200, 1800, 2400, RH_HOUSE_DEPTH - _GR_MEMBER_T];
+
+// Ridge-board Y span (gitterspær only) runs gable-to-gable.
+_GR_Y_SPAN = RH_HOUSE_DEPTH;
 
 module RenderHouseGableRoof(truss = "haneband", palette = DEFAULT_PALETTE) {
     if (truss == "haneband") {
