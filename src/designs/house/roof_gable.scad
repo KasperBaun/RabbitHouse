@@ -50,12 +50,12 @@ module _gable_vindskede(y_hi, palette) {
         rotate([90, 0, 0])
             linear_extrude(height = _GR_VS_T)
                 polygon(points = [
-                    [0,            g_rafter_top_z(0)            + _GR_ROOF_STACK],
-                    [G_RIDGE_X,    g_rafter_top_z(G_RIDGE_X)    + _GR_ROOF_STACK],
-                    [RH_HOUSE_LEN, g_rafter_top_z(RH_HOUSE_LEN) + _GR_ROOF_STACK],
-                    [RH_HOUSE_LEN, g_rafter_bottom_z(RH_HOUSE_LEN) - 50],
-                    [G_RIDGE_X,    g_rafter_bottom_z(G_RIDGE_X) - 50],
-                    [0,            g_rafter_bottom_z(0) - 50]
+                    [-G_OH_EAVE,               g_rafter_top_z(-G_OH_EAVE)               + _GR_ROOF_STACK],
+                    [G_RIDGE_X,                g_rafter_top_z(G_RIDGE_X)                + _GR_ROOF_STACK],
+                    [RH_HOUSE_LEN + G_OH_EAVE, g_rafter_top_z(RH_HOUSE_LEN + G_OH_EAVE) + _GR_ROOF_STACK],
+                    [RH_HOUSE_LEN + G_OH_EAVE, g_rafter_bottom_z(RH_HOUSE_LEN + G_OH_EAVE) - 50],
+                    [G_RIDGE_X,                g_rafter_bottom_z(G_RIDGE_X) - 50],
+                    [-G_OH_EAVE,               g_rafter_bottom_z(-G_OH_EAVE) - 50]
                 ]);
 }
 
