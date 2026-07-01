@@ -1,7 +1,7 @@
 # Beklædning — Hus
 
 Beklædningen dækker hus-zonen (X = 0..2000). Eave er flad på alle 4 vægge
-(RH_EH_FRONT = RH_EH_BACK = 2292 mm; gable-tag oven på giver fald).
+(RH_EH_FRONT = RH_EH_BACK = 2092 mm; gable-tag oven på giver fald).
 
 | Nr | Område | Materiale | Funktion |
 |---|---|---|---|
@@ -41,7 +41,7 @@ Beklædningen dækker hus-zonen (X = 0..2000). Eave er flad på alle 4 vægge
 | Egenskab | Værdi |
 |---|---|
 | Hus-footprint | 2000 × 3000 mm |
-| Eave-højde (flad, alle 4 vægge) | RH_EH_FRONT = RH_EH_BACK = 2292 mm |
+| Eave-højde (flad, alle 4 vægge) | RH_EH_FRONT = RH_EH_BACK = 2092 mm |
 | Sokkel-top (cladding bund) | Z = RH_BASE_H = 120 mm |
 | Vindpapir tykkelse | 1 mm (membran) |
 | Afstandsliste | 22 × 45 mm, lodret c/c 600 mm |
@@ -66,7 +66,7 @@ trænge ind. Synlig højde pr. række = 125 − 25 = 100 mm.
 
 Hjørnetrim 45 × 45 mm lodret tømmer sættes ved hver af de 4 hus-hjørner
 — overlapper begge klink-flader så raw end-grain er dækket. Alle 4 trims
-går til den flade eave (2292 mm).
+går til den flade eave (2092 mm).
 
 Indfatning (foring) 25 × 70 mm sættes rundt om hver åbning — dør + 2
 vinduer på V1, side-vindue på V3, hus-dør + pet-dør på V4. Klinken skæres
@@ -85,15 +85,15 @@ Vægareal og rækker pr. væg (alle 4 hus-vægge):
 
 | Væg | L × H (flad) | Areal brutto | Åbnings-fradrag | Rækker (H÷100) | Lin.m bræt |
 |---|---|---|---|---|---|
-| Front V1 | 2000 × 2292 | 4,58 m² | − dør 0,9×2,0 − 2 vind. 2×0,19 | 23 | 46 m |
-| Bag V2 | 2000 × 2292 | 4,58 m² | — | 23 | 46 m |
-| Venstre V3 | 3000 × 2292 | 6,88 m² | − vindue 0,7×0,6 | 23 | 69 m |
-| Partition V4 | 3000 × 2292 | 6,88 m² | − hus-dør 0,87×2,0 − petdør 0,25×0,3 | 23 | 69 m |
+| Front V1 | 2000 × 2092 | 4,18 m² | − dør 0,9×2,0 − 2 vind. 2×0,19 | 21 | 42 m |
+| Bag V2 | 2000 × 2092 | 4,18 m² | — | 21 | 42 m |
+| Venstre V3 | 3000 × 2092 | 6,28 m² | − vindue 0,7×0,6 | 21 | 63 m |
+| Partition V4 | 3000 × 2092 | 6,28 m² | − hus-dør 0,87×2,0 − petdør 0,25×0,3 | 21 | 63 m |
 | Gavl-trekant V1 + V2 | 2×(2000 × 700 ÷2) | 1,40 m² | — | ~7 pr. gavl | 14 m |
-| **Total** | | **24,3 m² brutto (~22 netto)** | | | **244 m** |
+| **Total** | | **22,3 m² brutto (~20 netto)** | | | **224 m** |
 
-V1 og V2 er **gavl-ender**: klink føres op i trekanten fra eave (z=2412) til
-kip (z≈3112, 35° fald), afkortet så toppen følger spærets underside.
+V1 og V2 er **gavl-ender**: klink føres op i trekanten fra eave (z=2212) til
+kip (z≈2912, 35° fald), afkortet så toppen følger spærets underside.
 
 **Smart-cut strategi for 4200 mm brædder:**
 
@@ -103,28 +103,28 @@ rækker skæres af 1200 mm-scrappen fra V3/V4-brædderne.
 
 | Behov | Antal rækker | Brædder |
 |---|---|---|
-| 3000 mm rækker (V3 + V4) | 46 | 46 (1 række pr. bræt) |
-| 2000 mm rækker (V1 + V2) | 46 | 23 (2 rækker pr. bræt) |
+| 3000 mm rækker (V3 + V4) | 42 | 42 (1 række pr. bræt) |
+| 2000 mm rækker (V1 + V2) | 42 | 21 (2 rækker pr. bræt) |
 | Gavl-trekant rækker (V1 + V2) | ~14 | (af 1200 mm scrap) |
 
-→ **69 brædder** + 5 % safety for snit ved åbninger + gavle = **75 stk** anbefalet.
+→ **63 brædder** + 5 % safety for snit ved åbninger + gavle = **67 stk** anbefalet.
 
 ## Materialeliste (klink-variant)
 
 Vindpapir-areal (uden fradrag for åbninger; cuttes efter): vægge + gavle =
-22,9 + 1,4 = **24,3 m²** → en 1,5 × 25 m rulle (37,5 m²) rækker; 1,5 × 50 m
+20,9 + 1,4 = **22,3 m²** → en 1,5 × 25 m rulle (37,5 m²) rækker; 1,5 × 50 m
 er standardlager med god buffer.
 
 | # | Vare | Beskrivelse | Antal | Enhed |
 |---|---|---|---|---|
-| 1 | Vindpapir Tyvek HouseWrap | 1,5 m × 25/50 m rulle, hus-vægge + gavle ~24,3 m² | 1 | rulle |
+| 1 | Vindpapir Tyvek HouseWrap | 1,5 m × 25/50 m rulle, hus-vægge + gavle ~22,3 m² | 1 | rulle |
 | 2 | Afstandsliste 22 × 45 × 2400 mm | Lodret klemmeliste c/c 600. V1+V2: 4+4 = 8 stk; V3+V4: 6+6 = 12 stk | 20 | stk |
-| 3 | Klink-brædder 25 × 125 × 4200 mm (gran/lærk) | Vægge + gavle 244 lin.m. Smart cut 3000 \| 2×2000, gavle af scrap → 69 stk + safety | 75 | stk |
-| 4 | Hjørnetrim 45 × 45 × 2400 mm | 4 hjørner, klink-end-grain dækning (flad eave 2292) | 4 | stk |
+| 3 | Klink-brædder 25 × 125 × 4200 mm (gran/lærk) | Vægge + gavle 224 lin.m. Smart cut 3000 \| 2×2000, gavle af scrap → 63 stk + safety | 67 | stk |
+| 4 | Hjørnetrim 45 × 45 × 2400 mm | 4 hjørner, klink-end-grain dækning (flad eave 2092) | 4 | stk |
 | 5 | Indfatning/foring 25 × 70 × 2400 mm | Om åbninger: V1 dør + 2 vinduer, V3 vindue, V4 hus-dør + pet-dør (~17,5 lin.m) | 8 | stk |
 | 5b | Vindskede 25 × 145 × 2400 mm | Barge langs begge gavl-skrå (4 stk à ~1220 mm, V1 + V2) | 3 | stk |
 | 6 | Klamper 25 mm | Stifter til vindpapir, c/c 200 | 1 | pak |
-| 7 | Klink-søm 50 mm rustfri | ~4 søm pr. bræt × 230 lin.m / 1,5 m bræt-snit ≈ 600 stk | 1 | pak |
+| 7 | Klink-søm 50 mm rustfri | ~4 søm pr. bræt × 224 lin.m / 1,5 m bræt-snit ≈ 600 stk | 1 | pak |
 | 8 | Skruer 4 × 60 mm | Afstandsliste + indfatning | 1 | pak |
 
 ## Materialeliste — board-on-board alternativ (1-på-2)
@@ -145,7 +145,7 @@ Hvis `cladding_type = "board_on_board"` i `src/main.scad`:
 2. Cut åbninger ud i vindpapir ved dør + 2 vinduer (V1), side-vindue (V3), hus-dør + petdør (V4)
 3. Sæt afstandsliste 22 × 45 lodret c/c 600 — ovenpå hver stud, gennem vindpapir, skruet ind i stud
 4. Skær klink-brædder pr. skærelisten ovenfor (smart cut: én 3000 mm række eller to 2000 mm rækker pr. bræt)
-5. Søm klink-brædder vandret på afstandslisten, nederst først, hver overlapper det underliggende med 25 mm. Flad overkant på alle 4 vægge (2292 mm) — gable-spær sидder ovenpå
+5. Søm klink-brædder vandret på afstandslisten, nederst først, hver overlapper det underliggende med 25 mm. Flad overkant på alle 4 vægge (2092 mm) — gable-spær sидder ovenpå
 6. Skær klinken ~8 mm bredere end hver åbning (rå snit skjules af indfatningen)
 7. Sæt indfatning 25 × 70 rundt om hver åbning — dækker klink-snittet, står ~12 mm proud, lapper ~10 mm ind over åbningen
 8. Sæt 4 hjørnetrim-stykker (45×45) ved hus-hjørnerne — overlapper begge klink-flader
@@ -160,5 +160,5 @@ Inspect:
 - Klink-stack ligger UDEN PÅ studsene (ikke embedded i)
 - Hjørnetrims dækker klink-end-grain ved alle 4 hus-hjørner
 - Indfatning dækker klink-snittet rundt om alle åbninger; dør-blade flugter med klink-fladen (ingen dyb lysning)
-- 23 klink-rækker på alle 4 vægge (flad eave 2292 mm)
+- 21 klink-rækker på alle 4 vægge (flad eave 2092 mm)
 - Partition-væggen klædt kun på YARD-siden (X = 1547.5)
