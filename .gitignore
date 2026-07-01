@@ -1,1 +1,5 @@
 _renders
+# Pasted screenshots
+Skærmbillede*.png
+# Markdown-preview HTML exports
+docs/**/*.html
