@@ -205,18 +205,19 @@ G_PITCH_DEG   = 35;
 // 70 mm min for 35° pitch). 229 mm also clears the yard wall top (Z=2220)
 // — rafter bottom at X=2229 sits at Z=2252, 32 mm clear.
 G_OH_EAVE     = 229;
-// Rake (barge) overhang — the slate extends this far past each gable wall so
-// it covers the proud gable cladding (~48 mm out) and gives a real barge
-// overhang instead of the cladding ends poking past a flush roof edge.
-// The taglægter cantilever out past the gable trusses to carry it; the
-// vindskede is nailed to the lægte ends at the rake edge.
-G_OH_RAKE     = 200;
+// Dobbelt vindskede at the rake edge: an underbræt (25×150) nailed to the
+// cantilevered lægte ends with its top just under the slate, plus an
+// overligger (25×150) on its outer face rising G_VS_OVER_RISE above the
+// slate surface — the classic double barge board that closes the rake.
+// The slate stops flush with the underbræt's outer face (does not overhang).
+G_VS_T         = 25;                          // board thickness (Y), both boards
+G_VS_OUTER     = 170;                         // underbræt outer face = slate edge (Y=-170/3170)
+G_VS_OVER_RISE = 40;                          // overligger top above the slate surface
 
-// Vindskede (barge board) at the rake edge. The slate overhangs the board's
-// outer face by G_VS_SLATE_LAP; the lægter run out to the board's inner face.
-G_VS_T         = 25;                          // vindskede thickness (Y)
-G_VS_SLATE_LAP = 30;                          // slate past vindskede outer face
-G_VS_OUTER     = G_OH_RAKE - G_VS_SLATE_LAP;  // = 170; outer face at Y=-170/3170
+// Total rake (barge) overhang to the overligger's outer face. The taglægter
+// cantilever out past the gable trusses to carry it; the boards also cover
+// the proud gable cladding (~48 mm out).
+G_OH_RAKE      = G_VS_OUTER + G_VS_T;         // = 195
 
 // Roof build-up above the rafter top (skifer cover): undertag 3 +
 // afstandsliste 25 (25×50 along each spær) + taglægte 38 (T1 38×73).

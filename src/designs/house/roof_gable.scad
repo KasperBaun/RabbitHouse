@@ -35,23 +35,26 @@ _GR_Y_SPAN = RH_HOUSE_DEPTH;
 // 38 = G_ROOF_STACK_T). The vindskede top reaches to just under the slate
 // (−1 mm so no faces coincide), capping the lægte ends at the rake.
 _GR_ROOF_STACK = G_ROOF_STACK_T - 1;
-// Vindskede vertical depth. Same 150 as the stern height, measured from the
-// same top line (stack top), so the two boards' lower edges land flush where
+// Vindskede vertical depth. The underbræt is 150 like the stern, measured
+// from the same top line (stack top), so their lower edges land flush where
 // they meet at the eave corners — no step/notch.
 _GR_VS_H = 150;
 // The vindskede runs RH_FASCIA_T past the eave line to cover the stern's
 // end grain; the end is cut plumb at the stern front face and level along
-// the stern's bottom edge (classic corner detail). The stern itself stops
-// at the vindskede inner face.
+// its own bottom line (classic corner detail). The stern itself stops
+// at the underbræt's inner face.
 _GR_VS_TIP = RH_FASCIA_T;
+// Overligger top edge: roof stack + slate (8, = SK_SLATE_T) + the rise above
+// the slate surface. The overligger closes the rake — the slate butts
+// against it instead of overhanging.
+_GR_VS_OVER_TOP = G_ROOF_STACK_T + 8 + G_VS_OVER_RISE;
 
-// Vindskede (barge board) — a board along both rake slopes of each gable,
-// nailed to the cantilevered taglægte ends at the rake edge (outer face at
-// Y=−G_VS_OUTER / RH_HOUSE_DEPTH+G_VS_OUTER; the slate laps G_VS_SLATE_LAP
-// past it). Top edge tucks up under the slate; depth _GR_VS_H matches the
-// stern so the boards meet flush at the eave corners.
+// One vindskede board along both rake slopes of a gable — used twice per
+// gable: underbræt (z_top = _GR_ROOF_STACK, just under the slate) and
+// overligger (z_top = _GR_VS_OVER_TOP, rising above the slate surface).
 // `y_hi` = the board's inner Y face (it extrudes G_VS_T outward, toward -Y).
-module _gable_vindskede(y_hi, palette) {
+// `z_top` = the top edge's vertical offset above the rafter-top plane.
+module _gable_vindskede(y_hi, z_top, palette) {
     x_el = -G_OH_EAVE;                  // eave line, left
     x_er = RH_HOUSE_LEN + G_OH_EAVE;    // eave line, right
     x_tl = x_el - _GR_VS_TIP;           // tip = stern front face, left
@@ -62,18 +65,18 @@ module _gable_vindskede(y_hi, palette) {
             linear_extrude(height = G_VS_T)
                 polygon(points = [
                     // top edge follows the roof plane tip-to-tip
-                    [x_tl,      g_rafter_top_z(x_tl)      + _GR_ROOF_STACK],
-                    [G_RIDGE_X, g_rafter_top_z(G_RIDGE_X) + _GR_ROOF_STACK],
-                    [x_tr,      g_rafter_top_z(x_tr)      + _GR_ROOF_STACK],
+                    [x_tl,      g_rafter_top_z(x_tl)      + z_top],
+                    [G_RIDGE_X, g_rafter_top_z(G_RIDGE_X) + z_top],
+                    [x_tr,      g_rafter_top_z(x_tr)      + z_top],
                     // plumb end cut at the stern front face...
-                    [x_tr,      g_rafter_top_z(x_er) + _GR_ROOF_STACK - _GR_VS_H],
-                    // ...level back to the eave line along the stern bottom
-                    [x_er,      g_rafter_top_z(x_er) + _GR_ROOF_STACK - _GR_VS_H],
+                    [x_tr,      g_rafter_top_z(x_er) + z_top - _GR_VS_H],
+                    // ...level back to the eave line along the bottom line
+                    [x_er,      g_rafter_top_z(x_er) + z_top - _GR_VS_H],
                     // bottom edge parallel to the roof plane
-                    [G_RIDGE_X, g_rafter_top_z(G_RIDGE_X) + _GR_ROOF_STACK - _GR_VS_H],
-                    [x_el,      g_rafter_top_z(x_el) + _GR_ROOF_STACK - _GR_VS_H],
+                    [G_RIDGE_X, g_rafter_top_z(G_RIDGE_X) + z_top - _GR_VS_H],
+                    [x_el,      g_rafter_top_z(x_el) + z_top - _GR_VS_H],
                     // level out to the tip + plumb cut closes the loop
-                    [x_tl,      g_rafter_top_z(x_el) + _GR_ROOF_STACK - _GR_VS_H]
+                    [x_tl,      g_rafter_top_z(x_el) + z_top - _GR_VS_H]
                 ]);
 }
 
@@ -87,12 +90,19 @@ module RenderHouseGableSpaer(truss = "haneband", palette = DEFAULT_PALETTE) {
     }
 }
 
-// Barge boards on both gable ends, nailed to the lægte ends at the rake
-// edge: front board Y=-170..-145, back board Y=3145..3170. Mounted AFTER
-// lægtning — arbejdsplan trin 5.
+// Dobbelt vindskede on both gable ends, mounted AFTER lægtning (arbejdsplan
+// trin 5): underbræt nailed to the lægte ends (front Y=-170..-145, back
+// Y=3145..3170) with its top just under the slate, then overligger on the
+// underbræt's outer face (front Y=-195..-170, back Y=3170..3195) rising
+// G_VS_OVER_RISE above the slate surface. The slate stops against the
+// overligger's inner face.
 module RenderHouseGableVindskeder(palette = DEFAULT_PALETTE) {
-    _gable_vindskede(-(G_VS_OUTER - G_VS_T),          palette);  // V1 front
-    _gable_vindskede(RH_HOUSE_DEPTH + G_VS_OUTER,     palette);  // V2 back
+    // underbræt
+    _gable_vindskede(-(G_VS_OUTER - G_VS_T),                _GR_ROOF_STACK,   palette);  // V1 front
+    _gable_vindskede(RH_HOUSE_DEPTH + G_VS_OUTER,           _GR_ROOF_STACK,   palette);  // V2 back
+    // overligger
+    _gable_vindskede(-G_VS_OUTER,                           _GR_VS_OVER_TOP,  palette);  // V1 front
+    _gable_vindskede(RH_HOUSE_DEPTH + G_VS_OUTER + G_VS_T,  _GR_VS_OVER_TOP,  palette);  // V2 back
 }
 
 // Composite (back-compat) — spær + vindskeder.

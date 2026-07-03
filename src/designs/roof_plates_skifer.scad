@@ -220,8 +220,10 @@ module render_skifer_laegter(palette = DEFAULT_PALETTE) {
 // Only the top SK_SLATE_T of the stack, lapping ~1 mm over the lægte tops
 // so no faces coincide.
 module render_skifer_sten() {
-    y_lo = -G_OH_RAKE;
-    y_hi = RH_HOUSE_DEPTH + G_OH_RAKE;
+    // The slate runs out over the vindskede-underbræt and stops flush with
+    // its outer face, butting against the overligger that rises above it.
+    y_lo = -G_VS_OUTER;
+    y_hi = RH_HOUSE_DEPTH + G_VS_OUTER;
     x_lo = -G_OH_EAVE;
     x_hi = RH_HOUSE_LEN + G_OH_EAVE;
     slate_z0 = SK_UNDERLAY_T + SK_CBATTEN_T + SK_BATTEN_T - 1;
@@ -261,9 +263,9 @@ module render_skifer_fodblik() {
     }
 }
 
-// Zink-rygning over kippen.
+// Zink-rygning over kippen — runs between the vindskede-overliggere.
 module render_skifer_rygning() {
-    _sk_ridge_cap(-G_OH_RAKE, RH_HOUSE_DEPTH + G_OH_RAKE);
+    _sk_ridge_cap(-G_VS_OUTER, RH_HOUSE_DEPTH + G_VS_OUTER);
 }
 
 // ============================================================================

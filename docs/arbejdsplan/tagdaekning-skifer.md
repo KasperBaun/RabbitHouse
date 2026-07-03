@@ -48,7 +48,7 @@
 | Zink-rygning | — | 3,4 m | 3,5 m |
 | Fodblik (zink) | — | 2 × 3,3 m | 7 m |
 | Sternbrædder (tagfod) | 25×150 mm | 2 × 3,4 m | 7 m |
-| Vindskeder | 25×150 mm | 4 stk à ~1,9 m | 8 m |
+| Vindskeder, dobbelte (underbræt + overligger) | 25×150 mm | 8 stk à ~1,9 m | 16 m |
 | Skiferkit (rågummi/veg. olie, fx DANA 694) | patron | randzoner ved gavle | 2 patroner |
 | Fuglegitter, ventileret | — | 2 × 3,3 m | 7 m |
 | Tagrende + nedløb | — | 2 × 3,4 m + 2 nedløb | — |
@@ -125,11 +125,15 @@ en tømrerfejl her kan ikke reddes under dækningen.
    Lok nye huller ~60–70 mm under overkanten, så sømmene rammer L7. Kip-listen
    8×25 sømmes ved kip FØRST, så toprækken ikke vipper. Sømhovederne dækkes af
    rygningen.
-10. **Vindskeder** 25×150 sømmes på lægte-enderne ved begge gavle — overkant
-    presses op mod skiferens underside; skiferen skal lappe ~30 mm ud over
-    vindskedens yderside. Den nederste ende føres ud over sternens endetræ
-    og skæres **lodret i flugt med sternens forside** og **vandret i flugt
-    med sternens underkant**, så hjørnet lukker uden spring.
+10. **Dobbelt vindskede** ved begge gavle, to brædder 25×150 oven på hinanden:
+    - **Underbræt** sømmes på lægte-enderne, overkant presset op mod skiferens
+      underside. Skiferen føres ud over underbrættets overkant og stopper i
+      flugt med dets yderside.
+    - **Overligger** sømmes uden på underbrættet, forskudt opad så det rager
+      **~40 mm op over skiferfladen** og lukker tagkanten mod vind.
+    - Begge brædders nederste ende føres ud over sternens endetræ og skæres
+      **lodret i flugt med sternens forside** og **vandret** (underbræt i
+      flugt med sternens underkant), så hjørnet lukker uden spring.
 11. **T-kitning ved gavlene:** de 3 yderste sten i hver række, begge gavle:
     en jævn ~50 mm bred stribe skiferkit vandret hen over sømhovederne og
     lodret i hele den lodrette fuge — **lige bred hele vejen** (ellers
@@ -158,5 +162,6 @@ en tømrerfejl her kan ikke reddes under dækningen.
 - [ ] Toprække + kipliste monteret; rygningsbrædder + zink dækker alle søm ved kip.
 - [ ] T-kitning udført på de 3 yderste sten ved begge gavle — striber lige brede.
 - [ ] Sternbrædder i flugt med lægte-oversiden ved begge tagfødder.
-- [ ] Vindskeder sømmet på lægte-ender; skifer lapper ~30 mm over.
+- [ ] Dobbelt vindskede: underbræt på lægte-ender, overligger rager ~40 mm op
+      over skiferfladen; hjørner mod stern lukker uden spring.
 - [ ] Ingen har betrådt den færdige dækning.
