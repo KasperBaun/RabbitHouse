@@ -28,12 +28,12 @@ Løbegården er en separat struktur og står til sidst.
 ## 3. Konstruktions-skelet (vægge)
 
 - [x] Monter bundrem, murpap og ankerbolte → [detaljer](docs/arbejdsplan/bundrem-murpap-ankerbolte.md)
-- [ ] Rejs V3 (venstre)
-- [ ] Rejs V1 (front, m. dør- + 2 vindue-åbninger)
-- [ ] Rejs V2 (bag)
-- [ ] Rejs V4 (partition, m. hus-dør + pet-dør)
-- [ ] Læg topremme på alle 4 vægge
-- [ ] Vinkelbeslag i alle hjørner
+- [x] Rejs V3 (venstre)
+- [x] Rejs V1 (front, m. dør- + 2 vindue-åbninger)
+- [x] Rejs V2 (bag)
+- [x] Rejs V4 (partition, m. hus-dør + pet-dør)
+- [x] Læg topremme på alle 4 vægge
+- [x] Vinkelbeslag i alle hjørner
 
 ## 4. Tagkonstruktion
 
