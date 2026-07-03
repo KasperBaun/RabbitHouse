@@ -34,11 +34,11 @@ ses i 3D ved at kommentere de efterfølgende kald ud.
 
 | Materiale | Dimension | Køb | Bruges i skridt |
 |---|---|---|---|
-| Konstruktionstræ C24 | 45×95 mm | 7 stk à 4,2 m | 1 |
+| Konstruktionstræ C24 | 45×95 mm | 9 stk à 3,6 m | 1 |
 | Vinkelbeslag + beslagskruer | 90×90×40 | 12 stk | 1 |
 | Undertag, diffusionsåbent (banevare) | — | 1 rulle (~9 m² brugt) | 2 |
 | Afstandslister, trykimp. | 25×50 mm | 20 m | 3 |
-| Taglægter T1 | 38×73 mm | 12 stk à 4,2 m | 4 |
+| Taglægter T1 | 38×73 mm | 14 stk à 3,6 m | 4 |
 | Brædder (stern + vindskeder + rygning) | 25×150 mm | 7 + 16 + 7 m = 30 m | 5, 9, 10 |
 | Fodblik (zink) | — | 7 m | 6 |
 | Fuglegitter, ventileret | — | 7 m | 6 |

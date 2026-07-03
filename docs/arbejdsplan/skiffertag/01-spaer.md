@@ -6,7 +6,7 @@
 
 | Materiale | Dimension | Mængde |
 |---|---|---|
-| Konstruktionstræ C24 | 45×95 mm | 12 spær à ~1,6 m + 6 hanebånd à ~1,0 m (køb 7 stk à 4,2 m) |
+| Konstruktionstræ C24 | 45×95 mm | 12 spær à ~1,6 m + 6 hanebånd à ~1,0 m (køb 9 stk à 3,6 m: 6 længder à 2 spær + 2 længder à 3 hanebånd + 1 i reserve) |
 | Vinkelbeslag + beslagskruer 4,0×40 | 90×90×40 | 12 stk (2 pr. fag) |
 | Skruer til hanebånd | 5,0×80 | 24 stk (4 pr. samling, 2 samlinger pr. fag) |
 

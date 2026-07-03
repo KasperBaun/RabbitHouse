@@ -9,7 +9,7 @@
 
 | Materiale | Dimension | Mængde |
 |---|---|---|
-| Taglægter T1 | 38×73 mm | 14 stk à 3,3 m (køb 12 stk à 4,2 m) |
+| Taglægter T1 | 38×73 mm | 14 stk à 3,3 m (køb 14 stk à 3,6 m — én længde pr. lægte, ingen stød) |
 | Søm/skruer | 100 mm | 2 pr. kryds (lægte × spær) |
 
 ## Lægteplan
