@@ -3,3 +3,5 @@ _renders
 Skærmbillede*.png
 # Markdown-preview HTML exports
 docs/**/*.html
+# ...men målsatte tegningssider er rigtige docs
+!docs/**/*-tegninger.html

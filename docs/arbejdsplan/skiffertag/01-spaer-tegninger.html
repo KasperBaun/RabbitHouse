@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spær — skæremål</title>
+<style>
+  /* Fast lyst tema — tegningen skal ligne papir, også ved print. */
+  :root, :root[data-theme="dark"], :root[data-theme="light"] {
+    --paper: #ffffff;
+    --ink: #232a2c;
+    --muted: #5f6a66;
+    --dim: #2f6b9a;
+    --cut: #b3402e;
+    --wood: #efe3ca;
+    --wood-line: #a8905f;
+    --faint: #ddd9d0;
+    --chip-bg: #f2f0ea;
+    color-scheme: light;
+  }
+
+  html { background: var(--paper); }
+  body {
+    font-family: "Segoe UI", system-ui, sans-serif;
+    color: var(--ink);
+    line-height: 1.55;
+    margin: 0;
+    padding: 2.5rem 1.25rem 4rem;
+  }
+  main { max-width: 880px; margin: 0 auto; }
+
+  .eyebrow {
+    font-family: Bahnschrift, "Avenir Next Condensed", "Arial Narrow", sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 0.4rem;
+  }
+  h1 {
+    font-family: Bahnschrift, "Avenir Next Condensed", "Arial Narrow", sans-serif;
+    font-weight: 600;
+    font-size: clamp(1.7rem, 4vw, 2.4rem);
+    letter-spacing: 0.01em;
+    margin: 0 0 0.5rem;
+    text-wrap: balance;
+  }
+  .lede { color: var(--muted); max-width: 62ch; margin: 0 0 1.2rem; }
+  .lede code { font-family: "Cascadia Code", Consolas, ui-monospace, monospace; font-size: 0.9em; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 2.2rem; }
+  .chip {
+    font-family: "Cascadia Code", Consolas, ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.8rem;
+    background: var(--chip-bg);
+    border: 1px solid var(--faint);
+    border-radius: 3px;
+    padding: 0.22rem 0.6rem;
+    white-space: nowrap;
+  }
+
+  section { margin: 0 0 2.8rem; }
+  h2 {
+    font-family: Bahnschrift, "Avenir Next Condensed", "Arial Narrow", sans-serif;
+    font-weight: 600;
+    font-size: 1.15rem;
+    letter-spacing: 0.03em;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 0.35rem;
+    margin: 0 0 1rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+  }
+  h2 .fignum {
+    font-family: "Cascadia Code", Consolas, ui-monospace, monospace;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .figwrap { overflow-x: auto; }
+  .figwrap svg { display: block; width: 100%; height: auto; }
+  .figwrap.narrow svg { max-width: 640px; margin: 0 auto; }
+
+  .notes { margin: 0.9rem 0 0; padding: 0 0 0 1.2rem; max-width: 68ch; }
+  .notes li { margin: 0.3rem 0; }
+  .maal { color: var(--dim); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .snit { color: var(--cut); font-weight: 600; }
+
+  .callout {
+    border-left: 3px solid var(--cut);
+    background: var(--chip-bg);
+    padding: 0.7rem 1rem;
+    margin: 2rem 0 0;
+    max-width: 66ch;
+    font-size: 0.95rem;
+  }
+  .callout strong { font-family: Bahnschrift, "Avenir Next Condensed", sans-serif; letter-spacing: 0.02em; }
+
+  footer { margin-top: 2.5rem; color: var(--muted); font-size: 0.85rem; }
+  footer code { font-family: "Cascadia Code", Consolas, ui-monospace, monospace; }
+
+  /* SVG classes */
+  .wood      { fill: var(--wood); stroke: var(--wood-line); }
+  .ink-line  { stroke: var(--ink); fill: none; }
+  .ref-line  { stroke: var(--muted); fill: none; }
+  .dim-line  { stroke: var(--dim); fill: none; }
+  .dim-fill  { fill: var(--dim); stroke: none; }
+  .cut-line  { stroke: var(--cut); fill: none; }
+  .cut-fill  { fill: var(--cut); stroke: none; }
+  .hatch     { stroke: var(--wood-line); fill: none; }
+  svg text {
+    paint-order: stroke;
+    stroke: var(--paper);
+    stroke-width: 3.5px;
+    stroke-linejoin: round;
+  }
+  .t-dim  { fill: var(--dim);  font-family: "Cascadia Code", Consolas, ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .t-cut  { fill: var(--cut);  font-family: "Cascadia Code", Consolas, ui-monospace, monospace; }
+  .t-lab  { fill: var(--ink);  font-family: Bahnschrift, "Avenir Next Condensed", "Arial Narrow", sans-serif; letter-spacing: 0.05em; }
+  .t-mut  { fill: var(--muted); font-family: "Segoe UI", system-ui, sans-serif; }
+</style>
+</head>
+<body>
+<main>
+  <p class="eyebrow">Arbejdsplan · skiffertag · skridt 1 af 10</p>
+  <h1>Spær — skæremål</h1>
+  <p class="lede">Målsatte tegninger til savearbejdet i <code>01-spaer.md</code>.
+     Alle mål i millimeter. Blå = mål, rød = snit/afsætning.</p>
+  <div class="chips">
+    <span class="chip">hældning 35°</span>
+    <span class="chip">C24 45×95</span>
+    <span class="chip">12 spær</span>
+    <span class="chip">6 hanebånd</span>
+    <span class="chip">udhæng 229</span>
+  </div>
+
+  <section>
+    <h2><span class="fignum">FIG. 1</span> Ét spærfag, samlet</h2>
+    <div class="figwrap"><div id="figA"></div></div>
+    <ul class="notes">
+      <li>Højder er målt fra <strong>topremmens overside</strong> (stiplet reference­linje).</li>
+      <li>Hanebåndets overkant sidder <span class="maal">467</span> over topremmen —
+          på jorden er det nemmest at måle <span class="maal">407</span> langs spærets
+          underkant fra kipsnittet.</li>
+      <li>Spærene mødes i kip med et lodret stødsnit — intet kipbræt.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="fignum">FIG. 2</span> Spær på saven — 12 stk.</h2>
+    <div class="figwrap"><div id="figB"></div></div>
+    <ul class="notes">
+      <li>Geringssav på <span class="snit">35°</span> — <strong>begge snit i samme retning</strong>,
+          så emnet bliver et parallelogram. Kanterne er lige lange: <span class="maal">1500</span>.</li>
+      <li>Emnet fylder <span class="maal">1567</span> spids til spids → 2 spær pr. 3,6 m-længde.</li>
+      <li>Den stiplede røde trekant er fugleudskæringen — den afsættes først på plads
+          (fig. 4), sav den ikke på forhånd. I praksis: lad fodenden være lang og kap
+          den til sidst.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="fignum">FIG. 3</span> Hanebånd på saven — 6 stk.</h2>
+    <div class="figwrap narrow"><div id="figC"></div></div>
+    <ul class="notes">
+      <li>Snittene er <span class="snit">55° fra vinkelret</span> (35° mod kanten) og
+          <strong>spejlvendte</strong> — emnet er et trapez. Endefladen ligger så plant an
+          mod spærets underside.</li>
+      <li>De fleste kapsave går kun til 45–50°: afsæt <span class="maal">136</span> fra
+          enden på overkanten, tegn stregen til underkantens hjørne, og skær med rundsav
+          eller håndsav.</li>
+      <li>3 stk. pr. 3,6 m-længde (3 × 938 = 2814 mm).</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="fignum">FIG. 4</span> Fugleudskæring — detalje ved toprem</h2>
+    <div class="figwrap narrow"><div id="figD"></div></div>
+    <ul class="notes">
+      <li>Læg faget op og <strong>mærk hvor spærets underkant rammer topremmens yderkant</strong>
+          (rød prik) — det er <span class="maal">280</span> fra fodenden målt langs underkanten.</li>
+      <li>Fra mærket: lodret hælsnit <span class="maal">38</span> op, vandret sæde
+          <span class="maal">55</span> ind mod kip. Det giver ~32 mm dybde vinkelret på
+          spæret = præcis maks-grænsen på 1/3 af de 95.</li>
+      <li>Hælen ligger an mod topremmens yderside, sædet hviler på oversiden.</li>
+      <li>Fodenden kappes lodret, så udhænget bliver <span class="maal">229</span> vandret.</li>
+    </ul>
+  </section>
+
+  <div class="callout">
+    <strong>Skabelonen er loven.</strong> Sav alle 12 fugleudskæringer med samme dybde —
+    skærer du et sæde dybere end de andre, sætter det spær sig lavere og tagfladen bølger.
+    Bemærk at hele taget sætter sig ~38 mm lavere end den teoretiske linje i fig. 1,
+    når sæderne er savet — det er ens for alle spær og helt efter planen.
+  </div>
+
+  <footer>Genereret ud fra modellens geometri: 35° hældning, kip 1000 mm fra vægydersiden,
+    udhæng 229 mm, spær/hanebånd 45×95. Se <code>docs/arbejdsplan/skiffertag/01-spaer.md</code>.</footer>
+</main>
+
+<script>
+(function () {
+  var SIN = Math.sin(35 * Math.PI / 180); // 0.5736
+  var COS = Math.cos(35 * Math.PI / 180); // 0.8192
+  var TAN = Math.tan(35 * Math.PI / 180); // 0.7002
+  var NS = "http://www.w3.org/2000/svg";
+
+  function el(name, attrs, parent) {
+    var e = document.createElementNS(NS, name);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+
+  // Figure factory: world coords in mm, z up. k = px per mm. Pads in px.
+  function fig(mountId, o) {
+    var W = (o.x1 - o.x0) * o.k + o.padL + o.padR;
+    var H = (o.z1 - o.z0) * o.k + o.padT + o.padB;
+    var svg = el("svg", { viewBox: "0 0 " + W.toFixed(1) + " " + H.toFixed(1),
+                          role: "img", "aria-label": o.label || "" });
+    document.getElementById(mountId).appendChild(svg);
+    function P(x, z) { return [(x - o.x0) * o.k + o.padL, (o.z1 - z) * o.k + o.padT]; }
+    return { svg: svg, P: P, W: W, H: H, k: o.k };
+  }
+
+  function pts(list) { return list.map(function (p) { return p[0].toFixed(1) + "," + p[1].toFixed(1); }).join(" "); }
+
+  function poly(f, worldPts, cls, opts) {
+    opts = opts || {};
+    var e = el("polygon", { points: pts(worldPts.map(function (p) { return f.P(p[0], p[1]); })),
+                            "class": cls, "stroke-width": opts.sw || 1.6 }, f.svg);
+    if (opts.dash) e.setAttribute("stroke-dasharray", opts.dash);
+    return e;
+  }
+  function seg(f, a, b, cls, opts) {
+    opts = opts || {};
+    var A = f.P(a[0], a[1]), B = f.P(b[0], b[1]);
+    var e = el("line", { x1: A[0], y1: A[1], x2: B[0], y2: B[1], "class": cls,
+                         "stroke-width": opts.sw || 1 }, f.svg);
+    if (opts.dash) e.setAttribute("stroke-dasharray", opts.dash);
+    return e;
+  }
+  function txt(f, x, z, s, cls, opts) {
+    opts = opts || {};
+    var A = f.P(x, z);
+    var e = el("text", { x: A[0] + (opts.dx || 0), y: A[1] + (opts.dy || 0),
+                         "class": cls, "font-size": opts.fs || 13,
+                         "text-anchor": opts.anchor || "middle" }, f.svg);
+    e.textContent = s;
+    return e;
+  }
+  function arrow(f, tipPx, dirPx, cls) { // dirPx: unit vector pointing INTO the dim line
+    var L = 9, Wd = 3.2;
+    var n = [-dirPx[1], dirPx[0]];
+    var p1 = [tipPx[0] + dirPx[0] * L + n[0] * Wd, tipPx[1] + dirPx[1] * L + n[1] * Wd];
+    var p2 = [tipPx[0] + dirPx[0] * L - n[0] * Wd, tipPx[1] + dirPx[1] * L - n[1] * Wd];
+    el("polygon", { points: pts([tipPx, p1, p2]), "class": cls }, f.svg);
+  }
+
+  // Aligned dimension between world points a,b; off = perpendicular offset in px
+  // (positive = screen-left of a->b). Label horizontal unless rot.
+  function dim(f, a, b, off, label, opts) {
+    opts = opts || {};
+    var A = f.P(a[0], a[1]), B = f.P(b[0], b[1]);
+    var dx = B[0] - A[0], dy = B[1] - A[1];
+    var len = Math.hypot(dx, dy);
+    var e = [dx / len, dy / len];
+    var n = [e[1], -e[0]]; // screen-left of direction
+    var A2 = [A[0] + n[0] * off, A[1] + n[1] * off];
+    var B2 = [B[0] + n[0] * off, B[1] + n[1] * off];
+    var ext = off >= 0 ? 1 : -1;
+    function extLine(S, S2) {
+      el("line", { x1: S[0] + n[0] * 3 * ext, y1: S[1] + n[1] * 3 * ext,
+                   x2: S2[0] + n[0] * 5 * ext, y2: S2[1] + n[1] * 5 * ext,
+                   "class": "dim-line", "stroke-width": 0.8 }, f.svg);
+    }
+    if (!opts.noExtA) extLine(A, A2);
+    if (!opts.noExtB) extLine(B, B2);
+    el("line", { x1: A2[0], y1: A2[1], x2: B2[0], y2: B2[1],
+                 "class": "dim-line", "stroke-width": 1 }, f.svg);
+    arrow(f, A2, e, "dim-fill");
+    arrow(f, B2, [-e[0], -e[1]], "dim-fill");
+    var mid = [(A2[0] + B2[0]) / 2 + (opts.dx || 0), (A2[1] + B2[1]) / 2 + (opts.dy === undefined ? -6 : opts.dy)];
+    var t = el("text", { x: mid[0], y: mid[1], "class": "t-dim",
+                         "font-size": opts.fs || 13.5,
+                         "text-anchor": "middle", "font-weight": 600 }, f.svg);
+    if (opts.rot) {
+      var ang = Math.atan2(dy, dx) * 180 / Math.PI;
+      if (ang > 90 || ang < -90) ang += 180;
+      t.setAttribute("transform", "rotate(" + ang.toFixed(1) + " " + mid[0] + " " + mid[1] + ")");
+    }
+    t.textContent = label;
+  }
+
+  // Angle arc at world vertex between two world directions, radius in px.
+  function angleDim(f, vertex, d1, d2, r, label, opts) {
+    opts = opts || {};
+    var V = f.P(vertex[0], vertex[1]);
+    function toScreen(d) { var L = Math.hypot(d[0], d[1]); return [d[0] / L, -d[1] / L]; }
+    var s1 = toScreen(d1), s2 = toScreen(d2);
+    var P1 = [V[0] + s1[0] * r, V[1] + s1[1] * r];
+    var P2 = [V[0] + s2[0] * r, V[1] + s2[1] * r];
+    var cross = s1[0] * s2[1] - s1[1] * s2[0];
+    var sweep = cross > 0 ? 1 : 0;
+    el("path", { d: "M " + P1[0].toFixed(1) + " " + P1[1].toFixed(1) +
+                    " A " + r + " " + r + " 0 0 " + sweep + " " +
+                    P2[0].toFixed(1) + " " + P2[1].toFixed(1),
+                 "class": opts.cls || "cut-line", "stroke-width": 1.1 }, f.svg);
+    var bis = [(s1[0] + s2[0]) / 2, (s1[1] + s2[1]) / 2];
+    var bl = Math.hypot(bis[0], bis[1]) || 1;
+    var T = [V[0] + bis[0] / bl * (r + (opts.rlab || 15)), V[1] + bis[1] / bl * (r + (opts.rlab || 15))];
+    var t = el("text", { x: T[0], y: T[1] + 4, "class": opts.tcls || "t-cut",
+                         "font-size": opts.fs || 12.5, "text-anchor": "middle",
+                         "font-weight": 600 }, f.svg);
+    t.textContent = label;
+  }
+
+  function hatchPattern(f, id) {
+    var defs = el("defs", {}, f.svg);
+    var pat = el("pattern", { id: id, width: 7, height: 7, patternUnits: "userSpaceOnUse",
+                              patternTransform: "rotate(45)" }, defs);
+    el("line", { x1: 0, y1: 0, x2: 0, y2: 7, "class": "hatch", "stroke-width": 1 }, pat);
+    return "url(#" + id + ")";
+  }
+
+  /* ============================================================
+     FIG. 1 — assembled truss (heights relative to toprem top, z'=0)
+     ============================================================ */
+  (function () {
+    var f = fig("figA", { x0: -430, x1: 2430, z0: -290, z1: 990,
+                          k: 0.285, padL: 8, padR: 8, padT: 26, padB: 12,
+                          label: "Samlet spærfag med hovedmål" });
+    var rise = 1000 * TAN;   // 700.2
+    var vgap = 95 / COS;     // 116.0 vertical thickness of sloped member
+    var ohDrop = 229 * TAN;  // 160.3
+
+    // reference line: toprem top
+    seg(f, [-380, 0], [2380, 0], "ref-line", { dash: "7 5", sw: 0.9 });
+    txt(f, 2380, 0, "overkant toprem", "t-mut", { fs: 11.5, anchor: "end", dy: 14 });
+
+    // topremme (cross-sections) + wall hints
+    poly(f, [[0, -45], [95, -45], [95, 0], [0, 0]], "wood", { sw: 1.2 });
+    poly(f, [[1905, -45], [2000, -45], [2000, 0], [1905, 0]], "wood", { sw: 1.2 });
+    seg(f, [10, -45], [10, -160], "ref-line", { sw: 1 });
+    seg(f, [85, -45], [85, -160], "ref-line", { sw: 1 });
+    seg(f, [1915, -45], [1915, -160], "ref-line", { sw: 1 });
+    seg(f, [1990, -45], [1990, -160], "ref-line", { sw: 1 });
+    txt(f, 47, -110, "V3", "t-mut", { fs: 11 });
+    txt(f, 1952, -110, "V4", "t-mut", { fs: 11 });
+
+    // rafters (ideal line, before bird's mouth)
+    poly(f, [[-229, -ohDrop], [1000, rise], [1000, rise + vgap], [-229, -ohDrop + vgap]], "wood", { sw: 1.6 });
+    poly(f, [[2229, -ohDrop], [1000, rise], [1000, rise + vgap], [2229, -ohDrop + vgap]], "wood", { sw: 1.6 });
+
+    // hanebånd
+    var xtl = 466.8 / TAN, xtr = 2000 - xtl;      // 666.7 / 1333.3
+    var xbl = xtl - 95 / TAN, xbr = 2000 - xbl;   // 531.0 / 1469.0
+    poly(f, [[xbl, 371.8], [xbr, 371.8], [xtr, 466.8], [xtl, 466.8]], "wood", { sw: 1.6 });
+    txt(f, 1000, 400, "hanebånd 45×95", "t-lab", { fs: 12.5 });
+
+    // 467: vertical dim outside left, with dashed reference at collar-top level
+    seg(f, [-270, 466.8], [xtl, 466.8], "ref-line", { dash: "5 4", sw: 0.8 });
+    dim(f, [-260, 0], [-260, 466.8], 0, "467", { noExtA: true, noExtB: true, dx: -26, dy: 4 });
+
+    // 700: rise, outside right, dashed reference from kip
+    seg(f, [1000, rise], [2310, rise], "ref-line", { dash: "5 4", sw: 0.8 });
+    dim(f, [2300, 0], [2300, rise], 0, "700", { noExtA: true, noExtB: true, dx: 28, dy: 4 });
+
+    // bottom tier: 229 overhang + 2000 span
+    dim(f, [-229, 0], [0, 0], -62, "229", { dy: 16 });
+    dim(f, [0, 0], [2000, 0], -62, "2000", { dy: 16 });
+
+    // 407 along underkant from kip to hanebånd attach
+    dim(f, [1000, rise], [xtl, 466.8], 34, "407 langs underkant", { rot: true, fs: 12, dy: 15 });
+
+    // 35° at left eave (vertex where underkant crosses toprem top)
+    angleDim(f, [0, 0], [1, 0], [COS, SIN], 40, "35°", { cls: "dim-line", tcls: "t-dim", rlab: 16 });
+
+    // kip note
+    seg(f, [1000, rise + vgap + 8], [1000, rise + vgap + 55], "ref-line", { sw: 0.8 });
+    txt(f, 1000, rise + vgap + 55, "lodret stødsnit i kip", "t-mut", { fs: 11.5, dy: -6 });
+  })();
+
+  /* ============================================================
+     FIG. 2 — rafter flat on the saw (u along underkant, v across board)
+     ============================================================ */
+  (function () {
+    var OFF = 95 * TAN; // 66.5 — shift of the 35° cut across the 95 face
+    var f = fig("figB", { x0: 0, x1: 1500 + OFF, z0: 0, z1: 95,
+                          k: 0.435, padL: 76, padR: 96, padT: 80, padB: 142,
+                          label: "Spær fladt på saven — parallelogram" });
+
+    poly(f, [[0, 0], [1500, 0], [1500 + OFF, 95], [OFF, 95]], "wood", { sw: 1.8 });
+
+    // square-cut reference lines (dashed) at both ends
+    seg(f, [0, 0], [0, 95], "ref-line", { dash: "4 4", sw: 0.9 });
+    seg(f, [1500, 0], [1500, 95], "ref-line", { dash: "4 4", sw: 0.9 });
+
+    // notch marking (dashed red): heel + seat on the board face
+    var M = [279.6, 0];
+    var H = [279.6 + 38.5 * SIN, 38.5 * COS];    // (301.7, 31.5)
+    var E = [H[0] + 55 * COS, H[1] - 55 * SIN];  // (346.7, 0)
+    seg(f, M, H, "cut-line", { dash: "5 4", sw: 1.4 });
+    seg(f, H, E, "cut-line", { dash: "5 4", sw: 1.4 });
+    txt(f, H[0], H[1], "fugleudskæring — afsættes på plads (fig. 4)", "t-cut",
+        { fs: 11.5, dy: -12, dx: 36, anchor: "start" });
+
+    // end + edge labels
+    txt(f, 0, 47, "FOD", "t-lab", { fs: 13, anchor: "end", dx: -34, dy: 4 });
+    txt(f, 1500 + OFF, 47, "KIP", "t-lab", { fs: 13, anchor: "start", dx: 34, dy: 4 });
+    txt(f, 800, 0, "underkant", "t-mut", { fs: 11.5, dy: 16 });
+    txt(f, 800 + OFF, 95, "overkant", "t-mut", { fs: 11.5, dy: -8 });
+    txt(f, 750 + OFF / 2, 95, "snittene er parallelle — samme geringsindstilling", "t-mut",
+        { fs: 11.5, dy: -52 });
+
+    // dims: overkant 1500 above; underkant 1500, 280, 1567 in tiers below
+    dim(f, [OFF, 95], [1500 + OFF, 95], 32, "1500", {});
+    dim(f, [0, 0], [1500, 0], -34, "1500", { dy: 17 });
+    dim(f, [0, 0], [279.6, 0], -72, "280", { dy: 17 });
+    seg(f, [1500 + OFF, 95], [1500 + OFF, -252], "dim-line", { sw: 0.8 });
+    dim(f, [0, 0], [1500 + OFF, 0], -108, "1567 spids til spids", { dy: 17, noExtB: true });
+
+    // width 95 at kip end (extension from the real bottom corner)
+    seg(f, [1500, 0], [1500 + OFF + 30 / f.k, 0], "dim-line", { sw: 0.8 });
+    dim(f, [1500 + OFF, 0], [1500 + OFF, 95], -26, "95", { noExtA: true, dx: 24, dy: 4 });
+
+    // 35° from square at both ends
+    angleDim(f, [0, 0], [0, 1], [OFF, 95], 46, "35°", { rlab: 15 });
+    angleDim(f, [1500, 0], [0, 1], [OFF, 95], 46, "35°", { rlab: 15 });
+  })();
+
+  /* ============================================================
+     FIG. 3 — hanebånd flat on the saw (trapezoid)
+     ============================================================ */
+  (function () {
+    var OFF = 95 / TAN; // 135.7
+    var f = fig("figC", { x0: 0, x1: 938, z0: 0, z1: 95,
+                          k: 0.60, padL: 64, padR: 96, padT: 86, padB: 76,
+                          label: "Hanebånd fladt på saven — trapez" });
+
+    poly(f, [[0, 0], [938, 0], [938 - OFF, 95], [OFF, 95]], "wood", { sw: 1.8 });
+    txt(f, 469, 0, "underkant (vender nedad mod gulvet)", "t-mut", { fs: 11.5, dy: 16 });
+    txt(f, 469, 95, "spejlvendte snit — endefladen følger spærets underside", "t-mut",
+        { fs: 11.5, dy: -52 });
+
+    // square-cut reference at left end
+    seg(f, [0, 0], [0, 95], "ref-line", { dash: "4 4", sw: 0.9 });
+
+    // dims
+    dim(f, [OFF, 95], [938 - OFF, 95], 34, "667", {});
+    dim(f, [0, 95], [OFF, 95], 34, "136", { fs: 12 });
+    dim(f, [0, 0], [938, 0], -34, "938", { dy: 17 });
+    seg(f, [938 - OFF, 95], [938 + 30 / f.k, 95], "dim-line", { sw: 0.8 });
+    dim(f, [938, 0], [938, 95], -26, "95", { noExtB: true, dx: 24, dy: 4 });
+
+    // 55° from square at left end
+    angleDim(f, [0, 0], [0, 1], [OFF, 95], 40, "55°", { rlab: 17 });
+  })();
+
+  /* ============================================================
+     FIG. 4 — bird's mouth detail, installed orientation (X-Z, mm).
+     Rafter seated: heel 38.5 vertical against toprem outer face (x=0),
+     seat 55 on toprem top (z=2412).
+     ============================================================ */
+  (function () {
+    var zTop = 2412;
+    var f = fig("figD", { x0: -330, x1: 270, z0: 2150, z1: 2665,
+                          k: 0.80, padL: 10, padR: 12, padT: 12, padB: 12,
+                          label: "Fugleudskæring — detalje ved toprem" });
+    var hatch = hatchPattern(f, "hatchD");
+
+    // wall continuation below toprem
+    seg(f, [12, 2367], [12, 2185], "ref-line", { sw: 1 });
+    seg(f, [83, 2367], [83, 2185], "ref-line", { sw: 1 });
+    txt(f, 47, 2215, "væg V3", "t-mut", { fs: 11.5 });
+
+    // toprem cross-section (95 wide, 45 thick), hatched
+    poly(f, [[0, 2367], [95, 2367], [95, zTop], [0, zTop]], "wood", { sw: 1.6 });
+    var A = f.P(0, zTop), B = f.P(95, 2367);
+    el("rect", { x: A[0], y: A[1], width: B[0] - A[0], height: B[1] - A[1], fill: hatch }, f.svg);
+    txt(f, 47, 2367, "toprem", "t-lab", { fs: 12, dy: 16 });
+
+    // rafter with notch, cropped at x=220 with a break zigzag
+    var heel = 38.5;
+    function ukz(x) { return zTop - heel + x * TAN; } // underkant line
+    var vgap = 95 / COS; // 116 vertical
+    var crop = 220;
+    poly(f, [
+      [-229, ukz(-229)],            // foot tip, underkant
+      [0, zTop - heel],             // heel bottom = THE MARK
+      [0, zTop],                    // heel top
+      [55, zTop],                   // seat exits through underkant
+      [crop, ukz(crop)],
+      [crop - 14, ukz(crop) + vgap * 0.36],
+      [crop + 12, ukz(crop) + vgap * 0.68],
+      [crop, ukz(crop) + vgap],
+      [-229, ukz(-229) + vgap]      // foot tip, overkant
+    ], "wood", { sw: 1.8 });
+
+    // cut faces emphasized
+    seg(f, [0, zTop - heel], [0, zTop], "cut-line", { sw: 2.2 });
+    seg(f, [0, zTop], [55, zTop], "cut-line", { sw: 2.2 });
+
+    // the mark point + leader to annotation at lower right
+    var Mp = f.P(0, zTop - heel);
+    el("circle", { cx: Mp[0], cy: Mp[1], r: 4, "class": "cut-fill" }, f.svg);
+    seg(f, [4, zTop - heel - 4], [128, 2318], "cut-line", { sw: 0.9 });
+    txt(f, 134, 2318, "mærk her: underkant rammer", "t-cut", { fs: 11.5, anchor: "start", dy: 3 });
+    txt(f, 134, 2318, "topremmens yderkant", "t-cut", { fs: 11.5, anchor: "start", dy: 18 });
+
+    // dims
+    dim(f, [0, zTop], [55, zTop], -24, "55", { fs: 12.5, dy: 17 });
+    dim(f, [0, zTop - heel], [0, zTop], 34, "38", { fs: 12.5, dx: -18, dy: 4 });
+    // 229 overhang, with manual extension lines
+    seg(f, [-229, ukz(-229) - 8 / f.k], [-229, 2184], "dim-line", { sw: 0.8 });
+    seg(f, [0, zTop - heel - 8 / f.k], [0, 2184], "dim-line", { sw: 0.8 });
+    dim(f, [-229, 2190], [0, 2190], 0, "229 udhæng", { noExtA: true, noExtB: true, fs: 12.5 });
+    // 280 along underkant (below the edge, in open air)
+    dim(f, [-229, ukz(-229)], [0, zTop - heel], -26, "280 langs underkant", { rot: true, fs: 12, dy: 17 });
+    // 35° between the (horizontal) seat direction and the underkant
+    angleDim(f, [55, zTop], [1, 0], [COS, SIN], 42, "35°", { cls: "dim-line", tcls: "t-dim", rlab: 15 });
+
+    // foot cut label
+    txt(f, -229, ukz(-229) + vgap / 2, "fodende:", "t-mut", { fs: 11.5, dx: -8, dy: -6, anchor: "end" });
+    txt(f, -229, ukz(-229) + vgap / 2, "lodret snit", "t-mut", { fs: 11.5, dx: -8, dy: 9, anchor: "end" });
+  })();
+})();
+</script>
+</body>
+</html>
