@@ -37,20 +37,20 @@ Løbegården er en separat struktur og står til sidst.
 
 ## 4. Tagkonstruktion
 
-- [ ] Rejs spær m. hanebånd + fugleudskæring
+- [ ] Rejs spær m. hanebånd + fugleudskæring → [01-spaer.md](docs/arbejdsplan/skiffertag/01-spaer.md)
 - [ ] Sofitt under tagskæg
 
-## 5. Tagdækning (skifer) → [tagdaekning-skifer.md](docs/arbejdsplan/tagdaekning-skifer.md)
+## 5. Tagdækning (skifer) → [oversigt + indkøbsliste](docs/arbejdsplan/skiffertag/README.md)
 
-- [ ] Sortér genbrugssten (bankeprøve, 3 tykkelser, bland partier)
-- [ ] Undertag + afstandslister 25×50 over spær
-- [ ] Lægtning 38×73 efter lægteplan (udkraget 200 mm ved gavle)
-- [ ] Sternbrædder ved begge tagfødder (overkant flugter lægte-overside)
-- [ ] Fodblik + fuglegitter + opklodsningsliste + begynderrække
-- [ ] Læg skifer nedefra (2 kobbersøm/sten, ½ stens forskydning, fuge 1–5 mm)
-- [ ] Toprække + kipliste + rygningsbrædder + zink-rygning
-- [ ] Vindskeder på lægte-ender + T-kitning ved gavle
-- [ ] Tagrende + nedløb
+- [ ] Undertag → [02-undertag.md](docs/arbejdsplan/skiffertag/02-undertag.md)
+- [ ] Afstandslister 25×50 over spær → [03-afstandslister.md](docs/arbejdsplan/skiffertag/03-afstandslister.md)
+- [ ] Lægtning 38×73 efter lægteplan → [04-laegter.md](docs/arbejdsplan/skiffertag/04-laegter.md)
+- [ ] Sternbrædder ved begge tagfødder → [05-stern.md](docs/arbejdsplan/skiffertag/05-stern.md)
+- [ ] Fodblik + fuglegitter + opklodsningsliste → [06-fodblik.md](docs/arbejdsplan/skiffertag/06-fodblik.md)
+- [ ] Sortér genbrugssten → [07-sortering.md](docs/arbejdsplan/skiffertag/07-sortering.md)
+- [ ] Læg skifer (begynder → toprække) → [08-skifer.md](docs/arbejdsplan/skiffertag/08-skifer.md)
+- [ ] Dobbelt vindskede ved gavle → [09-vindskeder.md](docs/arbejdsplan/skiffertag/09-vindskeder.md)
+- [ ] Rygning → [10-rygning.md](docs/arbejdsplan/skiffertag/10-rygning.md)
 
 ## 6. Udvendig beklædning
 

@@ -68,7 +68,7 @@ if (house_roof_cover == "skifer") {
     RenderHouseRoofAfstandslister();     // 5: klemme-/afstandslister 25×50 over spær
     RenderHouseRoofLaegter();            // 5: taglægter 38×73, gauge 225
     RenderHouseRoofStern();              // 5: sternbrædder ved tagfod (overkant flugter lægte-overside)
-    RenderHouseRoofFodblik();            // 5: fodblik (zink) over sternen, ud i renden
+    RenderHouseRoofFodblik();            // 5: fodblik (zink) over sternen — drypkant
     RenderHouseRoofSkifer();             // 5: naturskifer 30×60, dobbelt dækning
     RenderHouseRoofVindskeder();         // 5: vindskeder på lægte-enderne
     RenderHouseRoofRygning();            // 5: zink-rygning over kip (sidste trin)

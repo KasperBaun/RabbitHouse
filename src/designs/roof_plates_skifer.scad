@@ -13,7 +13,7 @@
 //   horizontal pitch = 225 × cos(35°) ≈ 184 mm — see SK_BATTEN_C2C
 //   lap = 600 − 2 × 225 = 150 mm (≥ 80–90 mm required at 35° pitch)
 // The real build adds a begynderrække at the eave and a cut top course at
-// the ridge (see docs/arbejdsplan/tagdaekning-skifer.md) — not modelled.
+// the ridge (see docs/arbejdsplan/skiffertag/) — not modelled.
 // Stone seams are rendered as shallow grooves on the slate surface so the
 // roof reads as slate rather than a painted slab.
 
@@ -237,8 +237,8 @@ module render_skifer_sten() {
 
 // Fodblik — zinc drip flashing at both eaves. A strip tucked in under the
 // slate edge, folded out over the stern's top edge and ~45 mm down its face,
-// so water off the undertag and the slate drips into the gutter instead of
-// running down behind the stern. Runs between the vindskede inner faces,
+// so water off the undertag and the slate drips clear of the stern (no
+// gutter in this build). Runs between the vindskede inner faces,
 // like the lægter. The stern must match this in height: stern top = stack
 // top, so the fold lands exactly on the stern's upper front edge.
 module render_skifer_fodblik() {

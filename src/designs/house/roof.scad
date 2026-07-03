@@ -145,8 +145,7 @@ module _render_fascia_house(eh_back, fascia_top_offset, palette) {
 // vindskede INNER faces — the vindskede tip runs past the eave line and
 // covers the stern's end grain (plumb + level end cut). Mounted AFTER
 // lægtning — the top edge is aligned flush with the lægte tops (just under
-// the slate, capping the undertag / liste / lægte ends at the eave). The
-// tagrende hangs on this board.
+// the slate, capping the undertag / liste / lægte ends at the eave).
 module _render_stern_gable(palette) {
     stern_h = 150;   // 25×150 — same depth as the vindskede, flush corners
     y0 = -(G_VS_OUTER - G_VS_T);
