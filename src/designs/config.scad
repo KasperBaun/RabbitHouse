@@ -208,7 +208,25 @@ G_OH_EAVE     = 229;
 // Rake (barge) overhang — the slate extends this far past each gable wall so
 // it covers the proud gable cladding (~48 mm out) and gives a real barge
 // overhang instead of the cladding ends poking past a flush roof edge.
+// The taglægter cantilever out past the gable trusses to carry it; the
+// vindskede is nailed to the lægte ends at the rake edge.
 G_OH_RAKE     = 200;
+
+// Vindskede (barge board) at the rake edge. The slate overhangs the board's
+// outer face by G_VS_SLATE_LAP; the lægter run out to the board's inner face.
+G_VS_T         = 25;                          // vindskede thickness (Y)
+G_VS_SLATE_LAP = 30;                          // slate past vindskede outer face
+G_VS_OUTER     = G_OH_RAKE - G_VS_SLATE_LAP;  // = 170; outer face at Y=-170/3170
+
+// Roof build-up above the rafter top (skifer cover): undertag 3 +
+// afstandsliste 25 (25×50 along each spær) + taglægte 38 (T1 38×73).
+// The slate itself sits on top of this stack.
+G_ROOF_STACK_T = 3 + 25 + 38;                 // = 66
+
+// Truss Y positions (front face of each 45 mm truss). Shared between the
+// gable framing (roof_gable.scad) and the skifer cover, whose afstandslister
+// must sit directly over the spær.
+G_TRUSS_YS = [0, 600, 1200, 1800, 2400, RH_HOUSE_DEPTH - 45];
 G_RIDGE_X     = RH_HOUSE_LEN / 2;         // = 1000
 G_EAVE_Z      = RH_BASE_H + RH_EH_FRONT;  // = 2412, flat eave on all 4 walls
 

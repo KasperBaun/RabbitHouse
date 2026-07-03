@@ -1,38 +1,45 @@
-// Skifer cover on the gable roof (cover == "skifer"). Stack from rafter
+// Skifer cover on the gable roof (cover == "skifer") — genbrugs-naturskifer
+// 30×60 cm i dobbelt dækning (guide-naturskifertag.md). Stack from rafter
 // top upward:
-//   0..3   mm  diffusion-open underlay
-//   3..28  mm  25x38 mm taglægter parallel to the ridge
-//   28..36 mm  Cembrit-style fiber-cement skifer plates (~8 mm visual thickness)
+//   0..3   mm  diffusion-open underlay (banevare, OK from 25°; pitch is 35°)
+//   3..28  mm  25×50 afstandslister along each spær (drainage gap, §4.1B)
+//   28..66 mm  38×73 T1 taglægter parallel to the ridge
+//   66..74 mm  slate courses (~8 mm visual thickness)
 //
-// 30×60 cm plates in halv-forbandt: 5 courses per half-slope, plate width
-// 300 mm along the ridge (Y), plate length 600 mm up-slope. Slope is
+// 30×60 cm stones in halv-forbandt: 5 full courses per half-slope, stone
+// width 300 mm along the ridge (Y), length 600 mm up-slope. Slope is
 // dimensioned so the math goes up exactly:
 //   slope = 4 × gauge(225 slope) + 600 = 1500 mm
 //   horizontal pitch = 225 × cos(35°) ≈ 184 mm — see SK_BATTEN_C2C
-//   lap = 600 − 2 × 225 = 150 mm (≥ 70 mm min for 35° pitch)
-// Plate seams are rendered as shallow grooves on the slate surface so the
+//   lap = 600 − 2 × 225 = 150 mm (≥ 80–90 mm required at 35° pitch)
+// The real build adds a begynderrække at the eave and a cut top course at
+// the ridge (see docs/arbejdsplan/tagdaekning-skifer.md) — not modelled.
+// Stone seams are rendered as shallow grooves on the slate surface so the
 // roof reads as slate rather than a painted slab.
 
 include <../lib/defaults.scad>
 include <config.scad>
 
 SK_UNDERLAY_T   = 3;
-SK_BATTEN_T     = 25;
-SK_BATTEN_W     = 38;
-SK_PLATE_L      = 600;          // plate length up the slope
-SK_PLATE_W      = 300;          // plate width along the ridge (Y)
+SK_CBATTEN_T    = 25;           // afstandsliste 25×50 (thickness above underlay)
+SK_CBATTEN_W    = 50;           // afstandsliste width along Y (over each spær)
+SK_BATTEN_T     = 38;           // taglægte T1 38×73
+SK_BATTEN_W     = 73;
+SK_PLATE_L      = 600;          // stone length up the slope
+SK_PLATE_W      = 300;          // stone width along the ridge (Y)
 SK_BATTEN_C2C   = 184;          // horizontal projection of slope-gauge 225 mm
-SK_SLATE_T      = 8;            // visible plate thickness (read as slate)
-SK_STACK_T      = SK_UNDERLAY_T + SK_BATTEN_T + SK_SLATE_T;
+SK_SLATE_T      = 8;            // visible stone thickness (read as slate)
+SK_STACK_T      = SK_UNDERLAY_T + SK_CBATTEN_T + SK_BATTEN_T + SK_SLATE_T;
 
-// No rake overhang — slate slab terminates at the gable walls, so seams
-// and grooves run all the way to the edge.
+// Seams and grooves run all the way to the slate edge (incl. the rake
+// overhang) — the stones are laid out to the barge line.
 SK_RAKE_INSET   = 0;
 
 SK_UNDERLAY_COLOR = [0.14, 0.13, 0.12];
 SK_SLATE_COLOR    = [0.20, 0.22, 0.26];
 SK_SEAM_COLOR     = [0.03, 0.04, 0.06];
 SK_RIDGE_COLOR    = [0.11, 0.12, 0.15];
+SK_ZINC_COLOR     = [0.72, 0.75, 0.78];
 
 // ============================================================================
 // One tilted slab along the gable plane on [x_lo..x_hi] × [y_lo..y_hi].
@@ -65,18 +72,36 @@ module _sk_underlay(y_lo, y_hi) {
     _sk_half_slab(G_RIDGE_X,  RH_HOUSE_LEN + G_OH_EAVE, y_lo, y_hi, 0, SK_UNDERLAY_T, SK_UNDERLAY_COLOR);
 }
 
-// Taglægter — 25×38, parallel to the ridge (run the full Y depth), at c/c up
-// each half-slope. Each is a slope-following slab (a flat cube would diverge
-// from the 35° plane and poke up through the slate at its up-slope edge).
+// Afstandslister — 25×50 trykimprægneret, on the underlay directly over each
+// spær, running the full slope of each half. They lift the taglægter off the
+// underlay so water on the membrane can drain to the eave (guide §4.1B).
+module _sk_counter_battens(palette) {
+    for (y = G_TRUSS_YS) {
+        y_mid = y + 45/2;   // centre the 50 mm list on the 45 mm truss
+        _sk_half_slab(-G_OH_EAVE, G_RIDGE_X,
+                      y_mid - SK_CBATTEN_W/2, y_mid + SK_CBATTEN_W/2,
+                      SK_UNDERLAY_T - 0.5, SK_CBATTEN_T, pal_post(palette));
+        _sk_half_slab(G_RIDGE_X, RH_HOUSE_LEN + G_OH_EAVE,
+                      y_mid - SK_CBATTEN_W/2, y_mid + SK_CBATTEN_W/2,
+                      SK_UNDERLAY_T - 0.5, SK_CBATTEN_T, pal_post(palette));
+    }
+}
+
+// Taglægter — T1 38×73, parallel to the ridge, at c/c up each half-slope,
+// on top of the afstandslister. They cantilever out past the gable trusses
+// to carry the rake overhang; ends stop at the vindskede inner face. Each is
+// a slope-following slab (a flat cube would diverge from the 35° plane and
+// poke up through the slate at its up-slope edge).
 module _sk_battens(y_lo, y_hi, palette) {
+    z0 = SK_UNDERLAY_T + SK_CBATTEN_T - 0.5;
     for (x = [-G_OH_EAVE + SK_BATTEN_W/2 :
                SK_BATTEN_C2C : G_RIDGE_X - SK_BATTEN_W])
         _sk_half_slab(x - SK_BATTEN_W/2, x + SK_BATTEN_W/2, y_lo, y_hi,
-                      SK_UNDERLAY_T - 0.5, SK_BATTEN_T, pal_post(palette));
+                      z0, SK_BATTEN_T, pal_post(palette));
     for (x = [G_RIDGE_X + SK_BATTEN_W/2 :
                SK_BATTEN_C2C : RH_HOUSE_LEN + G_OH_EAVE - SK_BATTEN_W])
         _sk_half_slab(x - SK_BATTEN_W/2, x + SK_BATTEN_W/2, y_lo, y_hi,
-                      SK_UNDERLAY_T - 0.5, SK_BATTEN_T, pal_post(palette));
+                      z0, SK_BATTEN_T, pal_post(palette));
 }
 
 // Course grooves and plate seams are rendered as thin tilted slabs that
@@ -168,33 +193,88 @@ module _sk_ridge_cap(y_lo, y_hi) {
 }
 
 // ============================================================================
-// Top-level entry. Draws the full roof build-up as separate slope-following
-// layers on the rafters: undertag (diffusion-open underlay) → taglægter
-// 25×38 → skifer plates. Each layer occupies its own band of the stack so
-// nothing z-fights; the slate plates are only the top SK_SLATE_T (the
-// underlay + lægter are visible at the eave edge and from the underside).
+// Per-layer entries — one per arbejdsplan work step, so main.scad can render
+// the build-up step by step. Each layer occupies its own band of the stack
+// so nothing z-fights; the slate is only the top SK_SLATE_T (the underlay +
+// lister + lægter are visible at the eave edge and from the underside).
 // ============================================================================
-module render_roof_plates_skifer_gable(palette = DEFAULT_PALETTE) {
+
+// Undertag — stops at the gable walls (does not run into the rake overhang).
+module render_skifer_undertag() {
+    _sk_underlay(0, RH_HOUSE_DEPTH);
+}
+
+// Klemme-/afstandslister 25×50 over hvert spær.
+module render_skifer_afstandslister(palette = DEFAULT_PALETTE) {
+    _sk_counter_battens(palette);
+}
+
+// Taglægter 38×73 — cantilever 200 mm past the gable trusses to carry the
+// rake overhang, ending at the vindskede inner face (vindskede caps the ends).
+module render_skifer_laegter(palette = DEFAULT_PALETTE) {
+    _sk_battens(-(G_VS_OUTER - G_VS_T),
+                RH_HOUSE_DEPTH + (G_VS_OUTER - G_VS_T), palette);
+}
+
+// Naturskifer — the two slate slabs plus course grooves and stone seams.
+// Only the top SK_SLATE_T of the stack, lapping ~1 mm over the lægte tops
+// so no faces coincide.
+module render_skifer_sten() {
     y_lo = -G_OH_RAKE;
     y_hi = RH_HOUSE_DEPTH + G_OH_RAKE;
     x_lo = -G_OH_EAVE;
     x_hi = RH_HOUSE_LEN + G_OH_EAVE;
-
-    // Underlay + lægter run only between the gable walls (not into the rake
-    // overhang), so their ends stay hidden behind the vindskede — the barge
-    // overhang reads as clean slate.
-    _sk_underlay(0, RH_HOUSE_DEPTH);
-    _sk_battens(0, RH_HOUSE_DEPTH, palette);
-
-    // Slate plates — only the top SK_SLATE_T of the stack, lapping ~1 mm over
-    // the lægte tops so no faces coincide.
-    slate_z0 = SK_UNDERLAY_T + SK_BATTEN_T - 1;
+    slate_z0 = SK_UNDERLAY_T + SK_CBATTEN_T + SK_BATTEN_T - 1;
     _sk_half_slab(x_lo, G_RIDGE_X, y_lo, y_hi,
                   slate_z0, SK_STACK_T - slate_z0, SK_SLATE_COLOR);
     _sk_half_slab(G_RIDGE_X, x_hi, y_lo, y_hi,
                   slate_z0, SK_STACK_T - slate_z0, SK_SLATE_COLOR);
-
     _sk_course_grooves(y_lo, y_hi);
     _sk_plate_seams(y_lo, y_hi);
-    _sk_ridge_cap(y_lo, y_hi);
+}
+
+// Fodblik — zinc drip flashing at both eaves. A strip tucked in under the
+// slate edge, folded out over the stern's top edge and ~45 mm down its face,
+// so water off the undertag and the slate drips into the gutter instead of
+// running down behind the stern. Runs between the vindskede inner faces,
+// like the lægter. The stern must match this in height: stern top = stack
+// top, so the fold lands exactly on the stern's upper front edge.
+module render_skifer_fodblik() {
+    y0   = -(G_VS_OUTER - G_VS_T);
+    y1   = RH_HOUSE_DEPTH + (G_VS_OUTER - G_VS_T);
+    drop = 45;    // visible fold-down over the stern face
+    tuck = 20;    // how far the top leg reaches in under the slate
+    t    = 2;
+    for (side = [0, 1]) {
+        x_e  = side == 0 ? -G_OH_EAVE : RH_HOUSE_LEN + G_OH_EAVE;
+        z_hi = g_rafter_top_z(x_e) + G_ROOF_STACK_T;
+        x_lo = side == 0 ? x_e - RH_FASCIA_T - t : x_e - tuck;
+        color(SK_ZINC_COLOR) {
+            // top leg: from under the slate out over the stern top
+            translate([x_lo, y0, z_hi - t])
+                cube([tuck + RH_FASCIA_T + t, y1 - y0, t]);
+            // front leg: down over the stern face
+            translate([side == 0 ? x_e - RH_FASCIA_T - t : x_e + RH_FASCIA_T,
+                       y0, z_hi - drop])
+                cube([t, y1 - y0, drop]);
+        }
+    }
+}
+
+// Zink-rygning over kippen.
+module render_skifer_rygning() {
+    _sk_ridge_cap(-G_OH_RAKE, RH_HOUSE_DEPTH + G_OH_RAKE);
+}
+
+// ============================================================================
+// Top-level entry — the full build-up in one call (back-compat for the
+// house/roof_plates.scad dispatcher and render scripts).
+// ============================================================================
+module render_roof_plates_skifer_gable(palette = DEFAULT_PALETTE) {
+    render_skifer_undertag();
+    render_skifer_afstandslister(palette);
+    render_skifer_laegter(palette);
+    render_skifer_fodblik();
+    render_skifer_sten();
+    render_skifer_rygning();
 }

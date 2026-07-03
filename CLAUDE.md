@@ -6,23 +6,32 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 OpenSCAD model of a rabbit house — an outdoor structure for a bonded pair of pet rabbits in a Nordic / temperate-maritime climate. All units are millimetres.
 
-Earlier iterations (v1: mono-pitch shed; v2: gabled house + polycarb run) are frozen in `_archive/` and not part of the active build. The current design is the only one rendered.
+Earlier iterations (v1: mono-pitch shed; v2: gabled house + polycarb run) are frozen in `_archive/` and not part of the active build. The current design is an **L-shape**: a tall gable-roofed house and a lower, separate mesh-top run (løbegård) sharing the back wall line.
 
 ## Opening / Previewing
 
-Open `src/main.scad` in OpenSCAD — it is the top-level dispatcher, organised into `// shared`, `// house`, and `// yard` sections. Toggle individual `Render*()` calls and pick `roof_cover` / `cladding_type` near the top of the file.
+Open `src/main.scad` in OpenSCAD — it is the top-level dispatcher, organised into `// shared`, `// house`, and `// yard` sections. Toggles near the top:
+
+- `house_roof_cover` — `"skifer"` (default; gable roof) | `"tagpap"` | `"eternit"` (legacy mono-pitch)
+- `house_truss` — `"haneband"` (default) | `"gitterspaer"`
+- `yard_roof_cover` — `"mesh"` (default) | `"polycarb"` | `"tagpap"` | `"eternit"`
+- `cladding_type` — `"klink"` | `"board_on_board"`
+
+With `"skifer"` the house roof is rendered **step by step** — one `RenderHouseRoof*()` call per arbejdsplan work step, in real build order (spær → undertag → afstandslister → lægter → stern → fodblik → skifer → vindskeder → rygning). Comment calls in/out to inspect each build stage. Other covers render via the two composite calls in the `else` branch (scripts in `src/scripts/` override `house_roof_cover` with `-D` and rely on this).
+
+The `// yard` render block is currently commented out — uncomment to see the run.
 
 ## House / yard split
 
-Code AND the BOM/skæreliste are split into two zones at **X = RH_HOUSE_LEN (1500 mm)**:
+The two zones are **separate structures** with different footprints and wall heights. Code and BOM split at **X = RH_HOUSE_LEN (2000 mm)**:
 
-| Zone   | Footprint        | What it owns                                                                 |
-| ------ | ---------------- | ---------------------------------------------------------------------------- |
-| House  | X = 0..1500      | V3 (left), V4 (partition) — entire walls; V1+V2 segments [0..hl]; junction stud at X=hl; left-side roof overhang + lookouts + side fascia + soffit; human door + side window; cladding (all 4 house walls); foundation under house walls + V4 cross; cover plates over house segment. |
-| Yard   | X = 1500..6000   | V5 (right) — entire wall; V1+V2 segments [hl..ll]; right-side roof overhang + lookouts + side fascia + soffit; yard door; mesh on front/back/right; foundation under yard 3 sides (left side = V4 = house in combined); cover plates over yard segment. |
-| Shared | —                | Ground; murpap til tagfod; small fastener packages (skruer, søm). Foundation V4 cross-wall is owned by house (when standalone yard is built, set `RenderYardFoundation(standalone=true)` to add its own left strip). Cover plates split at X=hl with wave phase alignment for eternit (1720 mm = 10 × B7_PITCH). |
+| Zone  | Footprint                     | What it owns |
+| ----- | ----------------------------- | ------------ |
+| House | X = 0..2000, Y = 0..3000      | Walls V1–V4 (own full perimeter); gable roof + skifer cover; kælder (basement pit + slab + lemme/trapper); strøer-gulv; front door + 2 front windows + side window + hus-dør/pet-dør in V4; cladding all 4 walls; foundation ring. |
+| Yard  | X = 2000..6000, Y = 1000..3000 | Own V1/V2 wall segments + V5; mesh walls front/back/right; mesh lid (or mono-pitch roof for solid covers); yard door; 3-sided foundation (`standalone=true` adds the 4th side). |
+| Shared | —                            | Ground; back wall line Y = 3000 is common to both zones. |
 
-Each zone folder (`designs/house/`, `designs/yard/`) exposes its own `RenderHouse*()` / `RenderYard*()` entry point per building system. Folders are independent — helpers are duplicated rather than shared. `RenderRoofPlates(cover)` stays at the root of `designs/` because the cover layers can't be cleanly split at the partition line.
+Note the yard front wall sits at Y = `RH_YARD_Y_OFFSET` (1000) — the house sticks 1000 mm further forward. `RenderYardFoundation(standalone)` / `RenderYardRoofPlates(cover, standalone)` control the geometry when the yard is built alone.
 
 ## Architecture
 
@@ -33,41 +42,50 @@ src/
   lib/
     ctx.scad                         # context-vector accessor functions
     defaults.scad                    # DEFAULT_PALETTE / CLAD / MESH / STUD
-    primitives/                      # cladding, mesh, roof, framing, foundation, openings, beslag, fundablok
+    presets.scad
+    primitives/                      # beslag, cladding, fundablok, mesh, roof (fascia/gutter)
     decor/                           # rabbit, landscape, lighting, furniture
   designs/
-    config.scad                      # constants (RH_LENGTH, RH_WIDTH, ...)
+    config.scad                      # constants (RH_*, G_*) + roof-geometry helper functions
+    README.md                        # per-folder overview + toggle documentation
     ground.scad                      # SHARED — grass / terrain
-    roof_plates.scad                 # SHARED — combined-cover dispatcher (back-compat)
-    roof_plates_tagpap.scad          # variant — OSB + tagpap + alu-sternkapsler (parameterised x_lo/x_hi)
-    roof_plates_eternit.scad         # variant — C18 lægter + eternit (parameterised x_lo/x_hi)
-    interior.scad                    # SHARED — nest box, hay rack, bowls
-    house/                           # HUS-zone (X = 0..1500) — buildable standalone
-      foundation.scad                # RenderHouseFoundation — perimeter + V4 cross
-      framing.scad                   # RenderHouseFraming — V1[0..hl] + V2[0..hl] + V3 + V4 + junction-stud
-      openings.scad                  # RenderHouseOpenings — human-dør + side-vindue
-      roof.scad                      # RenderHouseRoof — spær X<=1200 + venstre lookouts + venstre fascia/soffit
-      roof_plates.scad               # RenderHouseRoofPlates(cover, standalone) — house cover segment
-      cladding/
-        cladding.scad                # RenderHouseCladding — dispatcher (klink | board_on_board)
-        cladding_common.scad         # housewrap + corner-trim + counter-batten primitives (generic)
-        cladding_klink.scad          # klink renderer + entry
-        cladding_board_on_board.scad # board-on-board renderer + entry
-    yard/                            # YARD-zone (X = 1500..6000) — standalone needs `standalone=true` flags
+    roof_plates_tagpap.scad          # cover variant — OSB + tagpap (parameterised x_lo/x_hi)
+    roof_plates_eternit.scad         # cover variant — C18 lægter + eternit (x_lo/x_hi)
+    roof_plates_polycarb.scad        # cover variant — 12 mm polycarb slab (x_lo/x_hi)
+    roof_plates_mesh.scad            # cover variant — welded-wire lid (x_lo/x_hi)
+    roof_plates_skifer.scad          # cover variant — gable-only naturskifer (no x-range;
+                                     #   per-layer render_skifer_*() + composite entry)
+    house/                           # HUS-zone (X = 0..2000)
+      foundation.scad                # RenderHouseFoundation — fundablok perimeter ring
+      basement.scad                  # RenderHouseBasementFloor + RenderHouseStairs (kælder)
+      floor.scad                     # RenderHouseFloorJoists/-Hangers/-Deck (strøer-gulv)
+      framing.scad                   # RenderHouseFraming — DPC + bundrem + studs + toprem, V1–V4
+      openings.scad                  # RenderHouseOpenings — doors + windows
+      roof.scad                      # RenderHouseRoof dispatcher + stern; step entries
+                                     #   RenderHouseRoofSpaer/-Stern/-Vindskeder
+      roof_gable.scad                # gable trusses dispatcher + vindskede geometry
+      roof/haneband.scad             # spær med hanebånd (default truss)
+      roof/gitterspaer.scad          # king-post truss + ridge board (alternative)
+      roof_plates.scad               # RenderHouseRoofPlates dispatcher; step entries
+                                     #   RenderHouseRoofUndertag/-Afstandslister/-Laegter/
+                                     #   -Skifer/-Rygning
+      cladding/                      # klink | board_on_board renderers + common stack
+    yard/                            # YARD-zone (X = 2000..6000, Y = 1000..3000)
       foundation.scad                # RenderYardFoundation(standalone)
-      framing.scad                   # RenderYardFraming — V1[hl..ll] + V2[hl..ll] + V5
-      openings.scad                  # RenderYardOpenings — yard-dør
-      roof.scad                      # RenderYardRoof — spær X>=1800 + højre lookouts + højre fascia/soffit
-      roof_plates.scad               # RenderYardRoofPlates(cover, standalone) — yard cover segment
-      mesh.scad                      # RenderYardMesh — voliere på front + bag + højre
+      framing.scad                   # RenderYardFraming — V1/V2 segments + V5
+      openings.scad                  # RenderYardOpenings — yard door (mesh leaf)
+      roof.scad                      # RenderYardRoof — mono-pitch skeleton (solid covers only)
+      roof_plates.scad               # RenderYardRoofPlates(cover, standalone)
+      mesh.scad                      # RenderYardMesh — voliere front + bag + højre
 docs/
-  *.md                               # per-system build documentation
-  materialeliste.xlsx                # consolidated BOM (Zone-kolonne: Hus | Yard | Fælles)
-  superpowers/specs/                 # historical design specs (one-shot)
+  arbejdsplan/                       # printable per-step build instructions (+ img/)
+  hus/, løbegård/                    # per-zone construction docs + skærelister pr. væg
+  *.md                               # requirements, PRD, timber framing, roof guides
+  materialeliste.xlsx                # consolidated BOM
 _archive/                            # frozen earlier designs (v1, v2)
+arbejdsplan.md                       # top-level build checklist (links into docs/arbejdsplan/)
+guide-naturskifertag.md              # naturskifer reference guide (the slate-roof authority)
 ```
-
-**Each zone folder is self-contained** — `house/framing.scad`, `house/roof.scad`, `house/foundation.scad` and the yard equivalents each carry their own DPC/sill/stud/top-plate/rafter/lookout/soffit/fascia/strip helpers. Cover plates use shared variant files at `designs/roof_plates_*.scad` parameterised with `x_lo/x_hi`, and zone-specific `house/roof_plates.scad` / `yard/roof_plates.scad` dispatchers pass the right X range. Cladding is house-only and bundled in `house/cladding/`. `RenderHouseRoofPlates` and `RenderYardRoofPlates` each accept a `standalone=true` flag to render the missing-half overhang + side fascia when building one zone alone.
 
 **Library files use `use <...>`**, design files `include <config.scad>` for their own constants.
 
@@ -87,31 +105,30 @@ Every library module takes **named arguments with sensible defaults**. Things th
 
 ### Spatial layout
 
-- **Front** = Y=0 (open garden face / mesh side / human entry).
-- **Back** = Y=`width` (solid cladded wall; carries prevailing-wind / driving-rain duty per REQ-016).
-- **Left** = X=0, **Right** = X=`length`.
-- Z up; base height = 120 mm above grade.
+- **Front** = Y=0 (open garden face / human entry; yard front is at Y=1000).
+- **Back** = Y=3000 (solid cladded wall; carries prevailing-wind / driving-rain duty per REQ-016).
+- **Left** = X=0, **Right** = X=6000 (`RH_LENGTH`).
+- Z up; base height = 120 mm above grade (`RH_BASE_H` = sokkel top).
 
 ### Structural notes
 
-ONE continuous mono-pitch roof over the entire 6 m × 2,5 m footprint, sloping front-to-back (eh_front=2400, eh_back=2200, drop=200 over 2500 mm = 4,6° / 8 % fald for tagpap default; eh_back lowers further for eternit_10/14). The house occupies X=0..1500 (1.5 m); the yard occupies X=1500..6000 (4.5 m). Roof cover selected via the `roof_cover` parameter in `src/main.scad` (`"tagpap_osb"` | `"eternit_b7"` | `"eternit_10"` | `"eternit_14"`).
+**House roof** is a gable (saddeltag): pitch 35° (`G_PITCH_DEG`), ridge along Y at X = 1000 (`G_RIDGE_X`), flat eave Z = 2412 on all four walls (`G_EAVE_Z`). Geometry via `g_rafter_top_z(x)` & friends in `designs/config.scad`. Each half-slope is exactly 1500 mm = 4 × gauge(225) + 600, sized for 30×60 cm slate in double coverage. Skifer build-up on the rafters (per `guide-naturskifertag.md`): undertag 3 mm → afstandslister 25×50 over each spær → taglægter 38×73 (gauge 225 on the slope) → genbrugs-naturskifer. The 200 mm rake overhang (`G_OH_RAKE`) is carried by lægter cantilevering past the gable trusses; vindskeder are nailed to the lægte ends (`G_VS_*` constants), sternbrædder (25×150, same depth as the vindskeder so the corners meet flush) cap the rafter tails at both eaves with a zinc fodblik folded over them, and a zinc ridge cap covers the kip. Build details that are in the arbejdsplan but intentionally NOT modelled: begynderrække, opklodsnings-/kip-lister, cut top course. The mono-pitch helpers (`roof_oz*`, `RH_EH_*`) remain for the legacy tagpap/eternit house covers and the yard.
 
-Foundation is a continuous fundablok strip (50×20×15 cm blocks, 3 courses in halvstensforbandt = ~60 cm tall) under ALL walls — house perimeter + V4 partition cross + yard 3-side perimeter — sitting on stabilgrus in a frostfri trench (~80 cm dig). Drawn zone-by-zone via `RenderHouseFoundation()` + `RenderYardFoundation()` (each using the shared `fundablok_strip` primitive in `lib/primitives/fundablok.scad`); top of foundation at Z=`RH_BASE_H` (120 mm above grade — sokkel-niveau where bundrem of all walls sits), ring extends 600 mm down into the trench. Comment out `RenderGround()` in `main.scad` (under `// shared`) to inspect the buried foundation.
+**House walls**: 2000 mm studs → wall top 2092 (`RH_EH_FRONT`); DPC 2 + bundrem 45 + stud + toprem 45. The 2000 mm door rough openings reuse the top plate as header.
 
-House floor is `rh_stroer_floor`: 45×95 mm strøer laid flat at c/c 600 mm across the house footprint, with ~25 mm sawn boards nailed on top. The yard sits on grass at grade. The two right-end corner posts (yard NE and SE) sit on a steel post-base bracket (18 mm) directly on the fundablok ring. Yard sill plates run at Z=18..63.
+**Foundation / kælder**: fundablok ring (50×20×15 blocks), 4 courses ≈ 800 mm deep (`RH_FOUNDATION_DEPTH`), on stabilgrus in a frostfri trench. The hollow ring is a usable basement pit: concrete slab at Z = −680 (`RH_BASEMENT_FLOOR_Z`), floor hatches (lemme) + steep stairs give access. House floor = 45×95 reglar frame + ~25 mm board deck, deck top flush with ring top (Z = 120). Comment out `RenderGround()` to inspect buried parts.
 
-House side and partition walls are mono-pitch cladded with a sloped top beam below the roof. `house/framing.scad` renders only the structural skeleton — DPC, sill plate, studs (incl. junction studs at X=hl), top plate, jamb studs and framed openings. Mineral-wool insulation, dampspærre, losholter and vindkryds are intentionally not rendered (the wool is on the BOM under cladding). Vindpapir (housewrap) belongs to the cladding stack and lives in `house/cladding/cladding_common.scad`.
+**Yard**: separate lower cage — flat 2100 walls front and back (`RH_YARD_EH_*`), welded-wire mesh walls (13 mm aperture, predator-proof per REQ-008) and a mesh lid straight on the top plates (no roof skeleton when `yard_roof_cover == "mesh"`). `RenderYardRoof()` (spær/lookouts/soffit/stern) is only needed for solid covers.
 
 ## Conventions
 
-- Colors: bundled into a `palette` ctx vector. Structural wood = `pal_post(palette)`; panels = `pal_panel1`/`pal_panel2`; trim = `pal_trim`; transparent run roof = `pal_polycarb`.
+- Colors: bundled into a `palette` ctx vector. Structural wood = `pal_post(palette)`; panels = `pal_panel1`/`pal_panel2`; trim = `pal_trim`; transparent roof = `pal_polycarb`.
 - Cladding: `klink_board` primitive + higher-level `clad_wall_*` modules in `lib/primitives/cladding.scad`. For `axis="Y"`, cladding thickness extends in +X — set origin X to the wall's outer face when cladding the +X side, or to `outer_x - cs_thick(clad)` when cladding the -X side.
 - Mesh panels: `mesh_panel_x` / `mesh_panel_y` in `lib/primitives/mesh.scad`.
-- Roofs: `roof_mono_pitch` / `roof_gable_y` / `roof_polycarb_mono` in `lib/primitives/roof.scad`.
-- Angled geometry: `hull()` between two thin cubes at different Z heights.
+- Slope-following geometry on the gable roof: thin `polyhedron` slabs via `_sk_half_slab` (an axis-aligned cube diverges from the 35° plane). Elsewhere: `hull()` between two thin cubes at different Z heights.
 
 ## Constants prefix
 
-Design-level constants use the `RH_` prefix (Rabbit House) to avoid collision with library `DEFAULT_*` globals — e.g., `RH_LENGTH`, `RH_BASE_H`, `RH_OH_FRONT`. Module names use `rh_` lowercase prefix (e.g., `rh_spaer`, `rh_beklaedning`).
+Design-level constants use the `RH_` prefix (Rabbit House); gable-roof constants use `G_` — both live in `designs/config.scad`. Module names use `rh_` / `render_` lowercase prefixes; top-level entry points are `RenderHouse*` / `RenderYard*`.
 
-Wall identifiers V1–V5 refer to **physical walls**, numbered geometrically along X: **V1**=front, **V2**=back, **V3**=left gable (X=0), **V4**=partition (X=hl), **V5**=right gable (X=ll). House owns V1, V2, V3, V4; yard owns V1, V2, V5. These are physical-wall labels, not version numbers — preserve them.
+Wall identifiers V1–V5 refer to **physical walls**, numbered geometrically along X: **V1**=front (house at Y=0, yard segment at Y=1000), **V2**=back (Y=3000, shared line), **V3**=left gable (X=0), **V4**=partition (X=2000), **V5**=right (X=6000). House owns V1–V4; yard owns its V1/V2 segments + V5. These are physical-wall labels, not version numbers — preserve them.

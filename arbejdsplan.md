@@ -38,16 +38,18 @@ Løbegården er en separat struktur og står til sidst.
 ## 4. Tagkonstruktion
 
 - [ ] Rejs spær m. hanebånd + fugleudskæring
-- [ ] Vindskeder ved gavl-spær
-- [ ] Sternbrædder langs perimeter
 - [ ] Sofitt under tagskæg
 
-## 5. Tagdækning (skifer)
+## 5. Tagdækning (skifer) → [tagdaekning-skifer.md](docs/arbejdsplan/tagdaekning-skifer.md)
 
-- [ ] Undertag
-- [ ] Lægter
-- [ ] Læg skifer-plader
-- [ ] Rygning + inddækninger
+- [ ] Sortér genbrugssten (bankeprøve, 3 tykkelser, bland partier)
+- [ ] Undertag + afstandslister 25×50 over spær
+- [ ] Lægtning 38×73 efter lægteplan (udkraget 200 mm ved gavle)
+- [ ] Sternbrædder ved begge tagfødder (overkant flugter lægte-overside)
+- [ ] Fodblik + fuglegitter + opklodsningsliste + begynderrække
+- [ ] Læg skifer nedefra (2 kobbersøm/sten, ½ stens forskydning, fuge 1–5 mm)
+- [ ] Toprække + kipliste + rygningsbrædder + zink-rygning
+- [ ] Vindskeder på lægte-ender + T-kitning ved gavle
 - [ ] Tagrende + nedløb
 
 ## 6. Udvendig beklædning

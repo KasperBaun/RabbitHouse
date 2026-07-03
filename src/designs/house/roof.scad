@@ -1,7 +1,11 @@
-// HOUSE roof — rafters X<=1200 + left-side lookouts + front+back fascia/
-// soffit [x_left..hl] + left-side fascia/soffit. Self-contained: helpers
-// live in this file. Cover layers (OSB/eternit) are shared and live in
-// designs/roof_plates*.scad.
+// HOUSE roof dispatcher.
+//   Gable covers ("skifer"): spær/vindskeder live in roof_gable.scad; this
+//   file adds the sternbrædder at both eaves and exposes step-by-step
+//   entries (RenderHouseRoofSpaer / -Stern / -Vindskeder) matching the
+//   arbejdsplan work steps.
+//   Mono-pitch covers (tagpap/eternit): legacy path — rafters X<=1200 +
+//   left-side lookouts + fascia/soffit, all helpers in this file.
+// Cover layers are shared and live in designs/roof_plates*.scad.
 
 include <../../lib/defaults.scad>
 include <../config.scad>
@@ -136,9 +140,43 @@ module _render_fascia_house(eh_back, fascia_top_offset, palette) {
     }
 }
 
+// Sternbræt (fascia) on the rafter tails at BOTH eaves of the gable roof
+// (x = -G_OH_EAVE and x = RH_HOUSE_LEN + G_OH_EAVE). Runs Y between the
+// vindskede INNER faces — the vindskede tip runs past the eave line and
+// covers the stern's end grain (plumb + level end cut). Mounted AFTER
+// lægtning — the top edge is aligned flush with the lægte tops (just under
+// the slate, capping the undertag / liste / lægte ends at the eave). The
+// tagrende hangs on this board.
+module _render_stern_gable(palette) {
+    stern_h = 150;   // 25×150 — same depth as the vindskede, flush corners
+    y0 = -(G_VS_OUTER - G_VS_T);
+    y1 = RH_HOUSE_DEPTH + (G_VS_OUTER - G_VS_T);
+    for (x_face = [-G_OH_EAVE, RH_HOUSE_LEN + G_OH_EAVE]) {
+        z_top = g_rafter_top_z(x_face) + G_ROOF_STACK_T - 1;
+        x0 = x_face < G_RIDGE_X ? x_face - RH_FASCIA_T : x_face;
+        color(pal_trim(palette))
+        translate([x0, y0, z_top - stern_h])
+            cube([RH_FASCIA_T, y1 - y0, stern_h]);
+    }
+}
+
+// ---- Step-by-step entries for the gable/skifer roof — one per arbejdsplan
+// work step, so main.scad can toggle each build stage separately.
+module RenderHouseRoofSpaer(truss = "haneband", palette = DEFAULT_PALETTE) {
+    RenderHouseGableSpaer(truss, palette);
+}
+module RenderHouseRoofStern(palette = DEFAULT_PALETTE) {
+    _render_stern_gable(palette);
+}
+module RenderHouseRoofVindskeder(palette = DEFAULT_PALETTE) {
+    RenderHouseGableVindskeder(palette);
+}
+
 module RenderHouseRoof(roof_cover, truss = "haneband", palette = DEFAULT_PALETTE) {
     if (is_gable_roof(roof_cover)) {
-        RenderHouseGableRoof(truss, palette);
+        RenderHouseRoofSpaer(truss, palette);
+        RenderHouseRoofStern(palette);
+        RenderHouseRoofVindskeder(palette);
     } else {
         eh_back           = back_eave_height_for(roof_cover);
         fascia_top_offset = fascia_top_offset_for(roof_cover);

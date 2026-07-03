@@ -58,8 +58,24 @@ RenderHouseFloorDeck();
 //RenderHouseStairs();
 RenderHouseFraming();
 RenderHouseOpenings();
-RenderHouseRoof(house_roof_cover, house_truss);
-RenderHouseRoofPlates(house_roof_cover);
+// Tag — trin-for-trin, matcher arbejdsplan.md trin 4 + 5. Kommentér kald
+// ind/ud for at se hvert byggetrin oven på det forrige. Kun for "skifer";
+// tagpap/eternit renderes samlet via else-grenen (så scripts der sætter
+// -D house_roof_cover=... stadig virker).
+if (house_roof_cover == "skifer") {
+    RenderHouseRoofSpaer(house_truss);   // 4: rejs spær m. hanebånd
+    RenderHouseRoofUndertag();           // 5: undertag (banevare)
+    RenderHouseRoofAfstandslister();     // 5: klemme-/afstandslister 25×50 over spær
+    RenderHouseRoofLaegter();            // 5: taglægter 38×73, gauge 225
+    RenderHouseRoofStern();              // 5: sternbrædder ved tagfod (overkant flugter lægte-overside)
+    RenderHouseRoofFodblik();            // 5: fodblik (zink) over sternen, ud i renden
+    RenderHouseRoofSkifer();             // 5: naturskifer 30×60, dobbelt dækning
+    RenderHouseRoofVindskeder();         // 5: vindskeder på lægte-enderne
+    RenderHouseRoofRygning();            // 5: zink-rygning over kip (sidste trin)
+} else {
+    RenderHouseRoof(house_roof_cover, house_truss);
+    RenderHouseRoofPlates(house_roof_cover);
+}
 RenderHouseCladding(cladding_type);
 
 // yard (uses lower RH_YARD_EH_* eave heights — separate structure)
