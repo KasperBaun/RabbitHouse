@@ -159,10 +159,41 @@ module _render_stern_gable(palette) {
     }
 }
 
+// Skråt tagskæg-sofit for the gable roof — closes the underside of the eave
+// overhang at BOTH tagfødder (the X=0 side and the X=RH_HOUSE_LEN side, where
+// the rafter tails overhang G_OH_EAVE past the wall). One board per eave,
+// nailed to the rafter undersides, following the 35° slope from the wall line
+// out to the sternbræt. Y-span matches _render_stern_gable (between the
+// vindskede inner faces), so the corners meet flush. Predator/bird barrier per
+// REQ-008 — the roof ventilation runs separately in the afstandsliste gap at
+// the fodblik (arbejdsplan trin 6), so the soffit itself is a solid closer.
+module _soffit_slab_gable(x_in, x_out, y0, y1, palette) {
+    z_in  = g_rafter_bottom_z(x_in);
+    z_out = g_rafter_bottom_z(x_out);
+    color(pal_panel1(palette))
+    hull() {
+        translate([x_in,  y0, z_in  - SOFFIT_T]) cube([0.01, y1 - y0, SOFFIT_T]);
+        translate([x_out, y0, z_out - SOFFIT_T]) cube([0.01, y1 - y0, SOFFIT_T]);
+    }
+}
+
+module _render_soffit_gable(palette) {
+    hl = RH_HOUSE_LEN;
+    y0 = -(G_VS_OUTER - G_VS_T);
+    y1 = RH_HOUSE_DEPTH + (G_VS_OUTER - G_VS_T);
+    // Left eave: wall line x=0 out to the eave tip x=-G_OH_EAVE.
+    _soffit_slab_gable(0,  -G_OH_EAVE,      y0, y1, palette);
+    // Right eave: wall line x=hl out to the eave tip x=hl+G_OH_EAVE.
+    _soffit_slab_gable(hl, hl + G_OH_EAVE,  y0, y1, palette);
+}
+
 // ---- Step-by-step entries for the gable/skifer roof — one per arbejdsplan
 // work step, so main.scad can toggle each build stage separately.
 module RenderHouseRoofSpaer(truss = "haneband", palette = DEFAULT_PALETTE) {
     RenderHouseGableSpaer(truss, palette);
+}
+module RenderHouseRoofSofit(palette = DEFAULT_PALETTE) {
+    _render_soffit_gable(palette);
 }
 module RenderHouseRoofStern(palette = DEFAULT_PALETTE) {
     _render_stern_gable(palette);
@@ -174,6 +205,7 @@ module RenderHouseRoofVindskeder(palette = DEFAULT_PALETTE) {
 module RenderHouseRoof(roof_cover, truss = "haneband", palette = DEFAULT_PALETTE) {
     if (is_gable_roof(roof_cover)) {
         RenderHouseRoofSpaer(truss, palette);
+        RenderHouseRoofSofit(palette);
         RenderHouseRoofStern(palette);
         RenderHouseRoofVindskeder(palette);
     } else {

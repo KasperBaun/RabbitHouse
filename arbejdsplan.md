@@ -38,7 +38,7 @@ Løbegården er en separat struktur og står til sidst.
 ## 4. Tagkonstruktion
 
 - [ ] Rejs spær m. hanebånd + fugleudskæring → [01-spaer.md](docs/arbejdsplan/skiffertag/01-spaer.md)
-- [ ] Sofitt under tagskæg
+- [ ] Sofit under tagskæg → [01b-sofit.md](docs/arbejdsplan/skiffertag/01b-sofit.md)
 
 ## 5. Tagdækning (skifer) → [oversigt + indkøbsliste](docs/arbejdsplan/skiffertag/README.md)
 

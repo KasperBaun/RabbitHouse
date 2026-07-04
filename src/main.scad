@@ -64,6 +64,7 @@ RenderHouseOpenings();
 // -D house_roof_cover=... stadig virker).
 if (house_roof_cover == "skifer") {
     RenderHouseRoofSpaer(house_truss);   // 4: rejs spær m. hanebånd
+    RenderHouseRoofSofit();              // 4: skråt tagskæg-sofit ved begge tagfødder
     RenderHouseRoofUndertag();           // 5: undertag (banevare)
     RenderHouseRoofAfstandslister();     // 5: klemme-/afstandslister 25×50 over spær
     RenderHouseRoofLaegter();            // 5: taglægter 38×73, gauge 225
