@@ -11,10 +11,8 @@ Partition (mod yard), X=2000, Y=95..2905 (2810 lang). Åbninger: hus-dør 870×2
 | Stk | Dim (mm) | Længde | Stykke |
 | --- | -------- | ------ | ------ |
 | 1 | 95×45 PT | 2810 | Bundrem |
-| 1 | 95×45 gran | 2810 | Toprem |
-| 5 | 45×95 C24 | 2200 | Studs (2 grid ved 0/600 + 2 hus-dør jamb + 1 pet-dør jamb) |
-| 1 | 95×45 C24 | 870 | Hus-dør header |
-| 1 | 45×95 C24 | 155 | Cripple over hus-dør header |
+| 1 | 95×45 gran | 2810 | Toprem (fungerer også som hus-dør header — dør 2000 = væghøjde) |
+| 5 | 45×95 C24 | 2000 | Studs (2 grid ved 0/600 + 2 hus-dør jamb + 1 pet-dør jamb) |
 | 1 | 95×45 C24 | 250 | Pet-dør header |
 
 **Åbninger (rough):** hus-dør X=1405..2275, h=0..2000 · pet-dør X=2605..2855, h=60..360.

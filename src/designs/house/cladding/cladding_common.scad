@@ -49,6 +49,38 @@ module render_corner_post(pos, trim_w, height, palette = DEFAULT_PALETTE) {
         cube([trim_w, trim_w, height]);
 }
 
+// Indfatning (casing) around one wall opening — a 3- or 4-sided picture
+// frame of `tw`-wide boards that laps `ol` over the opening edge, stands
+// `proud` off the cladding face, and fills the `reveal` back to the stud
+// face (capping the cut cladding edges). `open_axis` is "X" for V1/V2
+// openings (run along X) or "Y" for V3/V4 (run along Y). `norm_face` is the
+// cladding outer-face coordinate on the wall-normal axis; `nd` = +1/-1 is
+// the outward normal direction. `sill=false` drops the bottom board (doors).
+module render_opening_trim(open_axis, norm_face, nd, a0, aw, z0, h,
+                           reveal, tw = 45, proud = 12, ol = 10, gap = 2,
+                           sill = true, palette = DEFAULT_PALETTE) {
+    // Casing that fills the reveal (hiding the cut klink board-ends) and
+    // stands `proud` of the cladding, lapping `ol` over the opening edge. It
+    // stops `gap` mm short of the stud face and sits well in front of the
+    // klink face, so no faces are coincident → nothing z-fights in preview.
+    depth = proud + reveal - gap;
+    n_lo  = (nd > 0) ? norm_face - reveal + gap : norm_face - proud;
+    color(pal_trim(palette))
+    if (open_axis == "X") {
+        translate([a0 - tw,      n_lo, z0 + h - ol]) cube([aw + 2*tw, depth, tw + ol]); // head
+        translate([a0 - tw,      n_lo, z0])          cube([tw + ol,   depth, h]);       // left jamb
+        translate([a0 + aw - ol, n_lo, z0])          cube([tw + ol,   depth, h]);       // right jamb
+        if (sill)
+            translate([a0 - tw,  n_lo, z0 - tw])     cube([aw + 2*tw, depth, tw + ol]); // sill
+    } else {
+        translate([n_lo, a0 - tw,      z0 + h - ol]) cube([depth, aw + 2*tw, tw + ol]);
+        translate([n_lo, a0 - tw,      z0])          cube([depth, tw + ol,   h]);
+        translate([n_lo, a0 + aw - ol, z0])          cube([depth, tw + ol,   h]);
+        if (sill)
+            translate([n_lo, a0 - tw,  z0 - tw])     cube([depth, aw + 2*tw, tw + ol]);
+    }
+}
+
 // Vertical 22×45 counter-battens — battens stand up, distributed along
 // the wall axis. Used when boards run horizontal (klink).
 module render_vertical_battens(origin, length, height, axis,

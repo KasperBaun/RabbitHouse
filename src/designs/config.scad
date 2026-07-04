@@ -21,15 +21,16 @@ RH_RUN_LEN       = RH_LENGTH - RH_HOUSE_LEN;  // 4000
 
 // House wall height from sokkel-top to top-plate top. All 4 walls share
 // this single eave — the gable rafters in roof_gable.scad sit on top and
-// create the pitch. Stack: DPC 2 + bundrem 45 + 2,2m C24 stud + toprem 45
-// = 2292 mm, so a stud is exactly 2200 mm. RH_EH_BACK kept equal to
+// create the pitch. Stack: DPC 2 + bundrem 45 + 2,0m C24 stud + toprem 45
+// = 2092 mm, so a stud is exactly 2000 mm. RH_EH_BACK kept equal to
 // RH_EH_FRONT so the legacy mono-pitch helpers (yard still uses them via
 // its own RH_YARD_EH_*) degenerate to flat for the house.
 //
-// V4 partition door (RH_HOUSE_DOOR_H=2000) has ~200 mm of header + cripple
-// space above the rough opening.
-RH_EH_FRONT     = 2292;
-RH_EH_BACK      = 2292;
+// Walls lowered to 2000 mm studs: the 2000 mm doors (RH_*_DOOR_H) now equal
+// the stud height, so each door header coincides with the top plate (no
+// cripple course above the door). Windows keep a shorter cripple-over-header.
+RH_EH_FRONT     = 2092;
+RH_EH_BACK      = 2092;
 
 // Yard walls are shorter than the house so the run reads as a separate
 // (lower) cage against V4. With the mesh-top cover the yard no longer
@@ -78,11 +79,11 @@ RH_NEST_W       = 800;
 RH_NEST_D       = 900;
 RH_NEST_H       = 600;
 
-// Side window on the left exterior wall (X=0, faces -X). Centred in Y;
-// sill at adult eye level (~1.1 m above floor).
+// Side window on the left exterior wall V3 (X=0, faces -X). Centred in the
+// 3 m house depth; sill at adult eye level (~1.1 m above floor).
 RH_SIDE_WIN_W   = 700;
 RH_SIDE_WIN_H   = 600;
-RH_SIDE_WIN_Y   = 900;
+RH_SIDE_WIN_Y   = (RH_HOUSE_DEPTH - RH_SIDE_WIN_W) / 2;   // = 1150, centred
 RH_SIDE_WIN_Z   = 1100;
 
 // Front entry door on V1 (Y=0, faces -Y). Centred on the 2 m front wall:
@@ -204,9 +205,29 @@ G_PITCH_DEG   = 35;
 // 70 mm min for 35° pitch). 229 mm also clears the yard wall top (Z=2220)
 // — rafter bottom at X=2229 sits at Z=2252, 32 mm clear.
 G_OH_EAVE     = 229;
-// No rake overhang — gables sit flush with V1 / V2. Slate slab and rafter
-// barge are aligned to the wall faces.
-G_OH_RAKE     = 0;
+// Dobbelt vindskede at the rake edge: an underbræt (25×150) nailed to the
+// cantilevered lægte ends with its top just under the slate, plus an
+// overligger (25×150) on its outer face rising G_VS_OVER_RISE above the
+// slate surface — the classic double barge board that closes the rake.
+// The slate stops flush with the underbræt's outer face (does not overhang).
+G_VS_T         = 25;                          // board thickness (Y), both boards
+G_VS_OUTER     = 170;                         // underbræt outer face = slate edge (Y=-170/3170)
+G_VS_OVER_RISE = 40;                          // overligger top above the slate surface
+
+// Total rake (barge) overhang to the overligger's outer face. The taglægter
+// cantilever out past the gable trusses to carry it; the boards also cover
+// the proud gable cladding (~48 mm out).
+G_OH_RAKE      = G_VS_OUTER + G_VS_T;         // = 195
+
+// Roof build-up above the rafter top (skifer cover): undertag 3 +
+// afstandsliste 25 (25×50 along each spær) + taglægte 38 (T1 38×73).
+// The slate itself sits on top of this stack.
+G_ROOF_STACK_T = 3 + 25 + 38;                 // = 66
+
+// Truss Y positions (front face of each 45 mm truss). Shared between the
+// gable framing (roof_gable.scad) and the skifer cover, whose afstandslister
+// must sit directly over the spær.
+G_TRUSS_YS = [0, 600, 1200, 1800, 2400, RH_HOUSE_DEPTH - 45];
 G_RIDGE_X     = RH_HOUSE_LEN / 2;         // = 1000
 G_EAVE_Z      = RH_BASE_H + RH_EH_FRONT;  // = 2412, flat eave on all 4 walls
 

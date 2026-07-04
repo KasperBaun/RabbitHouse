@@ -22,40 +22,42 @@ Løbegården er en separat struktur og står til sidst.
 
 ## 2. Gulv 
 
-- [ ] Gulv konstruktion (reglar + gulvbrædder) → [gulvkonstruktion-braedder.md](docs/arbejdsplan/gulvkonstruktion-braedder.md)
-- [ ] Lemme og trapper ned i kælder → [lem-og-trappe.md](docs/arbejdsplan/lem-og-trappe.md)
+- [x] Gulv konstruktion (reglar + gulvbrædder) → [gulvkonstruktion-braedder.md](docs/arbejdsplan/gulvkonstruktion-braedder.md)
+- [x] Lemme og trapper ned i kælder → [lem-og-trappe.md](docs/arbejdsplan/lem-og-trappe.md)
 
 ## 3. Konstruktions-skelet (vægge)
 
-- [ ] Monter bundrem, murpap og ankerbolte → [detaljer](docs/arbejdsplan/bundrem-murpap-ankerbolte.md)
-- [ ] Rejs V3 (venstre)
-- [ ] Rejs V1 (front, m. dør- + 2 vindue-åbninger)
-- [ ] Rejs V2 (bag)
-- [ ] Rejs V4 (partition, m. hus-dør + pet-dør)
-- [ ] Læg topremme på alle 4 vægge
-- [ ] Vinkelbeslag i alle hjørner
+- [x] Monter bundrem, murpap og ankerbolte → [detaljer](docs/arbejdsplan/bundrem-murpap-ankerbolte.md)
+- [x] Rejs V3 (venstre)
+- [x] Rejs V1 (front, m. dør- + 2 vindue-åbninger)
+- [x] Rejs V2 (bag)
+- [x] Rejs V4 (partition, m. hus-dør + pet-dør)
+- [x] Læg topremme på alle 4 vægge
+- [x] Vinkelbeslag i alle hjørner
 
 ## 4. Tagkonstruktion
 
-- [ ] Rejs spær m. hanebånd + fugleudskæring
-- [ ] Vindskeder ved gavl-spær
-- [ ] Sternbrædder langs perimeter
+- [ ] Rejs spær m. hanebånd + fugleudskæring → [01-spaer.md](docs/arbejdsplan/skiffertag/01-spaer.md)
 - [ ] Sofitt under tagskæg
 
-## 5. Tagdækning (skifer)
+## 5. Tagdækning (skifer) → [oversigt + indkøbsliste](docs/arbejdsplan/skiffertag/README.md)
 
-- [ ] Undertag
-- [ ] Lægter
-- [ ] Læg skifer-plader
-- [ ] Rygning + inddækninger
-- [ ] Tagrende + nedløb
+- [ ] Undertag → [02-undertag.md](docs/arbejdsplan/skiffertag/02-undertag.md)
+- [ ] Afstandslister 25×50 over spær → [03-afstandslister.md](docs/arbejdsplan/skiffertag/03-afstandslister.md)
+- [ ] Lægtning 38×73 efter lægteplan → [04-laegter.md](docs/arbejdsplan/skiffertag/04-laegter.md)
+- [ ] Sternbrædder ved begge tagfødder → [05-stern.md](docs/arbejdsplan/skiffertag/05-stern.md)
+- [ ] Fodblik + fuglegitter + opklodsningsliste → [06-fodblik.md](docs/arbejdsplan/skiffertag/06-fodblik.md)
+- [ ] Sortér genbrugssten → [07-sortering.md](docs/arbejdsplan/skiffertag/07-sortering.md)
+- [ ] Læg skifer (begynder → toprække) → [08-skifer.md](docs/arbejdsplan/skiffertag/08-skifer.md)
+- [ ] Dobbelt vindskede ved gavle → [09-vindskeder.md](docs/arbejdsplan/skiffertag/09-vindskeder.md)
+- [ ] Rygning → [10-rygning.md](docs/arbejdsplan/skiffertag/10-rygning.md)
 
 ## 6. Udvendig beklædning
 
 - [ ] Vindpapir på alle vægge, stift c/c 200
 - [ ] Cut åbninger i vindpapir
 - [ ] Afstandslister c/c 600
-- [ ] Beklædning (vertical_120)
+- [ ] Beklædning (klink)
 - [ ] Hjørnetrim ved 4 hjørner
 
 ## 7. Åbninger

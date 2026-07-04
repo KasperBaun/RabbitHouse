@@ -13,6 +13,27 @@ use <../roof_plates_tagpap.scad>
 use <../roof_plates_eternit.scad>
 use <../roof_plates_skifer.scad>
 
+// ---- Step-by-step entries for the skifer cover — one per arbejdsplan work
+// step (trin 5), so main.scad can toggle each build stage separately.
+module RenderHouseRoofUndertag() {
+    render_skifer_undertag();
+}
+module RenderHouseRoofAfstandslister(palette = DEFAULT_PALETTE) {
+    render_skifer_afstandslister(palette);
+}
+module RenderHouseRoofLaegter(palette = DEFAULT_PALETTE) {
+    render_skifer_laegter(palette);
+}
+module RenderHouseRoofFodblik() {
+    render_skifer_fodblik();
+}
+module RenderHouseRoofSkifer() {
+    render_skifer_sten();
+}
+module RenderHouseRoofRygning() {
+    render_skifer_rygning();
+}
+
 module RenderHouseRoofPlates(cover = "tagpap", standalone = false,
                               palette = DEFAULT_PALETTE) {
     hl    = RH_HOUSE_LEN;

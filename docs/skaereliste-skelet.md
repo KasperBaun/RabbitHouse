@@ -7,5 +7,3 @@
 | -------- | -------------------------------------------------------------------- |
 | Hus      | [hus/konstruktions-skelet.md](hus/konstruktions-skelet.md)           |
 | Løbegård | [løbegård/konstruktions-skelet.md](løbegård/konstruktions-skelet.md) |
-
-Oversigt over filstrukturen ligger i [konstruktions-skelet.md](konstruktions-skelet.md).
