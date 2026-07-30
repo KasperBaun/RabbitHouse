@@ -20,6 +20,21 @@ Løbegården er en separat struktur og står til sidst.
 - [x] Sokkelpuds på blokke. Kontroller om hele fundamentet er vandret, og ret evt. af med mørtel inden pudsning.
 - [x] Støb klaplag i fundamentets indre.
 
+## 1b. Dræning & fugtsikring (efterbygning) → [draening.md](docs/hus/draening.md)
+
+Kælderen står med vand året rundt. Der blev aldrig projekteret dræn,
+kapillarbrydende lag, fugtspærre eller ventilation under terræn.
+Klaplaget fra trin 1 brydes op og erstattes.
+
+- [ ] Prøvehul 1,2 m + plastfolieprøve + skyd afløbskoten — beslut løsning eller Plan B
+- [ ] Tagrender + nedløb til sandfangsbrønd (**før** graven åbnes)
+- [ ] Omfangsdræn: smøremembran + grundmursplade + Ø92 dræn i kote −1000/−1050, fag à maks. 1,0 m
+- [ ] Rense-/sandfangs-/pumpebrønd + afløb med 3–5 ‰ fald
+- [ ] Nyt kældergulv: opsamlingsdræn, 150 mm singels, radonspærre, støbning m. fald 1:100
+- [ ] Ventilation: 4 × sokkelrist à 150 cm² + grusskørt, net 13 mm + insektnet
+- [ ] Murpap mellem reglar og sokkel; trykimprægneret trappe
+- [ ] Terrænregulering 1:50 væk fra alle 4 vægge + lerlåg over rendens tilfyldning
+
 ## 2. Gulv 
 
 - [x] Gulv konstruktion (reglar + gulvbrædder) → [gulvkonstruktion-braedder.md](docs/arbejdsplan/gulvkonstruktion-braedder.md)
