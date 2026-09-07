@@ -29,7 +29,7 @@ efterfølgende kald ud for at se hvert byggetrin i 3D.
 | Mål | Værdi | Kommer af |
 |---|---|---|
 | Taghældning | 35° | `G_PITCH_DEG` |
-| Skråflade, spærende → kip | **1500 mm** | (1000 + 229) / cos 35° |
+| Skråflade, spærende → kip | **1500 mm** | spærets overkant, jf. skæretegningen |
 | Lægteafstand (gauge) på skråfladen | **225 mm** | (600 − 150) / 2 |
 | Overlæg (sten *n* over *n−2*) | **150 mm** | 600 − 2 × 225 |
 | Rækker pr. tagflade | 7 = begynderrække + 5 synlige + toprække | |
@@ -61,37 +61,64 @@ Vil du hellere spare rækken, så skift til 255 mm — men så skal **hele
 lægteplanen regnes om** (formlen står under tjek 1 nedenfor), og overlægget
 lander på guidens minimum uden margin.
 
-## ⚠️ Gør dette FØR du køber og skærer
+## De tre tjek — afklaret
 
-1. **Mål den virkelige skråflade** på begge tagflader: fra spærenden til
-   kippen, oven på afstandslisterne. Planen forudsætter **S = 1500 mm**.
+**1. Skråfladen S = 1500 mm. ✅ Bekræftet — du skal ikke måle om.**
+Den er regnet ud af dine egne skæretegninger,
+[01-spaer-tegninger.html](01-spaer-tegninger.html): spæremnet er et
+parallelogram med lige lange kanter på **1500 mm** og lodrette snit i begge
+ender. Hælmærket sidder 280 mm fra fodenden langs underkanten, hvilket giver
+280 × cos 35° = 229 mm vandret udhæng, og 1500 × cos 35° = 1229 mm vandret
+fra fodende til kip — altså præcis kip 1000 mm inde fra vægydersiden.
+Geometrien lukker. **Toprækken er 435 mm.**
 
-   Godt nyt: lægteplanen er sat af **fra tagfoden og opefter**, ikke fra
-   kippen. Måler S noget andet, skal L1–L7 derfor **ikke** flyttes — det er
-   kun **toprækkens tilskæring** der ændrer sig:
+> Fugleudskæringen sænker hele taget ~38 mm i forhold til den teoretiske
+> linje (det står også på tegningen). Det er en ren lodret forskydning og
+> ændrer **ikke** skråfladen — lægteplanen måles fra spærenden og er
+> upåvirket.
 
-   ```
-   toprækkens længde = S − 1065        (435 mm ved S = 1500)
-   ```
+**2. Sømdimension.** Måles når stenene er hjemme: 4–8 mm sten → 2,8×40
+kobbersøm, tykkere/rustik → 3,0×50. Bestil ~500 stk. Det eneste ufravigelige
+er at de skal være **kobber**, ikke galvaniserede.
 
-   Planen holder så længe **S ligger mellem ca. 1315 og 1665 mm**: under
-   1315 bliver toprækken for kort til at sømme forsvarligt, over 1665 skal
-   der en L8 på ved 1665 og en ekstra række. Ligger de to tagflader ikke ens,
-   så sæt hver flade af for sig — det er kun toprækken der skal tilpasses.
+**3. Ventilationsspalten. ✅ Afklaret — der skal ikke ændres noget.**
+De 63 mm er rigeligt, fordi 70 mm-kravet slet ikke gælder dette hulrum.
+Der er to hulrum i en tagkonstruktion, og de har hver sit krav:
 
-   Skulle du alligevel ville lægge om til en anden gauge *a*, gælder:
-   `overlæg = 600 − 2a`, og overlægget skal være **≥ 90 mm** (dvs. a ≤ 255).
+| Hulrum | Krav | Dit tag |
+|---|---|---|
+| **Over** undertaget (afstandsliste → tagdækning) | **min. 25 mm** | 25 + 38 = **63 mm** ✅ |
+| **Under** undertaget (undertag → isolering), kun i en *ventileret* konstruktion | 50 mm ved fast undertag, **70 mm** ved banevare | findes ikke her |
 
-2. **Mål tykkelsen på en håndfuld af genbrugsstenene.** 4–8 mm → kobbersøm
-   2,8 × 40. 7–12 mm (rustik) → 3,0 × 50. Bestil først sømmene bagefter.
+De 70 mm er afstanden mellem undertag og **isolering** — ikke mellem undertag
+og skifer. Taget her har ingen isolering oppe mod undertaget (arbejdsplanens
+§8 isolerer kun vægge og evt. gulv), så det nederste hulrum eksisterer ikke,
+og kravet gælder ikke. Afstandslisten på 25 mm er nøjagtig det, en
+banevare kræver ovenpå. **Lægterne kan gå på nu.**
 
-3. **Bekræft ventilationsspalten.** Opbygningen giver 25 (afstandsliste) +
-   38 (lægte) = **63 mm** mellem undertag og skifer. Guidens §4.1B skriver
-   min. 70 mm ved banevare. 25 + 38 er den gængse danske detalje, og de
-   70 mm gælder normalt hulrummet *under* et diffusionstæt undertag — men
-   tjek det i montagevejledningen til det undertag der ligger på taget
-   (Komproment). Skal spalten være større, skal det ske **nu**, før
-   lægterne sømmes fast.
+### Det der derimod skal være i orden: at luften kan komme IND og UD
+
+Spaltehøjden er ikke problemet — gennemstrømningen er. Kanalen der lufter er
+de **25 mm mellem afstandslisterne, under lægterne**, og den skal være åben i
+begge ender:
+
+- **Tagfod (indtag):** kanalen løber ud under L1 til tagkanten. Fodblikket
+  lægges hen over L1's overside og bukkes ned over sternen, så de 25 mm
+  under L1 forbliver åbne. **Fuglegitteret skal sidde her — i
+  afstandsliste-gabet under L1** — ikke under spærenderne: dér lukker
+  sofitten ([01b](01b-sofit.md)) helt tæt.
+- **Kip (aftræk):** over L7 (overkant 1440) er der 60 mm op til kippen, hvor
+  begge tagfladers kanaler mødes. De skal ud under rygningsbrædderne, der er
+  klodset op på 15 mm lister — **lad rygningens ender være åbne** (eller brug
+  en ventileret rygning), ellers står luften stille.
+
+> **Hvis du alligevel isolerer taget:** læg isoleringen **helt op mod**
+> undertaget (uventileret konstruktion) — det kræver at undertaget er
+> diffusionsåbent, og at der er en tæt dampspærre indvendigt. Læg den
+> **aldrig** med en luftspalte på under 70 mm under banevaren; med 95 mm spær
+> ville der kun blive 25 mm isolering tilbage, og det er værre end ingenting.
+> Der lå mineraluld i et spærfag ved tagfoden på billedet — afklar om det er
+> isolering eller bare en prop.
 
 ## Lægteplan (skridt 4 — det kritiske)
 

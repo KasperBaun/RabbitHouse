@@ -98,9 +98,22 @@ Kravet til overlæg **stiger, når hældningen falder** (mere vandbelastning og 
 
 ### 4.1 Tre gangbare opbygninger
 
-**A. Lægter + fast undertag (fra 20°):** Spær → krydsfiner eller brædder → tagpap → trykimprægnerede afstandslister 25×50 → lægter 38×73 → skifer. Ventilation efter TRÆ 54; ventilationsspalte ved fast undertag **min. 50 mm**.
+**A. Lægter + fast undertag (fra 20°):** Spær → krydsfiner eller brædder → tagpap → trykimprægnerede afstandslister 25×50 → lægter 38×73 → skifer.
 
-**B. Lægter + banevareundertag (fra 25°):** Spær → banevare (diffusionsåben eller -tæt, valgt efter DUKO-klassifikation) → afstandslister → lægter → skifer. Ventilationsspalte ved banevare **min. 70 mm**.
+**B. Lægter + banevareundertag (fra 25°):** Spær → banevare (diffusionsåben eller -tæt, valgt efter DUKO-klassifikation) → afstandslister → lægter → skifer.
+
+**To forskellige hulrum — bland dem ikke sammen.** Det er den klassiske
+forvekslingsfejl, og tallene er vidt forskellige:
+
+| Hulrum | Hvor | Krav |
+|---|---|---|
+| **Over undertaget** | mellem undertag og tagdækning, dannet af afstandslisten | **min. 25 mm afstandsliste** (trykimp.), både ved diffusionsåbent og -tæt undertag — skal give fri afvanding og udluftning fra tagfod til kip |
+| **Under undertaget** | mellem undertag og **isolering**, kun i en *ventileret* konstruktion | **min. 50 mm** ved fast undertag, **min. 70 mm** ved banevare (banevaren hænger ned mellem spærene, så der skal mere til for at holde en gennemsnitshøjde på 50 mm) |
+
+Er der **ingen isolering** under undertaget, eller ligger isoleringen tæt op
+mod et **diffusionsåbent** undertag (uventileret konstruktion, kræver tæt
+dampspærre), findes det nederste hulrum ikke, og 50/70 mm-kravet gælder
+ikke. Så er de 25 mm over undertaget hele ventilationen.
 
 **C. Direkte på rupløjede brædder med tagpap (fra 20°):** Spær → rupløjede brædder med fer og not (1–2 mm luft mellem brædderne) → tagpap, der forsegler omkring sømhullerne → skifer sømmet direkte, uden lægter. Traditionel svensk/københavnsk metode.
    - Fordele: ~63 mm lavere indbygningshøjde (sparer lægte 38 + liste 25 mm), fuld fladeunderstøtning af hver sten, enklere detaljer ved kviste og brandkamme, plads til mere isolering eller til at gøre en uventileret konstruktion ventileret.

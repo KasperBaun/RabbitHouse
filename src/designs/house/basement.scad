@@ -45,14 +45,24 @@ module _sbox(axis, r0, rlen, c0, clen, z0, zlen) {
 // ---- staircase ------------------------------------------------------------
 // Sloped stringer beam between two run positions (top edge follows the slope).
 // Both end slices sit INSIDE the run so the beam never pokes past the hatch edge.
-module _stringer(axis, r_start, r_end, c_center, thick, ztop, zbot) {
+// Vangen er et 160 mm højt bræt, hvis OVERKANT følger trappens linje fra
+// gulvdækket (ztop) ned til kældergulvet (zbot). Brættet hænger 160 mm under
+// den linje, så den nederste ende skal kappes af i gulvniveau — ellers står
+// vangen 160 mm nede i (og igennem) betondækket. z_floor = kældergulvets
+// overside; alt under den skæres væk, som når man kapper vangen på stedet.
+module _stringer(axis, r_start, r_end, c_center, thick, ztop, zbot,
+                 z_floor = RH_BASEMENT_FLOOR_Z) {
     bh = 160;
     sgn = (r_end > r_start) ? 1 : -1;
     rA  = (sgn > 0) ? r_start   : r_start - 2;   // top slice, inward
     rB  = (sgn > 0) ? r_end - 2 : r_end;         // bottom slice, inward
-    hull() {
-        _sbox(axis, rA, 2, c_center - thick/2, thick, ztop - bh, bh);
-        _sbox(axis, rB, 2, c_center - thick/2, thick, zbot - bh, bh);
+    big = 4000;
+    intersection() {
+        hull() {
+            _sbox(axis, rA, 2, c_center - thick/2, thick, ztop - bh, bh);
+            _sbox(axis, rB, 2, c_center - thick/2, thick, zbot - bh, bh);
+        }
+        translate([-big, -big, z_floor]) cube([2*big, 2*big, 2*big]);
     }
 }
 
