@@ -41,8 +41,8 @@ function palette(
     shelf  = [0.65, 0.50, 0.28],
     polycarb = [0.78, 0.85, 0.92, 0.30],
     insulation = [0.95, 0.90, 0.65],
-    // Sofit og vindskede har samme farve som beklædning/indfatning, men er
-    // egne slots, så de kan farvelægges hver for sig (debug_kanter i main.scad).
+    // Sofit og vindskede males som beklædning/indfatning, men er egne slots:
+    // det er tre forskellige bygningsdele, ikke én.
     soffit = [0.62, 0.45, 0.22],
     barge  = [0.58, 0.42, 0.20]
 ) = [post, wall, panel1, panel2, trim, mesh, roof, glass, base, floor,

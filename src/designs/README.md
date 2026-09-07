@@ -39,15 +39,8 @@ designs/
 ## Toggles
 
 Top of `main.scad`: set `house_roof_cover`, `yard_roof_cover`,
-`cladding_type` and `debug_kanter`.
+`cladding_type`.
 Comment/uncomment individual `Render*()` calls below to isolate a building system.
-
-`debug_kanter = true` paints the soffit orange and the vindskede blue. The two
-boards close the two different kinds of roof edge — the soffit covers the rafter
-ends along the eaves, the vindskede covers the lægte ends along the gables — and
-in the normal black palette they are impossible to tell apart. They have their
-own palette slots (`pal_soffit` / `pal_barge`) precisely so they can be coloured
-independently; with the flag off they match the cladding and trim exactly.
 
 `PALETTE` is the palette vector threaded into every house `Render*()` call:
 the cladding, casings, corner boards, soffit and vindskeder are painted black

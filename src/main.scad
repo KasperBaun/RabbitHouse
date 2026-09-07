@@ -35,18 +35,14 @@ house_roof_cover = "skifer";     // skifer | tagpap | eternit
 yard_roof_cover  = "mesh";       // mesh | polycarb | tagpap | eternit
 cladding_type    = "klink";      // klink | board_on_board
 
-// true: farvelæg tagkanterne, så man kan se hvad der lukker hvad — sofit
-// orange, vindskede blå. Kun farver, ingen geometri.
-debug_kanter = false;
-
 // Huset er sortmalet. Konstruktionstræ (pal_post) står ubehandlet.
 PALETTE = palette(panel1 = [0.13, 0.13, 0.14],   // beklædning
                   panel2 = [0.10, 0.10, 0.11],
                   trim   = [0.09, 0.09, 0.10],   // indfatning, hjørner
                   wall   = [0.12, 0.12, 0.13],
                   door   = [0.80, 0.68, 0.42],   // bar krydsfiner
-                  soffit = debug_kanter ? [1.00, 0.45, 0.05] : [0.13, 0.13, 0.14],
-                  barge  = debug_kanter ? [0.15, 0.55, 1.00] : [0.09, 0.09, 0.10]);
+                  soffit = [0.13, 0.13, 0.14],   // sofit
+                  barge  = [0.09, 0.09, 0.10]);  // vindskede
 
 // shared
 RenderGround();

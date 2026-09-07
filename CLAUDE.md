@@ -15,8 +15,6 @@ Open `src/main.scad` in OpenSCAD — it is the top-level dispatcher, organised i
 - `house_roof_cover` — `"skifer"` (default; gable roof) | `"tagpap"` | `"eternit"` (legacy mono-pitch)
 - `yard_roof_cover` — `"mesh"` (default) | `"polycarb"` | `"tagpap"` | `"eternit"`
 - `cladding_type` — `"klink"` | `"board_on_board"`
-- `debug_kanter` — `false` (default) | `true` (colours the soffit orange and the
-  vindskede blue so you can see which board closes which roof edge; colours only)
 
 With `"skifer"` the house roof is rendered **step by step** — one `RenderHouseRoof*()` call per arbejdsplan work step, in real build order (spær → undertag → afstandslister → lægter → stern → fodblik → skifer → vindskeder → rygning). Comment calls in/out to inspect each build stage. Other covers render via the two composite calls in the `else` branch (scripts in `src/scripts/` override `house_roof_cover` with `-D` and rely on this).
 
