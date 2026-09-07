@@ -1,19 +1,6 @@
-// Spær med hanebånd — traditional rafter-pair with collar tie.
-//
-//        /\
-//       /  \
-//      /    \
-//     /------\      hanebånd at 2/3 of bottom-edge rise (eave to ridge)
-//    /        \
-//   /          \
-//  /            \
-// /              \
-//
-// Two top chords meet at the apex with a clean butt joint. NO ridge
-// board — the hanebånd ties the rafter pair against spreading and the
-// pair meets directly at X = G_RIDGE_X. Headroom is clear from floor to
-// hanebånd top across the full span, and clear from hanebånd to apex in
-// the middle 1/3 of the span.
+// Spær med hanebånd — som bygget. To spær mødes i kippen med et lodret
+// stødsnit, intet kipbræt; hanebåndet binder parret mod udspredning.
+// Skæremål og afsætning: docs/arbejdsplan/skiffertag/01-spaer-tegninger.html
 
 include <../../../lib/defaults.scad>
 include <../../config.scad>
@@ -24,17 +11,11 @@ SH_MEMBER_H = 95;   // in the truss plane
 // Hanebånd top — 2/3 of the bottom-edge rise from eave to ridge.
 SH_COLLAR_Z_TOP = G_EAVE_Z + 2 * (g_ridge_bottom_z() - G_EAVE_Z) / 3;
 
-// X where each rafter's bottom edge crosses SH_COLLAR_Z_TOP — the
-// attach point for the hanebånd end face.
-//   Left rafter bottom edge: z = G_EAVE_Z + x * tan(pitch)
-//   z = SH_COLLAR_Z_TOP  =>  x = (SH_COLLAR_Z_TOP − G_EAVE_Z)/tan(pitch)
+// X hvor spærets underkant krydser SH_COLLAR_Z_TOP — hanebåndets anlæg.
 function _sh_collar_x_attach() =
     (SH_COLLAR_Z_TOP - G_EAVE_Z) / tan(G_PITCH_DEG);
 
-// ============================================================================
-// One sloped top chord (rafter) from x_outer to x_inner — both rafters
-// of a pair meet at X = G_RIDGE_X with a vertical butt joint.
-// ============================================================================
+// Ét spær fra x_outer til x_inner; parret mødes i G_RIDGE_X.
 module _sh_top_chord(x_outer, x_inner, y0, palette) {
     z_outer = g_rafter_bottom_z(x_outer);
     z_inner = g_rafter_bottom_z(x_inner);
@@ -47,19 +28,9 @@ module _sh_top_chord(x_outer, x_inner, y0, palette) {
     }
 }
 
-// ============================================================================
-// Hanebånd (collar tie) — horizontal 45×95 reglar. ENDS ARE ANGLE-CUT at
-// the rafter pitch so the entire end face sits flush against the rafter
-// underside — not just the top corner.
-//
-// Geometry in the X-Z plane (left half):
-//   top corner    @ (x_top_l, z_top) — touches rafter underside
-//   bottom corner @ (x_bot_l, z_bot) — also on rafter underside, offset
-//                                       toward the eave by H / tan(pitch)
-//
-// The end-cut line from top to bottom corner has the same slope as the
-// rafter underside, so the cut surface lies in the rafter plane.
-// ============================================================================
+// Hanebånd — 45×95 med enderne skåret i spærets hældning, så hele endefladen
+// ligger an mod spærets underside. Nederste hjørne forskydes derfor
+// H / tan(hældning) mod tagfoden i forhold til det øverste.
 module _sh_collar(y0, palette) {
     x_top_l = _sh_collar_x_attach();
     x_top_r = RH_HOUSE_LEN - x_top_l;
@@ -92,9 +63,7 @@ module _sh_collar(y0, palette) {
     );
 }
 
-// ============================================================================
-// Entry — one full rafter pair with hanebånd at Y position y0.
-// ============================================================================
+// Ét spærfag ved Y = y0.
 module spaer_med_haneband(y0, palette = DEFAULT_PALETTE) {
     x_left  = -G_OH_EAVE;
     x_right = RH_HOUSE_LEN + G_OH_EAVE;

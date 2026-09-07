@@ -43,9 +43,7 @@ SCREW_HEAD_D = 20;
 SCREW_HEAD_H = 6;
 SCREW_COLOR  = [0.20, 0.21, 0.24];
 
-// ============================================================================
 // Battens — one per plate top edge. Restricted to [x_lo..x_hi].
-// ============================================================================
 module _render_battens_segment(eh_front, eh_back, depth, y_offset,
                                 x_lo, x_hi, palette) {
     y_back_eave    = y_offset + depth + RH_OH_BACK + RH_FASCIA_T;
@@ -62,9 +60,7 @@ module _render_battens_segment(eh_front, eh_back, depth, y_offset,
     }
 }
 
-// ============================================================================
 // One plate strip across [x_lo..x_hi] × [y_start..y_end].
-// ============================================================================
 module _eternit_strip_segment(eh_front, eh_back, depth, y_offset,
                                y_start, y_end, z_offset, x_lo, x_hi) {
     if (y_end > y_start) {

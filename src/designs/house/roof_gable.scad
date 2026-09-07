@@ -1,47 +1,33 @@
-// HOUSE gable roof — gavlspær + vindskede geometry. The truss itself lives
-// in roof/haneband.scad: spær med hanebånd, as built — rafters meet
-// directly at the apex with a plumb butt joint (no ridge board) and a
-// collar tie at 2/3 rise, which suits the 2 m span at 35° and leaves the
-// loft clear.
-//
-// The gable trusses sit flush with V1 / V2; the slate cover
-// (designs/roof_plates_skifer.scad) overhangs the gables by G_OH_RAKE,
-// carried by taglægter cantilevering out past the trusses. The vindskede
-// is nailed to the lægte ends at the rake edge.
+// HOUSE gable roof — gavlspær + vindskeder. Selve spæret ligger i
+// roof/haneband.scad. Skiferen rager G_OH_RAKE ud forbi gavlene, båret af
+// taglægter der krager ud forbi gavlspærene; vindskeden sømmes på
+// lægte-enderne.
 
 include <../../lib/defaults.scad>
 include <../config.scad>
 use <roof/haneband.scad>
 
-// Truss Y positions come from config (G_TRUSS_YS) — shared with the skifer
-// cover, whose afstandslister must sit directly over the spær. Each truss
-// is 45 mm thick and extends +Y from its position, so the two gable trusses
-// sit flush INSIDE their wall faces: V1 at Y=0..45 and V2 at (ww-45)..ww.
+// Deles med skiferens afstandslister, der skal ligge direkte over spærene.
+// Hvert spær er 45 mm og vokser +Y, så gavlspærene ligger flush INDE i
+// vægfladerne: V1 Y=0..45, V2 (ww-45)..ww.
 _GR_TRUSS_YS = G_TRUSS_YS;
 
-// Roof stack above the rafter top (undertag 3 + afstandsliste 25 + taglægte
-// 38 = G_ROOF_STACK_T). The vindskede top reaches to just under the slate
-// (−1 mm so no faces coincide), capping the lægte ends at the rake.
+// Vindskedens overkant: lige under skiferen (−1 mm, så flader ikke falder
+// sammen), så den lukker lægte-enderne.
 _GR_ROOF_STACK = G_ROOF_STACK_T - 1;
-// Vindskede vertical depth. The underbræt is 150 like the stern, measured
-// from the same top line (stack top), so their lower edges land flush where
-// they meet at the eave corners — no step/notch.
+// Underbrættet er 150 som sternen og måles fra samme toplinje, så
+// underkanterne flugter i tagfodshjørnet.
 _GR_VS_H = 150;
-// The vindskede runs RH_FASCIA_T past the eave line to cover the stern's
-// end grain; the end is cut plumb at the stern front face and level along
-// its own bottom line (classic corner detail). The stern itself stops
-// at the underbræt's inner face.
+// Løber RH_FASCIA_T forbi tagfodslinjen og dækker sternens endetræ; enden
+// kappes lodret ved sternens forside.
 _GR_VS_TIP = RH_FASCIA_T;
-// Overligger top edge: roof stack + slate (8, = SK_SLATE_T) + the rise above
-// the slate surface. The overligger closes the rake — the slate butts
-// against it instead of overhanging.
+// Overliggerens overkant: tagopbygning + skifer (8) + rejsning over fladen.
+// Skiferen støder op mod den i stedet for at rage ud.
 _GR_VS_OVER_TOP = G_ROOF_STACK_T + 8 + G_VS_OVER_RISE;
 
-// One vindskede board along both rake slopes of a gable — used twice per
-// gable: underbræt (z_top = _GR_ROOF_STACK, just under the slate) and
-// overligger (z_top = _GR_VS_OVER_TOP, rising above the slate surface).
-// `y_hi` = the board's inner Y face (it extrudes G_VS_T outward, toward -Y).
-// `z_top` = the top edge's vertical offset above the rafter-top plane.
+// Ét vindskedebræt langs begge rake-flader; bruges to gange pr. gavl
+// (underbræt + overligger). `y_hi` = brættets indre Y-flade (ekstruderes
+// G_VS_T udad), `z_top` = overkantens løft over spærplanet.
 module _gable_vindskede(y_hi, z_top, palette) {
     x_el = -G_OH_EAVE;                  // eave line, left
     x_er = RH_HOUSE_LEN + G_OH_EAVE;    // eave line, right

@@ -156,9 +156,7 @@ module _render_framed_opening(wall_origin, axis,
     }
 }
 
-// ============================================================================
 // HOUSE entry — X=0..hl segment of V1/V2 + V3 + V4 + junction stud at X=hl.
-// ============================================================================
 module RenderHouseFraming(palette = DEFAULT_PALETTE) {
     ww = RH_HOUSE_DEPTH; hl = RH_HOUSE_LEN;
     h_high = WALL_TOP_HIGH - STUD_BOTTOM_Z - PLATE_HEIGHT;

@@ -144,7 +144,6 @@ module clad_wall_mono_pitch_with_cutout(origin, len, h_high, h_low, axis="X",
     }
 }
 
-// ============================================================================
 // Board-on-board (1-på-2) cladding primitives.
 // Vertical orientation — boards run along +Z. Two layers:
 //   back  boards: stepped along the wall axis at `pitch` = board_w + back_gap
@@ -152,7 +151,6 @@ module clad_wall_mono_pitch_with_cutout(origin, len, h_high, h_low, axis="X",
 // Same axis convention as klink: axis="X" → boards step in +X, thickness +Y;
 // axis="Y" → boards step in +Y, thickness +X. Cladding occupies thickness
 // 0..2*board_t outward from origin.
-// ============================================================================
 
 module bob_board(origin, h, board_w, board_t, axis, col) {
     color(col)

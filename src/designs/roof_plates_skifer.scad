@@ -6,18 +6,10 @@
 //   28..66 mm  38×73 T1 taglægter parallel to the ridge
 //   66..74 mm  slate courses (~8 mm visual thickness)
 //
-// 30×60 cm stones in halv-forbandt: 5 full courses per half-slope, stone
-// width 300 mm along the ridge (Y), length 600 mm up-slope. Slope is
-// dimensioned so the math goes up exactly:
-//   slope = 4 × gauge(225 slope) + 600 = 1500 mm
-//   horizontal pitch = 225 × cos(35°) ≈ 184 mm
-//   lap = 600 − 2 × 225 = 150 mm (≥ 80–90 mm required at 35° pitch)
-// Lægter, rækkelinjer og skiferforkant følger sætteplanen i
-// docs/arbejdsplan/skiffertag/04-laegter.md (SK_LAEGTE_TOP / SK_COURSE_TAIL
-// nedenfor), så renderet kan bruges som kontrol af planen. Begynderrækken
-// under tagfoden er ikke modelleret — den er skjult i den færdige flade.
-// Stone seams are rendered as shallow grooves on the slate surface so the
-// roof reads as slate rather than a painted slab.
+// Sten 30×60 i halv-forbandt. Lægter, rækkelinjer og skiferforkant følger
+// sætteplanen i docs/arbejdsplan/skiffertag/04-laegter.md (SK_LAEGTE_TOP /
+// SK_COURSE_TAIL nedenfor), så renderet kan bruges som kontrol af planen.
+// Begynderrækken er ikke modelleret — den er skjult i den færdige flade.
 
 include <../lib/defaults.scad>
 include <config.scad>
@@ -59,9 +51,7 @@ SK_SEAM_COLOR     = [0.03, 0.04, 0.06];
 SK_RIDGE_COLOR    = [0.11, 0.12, 0.15];
 SK_ZINC_COLOR     = [0.72, 0.75, 0.78];
 
-// ============================================================================
 // One tilted slab along the gable plane on [x_lo..x_hi] × [y_lo..y_hi].
-// ============================================================================
 module _sk_half_slab(x_lo, x_hi, y_lo, y_hi, offset_z, thick, color_rgb) {
     z00 = g_rafter_top_z(x_lo) + offset_z;
     z10 = g_rafter_top_z(x_hi) + offset_z;
@@ -133,11 +123,9 @@ SK_GROOVE_W = 10;            // X-extent of course-edge groove
 SK_SEAM_W   = 7;             // Y-extent of plate seam
 SK_GROOVE_H = 0.5;           // raised-above-slate height (vertical)
 
-// ============================================================================
 // Horizontal course grooves — one per course bottom on each half-slope.
 // Each groove is a thin tilted slab (groove_w along slope) running the
 // full Y depth.
-// ============================================================================
 module _sk_course_grooves(y_lo, y_hi) {
     yd_lo = y_lo + SK_RAKE_INSET;
     yd_hi = y_hi - SK_RAKE_INSET;
@@ -151,12 +139,10 @@ module _sk_course_grooves(y_lo, y_hi) {
     }
 }
 
-// ============================================================================
 // Vertical plate seams — between adjacent plates within each course.
 // Adjacent courses are staggered by half a plate width (halv-forbandt).
 // Each seam is a thin tilted slab spanning one course (c2c along slope)
 // at the plate boundary along Y.
-// ============================================================================
 // `side` = -1 venstre halvtag, +1 højre. Hver rækkes synlige bånd går fra
 // rækkens underkant til den næste rækkes underkant (øverste række: til kip).
 module _sk_plate_seams_one_half(side, y_lo, y_hi) {
@@ -181,7 +167,6 @@ module _sk_plate_seams(y_lo, y_hi) {
     _sk_plate_seams_one_half(+1, y_lo, y_hi);
 }
 
-// ============================================================================
 module _sk_ridge_cap(y_lo, y_hi) {
     cap_half_w = 90;       // each leg of the cap reaches this far from ridge
     cap_lift   = 32;       // apex height above slate top at the ridge
@@ -214,12 +199,10 @@ module _sk_ridge_cap(y_lo, y_hi) {
         ]);
 }
 
-// ============================================================================
 // Per-layer entries — one per arbejdsplan work step, so main.scad can render
 // the build-up step by step. Each layer occupies its own band of the stack
 // so nothing z-fights; the slate is only the top SK_SLATE_T (the underlay +
 // lister + lægter are visible at the eave edge and from the underside).
-// ============================================================================
 
 // Undertag — stops at the gable walls (does not run into the rake overhang).
 module render_skifer_undertag() {
@@ -291,10 +274,8 @@ module render_skifer_rygning() {
     _sk_ridge_cap(-G_VS_OUTER, RH_HOUSE_DEPTH + G_VS_OUTER);
 }
 
-// ============================================================================
 // Top-level entry — the full build-up in one call (back-compat for the
 // house/roof_plates.scad dispatcher and render scripts).
-// ============================================================================
 module render_roof_plates_skifer_gable(palette = DEFAULT_PALETTE) {
     render_skifer_undertag();
     render_skifer_afstandslister(palette);

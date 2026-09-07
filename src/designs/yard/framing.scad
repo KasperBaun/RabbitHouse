@@ -112,10 +112,8 @@ module _render_yard_door_framing(palette = DEFAULT_PALETTE) {
     }
 }
 
-// ============================================================================
 // YARD entry — X=hl..ll segment of V1/V2 + V5. No junction stud (house owns it).
 // Y range: yo..yo+yd (= 500..3000 i nuværende config).
-// ============================================================================
 module RenderYardFraming(palette = DEFAULT_PALETTE) {
     ll = RH_LENGTH; yd = RH_YARD_DEPTH; hl = RH_HOUSE_LEN;
     yo = RH_YARD_Y_OFFSET;
