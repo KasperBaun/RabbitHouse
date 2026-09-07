@@ -15,6 +15,8 @@ Open `src/main.scad` in OpenSCAD — it is the top-level dispatcher, organised i
 - `house_roof_cover` — `"skifer"` (default; gable roof) | `"tagpap"` | `"eternit"` (legacy mono-pitch)
 - `yard_roof_cover` — `"mesh"` (default) | `"polycarb"` | `"tagpap"` | `"eternit"`
 - `cladding_type` — `"klink"` | `"board_on_board"`
+- `debug_kanter` — `false` (default) | `true` (colours the soffit orange and the
+  vindskede blue so you can see which board closes which roof edge; colours only)
 
 With `"skifer"` the house roof is rendered **step by step** — one `RenderHouseRoof*()` call per arbejdsplan work step, in real build order (spær → undertag → afstandslister → lægter → stern → fodblik → skifer → vindskeder → rygning). Comment calls in/out to inspect each build stage. Other covers render via the two composite calls in the `else` branch (scripts in `src/scripts/` override `house_roof_cover` with `-D` and rely on this).
 
@@ -94,7 +96,7 @@ Every library module takes **named arguments with sensible defaults**. Things th
 | Vector | Slots | Accessors |
 |--------|-------|-----------|
 | `dims` | length, width, eave_h, base_h, wall_t | `dims_length`, `dims_width`, ... |
-| `palette` | 21 named colors | `pal_post`, `pal_wall`, `pal_polycarb`, ... |
+| `palette` | 23 named colors | `pal_post`, `pal_wall`, `pal_soffit`, `pal_barge`, ... |
 | `clad_spec` | board_h, overlap, thick, lip | `cs_board_h`, `cs_thick`, `cs_step`, ... |
 | `mesh_spec` | spacing, bar, frame, depth | `ms_spacing`, `ms_bar`, ... |
 | `stud_spec` | stud_w, stud_d, spacing | `ss_w`, `ss_d`, `ss_spacing` |

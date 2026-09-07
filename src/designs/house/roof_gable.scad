@@ -33,7 +33,7 @@ module _gable_vindskede(y_hi, z_top, palette) {
     x_er = RH_HOUSE_LEN + G_OH_EAVE;    // eave line, right
     x_tl = x_el - _GR_VS_TIP;           // tip = stern front face, left
     x_tr = x_er + _GR_VS_TIP;           // tip = stern front face, right
-    color(pal_trim(palette))
+    color(pal_barge(palette))
     translate([0, y_hi, 0])
         rotate([90, 0, 0])
             linear_extrude(height = G_VS_T)

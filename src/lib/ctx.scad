@@ -40,10 +40,14 @@ function palette(
     screen = [0.30, 0.55, 0.75, 0.60],
     shelf  = [0.65, 0.50, 0.28],
     polycarb = [0.78, 0.85, 0.92, 0.30],
-    insulation = [0.95, 0.90, 0.65]
+    insulation = [0.95, 0.90, 0.65],
+    // Sofit og vindskede har samme farve som beklædning/indfatning, men er
+    // egne slots, så de kan farvelægges hver for sig (debug_kanter i main.scad).
+    soffit = [0.62, 0.45, 0.22],
+    barge  = [0.58, 0.42, 0.20]
 ) = [post, wall, panel1, panel2, trim, mesh, roof, glass, base, floor,
      table, bench, door, lamp, glow, elec, laptop, screen, shelf,
-     polycarb, insulation];
+     polycarb, insulation, soffit, barge];
 
 function pal_post(p)       = p[0];
 function pal_wall(p)       = p[1];
@@ -66,6 +70,8 @@ function pal_screen(p)     = p[17];
 function pal_shelf(p)      = p[18];
 function pal_polycarb(p)   = p[19];
 function pal_insulation(p) = p[20];
+function pal_soffit(p)     = p[21];
+function pal_barge(p)      = p[22];
 
 // --- clad_spec ---------------------------------------------------------------
 

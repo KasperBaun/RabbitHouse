@@ -84,7 +84,7 @@ module _render_lookouts_house(eh_back, palette) {
 module _soffit_panel(x0, x1, y0, y1, eh_back, palette) {
     z_top_y0 = roof_underside_for(eh_back, y0) - RH_RAFTER_H;
     z_top_y1 = roof_underside_for(eh_back, y1) - RH_RAFTER_H;
-    color(pal_panel1(palette))
+    color(pal_soffit(palette))
     polyhedron(
         points = [
             [x0, y0, z_top_y0 - SOFFIT_T],
@@ -170,7 +170,7 @@ module _render_stern_gable(palette) {
 module _soffit_slab_gable(x_in, x_out, y0, y1, palette) {
     z_in  = g_rafter_bottom_z(x_in);
     z_out = g_rafter_bottom_z(x_out);
-    color(pal_panel1(palette))
+    color(pal_soffit(palette))
     hull() {
         translate([x_in,  y0, z_in  - SOFFIT_T]) cube([0.01, y1 - y0, SOFFIT_T]);
         translate([x_out, y0, z_out - SOFFIT_T]) cube([0.01, y1 - y0, SOFFIT_T]);
