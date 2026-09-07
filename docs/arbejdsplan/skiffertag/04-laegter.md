@@ -9,7 +9,7 @@
 
 | Materiale | Dimension | Mængde |
 |---|---|---|
-| Taglægter T1 | 38×73 mm | 14 stk à 3,3 m (køb 14 stk à 3,6 m — én længde pr. lægte, ingen stød) |
+| Taglægter T1 | 38×73 mm | 14 stk à 3290 mm (køb 14 stk à 3,6 m — én længde pr. lægte, ingen stød) |
 | Søm/skruer | 100 mm | 2 pr. kryds (lægte × spær) |
 
 ## Lægteplan
@@ -44,13 +44,15 @@ Alle mål er **på skrå fladen, fra spærenden (tagfod) og op**, til lægtens
 
 1. Mærk lægteplanen op på de yderste afstandslister med tommestok + kridtsnor.
 2. Sømmene går gennem lægte + afstandsliste ned i spæret.
-3. Lægterne føres **200 mm ud forbi gavlspærene i begge ender** — de bærer
-   gavludhænget. Enderne kappes i flugt (snor), vindskedens underbræt sømmes
-   på dem i skridt 9.
+3. Lægterne føres **145 mm ud forbi gavlspærene i begge ender** — de bærer
+   gavludhænget. Samlet lægtelængde **3290 mm** (3000 + 2 × 145). Enderne
+   kappes i flugt (snor); vindskedens underbræt (25 mm) sømmes på lægternes
+   endetræ i skridt 9 og bringer kanten ud på 170, og overliggeren uden på
+   den bringer det samlede gavludhæng ud på 195.
 4. Lægtestød skal ligge over et spær (skiftevis, ikke alle på samme spær).
 
 ## Tjek
 
 - [ ] Alle afstande målt efter planen — 225 mm overkant-til-overkant fra L3 og op.
 - [ ] Planhed maks. **2 mm på 2 m retskinne**, både på langs og på tværs.
-- [ ] Udkragning 200 mm ved begge gavle, ender i flugt.
+- [ ] Udkragning 145 mm ved begge gavle, ender i flugt (lægte 3290 mm).

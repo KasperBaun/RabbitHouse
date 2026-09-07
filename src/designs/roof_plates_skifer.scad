@@ -10,10 +10,12 @@
 // width 300 mm along the ridge (Y), length 600 mm up-slope. Slope is
 // dimensioned so the math goes up exactly:
 //   slope = 4 × gauge(225 slope) + 600 = 1500 mm
-//   horizontal pitch = 225 × cos(35°) ≈ 184 mm — see SK_BATTEN_C2C
+//   horizontal pitch = 225 × cos(35°) ≈ 184 mm
 //   lap = 600 − 2 × 225 = 150 mm (≥ 80–90 mm required at 35° pitch)
-// The real build adds a begynderrække at the eave and a cut top course at
-// the ridge (see docs/arbejdsplan/skiffertag/) — not modelled.
+// Lægter, rækkelinjer og skiferforkant følger sætteplanen i
+// docs/arbejdsplan/skiffertag/04-laegter.md (SK_LAEGTE_TOP / SK_COURSE_TAIL
+// nedenfor), så renderet kan bruges som kontrol af planen. Begynderrækken
+// under tagfoden er ikke modelleret — den er skjult i den færdige flade.
 // Stone seams are rendered as shallow grooves on the slate surface so the
 // roof reads as slate rather than a painted slab.
 
@@ -27,7 +29,23 @@ SK_BATTEN_T     = 38;           // taglægte T1 38×73
 SK_BATTEN_W     = 73;
 SK_PLATE_L      = 600;          // stone length up the slope
 SK_PLATE_W      = 300;          // stone width along the ridge (Y)
-SK_BATTEN_C2C   = 184;          // horizontal projection of slope-gauge 225 mm
+// ---- Sætteplan. Én kilde til sandhed, identisk med tabellen i
+// docs/arbejdsplan/skiffertag/04-laegter.md. Alle mål er PÅ SKRÅFLADEN,
+// målt fra spærenden (s = 0) op mod kip (s = SK_SLOPE). Skiferens forkant
+// stikker SK_EAVE_PROJ forbi spærenden, så vandet drypper fri af sternen.
+//
+//   s = (x + G_OH_EAVE) / cos(35°) på venstre halvtag
+//   hver rækkes OVERKANT flugter en lægtes OVERKANT, så sømmene
+//   (25–40 mm under stenens overkant) altid rammer lægten.
+SK_SLOPE        = 1500;   // spærende -> kip = (G_RIDGE_X+G_OH_EAVE)/cos(35°)
+SK_GAUGE        = 225;    // lægteafstand på skråfladen = (600 - 150) / 2
+SK_EAVE_PROJ    = 60;     // skiferforkant forbi spærenden
+SK_LAEGTE_TOP   = [0, 315, 540, 765, 990, 1215, 1440];  // L1..L7 overkanter
+SK_COURSE_TAIL  = [-60, 165, 390, 615, 840, 1065];      // synlige rækkers underkant
+
+// Skråflade-position -> X på hvert halvtag.
+function _sk_xl(s) = -G_OH_EAVE + s * cos(G_PITCH_DEG);
+function _sk_xr(s) = RH_HOUSE_LEN + G_OH_EAVE - s * cos(G_PITCH_DEG);
 SK_SLATE_T      = 8;            // visible stone thickness (read as slate)
 SK_STACK_T      = SK_UNDERLAY_T + SK_CBATTEN_T + SK_BATTEN_T + SK_SLATE_T;
 
@@ -94,14 +112,14 @@ module _sk_counter_battens(palette) {
 // poke up through the slate at its up-slope edge).
 module _sk_battens(y_lo, y_hi, palette) {
     z0 = SK_UNDERLAY_T + SK_CBATTEN_T - 0.5;
-    for (x = [-G_OH_EAVE + SK_BATTEN_W/2 :
-               SK_BATTEN_C2C : G_RIDGE_X - SK_BATTEN_W])
-        _sk_half_slab(x - SK_BATTEN_W/2, x + SK_BATTEN_W/2, y_lo, y_hi,
+    for (t = SK_LAEGTE_TOP) {
+        // Venstre halvtag: lægten spænder s = t-73 .. t.
+        _sk_half_slab(_sk_xl(t - SK_BATTEN_W), _sk_xl(t), y_lo, y_hi,
                       z0, SK_BATTEN_T, pal_post(palette));
-    for (x = [G_RIDGE_X + SK_BATTEN_W/2 :
-               SK_BATTEN_C2C : RH_HOUSE_LEN + G_OH_EAVE - SK_BATTEN_W])
-        _sk_half_slab(x - SK_BATTEN_W/2, x + SK_BATTEN_W/2, y_lo, y_hi,
+        // Højre halvtag: spejlet om kippen.
+        _sk_half_slab(_sk_xr(t), _sk_xr(t - SK_BATTEN_W), y_lo, y_hi,
                       z0, SK_BATTEN_T, pal_post(palette));
+    }
 }
 
 // Course grooves and plate seams are rendered as thin tilted slabs that
@@ -114,7 +132,6 @@ module _sk_battens(y_lo, y_hi, palette) {
 SK_GROOVE_W = 10;            // X-extent of course-edge groove
 SK_SEAM_W   = 7;             // Y-extent of plate seam
 SK_GROOVE_H = 0.5;           // raised-above-slate height (vertical)
-SK_N_COURSES = 5;            // courses per half-slope (slope = 1500 mm = 4G+600)
 
 // ============================================================================
 // Horizontal course grooves — one per course bottom on each half-slope.
@@ -124,14 +141,12 @@ SK_N_COURSES = 5;            // courses per half-slope (slope = 1500 mm = 4G+600
 module _sk_course_grooves(y_lo, y_hi) {
     yd_lo = y_lo + SK_RAKE_INSET;
     yd_hi = y_hi - SK_RAKE_INSET;
-    for (i = [0 : SK_N_COURSES - 1]) {
-        x_l = -G_OH_EAVE + SK_BATTEN_C2C/2 + i * SK_BATTEN_C2C;
-        _sk_half_slab(x_l - SK_GROOVE_W/2, x_l + SK_GROOVE_W/2,
-                      yd_lo, yd_hi,
+    for (t = SK_COURSE_TAIL) {
+        xl = _sk_xl(t);
+        _sk_half_slab(xl - SK_GROOVE_W/2, xl + SK_GROOVE_W/2, yd_lo, yd_hi,
                       SK_STACK_T - 0.2, SK_GROOVE_H, SK_SEAM_COLOR);
-        x_r = G_RIDGE_X + SK_BATTEN_C2C/2 + i * SK_BATTEN_C2C;
-        _sk_half_slab(x_r - SK_GROOVE_W/2, x_r + SK_GROOVE_W/2,
-                      yd_lo, yd_hi,
+        xr = _sk_xr(t);
+        _sk_half_slab(xr - SK_GROOVE_W/2, xr + SK_GROOVE_W/2, yd_lo, yd_hi,
                       SK_STACK_T - 0.2, SK_GROOVE_H, SK_SEAM_COLOR);
     }
 }
@@ -142,29 +157,30 @@ module _sk_course_grooves(y_lo, y_hi) {
 // Each seam is a thin tilted slab spanning one course (c2c along slope)
 // at the plate boundary along Y.
 // ============================================================================
-module _sk_plate_seams_one_half(x_start, y_lo, y_hi) {
+// `side` = -1 venstre halvtag, +1 højre. Hver rækkes synlige bånd går fra
+// rækkens underkant til den næste rækkes underkant (øverste række: til kip).
+module _sk_plate_seams_one_half(side, y_lo, y_hi) {
     yd_lo = y_lo + SK_RAKE_INSET;
     yd_hi = y_hi - SK_RAKE_INSET;
-    for (i = [0 : SK_N_COURSES - 1]) {
-        x_mid    = x_start + (i + 0.5) * SK_BATTEN_C2C;
-        y_offset = (i % 2 == 0) ? 0 : SK_PLATE_W / 2;
-        for (y = [yd_lo + y_offset : SK_PLATE_W : yd_hi]) {
-            _sk_half_slab(x_mid - SK_BATTEN_C2C/2, x_mid + SK_BATTEN_C2C/2,
+    n = len(SK_COURSE_TAIL);
+    for (i = [0 : n - 1]) {
+        s_lo  = SK_COURSE_TAIL[i];
+        s_hi  = (i < n - 1) ? SK_COURSE_TAIL[i + 1] : SK_SLOPE;
+        x_a   = (side < 0) ? _sk_xl(s_lo) : _sk_xr(s_lo);
+        x_b   = (side < 0) ? _sk_xl(s_hi) : _sk_xr(s_hi);
+        y_off = (i % 2 == 0) ? 0 : SK_PLATE_W / 2;
+        for (y = [yd_lo + y_off : SK_PLATE_W : yd_hi])
+            _sk_half_slab(min(x_a, x_b), max(x_a, x_b),
                           y - SK_SEAM_W/2, y + SK_SEAM_W/2,
                           SK_STACK_T - 0.2, SK_GROOVE_H, SK_SEAM_COLOR);
-        }
     }
 }
 
 module _sk_plate_seams(y_lo, y_hi) {
-    _sk_plate_seams_one_half(-G_OH_EAVE,  y_lo, y_hi);
-    _sk_plate_seams_one_half(G_RIDGE_X,   y_lo, y_hi);
+    _sk_plate_seams_one_half(-1, y_lo, y_hi);
+    _sk_plate_seams_one_half(+1, y_lo, y_hi);
 }
 
-// ============================================================================
-// Ridge cap — slate-following V-tent. Cross-section in XZ is a thin tilted
-// V that hugs the slate top on both sides of the ridge with a small apex
-// rise, extruded along Y. Renders as a clean ridge tile line.
 // ============================================================================
 module _sk_ridge_cap(y_lo, y_hi) {
     cap_half_w = 90;       // each leg of the cap reaches this far from ridge
@@ -230,8 +246,9 @@ module render_skifer_sten() {
     // its outer face, butting against the overligger that rises above it.
     y_lo = -G_VS_OUTER;
     y_hi = RH_HOUSE_DEPTH + G_VS_OUTER;
-    x_lo = -G_OH_EAVE;
-    x_hi = RH_HOUSE_LEN + G_OH_EAVE;
+    // Forkanten stikker SK_EAVE_PROJ ud forbi spærenden (drypkant).
+    x_lo = _sk_xl(-SK_EAVE_PROJ);
+    x_hi = _sk_xr(-SK_EAVE_PROJ);
     slate_z0 = SK_UNDERLAY_T + SK_CBATTEN_T + SK_BATTEN_T - 1;
     _sk_half_slab(x_lo, G_RIDGE_X, y_lo, y_hi,
                   slate_z0, SK_STACK_T - slate_z0, SK_SLATE_COLOR);

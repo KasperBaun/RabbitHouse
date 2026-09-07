@@ -238,8 +238,11 @@ G_VS_OUTER     = 170;                         // underbræt outer face = slate e
 G_VS_OVER_RISE = 40;                          // overligger top above the slate surface
 
 // Total rake (barge) overhang to the overligger's outer face. The taglægter
-// cantilever out past the gable trusses to carry it; the boards also cover
-// the proud gable cladding (~48 mm out).
+// cantilever G_VS_OUTER - G_VS_T = 145 mm past the gable trusses and the
+// underbræt is nailed to their end grain, bringing the edge out to 170; the
+// overligger on its outer face makes the total 195. The boards also cover
+// the proud gable cladding (~48 mm out). Så: lægter 3290, skifer 3340,
+// yderste kant 3390 mm.
 G_OH_RAKE      = G_VS_OUTER + G_VS_T;         // = 195
 
 // Roof build-up above the rafter top (skifer cover): undertag 3 +

@@ -52,13 +52,16 @@ Klaplaget fra trin 1 brydes op og erstattes.
 
 ## 4. Tagkonstruktion
 
-- [ ] Rejs spær m. hanebånd + fugleudskæring → [01-spaer.md](docs/arbejdsplan/skiffertag/01-spaer.md)
+- [x] Rejs spær m. hanebånd + fugleudskæring → [01-spaer.md](docs/arbejdsplan/skiffertag/01-spaer.md)
 - [ ] Sofit under tagskæg → [01b-sofit.md](docs/arbejdsplan/skiffertag/01b-sofit.md)
 
-## 5. Tagdækning (skifer) → [oversigt + indkøbsliste](docs/arbejdsplan/skiffertag/README.md)
+## 5. Tagdækning (skifer) → **[BYGGEPLAN: nøglemål, lægteplan + indkøbsliste](docs/arbejdsplan/skiffertag/README.md)**
 
-- [ ] Undertag → [02-undertag.md](docs/arbejdsplan/skiffertag/02-undertag.md)
-- [ ] Afstandslister 25×50 over spær → [03-afstandslister.md](docs/arbejdsplan/skiffertag/03-afstandslister.md)
+> Næste skridt er **lægtning (4)**. Læs "Gør dette FØR du køber og skærer" i
+> byggeplanen først — der er tre ting at måle inden der bestilles sten og søm.
+
+- [x] Undertag → [02-undertag.md](docs/arbejdsplan/skiffertag/02-undertag.md)
+- [x] Afstandslister 25×50 over spær → [03-afstandslister.md](docs/arbejdsplan/skiffertag/03-afstandslister.md)
 - [ ] Lægtning 38×73 efter lægteplan → [04-laegter.md](docs/arbejdsplan/skiffertag/04-laegter.md)
 - [ ] Sternbrædder ved begge tagfødder → [05-stern.md](docs/arbejdsplan/skiffertag/05-stern.md)
 - [ ] Fodblik + fuglegitter + opklodsningsliste → [06-fodblik.md](docs/arbejdsplan/skiffertag/06-fodblik.md)
@@ -69,11 +72,11 @@ Klaplaget fra trin 1 brydes op og erstattes.
 
 ## 6. Udvendig beklædning
 
-- [ ] Vindpapir på alle vægge, stift c/c 200
-- [ ] Cut åbninger i vindpapir
-- [ ] Afstandslister c/c 600
-- [ ] Beklædning (klink)
-- [ ] Hjørnetrim ved 4 hjørner
+- [x] Vindpapir på alle vægge, stift c/c 200
+- [x] Cut åbninger i vindpapir
+- [x] Afstandslister c/c 600
+- [x] Beklædning (klink) — sortmalet; V4 mangler stadig omkring hus-dør-åbningen
+- [x] Hjørnetrim ved 4 hjørner
 
 ## 7. Åbninger
 

@@ -32,7 +32,7 @@ Værktøj: skiferøkse + fladstål (tilskæring/lokning), kridtsnor.
    forkant (−60). **Sømningens gyldne regel:** slå sømmet i, til hovedet
    NETOP rører stenen — stenen skal hænge på sømmene, ikke være spændt op.
    Opspænding er den klassiske årsag til revnede sten.
-   *Rækken går ikke op i hele sten (3400 = 11⅓): afslut aldrig med en
+   *Rækken går ikke op i hele sten (3340 = 11,1 sten): afslut aldrig med en
    strimmel under 150 mm — tilskær i stedet de to sidste sten til ~250 mm,
    eller start rækken med en ½-sten.*
 4. **Kip-liste 8×25** sømmes helt oppe ved kippen (begge sider), så
