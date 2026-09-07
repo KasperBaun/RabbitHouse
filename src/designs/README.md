@@ -39,23 +39,13 @@ designs/
 ## Toggles
 
 Top of `main.scad`: set `house_roof_cover`, `yard_roof_cover`,
-`cladding_type`, `exterior_finish` and `show_unbuilt`.
+`cladding_type`.
 Comment/uncomment individual `Render*()` calls below to isolate a building system.
 
-`show_unbuilt = false` (default) renders only what actually stands in the
-garden: V4's hus-dør shows as a framed opening with no leaf in it, and the pet
-door is omitted entirely (cladding closes over it). Set it `true` to see the
-full design. It is threaded into `RenderHouseOpenings()` and
-`RenderHouseCladding()`.
-
-`exterior_finish` builds the `PALETTE` vector that is threaded into every house
-`Render*()` call:
-
-- `sortmalet` (default) — as built: cladding, casings, corner boards, soffit and
-  vindskeder painted black; structural timber (studs, spær, afstandslister,
-  taglægter) left natural, and the front door leaf bare plywood.
-- `ubehandlet` — the library `DEFAULT_PALETTE`, i.e. natural timber everywhere.
-  Easier to read the klink shadow lines when checking geometry.
+`PALETTE` is the palette vector threaded into every house `Render*()` call:
+the cladding, casings, corner boards, soffit and vindskeder are painted black
+as built, while structural timber (studs, spær, afstandslister, taglægter)
+stays natural and the front door leaf is bare plywood.
 
 With `house_roof_cover == "skifer"` the roof is rendered **step by step** — one
 call per arbejdsplan work step (`RenderHouseRoofSpaer` → `-Undertag`

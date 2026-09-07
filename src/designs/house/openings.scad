@@ -219,11 +219,14 @@ module _render_side_window(palette) {
             cube([GLASS_T, glass_w, glass_h]);
 }
 
-// show_unbuilt = false udelader det der er projekteret men endnu ikke lavet:
-// V4's hus-dør (åbningen er rejst, men der sidder intet dørblad i endnu) og
-// pet-døren. Se main.scad.
-module RenderHouseOpenings(palette = DEFAULT_PALETTE, show_unbuilt = true) {
-    if (show_unbuilt) _render_human_door(palette);
+module RenderHouseOpenings(palette = DEFAULT_PALETTE) {
     _render_front_door(palette);
     _render_side_window(palette);
+}
+
+// V4's hus-dør — projekteret, men ikke bygget: åbningen er rejst, der sidder
+// bare intet dørblad i endnu. Eget kald, så den kan kommenteres ind når den
+// kommer op.
+module RenderHouseV4Doors(palette = DEFAULT_PALETTE) {
+    _render_human_door(palette);
 }

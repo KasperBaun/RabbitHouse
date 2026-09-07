@@ -15,12 +15,6 @@ Open `src/main.scad` in OpenSCAD — it is the top-level dispatcher, organised i
 - `house_roof_cover` — `"skifer"` (default; gable roof) | `"tagpap"` | `"eternit"` (legacy mono-pitch)
 - `yard_roof_cover` — `"mesh"` (default) | `"polycarb"` | `"tagpap"` | `"eternit"`
 - `cladding_type` — `"klink"` | `"board_on_board"`
-- `show_unbuilt` — `false` (default; as built — omits the V4 hus-dør leaf, whose
-  opening is framed but has no door in it yet, and the pet door, which doesn't
-  exist yet) | `true` (the full design)
-- `exterior_finish` — `"sortmalet"` (default; as built — cladding, casings, corner
-  boards, soffit and vindskeder painted black) | `"ubehandlet"` (natural timber,
-  easier to read the klink shadow lines in preview)
 
 With `"skifer"` the house roof is rendered **step by step** — one `RenderHouseRoof*()` call per arbejdsplan work step, in real build order (spær → undertag → afstandslister → lægter → stern → fodblik → skifer → vindskeder → rygning). Comment calls in/out to inspect each build stage. Other covers render via the two composite calls in the `else` branch (scripts in `src/scripts/` override `house_roof_cover` with `-D` and rely on this).
 
@@ -32,7 +26,7 @@ The two zones are **separate structures** with different footprints and wall hei
 
 | Zone  | Footprint                     | What it owns |
 | ----- | ----------------------------- | ------------ |
-| House | X = 0..2000, Y = 0..3000      | Walls V1–V4 (own full perimeter); gable roof + skifer cover; kælder (basement pit + slab + lemme/trapper); strøer-gulv; front door (no front windows) + V3 side window + hus-dør/pet-dør in V4; cladding all 4 walls; foundation ring. |
+| House | X = 0..2000, Y = 0..3000      | Walls V1–V4 (own full perimeter); gable roof + skifer cover; kælder (basement pit + slab + lemme/trapper); strøer-gulv; front door (no front windows) + V3 side window + hus-dør in V4 (`RenderHouseV4Doors`, not built — commented out in main.scad); cladding all 4 walls; foundation ring. |
 | Yard  | X = 2000..6000, Y = 1000..3000 | Own V1/V2 wall segments + V5; mesh walls front/back/right; mesh lid (or mono-pitch roof for solid covers); yard door; 3-sided foundation (`standalone=true` adds the 4th side). |
 | Shared | —                            | Ground; back wall line Y = 3000 is common to both zones. |
 
@@ -105,8 +99,9 @@ Every library module takes **named arguments with sensible defaults**. Things th
 | `mesh_spec` | spacing, bar, frame, depth | `ms_spacing`, `ms_bar`, ... |
 | `stud_spec` | stud_w, stud_d, spacing | `ss_w`, `ss_d`, `ss_spacing` |
 
-`src/main.scad` constructs ctx vectors near the top (`PALETTE`, driven by
-`exterior_finish`) and threads them into the `Render*()` calls. No library module reads file-global variables.
+`src/main.scad` constructs ctx vectors near the top (`PALETTE` — the house is
+painted black; structural timber stays natural) and threads them into the
+`Render*()` calls. No library module reads file-global variables.
 
 ### Spatial layout
 

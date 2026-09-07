@@ -20,8 +20,9 @@ module _gable_prism(y0, y1) {
                          [G_RIDGE_X, g_ridge_bottom_z()]]);
 }
 
-module render_cladding_klink(clad = RH_CLAD, palette = DEFAULT_PALETTE,
-                             show_unbuilt = true) {
+// Pet-døren i V4 er projekteret men ikke bygget, så der skæres ikke hul til
+// den her — kun til hus-døren, hvis åbning står rejst.
+module render_cladding_klink(clad = RH_CLAD, palette = DEFAULT_PALETTE) {
     hl  = RH_HOUSE_LEN; ww = RH_HOUSE_DEPTH; bh = RH_BASE_H;
     eh  = RH_EH_FRONT;
     sd  = RH_POST_W;    pl  = RH_SILL_H;
@@ -66,9 +67,6 @@ module render_cladding_klink(clad = RH_CLAD, palette = DEFAULT_PALETTE,
         render_housewrap([part_x, 0, bh], ww, eh - pl, "Y");
         translate([part_x - 1, RH_HOUSE_DOOR_Y, house_dz])
             cube([RH_HOUSEWRAP_T + 2, RH_HOUSE_DOOR_W, RH_HOUSE_DOOR_H]);
-        if (show_unbuilt)
-            translate([part_x - 1, RH_PET_DOOR_Y, pet_dz])
-                cube([RH_HOUSEWRAP_T + 2, RH_PET_DOOR_W, RH_PET_DOOR_H]);
     }
 
     // -- Counter-battens (vertical — klink boards run horizontal).
@@ -77,10 +75,7 @@ module render_cladding_klink(clad = RH_CLAD, palette = DEFAULT_PALETTE,
     render_vertical_battens([-s, 0, bh], ww, eh, "Y", skip_ranges = v3_skip);
     render_vertical_battens(
         [part_x + RH_HOUSEWRAP_T, 0, bh], ww, eh, "Y",
-        skip_ranges = show_unbuilt
-            ? [[RH_HOUSE_DOOR_Y, RH_HOUSE_DOOR_Y + RH_HOUSE_DOOR_W],
-               [RH_PET_DOOR_Y,   RH_PET_DOOR_Y   + RH_PET_DOOR_W]]
-            : [[RH_HOUSE_DOOR_Y, RH_HOUSE_DOOR_Y + RH_HOUSE_DOOR_W]]);
+        skip_ranges = [[RH_HOUSE_DOOR_Y, RH_HOUSE_DOOR_Y + RH_HOUSE_DOOR_W]]);
 
     // -- Klink boards. Cutouts run `km` mm wider than the opening on the
     // lateral (jamb) axis so the cut board-ends retreat behind the casing lap
@@ -103,9 +98,6 @@ module render_cladding_klink(clad = RH_CLAD, palette = DEFAULT_PALETTE,
                        palette, clad);
         translate([part_x + s - 10, RH_HOUSE_DOOR_Y - km, house_dz])
             cube([ct + 20, RH_HOUSE_DOOR_W + 2*km, RH_HOUSE_DOOR_H]);
-        if (show_unbuilt)
-            translate([part_x + s - 10, RH_PET_DOOR_Y - km, pet_dz])
-                cube([ct + 20, RH_PET_DOOR_W + 2*km, RH_PET_DOOR_H]);
     }
 
     // -- Gable-end cladding — closes the triangle between the flat wall top
@@ -144,6 +136,4 @@ module render_cladding_klink(clad = RH_CLAD, palette = DEFAULT_PALETTE,
     render_opening_trim("Y", -o, -1, RH_SIDE_WIN_Y, RH_SIDE_WIN_W, v3_win_z, RH_SIDE_WIN_H, o, palette=palette);
     // V4 partition — outward normal +X, cladding outer face at X = hl + o.
     render_opening_trim("Y", hl + o, +1, RH_HOUSE_DOOR_Y, RH_HOUSE_DOOR_W, house_dz, RH_HOUSE_DOOR_H, o, sill=false, palette=palette);
-    if (show_unbuilt)
-        render_opening_trim("Y", hl + o, +1, RH_PET_DOOR_Y, RH_PET_DOOR_W, pet_dz, RH_PET_DOOR_H, o, sill=false, palette=palette);
 }

@@ -34,16 +34,13 @@ use <designs/yard/mesh.scad>
 house_roof_cover = "skifer";     // skifer | tagpap | eternit
 yard_roof_cover  = "mesh";       // mesh | polycarb | tagpap | eternit
 cladding_type    = "klink";      // klink | board_on_board
-exterior_finish  = "sortmalet";  // sortmalet (som bygget) | ubehandlet
-show_unbuilt     = false;        // true: vis også V4-dørblad + pet-dør
 
-PALETTE = exterior_finish == "sortmalet"
-    ? palette(panel1 = [0.13, 0.13, 0.14],   // beklædning
-              panel2 = [0.10, 0.10, 0.11],
-              trim   = [0.09, 0.09, 0.10],   // indfatning, hjørner, vindskeder
-              wall   = [0.12, 0.12, 0.13],
-              door   = [0.80, 0.68, 0.42])   // bar krydsfiner
-    : DEFAULT_PALETTE;
+// Huset er sortmalet. Konstruktionstræ (pal_post) står ubehandlet.
+PALETTE = palette(panel1 = [0.13, 0.13, 0.14],   // beklædning
+                  panel2 = [0.10, 0.10, 0.11],
+                  trim   = [0.09, 0.09, 0.10],   // indfatning, hjørner, vindskeder
+                  wall   = [0.12, 0.12, 0.13],
+                  door   = [0.80, 0.68, 0.42]);  // bar krydsfiner
 
 // shared
 RenderGround();
@@ -56,7 +53,8 @@ RenderHouseFloorHangers();
 RenderHouseFloorDeck(PALETTE);
 //RenderHouseStairs(PALETTE);
 RenderHouseFraming(PALETTE);
-RenderHouseOpenings(PALETTE, show_unbuilt);
+RenderHouseOpenings(PALETTE);
+//RenderHouseV4Doors(PALETTE);   // hus-dør mod løbegården — ikke bygget
 
 // tag, trin for trin (arbejdsplan trin 4-5) — kommentér ud nedefra
 if (house_roof_cover == "skifer") {
@@ -74,7 +72,7 @@ if (house_roof_cover == "skifer") {
     RenderHouseRoof(house_roof_cover, PALETTE);
     RenderHouseRoofPlates(house_roof_cover, palette = PALETTE);
 }
-RenderHouseCladding(cladding_type, PALETTE, show_unbuilt);
+RenderHouseCladding(cladding_type, PALETTE);
 
 // yard — ikke bygget endnu
 //RenderYardFoundation();
