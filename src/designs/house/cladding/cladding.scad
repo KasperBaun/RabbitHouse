@@ -6,9 +6,10 @@ use <cladding_klink.scad>
 use <cladding_board_on_board.scad>
 
 module RenderHouseCladding(cladding_type = "klink",
-                           palette = DEFAULT_PALETTE) {
+                           palette = DEFAULT_PALETTE,
+                           show_unbuilt = true) {
     if (cladding_type == "klink")
-        render_cladding_klink(RH_CLAD, palette);
+        render_cladding_klink(RH_CLAD, palette, show_unbuilt);
     else if (cladding_type == "board_on_board")
         render_cladding_board_on_board(RH_CLAD_BOB, palette);
     else

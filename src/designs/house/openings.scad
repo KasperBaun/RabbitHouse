@@ -1,5 +1,6 @@
-// HOUSE openings — front entry door + 2 windows on V1, human door in the
-// partition (V4). Self-contained: zone-specific geometry only.
+// HOUSE openings — front entry door on V1 (no flanking windows), side
+// window on V3, human door + pet door in the partition (V4).
+// Self-contained: zone-specific geometry only.
 
 include <../../lib/defaults.scad>
 include <../config.scad>
@@ -21,9 +22,13 @@ PART_INNER_X  = PARTITION_X - WALL_DEPTH;
 // (indfatning) doesn't leave a deep empty reveal.
 CLAD_FACE     = RH_HOUSEWRAP_T + RH_COUNTER_BATTEN_T + 25;
 
-HINGE_C       = [0.18, 0.18, 0.20];
-HANDLE_C      = [0.18, 0.18, 0.20];
+// Beslag som monteret: lyse galvaniserede hængsler og et sølvfarvet
+// greb med messing-cylinder over. (Aflæst på nærbillede af hoveddøren.)
+HINGE_C       = [0.72, 0.73, 0.75];
+HANDLE_C      = [0.76, 0.77, 0.78];
+CYLINDER_C    = [0.72, 0.58, 0.24];
 GLASS_C       = [0.55, 0.75, 0.85, 0.45];
+WIN_FRAME_C   = [0.93, 0.93, 0.89];   // hvidmalet vindueskarm
 
 // Internal human door in V4, faces +X (into yard), opens into yard.
 module _render_human_door(palette) {
@@ -70,82 +75,111 @@ module _render_human_door(palette) {
             cube([8, 110, 40]);
 }
 
-// Front entry door on V1, faces -Y (out into garden). Single solid leaf,
-// styled like the V4 human door (plain slab + horizontal batten strips +
-// handle). The leaf's outer face sits flush with the klink face so the
-// casing frames it with no deep empty reveal. Opens outward on 2 hinges.
-module _render_front_door(palette) {
-    x0 = RH_FRONT_DOOR_X;
-    x1 = x0 + RH_FRONT_DOOR_W;
-    z0 = FLOOR_Z;
-    z1 = z0 + RH_FRONT_DOOR_H;
-
-    // Frame — header + two jambs filling the wall depth.
-    color(pal_post(palette)) {
-        translate([x0, 0, z1 - FRAME_T])
-            cube([RH_FRONT_DOOR_W, WALL_DEPTH, FRAME_T]);
-        side_h = RH_FRONT_DOOR_H - FRAME_T;
-        translate([x0, 0, z0])
-            cube([FRAME_T, WALL_DEPTH, side_h]);
-        translate([x1 - FRAME_T, 0, z0])
-            cube([FRAME_T, WALL_DEPTH, side_h]);
-    }
-
-    // Leaf fills the whole opening and sits just proud of the klink face, so
-    // the casing laps straight onto it — no recessed frame reveal to show the
-    // cut cladding layers. `w`/`h` = opening width/height.
-    w       = RH_FRONT_DOOR_W;
-    leaf_yf = -CLAD_FACE - 2;  // outer face just proud of the klink face
-
-    color(pal_door(palette))
-    translate([x0, leaf_yf, z0])
-        cube([w, LEAF_T, RH_FRONT_DOOR_H]);
-
-    // Horizontal batten strips on the outer face — same look as V4 door.
-    color(pal_trim(palette))
-    for (i = [0 : 4])
-        translate([x0 + 80, leaf_yf - 1, z0 + 200 + i * 400])
-            cube([w - 160, 2, 30]);
-
-    // Handle — vertical bar near the right (latch) edge, mid-height.
-    color(HANDLE_C) {
-        translate([x1 - 110, leaf_yf - 25, z0 + 950])  cube([25, 25, 150]);
-        translate([x1 - 115, leaf_yf - 12, z0 + 990])  cube([35, 12, 70]);
-    }
-    // Hinges — 2 straps on the left (hinge) edge.
-    color(HINGE_C)
-    for (zh = [z0 + 200, z1 - 300])
-        translate([x0 + 20, leaf_yf - 3, zh])
-            cube([110, 8, 40]);
+// Rombe-prisme ("harlekin") i XZ-planet, ekstruderet langs Y. Bruges både
+// til udskæringen i dørbladet og til ruden der sidder i den.
+//   cx, cz  : rombens centrum, w/h : diagonalernes længde
+//   y0      : prismets bagkant, depth : tykkelse i +Y
+module _diamond_prism(cx, cz, w, h, y0, depth) {
+    translate([cx, y0 + depth, cz])
+        rotate([90, 0, 0])
+            linear_extrude(height = depth)
+                polygon([[0, -h/2], [w/2, 0], [0, h/2], [-w/2, 0]]);
 }
 
-// Generic V1 window — frame inside wall depth + glass pane.
-module _render_front_window(x_opening, palette) {
-    x0 = x_opening;
-    x1 = x0 + RH_FRONT_WIN_W;
-    z0 = FLOOR_Z + RH_FRONT_WIN_Z;
-    z1 = z0 + RH_FRONT_WIN_H;
+// Front entry door on V1, faces -Y (out into garden). Indkøbt dør med
+// udvendige karmmål 948 × 2050; karmen står på sokkel-/gulvniveau
+// (RH_FRONT_DOOR_Z) med RH_FRONT_DOOR_FUGE montagefuge i hver side.
+// Bladet er en glat plade (krydsfiner) med en rombeformet rude i øverste
+// tredjedel — ingen vandrette bræddelister. Åbner udad på 3 hængsler.
+module _render_front_door(palette) {
+    // Lysning (rough opening) — karmen sidder centreret i den.
+    x0 = RH_FRONT_DOOR_X;
+    z0 = RH_FRONT_DOOR_Z;
 
-    color(pal_post(palette)) {
-        // Top + bottom of frame
-        translate([x0, 0, z1 - FRAME_T])
-            cube([RH_FRONT_WIN_W, WALL_DEPTH, FRAME_T]);
-        translate([x0, 0, z0])
-            cube([RH_FRONT_WIN_W, WALL_DEPTH, FRAME_T]);
-        // Sides
-        side_h = RH_FRONT_WIN_H - 2 * FRAME_T;
-        translate([x0, 0, z0 + FRAME_T])
+    // Karm — udvendige mål, midt i lysningen.
+    kx0 = x0 + RH_FRONT_DOOR_FUGE;
+    kw  = RH_FRONT_DOOR_KARM_W;
+    // Tegnes i lysningens højde (2047). Den rigtige karm er 2050 — de 3 mm
+    // høvles af topremmen ved montage, se config.scad.
+    kh  = RH_FRONT_DOOR_H;
+    kx1 = kx0 + kw;
+    kz1 = z0 + kh;
+
+    // Karm — overligger + to sidestykker i fuld vægdybde. Males sort som
+    // resten af den udvendige snedkerdel (pal_trim), ikke bart konstruktionstræ.
+    color(pal_trim(palette)) {
+        translate([kx0, 0, kz1 - FRAME_T])
+            cube([kw, WALL_DEPTH, FRAME_T]);
+        side_h = kh - FRAME_T;
+        translate([kx0, 0, z0])
             cube([FRAME_T, WALL_DEPTH, side_h]);
-        translate([x1 - FRAME_T, 0, z0 + FRAME_T])
+        translate([kx1 - FRAME_T, 0, z0])
             cube([FRAME_T, WALL_DEPTH, side_h]);
     }
 
-    // Glass pane — flush with outer wall face.
-    glass_w = RH_FRONT_WIN_W - 2 * FRAME_T;
-    glass_h = RH_FRONT_WIN_H - 2 * FRAME_T;
-    color(GLASS_C)
-    translate([x0 + FRAME_T, -GLASS_T, z0 + FRAME_T])
-        cube([glass_w, GLASS_T, glass_h]);
+    // Dørblad — udfylder karmlysningen og sidder lige uden for klinkens
+    // yderside, så indfatningen lapper direkte på det.
+    lx0     = kx0 + FRAME_T;
+    lw      = kw - 2 * FRAME_T;
+    lh      = kh - FRAME_T;
+    // Bladets YDERSIDE. Udad er −Y, så bladet fylder Y = leaf_yf ..
+    // leaf_yf + LEAF_T (indad). Klinkens yderside ligger i Y = −CLAD_FACE
+    // (= −48), så bladet står 2 mm proud af klinken — indfatningen (25 mm,
+    // ~12 mm proud) lapper på det udefra. Tegnes bladet i stedet fra
+    // leaf_yf − LEAF_T stikker det 42 mm ud foran beklædningen.
+    leaf_yf = -CLAD_FACE - 2;                 // = −50
+    cx      = lx0 + lw / 2;                   // rudens center i X
+    cz      = z0 + RH_FRONT_DOOR_LIGHT_Z;     // rudens center i Z
+
+    color(pal_door(palette))
+    difference() {
+        translate([lx0, leaf_yf, z0])
+            cube([lw, LEAF_T, lh]);
+        _diamond_prism(cx, cz, RH_FRONT_DOOR_LIGHT_W, RH_FRONT_DOOR_LIGHT_H,
+                       leaf_yf - 1, LEAF_T + 2);
+    }
+
+    // Foring — geringsskåret rombe-ramme af lyst træ uden om hullet, i
+    // bladets fulde tykkelse.
+    lin = RH_FRONT_DOOR_LIGHT_LINING;
+    color(pal_floor(palette))
+    difference() {
+        _diamond_prism(cx, cz, RH_FRONT_DOOR_LIGHT_W + 2 * lin,
+                       RH_FRONT_DOOR_LIGHT_H + 2 * lin, leaf_yf, LEAF_T);
+        _diamond_prism(cx, cz, RH_FRONT_DOOR_LIGHT_W, RH_FRONT_DOOR_LIGHT_H,
+                       leaf_yf - 1, LEAF_T + 2);
+    }
+
+    // Rude — kun hvis hullet er glaseret; som bygget står det åbent.
+    if (RH_FRONT_DOOR_LIGHT_GLAZED)
+        color(GLASS_C)
+        _diamond_prism(cx, cz, RH_FRONT_DOOR_LIGHT_W, RH_FRONT_DOOR_LIGHT_H,
+                       leaf_yf + LEAF_T/2 - GLASS_T/2, GLASS_T);
+
+    // Beslag sidder UDEN PÅ bladet, dvs. på den negative side af bladets
+    // yderside (leaf_yf).
+    face = leaf_yf;
+
+    // Greb — sølvfarvet vippegreb der peger ind mod hængselssiden, med
+    // messing-låsecylinder ca. 75 mm over. Ingen stor bagplade.
+    hz = z0 + 0.42 * lh;
+    hx = lx0 + lw - 55;                       // grebets rosetcenter
+    color(HANDLE_C) {
+        translate([hx - 8, face - 20, hz - 8]) cube([16, 20, 16]);   // hals
+        translate([hx - 165, face - 22, hz - 9]) cube([165, 14, 18]); // vippe
+    }
+    // rotate([90,0,0]) vender cylinderen fra +Z til −Y, så den vokser udad
+    // fra bladets forside: y = face .. face − 18 (18 mm proud, ikke 28).
+    color(CYLINDER_C)
+        translate([hx, face, hz + 75])
+            rotate([90, 0, 0]) cylinder(h = 18, d = 26);
+
+    // Hængsler — 2 lyse galvaniserede hængsler på venstre kant. De sidder
+    // hen over samlingen blad/karm, ca. 200 mm fra top og 250 mm fra bund.
+    color(HINGE_C)
+    for (zh = [z0 + lh - 260, z0 + 190])
+        translate([lx0 - 18, face - 5, zh])
+            cube([40, 5, 115]);
 }
 
 // Side window on V3 (left wall, X=0, faces -X). Frame fills the wall depth
@@ -156,32 +190,40 @@ module _render_side_window(palette) {
     z0 = FLOOR_Z + RH_SIDE_WIN_Z;
     z1 = z0 + RH_SIDE_WIN_H;
 
-    color(pal_post(palette)) {
-        // Top + bottom of frame
+    // Hvid karm — to lige høje rammer over hinanden, delt af en vandret
+    // midterpost (samme dimension som karmen).
+    z_mid = (z0 + z1) / 2;
+    color(WIN_FRAME_C) {
+        // Over- + underkarm
         translate([0, y0, z1 - FRAME_T])
             cube([WALL_DEPTH, RH_SIDE_WIN_W, FRAME_T]);
         translate([0, y0, z0])
             cube([WALL_DEPTH, RH_SIDE_WIN_W, FRAME_T]);
-        // Sides
+        // Sidekarme
         side_h = RH_SIDE_WIN_H - 2 * FRAME_T;
         translate([0, y0, z0 + FRAME_T])
             cube([WALL_DEPTH, FRAME_T, side_h]);
         translate([0, y1 - FRAME_T, z0 + FRAME_T])
             cube([WALL_DEPTH, FRAME_T, side_h]);
+        // Vandret midterpost
+        translate([0, y0 + FRAME_T, z_mid - FRAME_T/2])
+            cube([WALL_DEPTH, RH_SIDE_WIN_W - 2 * FRAME_T, FRAME_T]);
     }
 
-    // Glass pane — flush with outer wall face (X=0).
+    // Glas — én rude i hver ramme, flugter med ydersiden (X=0).
     glass_w = RH_SIDE_WIN_W - 2 * FRAME_T;
-    glass_h = RH_SIDE_WIN_H - 2 * FRAME_T;
+    glass_h = (RH_SIDE_WIN_H - 3 * FRAME_T) / 2;
     color(GLASS_C)
-    translate([-GLASS_T, y0 + FRAME_T, z0 + FRAME_T])
-        cube([GLASS_T, glass_w, glass_h]);
+    for (gz = [z0 + FRAME_T, z_mid + FRAME_T/2])
+        translate([-GLASS_T, y0 + FRAME_T, gz])
+            cube([GLASS_T, glass_w, glass_h]);
 }
 
-module RenderHouseOpenings(palette = DEFAULT_PALETTE) {
-    _render_human_door(palette);
+// show_unbuilt = false udelader det der er projekteret men endnu ikke lavet:
+// V4's hus-dør (åbningen er rejst, men der sidder intet dørblad i endnu) og
+// pet-døren. Se main.scad.
+module RenderHouseOpenings(palette = DEFAULT_PALETTE, show_unbuilt = true) {
+    if (show_unbuilt) _render_human_door(palette);
     _render_front_door(palette);
-    _render_front_window(RH_FRONT_WIN_X_LEFT,  palette);
-    _render_front_window(RH_FRONT_WIN_X_RIGHT, palette);
     _render_side_window(palette);
 }

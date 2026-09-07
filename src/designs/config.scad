@@ -46,6 +46,20 @@ RH_OH_BACK      = 180;
 RH_OH_SIDE      = 220;
 RH_ROOF_THICK   = 80;
 
+// Standard Danish timber sizes.
+//   95x180 glulam   — yard top beams sloping under roof
+//   45x195 reglar   — interior collar tie
+//   70x70 KOMPAKT   — mesh-wall stiles
+//   45x95 reglar    — yard corner posts (flush at X=ll), sill plates flat
+// RH_POST_W is the shared 95 mm "wide" dimension used by sills, beams, and
+// the corner reglar's wide axis — single constant keeps wall envelope sizes
+// consistent.
+RH_POST_W       = 95;
+RH_BEAM_H       = 180;
+RH_COLLAR_TIE_W = 45;
+RH_COLLAR_TIE_H = 195;
+RH_SILL_H       = 45;
+
 // Internal door in the partition wall (X=RH_HOUSE_LEN, faces +X into yard).
 // Rough opening for a standard 80x200 cm internal door.
 // Y=1500 centres door in partition zone (yard only meets V4 at Y=500..3000).
@@ -79,47 +93,56 @@ RH_NEST_W       = 800;
 RH_NEST_D       = 900;
 RH_NEST_H       = 600;
 
-// Side window on the left exterior wall V3 (X=0, faces -X). Centred in the
-// 3 m house depth; sill at adult eye level (~1.1 m above floor).
-RH_SIDE_WIN_W   = 700;
-RH_SIDE_WIN_H   = 600;
-RH_SIDE_WIN_Y   = (RH_HOUSE_DEPTH - RH_SIDE_WIN_W) / 2;   // = 1150, centred
-RH_SIDE_WIN_Z   = 1100;
+// Side window on the left exterior wall V3 (X=0, faces -X) — den frie
+// langside; løbegården ligger på V4-siden. To-rammet vindue (to lige høje
+// rammer over hinanden), hvid karm.
+//
+// Målt af byggefoto (klink-skifter à 100 mm som målestok), IKKE opmålt:
+//   lysning ca. 860 bred × 1000 høj, underkant 1000 mm over sokkeltop
+//   (= 955 over gulv), overkant tæt under topremmen.
+// Med Z=955 og H=1000 lander overliggeren (45) præcis under toprem-
+// underkanten (kote 2167) — ingen cripple over vinduet.
+// TODO: ret W/H/Y til vinduets faktiske karmmål + placering når de er
+// opmålt (læg montagefuge til karmmålet ligesom ved hoveddøren).
+RH_SIDE_WIN_W   = 860;
+RH_SIDE_WIN_H   = 1000;
+RH_SIDE_WIN_Y   = (RH_HOUSE_DEPTH - RH_SIDE_WIN_W) / 2;   // = 1070, centreret
+RH_SIDE_WIN_Z   = 955;                                    // over gulv (RH_FLOOR_TOP)
 
-// Front entry door on V1 (Y=0, faces -Y). Centred on the 2 m front wall:
-// X=550..1450 = 900 mm leaf opening. Header doubles as top plate (same
-// pattern as V4 partition door, since RH_FRONT_DOOR_H=2000 leaves exactly
-// PLATE_HEIGHT=45 + cripple stack to wall_top).
-RH_FRONT_DOOR_W = 900;
-RH_FRONT_DOOR_H = 2000;
-RH_FRONT_DOOR_X = (RH_HOUSE_LEN - RH_FRONT_DOOR_W) / 2;  // = 550
+// Front entry door on V1 (Y=0, faces -Y). Indkøbt dør, udvendige karmmål
+// 948 × 2050 mm (B × H).
+//
+// Lysning (rough opening) = karm + 10 mm montagefuge i hver side.
+// Bundremmen er skåret væk under døren, så karmen står direkte på sokkel-
+// /gulvniveau (Z = RH_BASE_H = 120) — samme kote som gulvbrættets overside.
+// Toprem = overligger (underkant Z = 2167), så den frie lysningshøjde er
+// RH_EH_FRONT − RH_SILL_H = 2047 mm.
+//
+// NB: karmen er 2050 høj, lysningen 2047 — de 3 mm høvles af topremmens
+// underside ved montage (eller opmål den byggede væg: er studs'ene i
+// virkeligheden 2003+ mm, forsvinder differencen).
+RH_FRONT_DOOR_KARM_W = 948;                        // udvendigt karmmål, bredde
+RH_FRONT_DOOR_KARM_H = 2050;                       // udvendigt karmmål, højde
+RH_FRONT_DOOR_FUGE   = 10;                         // montagefuge pr. side
 
-// Front windows on V1 — square lights flanking the front door. Each window
-// has its own dedicated full-height jamb stud on the door side (not fused
-// with the door jamb). Outer side reuses the corner / junction stud as the
-// king, with cripples below the sill and above the header at the opening's
-// outer edge. Header + sill span the 415 mm opening; visible glass area
-// between outer cripple and inner jamb is 370 mm.
-// Sill at door-midpoint (RH_FRONT_DOOR_H / 2) above floor.
-RH_FRONT_WIN_W       = 415;
-RH_FRONT_WIN_H       = 450;
-RH_FRONT_WIN_Z       = RH_FRONT_DOOR_H / 2;   // 1000 mm above floor
-RH_FRONT_WIN_X_LEFT  = 45;     // opening starts here (right face of corner stud)
-RH_FRONT_WIN_X_RIGHT = 1540;   // opening starts here (right face of right-window inner jamb)
+RH_FRONT_DOOR_W = RH_FRONT_DOOR_KARM_W + 2 * RH_FRONT_DOOR_FUGE;  // = 968
+RH_FRONT_DOOR_H = RH_EH_FRONT - RH_SILL_H;                        // = 2047
+RH_FRONT_DOOR_Z = RH_BASE_H;                       // = 120, karmens underkant
+RH_FRONT_DOOR_X = (RH_HOUSE_LEN - RH_FRONT_DOOR_W) / 2;           // = 516
 
-// Standard Danish timber sizes.
-//   95x180 glulam   — yard top beams sloping under roof
-//   45x195 reglar   — interior collar tie
-//   70x70 KOMPAKT   — mesh-wall stiles
-//   45x95 reglar    — yard corner posts (flush at X=ll), sill plates flat
-// RH_POST_W is the shared 95 mm "wide" dimension used by sills, beams, and
-// the corner reglar's wide axis — single constant keeps wall envelope sizes
-// consistent.
-RH_POST_W       = 95;
-RH_BEAM_H       = 180;
-RH_COLLAR_TIE_W = 45;
-RH_COLLAR_TIE_H = 195;
-RH_SILL_H       = 45;
+// Rudeudskæring i dørbladet — rombe ("harlekin") i bladets øverste tredjedel,
+// centreret i bredden, med en geringsskåret foring af lyst træ hele vejen
+// rundt. Hullet står ÅBENT som bygget (ingen rude i endnu) — sæt
+// RH_FRONT_DOOR_LIGHT_GLAZED = true når der isættes glas.
+// Mål skaleret af byggefoto, ikke opmålt.
+RH_FRONT_DOOR_LIGHT_W      = 240;    // hullets bredde (vandret diagonal)
+RH_FRONT_DOOR_LIGHT_H      = 280;    // hullets højde (lodret diagonal)
+RH_FRONT_DOOR_LIGHT_Z      = 1530;   // hullets centerkote over karmbund
+RH_FRONT_DOOR_LIGHT_LINING = 45;     // foringens bredde uden om hullet
+RH_FRONT_DOOR_LIGHT_GLAZED = false;
+
+// V1 har INGEN vinduer — facaden er blank beklædning på begge sider af
+// døren, og eneste glas i gavlen er ruden i dørbladet.
 
 // Yard mesh — fine welded wire (predator-proof per REQ-008).
 // 13 mm aperture x 1 mm wire (gauge 19 GAW).

@@ -48,80 +48,65 @@ inderfladser i Y=95..2905 og er begge 2810 mm lange.
 
 ---
 
-## V1 — Front (med dør + 2 vinduer)
+## V1 — Front (kun hoveddør)
 
-**Position:** Y=0..95, X=0..2000 (2000 mm lang).  
-**Åbninger:**
-- Dobbelt-lade-dør 900 × 2000 mm centreret om X=1000 (åbning X=550..1450)
-- Venstre vindue 415 × 450 mm (åbning X=45..460, z=1167..1617)
-- Højre vindue 415 × 450 mm (åbning X=1540..1955, z=1167..1617)
+**Position:** Y=0..95, X=0..2000 (2000 mm lang).
+**Åbning:** hoveddør — lysning **968 × 2047** mm, X=516..1484, z=120..2167.
+Indkøbt dør med udvendige karmmål **948 × 2050**, monteret med 10 mm
+montagefuge i hver side.
 
-Vinduernes sål ligger i z=1167 (= halv dørhøjde over gulv). Hver vindue har
-**én dedikeret full-height vindue-jamb** mod dør-jamben (separat træ, ikke
-fastgjort til dør-karmen) plus outer-cripples under sål og over header på
-hjørnesiden.
+**Ingen vinduer i facaden.** Det eneste glas/lys i gavlen er den
+rombeformede udskæring i selve dørbladet (240 × 280 mm hul med ~45 mm
+foring, center 1530 mm over karmbunden) — den står åben som bygget.
+
+To ting adskiller V1 fra de øvrige vægge:
+
+- **Bundremmen er skåret væk under døren.** Karmen står direkte på
+  sokkel-/gulvniveau (z=120), ikke oven på bundremmen. Derfor er V1's
+  bundrem to stykker à 516 mm i stedet for ét på 2000.
+- **Topremmen er dør-overligger.** Lysningen når op til toprem-underkanten
+  (z=2167), så der er hverken separat header eller cripples over døren.
+
+Karmen er 2050 høj mod en lysning på 2047 — de 3 mm høvles af topremmens
+underside ved montage (eller opmål den byggede væg).
 
 ### Elevation (set udefra)
 
 ```
-z=2212 ─────────────────────────── tag-spær hviler ovenpå ────────────────────────────
-       ┌──────────────────────────────────────────────────────────────────────────────┐
-z=2167 │                          TOPREM 45×95 — 2000 mm                                │
-       ├──┬───┬───────┬────┬────┬─────────────────────────────────┬────┬────┬───────┬───┬──┤
-       │  │░░░│═══════│    │    │░░░░░ cripple over dør ░░░░░░░░░░│    │    │═══════│░░░│  │  } over hdr
-       │  │░░░│ hdr   │    │    │             X=828..873          │    │    │ hdr   │░░░│  │   (cripple = 505)
-z=2212 │  │░░░├═══════┤    │    ├─────────────────────────────────┤    │    ├═══════┤░░░│  │  ← dør-header
-z=2167 │  │░░░│       │    │    │                                 │    │    │       │░░░│  │
-       │  │   │       │    │    │                                 │    │    │       │   │  │
-z=1712 │K │   │═══════│ WJ │ DJ │                                 │ DJ │ WJ │═══════│   │ J│  ← vindue-header
-z=1662 │  │   │ hdr   │    │    │                                 │    │    │ hdr   │   │  │
-       │  │   │       │    │    │       D Ø R   åbning            │    │    │       │   │  │
-       │  │   │ VINDUE│    │    │         900 × 2000              │    │    │ VINDUE│   │  │
-       │  │   │ åbning│    │    │                                 │    │    │ åbning│   │  │
-       │  │   │415×450│    │    │                                 │    │    │415×450│   │  │
-z=1167 │  │   ├═══════┤    │    │                                 │    │    ├═══════┤   │  │  ← vindue-sål
-z=1122 │  │   │ sål   │    │    │                                 │    │    │ sål   │   │  │
-       │  │░░░│       │    │    │                                 │    │    │       │░░░│  │  } under sål
-       │  │░░░│       │    │    │                                 │    │    │       │░░░│  │   (cripple = 955)
-       │  │░░░│       │    │    │                                 │    │    │       │░░░│  │
-z=212  ╞══╧═══╧═══════╧════╧════╧═════════════════════════════════╧════╧════╧═══════╧═══╧══╡
-       │                          BUNDREM 95×45 — 2000 mm                                  │
-z=167  ├──────────────────────────────────────────────────────────────────────────────────┤
-z=122  │░░░░░░░░░░░░░░░░░░░░░░░░░░ DPC 100×2 — 2000 mm ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│
-z=120  └──────────────────────────────────────────────────────────────────────────────────┘
-        X=0  45  90    460 505    550                          1450 1495  1540   1910 1955  2000
+z=2212 ────────────────────── tag-spær hviler ovenpå ──────────────────────
+       ┌───────────────────────────────────────────────────────────────────┐
+z=2167 │        TOPREM 45×95 — 2000 mm   (spænder døren som overligger)     │
+       ├──┬──────────┬────┬──────────────────────────┬────┬─────┬────┬─────┤
+       │  │          │    │                          │    │     │    │     │
+       │K │          │ DJ │      D Ø R  lysning      │ DJ │  S  │    │  J  │
+       │  │          │    │        968 × 2047        │    │     │    │     │
+       │  │          │    │     (karm 948 × 2050)    │    │     │    │     │
+z=167  ╞══╧══════════╧════╡                          ╞════╧═════╧════╧═════╡
+       │ BUNDREM 95×45     │   bundrem udskåret       │  BUNDREM 95×45      │
+z=122  │      516 mm       │                          │      516 mm         │
+z=120  └───────────────────┴──────────────────────────┴─────────────────────┘
+        X=0 45          471 516                    1484 1529 1800 1845 1955 2000
 
-  K  = hjørnestud (X=0..45, full-h)                  J  = junction-stud (X=1955..2000, full-h)
-  DJ = dør-jamb (full-h, X=505..550 og X=1450..1495)
-  WJ = vindue-jamb (full-h, X=460..505 og X=1495..1540) — separat træ, ikke fastgjort til DJ
-  ░░░ = outer-cripple (vindue): under sål 955 mm + over header 505 mm
-  ═══ = sål / header (45 mm tykt 95×45-stykke på fladsiden)
+  K  = hjørnestud (X=0..45, full-h)          J = junction-stud (X=1955..2000)
+  DJ = dør-jamb (full-h, X=471..516 og X=1484..1529)
+  S  = grid-stud (X=1800..1845)
+  Ingen header, sål eller cripples på V1.
 ```
-
-> **Bemærk (2000 mm vægge):** dørene (2000) = væghøjde, så 'dør-header'- og
-> 'cripple over dør'-rækkerne i elevations-ASCII'et falder nu sammen med
-> topremmen — topremmen spænder dør-åbningen som header, og der er ingen
-> cripple over dørene. Elevationen er skematisk; se skæreliste-tabellen
-> nedenfor og [skaereliste/](../skaereliste/00-oversigt.md) for præcise mål.
 
 ### Skæreliste — V1
 
-| #  | Element                          | Sektion  | Længde (mm) | Antal | Position                                                    |
-| -- | -------------------------------- | -------- | ----------- | ----- | ----------------------------------------------------------- |
-| 1  | DPC murpap                       | 100×2    | 2000        | 1     | Y=0..100, z=120                                             |
-| 2  | Bundrem PT                       | 95×45    | 2000        | 1     | Y=0..95, z=122..167                                         |
-| 3  | Toprem (gran, = dør-header)      | 95×45    | 2000        | 1     | Y=0..95, z=2167..2212 — spænder dør-åbningen som header     |
-| 4  | Stud — hjørne (mod V3)           | 45×95    | 2000        | 1     | X=0..45                                                     |
-| 5  | Stud — junction (mod V4)         | 45×95    | 2000        | 1     | X=1955..2000                                                |
-| 6  | Stud — dør-jamb                  | 45×95    | 2000        | 2     | X=505..550 og X=1450..1495                                  |
-| 7  | Stud — vindue-jamb (separat)     | 45×95    | 2000        | 2     | X=460..505 og X=1495..1540                                  |
-| 8  | Cripple — vindue under sål       | 45×95    | 955         | 2     | X=45..90 og X=1910..1955, z=167..1122                       |
-| 9  | Cripple — vindue over header     | 45×95    | 505         | 2     | X=45..90 og X=1910..1955, z=1662..2167                      |
-| 10 | Vindue-header                    | 95×45    | 415         | 2     | X=45..460 og X=1540..1955, z=1617..1662                     |
-| 11 | Vindue-sål (rough)               | 95×45    | 415         | 2     | X=45..460 og X=1540..1955, z=1122..1167                     |
+| # | Element                     | Sektion | Længde (mm) | Antal | Position                                                 |
+| - | --------------------------- | ------- | ----------- | ----- | -------------------------------------------------------- |
+| 1 | DPC murpap                  | 100×2   | 2000        | 1     | Y=0..100, z=120 (gennemgående, også under dørtærsklen)   |
+| 2 | Bundrem PT                  | 95×45   | 516         | 2     | X=0..516 og X=1484..2000, z=122..167                     |
+| 3 | Toprem (gran, = overligger) | 95×45   | 2000        | 1     | Y=0..95, z=2167..2212 — spænder dør-åbningen             |
+| 4 | Stud — hjørne (mod V3)      | 45×95   | 2000        | 1     | X=0..45                                                  |
+| 5 | Stud — dør-jamb             | 45×95   | 2000        | 2     | X=471..516 og X=1484..1529                               |
+| 6 | Stud — grid                 | 45×95   | 2000        | 1     | X=1800..1845                                             |
+| 7 | Stud — junction (mod V4)    | 45×95   | 2000        | 1     | X=1955..2000                                             |
 
-**V1 i alt:** 6 full-height studs (2000) + 4 vindue-cripples + 4 vindue-headers/såle (dør-header = toprem, ingen cripple over dør)  
-**Løbende meter 45×95 i V1:** 6·2,0 + 2·0,955 + 2·0,505 + 2·2·0,415 ≈ **16,6 m** (ekskl. DPC og bundrem-PT).
+**V1 i alt:** 5 full-height studs (2000). Ingen cripples, headers eller såle.
+**Løbende meter 45×95 i V1:** 5·2,0 = **10,0 m** (ekskl. DPC og bundrem-PT).
 
 ---
 
@@ -175,59 +160,64 @@ z=120  └───────────────────────�
 
 ## V3 — Venstre (med sidevindue)
 
-**Position:** X=0..95, Y=95..2905 (2810 mm lang, butter mellem V1 og V2).  
-**Åbninger:** Sidevindue 700 × 600 mm, centreret (åbning Y=1150..1850, sål-top z=1267, header-bund z=1867).
+**Position:** X=0..95, Y=95..2905 (2810 mm lang, butter mellem V1 og V2).
+**Åbning:** sidevindue — lysning **860 × 1000** mm, centreret
+(Y=1070..1930), sål-top z=1122, header-bund z=2122.
 
-Y-væg med ét sidevindue. Eave er flad (gable-tag oven på), så alle V3-studs er
-lige lange. Grid-studsene ved Y=1295 og 1895 udgår i vindues-åbningen og
-erstattes af 2 dedikerede vindue-jambs; header + sål spænder åbningen med én
-cripple under sålen og én over headeren. 6 full-height studs i alt (4 grid + 2
-jamb).
+V3 er husets frie langside; løbegården ligger mod V4. Vinduet er to-rammet
+(to lige høje rammer over hinanden, hvid karm) og sidder højt: sålen ligger
+1000 mm over sokkeltop, og headerens overside flugter toprem-underkanten
+(z=2167) — derfor er der **ingen cripple over vinduet**, kun én under sålen.
+
+Grid-studsene ved Y=1295 og 1895 udgår i åbningen og erstattes af 2
+dedikerede vindue-jambs. 6 full-height studs i alt (4 grid + 2 jamb).
+
+> **Mål skaleret af byggefoto, ikke opmålt.** Lysningen er aflæst på
+> klink-skifterne (100 mm pr. skifte) på det byggede hus. Ret målene her og
+> i `RH_SIDE_WIN_*` når vinduets karmmål og præcise placering er opmålt.
 
 ### Elevation (set udefra, –X mod kameraet)
 
 ```
 z=2212 ─────────────────── tag-spær hviler ovenpå ───────────────────
        ┌────────────────────────────────────────────────────────────┐
-z=2167 │                  TOPREM 45×95 — 2810 mm                      │
+z=2167 │              TOPREM 45×95 — 2810 mm                          │
        ├──┬──────┬─────┬───────────┬─────┬──────┬──────┬─────────────┤
-       │  │      │     │░ crip 255 ░│     │      │      │             │  } over hdr
-z=1912 │  │      │     ├───────────┤     │      │      │             │  ← vindue-header
+z=2122 │  │      │     ├═══════════┤     │      │      │             │  ← header (flugter toprem)
        │  │      │ WJ  │           │ WJ  │      │      │             │
-z=1867 │  │      │     │  VINDUE   │     │      │      │             │
-       │ S│  S   │     │  700×600  │     │  S   │  S   │  E          │
-z=1267 │  │      │     ├───────────┤     │      │      │             │  ← vindue-sål
-z=1222 │  │      │     │░ crip     │     │      │      │             │  } under sål
-       │  │      │     │░ 1055     │     │      │      │             │
+       │  │      │     │  VINDUE   │     │      │      │             │
+       │ S│  S   │     │  860×1000 │     │  S   │  S   │  E          │
+z=1122 │  │      │     ├═══════════┤     │      │      │             │  ← vindue-sål
+z=1077 │  │      │     │░ crip     │     │      │      │             │  } under sål
+       │  │      │     │░ 910      │     │      │      │             │
 z=212  ╞══╧══════╧═════╧═══════════╧═════╧══════╧══════╧═════════════╡
        │                 BUNDREM 95×45 — 2810 mm                      │
 z=167  ├────────────────────────────────────────────────────────────┤
 z=122  │░░░░░░░░░░░░░░░░ DPC 100×2 — 2800 mm ░░░░░░░░░░░░░░░░░░░░░░░░│
 z=120  └────────────────────────────────────────────────────────────┘
-       Y=95  695  1105 1150      1850 1895 2495   2860
+       Y=95  695  1025 1070      1930 1975 2495   2860
 
   S  = grid-stud c/c 600 (full-h, Y=95/695/2495)   E = end-emit (Y=2860)
-  WJ = vindue-jamb (full-h, Y=1105..1150 og Y=1850..1895)
-  ░░░ = cripple (vindue): under sål 1055 + over header 255 (Y=1427..1472)
+  WJ = vindue-jamb (full-h, Y=1025..1070 og Y=1930..1975)
+  ░░░ = cripple under sål, 910 mm (Y=1347,5..1392,5)
   ═══ = sål / header (45 mm 95×45 på fladsiden)
 ```
 
 ### Skæreliste — V3
 
-| # | Element                      | Sektion | Længde (mm) | Antal | Position                               |
-| - | ---------------------------- | ------- | ----------- | ----- | -------------------------------------- |
-| 1 | DPC murpap                   | 100×2   | 2800        | 1     | X=0..100, Y=100..2900                  |
-| 2 | Bundrem PT                   | 95×45   | 2810        | 1     | X=0..95, Y=95..2905                    |
-| 3 | Toprem (gran)                | 95×45   | 2810        | 1     | X=0..95, Y=95..2905, z=2167..2212      |
-| 4 | Stud — grid                  | 45×95   | 2000        | 4     | Y=95, 695, 2495, 2860                  |
-| 5 | Stud — vindue-jamb           | 45×95   | 2000        | 2     | Y=1105..1150 og Y=1850..1895           |
-| 6 | Cripple — vindue under sål   | 45×95   | 1055        | 1     | Y=1427..1472, z=167..1222              |
-| 7 | Cripple — vindue over header | 45×95   | 255         | 1     | Y=1427..1472, z=1912..2167             |
-| 8 | Vindue-header                | 95×45   | 700         | 1     | Y=1150..1850, z=1867..1912             |
-| 9 | Vindue-sål (rough)           | 95×45   | 700         | 1     | Y=1150..1850, z=1222..1267             |
+| # | Element                    | Sektion | Længde (mm) | Antal | Position                               |
+| - | -------------------------- | ------- | ----------- | ----- | -------------------------------------- |
+| 1 | DPC murpap                 | 100×2   | 2800        | 1     | X=0..100, Y=100..2900                  |
+| 2 | Bundrem PT                 | 95×45   | 2810        | 1     | X=0..95, Y=95..2905                    |
+| 3 | Toprem (gran)              | 95×45   | 2810        | 1     | X=0..95, Y=95..2905, z=2167..2212      |
+| 4 | Stud — grid                | 45×95   | 2000        | 4     | Y=95, 695, 2495, 2860                  |
+| 5 | Stud — vindue-jamb         | 45×95   | 2000        | 2     | Y=1025..1070 og Y=1930..1975           |
+| 6 | Cripple — vindue under sål | 45×95   | 910         | 1     | Y=1347,5..1392,5, z=167..1077          |
+| 7 | Vindue-header              | 95×45   | 860         | 1     | Y=1070..1930, z=2122..2167             |
+| 8 | Vindue-sål (rough)         | 95×45   | 860         | 1     | Y=1070..1930, z=1077..1122             |
 
-**V3 i alt:** 6 full-height studs (4 grid + 2 vindue-jamb) + 2 cripples + 2 header/sål.  
-**Løbende meter 45×95 i V3:** 6·2,0 + 1,055 + 0,255 + 2·0,7 ≈ **14,7 m** (ekskl. DPC og bundrem-PT).
+**V3 i alt:** 6 full-height studs (4 grid + 2 vindue-jamb) + 1 cripple + header/sål.
+**Løbende meter 45×95 i V3:** 6·2,0 + 0,91 + 2·0,86 ≈ **14,6 m** (ekskl. DPC og bundrem-PT).
 
 > V3 og V1 deler en hjørnesamling: V1's hjørnestud (X=0..45, Y=0..95) sidder
 > vinkelret på V3's første stud (X=0..95, Y=95..140). De rører hinanden langs
@@ -333,22 +323,21 @@ V4 mod V1 og V2.
 | ----------------------------------- | ------- | ----------- | ----- | ------------------- |
 | DPC murpap (V1+V2 perimeter)        | 100×2   | 2000        | 2     | 4,0 m               |
 | DPC murpap (V3 + V4 cross)          | 100×2   | 2800        | 2     | 5,6 m               |
-| Bundrem PT (V1+V2)                  | 95×45   | 2000        | 2     | 4,0 m               |
+| Bundrem PT (V1 2×516 + V2 2000)     | 95×45   | 2000/516    | 3     | 3,03 m              |
 | Bundrem PT (V3 + V4)                | 95×45   | 2810        | 2     | 5,62 m              |
 | Toprem gran (V1+V2)                 | 95×45   | 2000        | 2     | 4,0 m               |
 | Toprem gran (V3 + V4)               | 95×45   | 2810        | 2     | 5,62 m              |
-| Full-height stud (V1 6 + V2 5 + V3 6 + V4 7) | 45×95 | 2000    | 24    | 48,0 m              |
-| Cripple — vindue under sål          | 45×95   | 955         | 2     | 1,91 m              |
-| Cripple — vindue over header        | 45×95   | 505         | 2     | 1,01 m              |
+| Full-height stud (V1 5 + V2 5 + V3 6 + V4 7) | 45×95 | 2000    | 23    | 46,0 m              |
 | V4 pet-dør header                   | 95×45   | 250         | 1     | 0,25 m              |
-| V1 vindue-header                    | 95×45   | 415         | 2     | 0,83 m              |
-| V1 vindue-sål                       | 95×45   | 415         | 2     | 0,83 m              |
-| Cripple — V3 vindue under sål       | 45×95   | 1055        | 1     | 1,055 m             |
-| Cripple — V3 vindue over header     | 45×95   | 255         | 1     | 0,255 m             |
-| V3 vindue-header                    | 95×45   | 700         | 1     | 0,7 m               |
-| V3 vindue-sål                       | 95×45   | 700         | 1     | 0,7 m               |
+| Cripple — V3 vindue under sål       | 45×95   | 910         | 1     | 0,91 m              |
+| V3 vindue-header                    | 95×45   | 860         | 1     | 0,86 m              |
+| V3 vindue-sål                       | 95×45   | 860         | 1     | 0,86 m              |
 
-**Total løbende meter 45×95 gran C24:** 48,0 + 5,41 = **53,4 m** (studs + headers + cripples + sål; dørene bruger toprem som header).  
+V1 har hverken header, sål eller cripples: hoveddøren går fra sokkeltop til
+toprem-underkant, så topremmen er overligger. V3-vinduets header flugter
+ligeledes topremmen, så der kun er én cripple (under sålen) i hele huset.
+
+**Total løbende meter 45×95 gran C24:** 46,0 + 2,88 = **48,9 m** (studs + header + cripple + sål; dørene bruger toprem som header).  
 **Total løbende meter 95×45 PT NTR-AB:** 4,0 + 5,62 = **9,62 m** (bundrem).  
 **Total løbende meter 95×45 gran:** 4,0 + 5,62 = **9,62 m** (toprem).  
 **Total DPC bånd 100 mm:** **9,6 m**.
@@ -357,15 +346,15 @@ V4 mod V1 og V2.
 
 | Vare                                | Antal | Brug                                                                |
 | ----------------------------------- | ----- | ------------------------------------------------------------------- |
-| Reglar 45 × 95 × 2400 mm gran C24   | 25    | 24 studs à 2000 mm + headers/cripples/sål (~5,4 m, inkl. V3-vindue) |
+| Reglar 45 × 95 × 2400 mm gran C24   | 24    | 23 studs à 2000 mm + header/cripple/sål (~2,9 m, V3-vindue + pet-dør) |
 | Reglar 45 × 95 × 3000 mm gran C24   | 4     | 2 stk topremme V3 + V4 (2810 mm) + 2 stk topremme V1 + V2 (2000 mm) |
 | Reglar 45 × 95 × 3000 mm PT NTR-AB  | 4     | 2 stk bundremme V3 + V4 (2810 mm) + 2 stk bundremme V1 + V2 (2000 mm) |
 | Bitumen-tape 100 mm × 10 m rulle    | 1     | Murpap — én rulle dækker hele hus + V4-cross (9,6 m)               |
 | Ankerskruer M10 × 120               | 10    | Bundrem-til-sokkel c/c 1000 mm (2 V1 + 2 V2 + 3 V3 + 3 V4)         |
 | Vinkelbeslag 90×90 + skruer         | 16    | 4 hjørner × 4 stk (2 oppe + 2 nede V3-corner, V4/V1 + V4/V2)        |
-| Vinkelbeslag jamb-til-toprem        | 16    | 8 jamber (V1 dør+vindue, V4 dør, V3 vindue) × 2 (top + bund)       |
+| Vinkelbeslag jamb-til-toprem        | 12    | 6 jamber (V1 dør, V4 dør, V3 vindue) × 2 (top + bund)              |
 
-Headers og sål skæres af spild fra 2400 mm-stokken (~200 mm spild pr. stud × 24 = 4,8 m).
+Header, sål og cripple skæres af spild fra 2400 mm-stokken (~400 mm spild pr. stud × 23 = 9,2 m).
 
 ---
 
@@ -377,21 +366,21 @@ Headers og sål skæres af spild fra 2400 mm-stokken (~200 mm spild pr. stud × 
 2. **Bundrem** — bor gennemgangshuller for M10 ankerskruer (c/c 1000 mm)
    i de fire bundrem-stykker. Læg på plads og spænd møtrikkerne.
 
-3. **V3 (venstre)** først — rejs alle 6 studs c/c 600 mm. Læg topremmen
+3. **V3 (venstre)** først — rejs alle 6 studs c/c 600 mm (4 grid + 2
+   vindue-jamb). Sæt vindue-sål (860 mm) ved z=1077..1122 med cripplen
+   (910 mm) under, og vindue-headeren (860 mm) ved z=2122..2167 — den
+   flugter toprem-underkanten, så der er ingen cripple over. Læg topremmen
    ovenpå og fastgør med 2 skruer pr. stud.
 
 4. **V1 (front)**:
+   - Læg bundremmen som **to stykker à 516 mm** (X=0..516 og X=1484..2000) —
+     udsparingen imellem er dør-åbningen, hvor karmen står på sokkel/gulv.
    - Stil hjørnestuden (X=0..45) op mod V3's første stud — vinkelbeslag.
-   - Stil junction-studen (X=1955..2000).
-   - Sæt vindue-jamberne (X=460..505 og X=1495..1540).
-   - Sæt dør-jamberne (X=505..550 og X=1450..1495) — vindue-jamb og dør-jamb
-     står flush mod hinanden men er to selvstændige reglar.
-   - Sæt vindue-headers (415 mm) og vindue-såle (415 mm) mellem
-     hjørne/jamb-studs og vindue-jamberne. Døren går helt op til
-     topremmen — ingen separat dør-header (toprem = header).
-   - Sæt outer-cripples under sål (955 mm) og over header (505 mm) lige
-     ved hjørne/junction-studens side af vindues-åbningen.
-   - Læg topremmen ovenpå (spænder også dør-åbningen som header).
+   - Stil junction-studen (X=1955..2000) og grid-studen (X=1800..1845).
+   - Sæt dør-jamberne (X=471..516 og X=1484..1529). De står på bundremmens
+     ender, ikke i udsparingen.
+   - Ingen header, sål eller cripples: læg topremmen ovenpå, den spænder
+     dør-åbningen som overligger.
 
 5. **V2 (bag)** — rejs alle 5 studs c/c 600 mm + junction-stud. Læg toprem.
 
@@ -416,9 +405,8 @@ Headers og sål skæres af spild fra 2400 mm-stokken (~200 mm spild pr. stud × 
 
 - Toprem skal være flat på alle 4 hus-vægge (gable-spær oven på)
 - Stud-længde 2000 mm ens på V1, V2, V3, V4
-- V3 har 1 cutout (side-vindue Y=1150..1850, sål-top z=1267)
+- V3 har 1 cutout (side-vindue Y=1070..1930, sål-top z=1122)
 - V4 har 2 cutouts (hus-dør Y=1500..2370 + pet-dør Y=2700..2950)
-- V1 har 3 cutouts (dør X=550..1450 + 2 vinduer på hver side)
+- V1 har 1 cutout (dør X=516..1484, z=120..2167) — ingen vinduer
 - Junction-studs synlige som "dobbelt-stud" ved V4/V1- og V4/V2-hjørner
-- Vindue-jamb og dør-jamb på V1 står som to adskilte reglar (≈90 mm
-  samlet bredde) mod hinanden ved dør-vindue-overgangen
+- V1's bundrem er delt i to stykker med udsparing under døren

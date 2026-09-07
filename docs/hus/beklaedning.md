@@ -5,7 +5,7 @@ Beklædningen dækker hus-zonen (X = 0..2000). Eave er flad på alle 4 vægge
 
 | Nr | Område | Materiale | Funktion |
 |---|---|---|---|
-| B1 | Hus front (V1, X=0..2000, Y=0) | klink m. dør- + 2 vindue-cutouts + lag-stack | vejrbeklædning |
+| B1 | Hus front (V1, X=0..2000, Y=0) | klink m. ét dør-cutout + lag-stack (ingen vinduer) | vejrbeklædning |
 | B2 | Hus bag (V2, X=0..2000, Y=3000) | klink + vindpapir + afstandsliste | vejrbeklædning |
 | B3 | Hus venstre (V3, X=0) | klink m. side-vindue-cutout + lag-stack | vejrbeklædning |
 | B4 | Hus partition yard-side (V4, X=1548, hele Y=0..3000) | klink m. dør-cutouts + lag-stack | vejrbeklædning yard-side |
@@ -68,8 +68,8 @@ Hjørnetrim 45 × 45 mm lodret tømmer sættes ved hver af de 4 hus-hjørner
 — overlapper begge klink-flader så raw end-grain er dækket. Alle 4 trims
 går til den flade eave (2092 mm).
 
-Indfatning (foring) 25 × 70 mm sættes rundt om hver åbning — dør + 2
-vinduer på V1, side-vindue på V3, hus-dør + pet-dør på V4. Klinken skæres
+Indfatning (foring) 25 × 70 mm sættes rundt om hver åbning — hoveddøren
+på V1 (eneste åbning i facaden), side-vinduet på V3, hus-dør + pet-dør på V4. Klinken skæres
 ud ~8 mm bredere end selve åbningen, og indfatningen dækker det snit: den
 står ~12 mm proud af klink-fladen og lapper ~10 mm ind over åbningen, så
 der ikke ses rå klink-snit i lysningen. Dør-blade (V1 + V4) flugter med
@@ -85,9 +85,9 @@ Vægareal og rækker pr. væg (alle 4 hus-vægge):
 
 | Væg | L × H (flad) | Areal brutto | Åbnings-fradrag | Rækker (H÷100) | Lin.m bræt |
 |---|---|---|---|---|---|
-| Front V1 | 2000 × 2092 | 4,18 m² | − dør 0,9×2,0 − 2 vind. 2×0,19 | 21 | 42 m |
+| Front V1 | 2000 × 2092 | 4,18 m² | − dør 0,97×2,05 | 21 | 42 m |
 | Bag V2 | 2000 × 2092 | 4,18 m² | — | 21 | 42 m |
-| Venstre V3 | 3000 × 2092 | 6,28 m² | − vindue 0,7×0,6 | 21 | 63 m |
+| Venstre V3 | 3000 × 2092 | 6,28 m² | − vindue 0,86×1,0 | 21 | 63 m |
 | Partition V4 | 3000 × 2092 | 6,28 m² | − hus-dør 0,87×2,0 − petdør 0,25×0,3 | 21 | 63 m |
 | Gavl-trekant V1 + V2 | 2×(2000 × 700 ÷2) | 1,40 m² | — | ~7 pr. gavl | 14 m |
 | **Total** | | **22,3 m² brutto (~20 netto)** | | | **224 m** |
@@ -121,7 +121,7 @@ er standardlager med god buffer.
 | 2 | Afstandsliste 22 × 45 × 2400 mm | Lodret klemmeliste c/c 600. V1+V2: 4+4 = 8 stk; V3+V4: 6+6 = 12 stk | 20 | stk |
 | 3 | Klink-brædder 25 × 125 × 4200 mm (gran/lærk) | Vægge + gavle 224 lin.m. Smart cut 3000 \| 2×2000, gavle af scrap → 63 stk + safety | 67 | stk |
 | 4 | Hjørnetrim 45 × 45 × 2400 mm | 4 hjørner, klink-end-grain dækning (flad eave 2092) | 4 | stk |
-| 5 | Indfatning/foring 25 × 70 × 2400 mm | Om åbninger: V1 dør + 2 vinduer, V3 vindue, V4 hus-dør + pet-dør (~17,5 lin.m) | 8 | stk |
+| 5 | Indfatning/foring 25 × 70 × 2400 mm | Om åbninger: V1 dør, V3 vindue, V4 hus-dør + pet-dør (~14 lin.m) | 6 | stk |
 | 5b | Vindskede 25 × 145 × 2400 mm | Barge langs begge gavl-skrå (4 stk à ~1220 mm, V1 + V2) | 3 | stk |
 | 6 | Klamper 25 mm | Stifter til vindpapir, c/c 200 | 1 | pak |
 | 7 | Klink-søm 50 mm rustfri | ~4 søm pr. bræt × 224 lin.m / 1,5 m bræt-snit ≈ 600 stk | 1 | pak |
@@ -142,7 +142,7 @@ Hvis `cladding_type = "board_on_board"` i `src/main.scad`:
 ## Bygge-rækkefølge
 
 1. Spænd vindpapir på stud-ydersiden af alle 4 hus-vægge (V1, V2, V3, V4-yard-side); stift c/c 200, overlap 100 mm i samlinger
-2. Cut åbninger ud i vindpapir ved dør + 2 vinduer (V1), side-vindue (V3), hus-dør + petdør (V4)
+2. Cut åbninger ud i vindpapir ved døren (V1), side-vinduet (V3), hus-dør + petdør (V4)
 3. Sæt afstandsliste 22 × 45 lodret c/c 600 — ovenpå hver stud, gennem vindpapir, skruet ind i stud
 4. Skær klink-brædder pr. skærelisten ovenfor (smart cut: én 3000 mm række eller to 2000 mm rækker pr. bræt)
 5. Søm klink-brædder vandret på afstandslisten, nederst først, hver overlapper det underliggende med 25 mm. Flad overkant på alle 4 vægge (2092 mm) — gable-spær sидder ovenpå

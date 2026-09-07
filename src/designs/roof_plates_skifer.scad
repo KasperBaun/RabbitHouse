@@ -178,9 +178,15 @@ module _sk_ridge_cap(y_lo, y_hi) {
     z_apex_b  = g_rafter_top_z(G_RIDGE_X) + SK_STACK_T;
     z_apex_t  = z_apex_b + cap_lift;
     // The top edge offset is along z (vertical lift) for simplicity.
+    //
+    // Orientering: polygonen er tegnet i verdens (x, z). rotate([90,0,0])
+    // sender polygonens y → verdens +z og ekstruderingen → verdens −y, så
+    // der translateres til y_hi og ekstruderes tilbage til y_lo.
+    // (rotate([-90,0,0]) spejler i stedet polygonen til NEGATIV z og lægger
+    // hele rygningen ~3,1 m under terræn — det var fejlen her.)
     color(SK_RIDGE_COLOR)
-    translate([0, y_lo, 0])
-    rotate([-90, 0, 0])
+    translate([0, y_hi, 0])
+    rotate([90, 0, 0])
     linear_extrude(height = y_hi - y_lo)
         polygon(points = [
             [x_left,    z_outer_l],                 // 0: bottom-left

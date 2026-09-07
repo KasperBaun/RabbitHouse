@@ -27,9 +27,9 @@ C_OPEN = ("#ffffff", "#b9b9b9")
 DIM    = "#3a3a3a"
 
 def gen(fname, title, sub, length, pieces, openings, hticks, vticks, note,
-        opdims=None, labels=None):
+        opdims=None, labels=None, bund_lbl=None):
     w = LEFT + length*S + RIGHT
-    h = TOP + (HTOP-HBOT)*S + BOT
+    h = TOP + (HTOP-HBOT)*S + BOT + 15*note.count("\n")
     def mx(x): return LEFT + x*S
     def my(z): return TOP + (HTOP - z)*S
     e = []
@@ -80,8 +80,9 @@ def gen(fname, title, sub, length, pieces, openings, hticks, vticks, note,
     # plate length labels (bundrem/toprem)
     e.append(f'<text x="{mx(length/2):.1f}" y="{my(2022):.1f}" font-size="11" fill="#7a6533" '
              f'text-anchor="middle">TOPREM 45×95 · {int(length)}</text>')
+    bl = bund_lbl or f'BUNDREM 95×45 · {int(length)} (PT)'
     e.append(f'<text x="{mx(length/2):.1f}" y="{my(-22):.1f}" font-size="11" fill="#4f6038" '
-             f'text-anchor="middle" dy="4">BUNDREM 95×45 · {int(length)} (PT)</text>')
+             f'text-anchor="middle" dy="4">{bl}</text>')
 
     # free-text annotations: (x, h, text, rotate?)
     if labels:
@@ -136,28 +137,34 @@ def gen(fname, title, sub, length, pieces, openings, hticks, vticks, note,
              f'text-anchor="middle" transform="rotate(-90 {vx-30:.1f} {my(1100):.1f})">'
              f'højde fra bundrem (mm)</text>')
 
-    # note
-    e.append(f'<text x="{LEFT}" y="{h-12:.0f}" font-size="11" fill="#555">{note}</text>')
+    # note (understøtter flere linjer via \n)
+    nlines = note.split("\n")
+    for i, ln in enumerate(nlines):
+        yy = h - 12 - (len(nlines)-1-i)*15
+        e.append(f'<text x="{LEFT}" y="{yy:.0f}" font-size="11" fill="#555">{ln}</text>')
     e.append('</svg>')
     path=os.path.join(OUT,fname)
     with open(path,"w",encoding="utf-8") as f: f.write("\n".join(e))
     return path
 
 # ---------------- V1 FRONT ----------------
-v1_pieces=[(0,2000,-45,0,"bund"),(0,2000,2000,2045,"top"),
-    (0,45,0,2000,"stud"),(460,505,0,2000,"stud"),(505,550,0,2000,"stud"),
-    (1450,1495,0,2000,"stud"),(1495,1540,0,2000,"stud"),(1955,2000,0,2000,"stud"),
-    (45,90,0,955,"blk"),(45,90,1495,2000,"blk"),(1910,1955,0,955,"blk"),(1910,1955,1495,2000,"blk"),
-    (45,460,1450,1495,"blk"),(1540,1955,1450,1495,"blk"),
-    (45,460,955,1000,"blk"),(1540,1955,955,1000,"blk")]
-v1_open=[(550,1450,0,2000,"DØR\n900×2000"),(90,460,1000,1450,"VINDUE\n415×450"),
-    (1540,1910,1000,1450,"VINDUE\n415×450")]
+# Eneste åbning er hoveddøren. Indkøbt dør, udvendige karmmål 948×2050 →
+# lysning 968 bred (karm + 10 mm fuge pr. side) og 2047 høj: bundremmen er
+# skåret væk under døren, så karmen står på sokkel/gulv (47 mm under
+# bundrem-overkant = 0 her), og toprem-underkanten (h=2000) er overligger.
+# Ingen vinduer i facaden — eneste glas er ruden i dørbladet.
+v1_pieces=[(0,516,-45,0,"bund"),(1484,2000,-45,0,"bund"),(0,2000,2000,2045,"top"),
+    (0,45,0,2000,"stud"),(471,516,0,2000,"stud"),
+    (1484,1529,0,2000,"stud"),(1800,1845,0,2000,"stud"),(1955,2000,0,2000,"stud")]
+v1_open=[(516,1484,-45,2000,"DØR\nlysning 968×2047\nkarm 948×2050")]
 gen("V1-front.svg","V1 — FRONT","set udefra · mål i mm · 0 = venstre hjørne / bundrem-overkant",2000,
     v1_pieces,v1_open,
-    [(0,"0"),(460,"460"),(550,"550"),(1450,"1450"),(1540,"1540"),(2000,"2000")],
-    [0,1000,1450,2000],
-    "Lodrette studs: 45×95 · L=2000. Dør 2000 = væghøjde → toprem er dør-header (ingen cripple over dør). Jamb-par (45+45) langs dør/vindue.",
-    opdims=[(45,460,1640,"vindue 45→460"),(1540,1955,1640,"1540→1955")])
+    [(0,"0"),(471,"471"),(516,"516"),(1484,"1484"),(1800,"1800"),(2000,"2000")],
+    [0,2000],
+    "Studs 45×95 · L=2000 — 5 stk: hjørne 0 · dør-jambs 471+1484 · 1800 · hjørne 1955.\n"
+    "Ingen vinduer i facaden. Lysning 968×2047: bundrem udskåret under døren,\n"
+    "toprem = dør-overligger (ingen cripple over). Karm 948×2050 + 10 mm fuge pr. side.",
+    bund_lbl="BUNDREM 95×45 · 2 × 516 (PT)")
 
 # ---------------- V2 BAG ----------------
 v2_pieces=[(0,2000,-45,0,"bund"),(0,2000,2000,2045,"top"),
@@ -170,24 +177,26 @@ gen("V2-bag.svg","V2 — BAG","set udefra · mål i mm · 0 = venstre hjørne / 
     "Solid væg, ingen åbninger. 5 studs 45×95 · L=2000, c/c 600 (venstre-kant ved 0/600/1200/1800).")
 
 # ---------------- V3 VENSTRE ----------------  p=Y-95
-# Sidevindue 700×600 centreret: Y=1150..1850 → p=1055..1755. Sål-top h=1100,
-# header-bund h=1700. Studs ved 1200/1800 udgår (skip-range); erstattet af
-# 2 vindue-jambs + header/sål + 1 cripple under sål + 1 cripple over header.
+# Sidevindue: lysning 860×1000 centreret i dybden (Y=1070..1930 → p=975..1835).
+# Sål-top h=955, header-bund h=1955 → headeren flugter toprem-underkanten,
+# så der er INGEN cripple over vinduet. Studs ved 1200/1800 udgår
+# (skip-range); erstattet af 2 vindue-jambs + header/sål + 1 cripple under sål.
 v3_pieces=[(0,2810,-45,0,"bund"),(0,2810,2000,2045,"top"),
     (0,45,0,2000,"stud"),(600,645,0,2000,"stud"),
     (2400,2445,0,2000,"stud"),(2765,2810,0,2000,"stud"),
-    (1010,1055,0,2000,"stud"),(1755,1800,0,2000,"stud"),   # vindue-jambs
-    (1055,1755,1700,1745,"blk"),          # vindue-header 700
-    (1055,1755,1055,1100,"blk"),          # vindue-sål 700
-    (1332.5,1377.5,0,1055,"blk"),         # cripple under sål 1055
-    (1332.5,1377.5,1745,2000,"blk")]      # cripple over header 255
-v3_open=[(1055,1755,1100,1700,"VINDUE\n700×600")]
+    (930,975,0,2000,"stud"),(1835,1880,0,2000,"stud"),   # vindue-jambs
+    (975,1835,1955,2000,"blk"),           # vindue-header 860
+    (975,1835,910,955,"blk"),             # vindue-sål 860
+    (1252.5,1297.5,0,910,"blk")]          # cripple under sål 910
+v3_open=[(975,1835,955,1955,"VINDUE\nlysning 860×1000")]
 gen("V3-venstre.svg","V3 — VENSTRE GAVL","set udefra · mål i mm · 0 = hjørne mod V1 (Y=95) / bundrem-overkant",2810,
     v3_pieces,v3_open,
-    [(0,"0"),(600,"600"),(1055,"1055"),(1755,"1755"),(2400,"2400"),(2810,"2810")],
-    [0,1100,1700,2000],
-    "Sidevindue 700×600 centreret (Y=1150..1850). 6 studs 45×95 · L=2000: kant/600/2400/end-2765 + 2 vindue-jambs.",
-    opdims=[(1055,1755,1850,"vindue 1055→1755")])
+    [(0,"0"),(600,"600"),(975,"975"),(1835,"1835"),(2400,"2400"),(2810,"2810")],
+    [0,955,1955,2000],
+    "Sidevindue lysning 860×1000 centreret (Y=1070..1930).\n"
+    "Underkant 955 over gulv = 1000 over sokkeltop; header flugter toprem — ingen cripple over.\n"
+    "6 studs 45×95 · L=2000: kant/600/2400/end-2765 + 2 vindue-jambs.",
+    opdims=[(975,1835,480,"vindue 975→1835")])
 
 # ---------------- V4 PARTITION ----------------  p=Y-95
 v4_pieces=[(0,2810,-45,0,"bund"),(0,2810,2000,2045,"top"),

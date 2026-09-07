@@ -7,13 +7,13 @@ Save-og-mål-guide for husets 4 vægge. Alle mål i mm. Én tegning pr. væg:
 
 ```
               V2 — bag  (Y=3000)
-        ┌───────────────────────────┐
-        │                           │
- V3 ────│        2000 × 3000        │──── V4  (partition, X=2000)
-venstre │                           │     hus-dør + pet-dør
- (X=0)  └───────────────────────────┘
+          ┌───────────────────────────┐
+   V3 ────│                           │──── V4  (partition, X=2000)
+ venstre  │        2000 × 3000        │      hus-dør + pet-dør
+  (X=0)   │                           │
+sidevindue└───────────────────────────┘
               V1 — front  (Y=0)
-        X=0    dør + 2 vinduer    X=2000
+        X=0    kun dør, ingen vinduer   X=2000
 ```
 
 ## Sådan måler du (datum)
@@ -33,15 +33,19 @@ venstre/nedre hjørne (=0)**. Hægt tape i hjørnet og på bundremmen og sæt af
 | 45×95 PT NTR-AB | Bundrem (2×2000 + 2×2810) | 9,6 |
 | 45×95 gran/C24 | Toprem (2×2000 + 2×2810) | 9,6 |
 | 45×95 C24 | 22 studs à 2000 | 44,0 |
-| 45×95 C24 | Headers, sål, cripples (inkl. V3-sidevindue) | 7,5 |
+| 45×95 C24 | Headers, sål, cripple (V3-sidevindue + V4 pet-dør) | 3,0 |
 
-**I alt 45×95 C24/gran ≈ 61 m + bundrem PT ≈ 10 m.** Studs er ens 2000 mm på alle vægge. Dørene (2000) = væghøjde, så toprem er dør-header (ingen cripple over dørene).
+**I alt 45×95 C24/gran ≈ 57 m + bundrem PT ≈ 10 m.** Studs er ens 2000 mm på
+alle vægge. Dørene går fra sokkel-/gulvniveau op til toprem-underkant, så
+topremmen er dør-header (ingen cripple over dørene) — og V3-vinduets header
+flugter ligeledes topremmen, så der heller ikke er cripple over vinduet.
+På V1 er bundremmen skåret væk under døren (2 × 516 i stedet for 2000).
 
 ## Bygge-rækkefølge
 
 1. DPC på ringen → læg **bundrem** (bor M10 c/c ~1000, spænd ankerskruer).
-2. Rejs **V3** (venstre) m. sidevindue-ramme (700×600) → toprem.
-3. **V1** (front) m. dør- + vindue-rammer → toprem.
+2. Rejs **V3** (venstre) m. sidevindue-ramme (lysning 860×1000) → toprem.
+3. **V1** (front) m. dør-ramme (lysning 968×2047) → toprem. Ingen vinduer.
 4. **V2** (bag) → toprem.
 5. **V4** (partition) m. dør-rammer → toprem.
 6. **Vinkelbeslag** i alle 4 hjørner (top + bund).

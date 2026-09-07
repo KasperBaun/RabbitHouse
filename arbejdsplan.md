@@ -44,7 +44,7 @@ Klaplaget fra trin 1 brydes op og erstattes.
 
 - [x] Monter bundrem, murpap og ankerbolte → [detaljer](docs/arbejdsplan/bundrem-murpap-ankerbolte.md)
 - [x] Rejs V3 (venstre)
-- [x] Rejs V1 (front, m. dør- + 2 vindue-åbninger)
+- [x] Rejs V1 (front, m. dør-åbning — ingen vinduer i facaden)
 - [x] Rejs V2 (bag)
 - [x] Rejs V4 (partition, m. hus-dør + pet-dør)
 - [x] Læg topremme på alle 4 vægge
@@ -77,12 +77,13 @@ Klaplaget fra trin 1 brydes op og erstattes.
 
 ## 7. Åbninger
 
-- [ ] Sæt karme i rough openings
-- [ ] Yard-udhusdør (Å1, mesh-leaf)
-- [ ] Indvendig dør (Å2)
-- [ ] Side-vindue plexi (Å3)
+- [x] Hoveddør V1 — karm 948 × 2050 sat i lysning 968 × 2047, krydsfinerblad
+      med rombe-udskæring (240 × 280, foring ~45), 2 båndhængsler + greb/cylinder
+- [x] Side-vindue V3 — to-rammet vindue i lysning 860 × 1000, sål 955 over gulv
+- [ ] Rude i dørbladets rombe (står åben lige nu)
+- [ ] Indvendig hus-dør V4 (Å2)
 - [ ] Kattelem i pet-åbning
-- [ ] Hængsler + greb + lås
+- [ ] Yard-udhusdør (Å1, mesh-leaf)
 
 ## 8. Isolering
 
