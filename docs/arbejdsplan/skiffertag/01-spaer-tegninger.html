@@ -486,25 +486,28 @@
   /* ============================================================
      FIG. 4 — bird's mouth detail, installed orientation (X-Z, mm).
      Rafter seated: heel 38.5 vertical against toprem outer face (x=0),
-     seat 55 on toprem top (z=2412).
+     seat 55 on toprem top (z = G_EAVE_Z).
      ============================================================ */
   (function () {
-    var zTop = 2412;
-    var f = fig("figD", { x0: -330, x1: 270, z0: 2150, z1: 2665,
+    var zTop = 2212;   // = G_EAVE_Z (RH_BASE_H 120 + RH_EH_FRONT 2092)
+    // Alt herunder er sat RELATIVT til zTop, så figuren følger med hvis
+    // væghøjden ændres igen. Selve skæremålene (95/55/38/229/280/35°) er
+    // uafhængige af koten.
+    var f = fig("figD", { x0: -330, x1: 270, z0: zTop - 262, z1: zTop + 253,
                           k: 0.80, padL: 10, padR: 12, padT: 12, padB: 12,
                           label: "Fugleudskæring — detalje ved toprem" });
     var hatch = hatchPattern(f, "hatchD");
 
     // wall continuation below toprem
-    seg(f, [12, 2367], [12, 2185], "ref-line", { sw: 1 });
-    seg(f, [83, 2367], [83, 2185], "ref-line", { sw: 1 });
-    txt(f, 47, 2215, "væg V3", "t-mut", { fs: 11.5 });
+    seg(f, [12, zTop - 45], [12, zTop - 227], "ref-line", { sw: 1 });
+    seg(f, [83, zTop - 45], [83, zTop - 227], "ref-line", { sw: 1 });
+    txt(f, 47, zTop - 197, "væg V3", "t-mut", { fs: 11.5 });
 
     // toprem cross-section (95 wide, 45 thick), hatched
-    poly(f, [[0, 2367], [95, 2367], [95, zTop], [0, zTop]], "wood", { sw: 1.6 });
-    var A = f.P(0, zTop), B = f.P(95, 2367);
+    poly(f, [[0, zTop - 45], [95, zTop - 45], [95, zTop], [0, zTop]], "wood", { sw: 1.6 });
+    var A = f.P(0, zTop), B = f.P(95, zTop - 45);
     el("rect", { x: A[0], y: A[1], width: B[0] - A[0], height: B[1] - A[1], fill: hatch }, f.svg);
-    txt(f, 47, 2367, "toprem", "t-lab", { fs: 12, dy: 16 });
+    txt(f, 47, zTop - 45, "toprem", "t-lab", { fs: 12, dy: 16 });
 
     // rafter with notch, cropped at x=220 with a break zigzag
     var heel = 38.5;
@@ -530,17 +533,17 @@
     // the mark point + leader to annotation at lower right
     var Mp = f.P(0, zTop - heel);
     el("circle", { cx: Mp[0], cy: Mp[1], r: 4, "class": "cut-fill" }, f.svg);
-    seg(f, [4, zTop - heel - 4], [128, 2318], "cut-line", { sw: 0.9 });
-    txt(f, 134, 2318, "mærk her: underkant rammer", "t-cut", { fs: 11.5, anchor: "start", dy: 3 });
-    txt(f, 134, 2318, "topremmens yderkant", "t-cut", { fs: 11.5, anchor: "start", dy: 18 });
+    seg(f, [4, zTop - heel - 4], [128, zTop - 94], "cut-line", { sw: 0.9 });
+    txt(f, 134, zTop - 94, "mærk her: underkant rammer", "t-cut", { fs: 11.5, anchor: "start", dy: 3 });
+    txt(f, 134, zTop - 94, "topremmens yderkant", "t-cut", { fs: 11.5, anchor: "start", dy: 18 });
 
     // dims
     dim(f, [0, zTop], [55, zTop], -24, "55", { fs: 12.5, dy: 17 });
     dim(f, [0, zTop - heel], [0, zTop], 34, "38", { fs: 12.5, dx: -18, dy: 4 });
     // 229 overhang, with manual extension lines
-    seg(f, [-229, ukz(-229) - 8 / f.k], [-229, 2184], "dim-line", { sw: 0.8 });
-    seg(f, [0, zTop - heel - 8 / f.k], [0, 2184], "dim-line", { sw: 0.8 });
-    dim(f, [-229, 2190], [0, 2190], 0, "229 udhæng", { noExtA: true, noExtB: true, fs: 12.5 });
+    seg(f, [-229, ukz(-229) - 8 / f.k], [-229, zTop - 228], "dim-line", { sw: 0.8 });
+    seg(f, [0, zTop - heel - 8 / f.k], [0, zTop - 228], "dim-line", { sw: 0.8 });
+    dim(f, [-229, zTop - 222], [0, zTop - 222], 0, "229 udhæng", { noExtA: true, noExtB: true, fs: 12.5 });
     // 280 along underkant (below the edge, in open air)
     dim(f, [-229, ukz(-229)], [0, zTop - heel], -26, "280 langs underkant", { rot: true, fs: 12, dy: 17 });
     // 35° between the (horizontal) seat direction and the underkant

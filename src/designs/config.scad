@@ -225,8 +225,17 @@ G_PITCH_DEG   = 35;
 // Eave overhang tuned so each half-slope is exactly 5 courses of 30×60 cm
 // skifer in halv-forbandt: slope = (G_RIDGE_X + G_OH_EAVE) / cos(35°) =
 // 1500 mm = 4 × gauge(225 slope) + 600. Lap = 150 mm (well over the
-// 70 mm min for 35° pitch). 229 mm also clears the yard wall top (Z=2220)
-// — rafter bottom at X=2229 sits at Z=2252, 32 mm clear.
+// 70 mm min for 35° pitch).
+//
+// ⚠ ÅBENT PUNKT — husets højre tagskæg vs. løbegårdens vægge. Da husets
+// vægge blev sænket til 2000 mm studs faldt G_EAVE_Z fra 2412 til 2212, og
+// dermed faldt hele det højre tagudhæng 200 mm. Ved X=2229 ligger nu
+// spærunderkant 2051,7 / sofit-underside 2030,7 / stern-underkant 2011,7,
+// mens løbegårdens toprem-top står i 2220 (RH_BASE_H + RH_YARD_EH_FRONT).
+// Yardens V1/V2-vægge løber X=2000..6000 og gennemskærer altså tagudhænget
+// på de første ~254 mm. Skal løses når løbegården bygges — enten ved at holde
+// yardens vægge tilbage til X>=2260 eller ved at sænke RH_YARD_EH_*.
+// Se docs/løbegård/konstruktions-skelet.md.
 G_OH_EAVE     = 229;
 // Dobbelt vindskede at the rake edge: an underbræt (25×150) nailed to the
 // cantilevered lægte ends with its top just under the slate, plus an
@@ -245,6 +254,18 @@ G_VS_OVER_RISE = 40;                          // overligger top above the slate 
 // yderste kant 3390 mm.
 G_OH_RAKE      = G_VS_OUTER + G_VS_T;         // = 195
 
+// Gavludhængets BÆRENDE bredde — så langt krager både taglægterne og
+// udhængsspærene ud forbi gavlspærene. Vindskedens underbræt sømmes på deres
+// endetræ og fører kanten videre ud til G_VS_OUTER.
+G_OH_RAKE_STRUCT = G_VS_OUTER - G_VS_T;       // = 145
+
+// Sternbræt og vindskedens underbræt: 25×200. Med overkanten i flugt med
+// lægterne nåede et 150-bræt kun ned til 10 mm OVER spærets underkant, så
+// sofitten stod med synlig kant nedenunder. 200 dækker spærende + sofitlamel
+// med 19 mm i overskud. Overliggeren er stadig 25×150 (den sidder forskudt op).
+G_STERN_H     = 200;
+G_VS_OVER_H   = 150;
+
 // Roof build-up above the rafter top (skifer cover): undertag 3 +
 // afstandsliste 25 (25×50 along each spær) + taglægte 38 (T1 38×73).
 // The slate itself sits on top of this stack.
@@ -254,8 +275,36 @@ G_ROOF_STACK_T = 3 + 25 + 38;                 // = 66
 // gable framing (roof_gable.scad) and the skifer cover, whose afstandslister
 // must sit directly over the spær.
 G_TRUSS_YS = [0, 600, 1200, 1800, 2400, RH_HOUSE_DEPTH - 45];
+
+// Udhængsspær ("flyvende spær") — ét pr. halvtag i hver gavl, sat
+// G_OH_RAKE_STRUCT ude forbi gavlspæret og i NØJAGTIG samme plan. Uden det
+// ligger der intet træ i spærplanet ude i gavludhænget: taglægterne sidder
+// G_ROOF_STACK_T − 38 = 28 mm OVER planet, så de kan hverken bære undertaget
+// eller en gavlsofit. Udhængsspæret er samme emne og samme skabelon som de 12
+// spær (bare uden hanebånd). Y-værdien er spærets nære flade.
+G_UDH_SPAER_YS = [-G_OH_RAKE_STRUCT,
+                  RH_HOUSE_DEPTH + G_OH_RAKE_STRUCT - 45];   // = [-145, 3100]
+
+// Klodser 45×95 mellem gavlspær og udhængsspær — firkantkappede afkort, der
+// holder afstanden og giver sømfæste til den inderste sofitlamel. Længden er
+// lysningen mellem de to spær; positionerne er skråmål fra spærenden, spejlet
+// på begge halvtage.
+G_UDH_KLODS_L  = G_OH_RAKE_STRUCT - RH_RAFTER_W;   // = 100
+G_UDH_KLODS_SS = [150, 700, 1250];
+
+// Alle spær der bærer undertag + afstandslister (fag + udhængsspær).
+G_SPAER_YS = concat(G_TRUSS_YS, G_UDH_SPAER_YS);
+
+// Sofit — ventilerede lameller af høvlet forskalling m/fas (jem & fix 25×50,
+// høvlet mål 21×45), skruet op under spærene parallelt med tagkanten med
+// luft imellem. Antal og den faktiske spaltebredde regnes af den bredde der
+// skal lukkes, se roof.scad. Insektnet på lamellernes overside lukker
+// spalterne mod fugle/hvepse (REQ-008).
+G_SOFFIT_T   = 21;
+G_SOFFIT_W   = 45;
+G_SOFFIT_GAP = 10;   // ønsket spalte; den faktiske fordeles jævnt over bredden
 G_RIDGE_X     = RH_HOUSE_LEN / 2;         // = 1000
-G_EAVE_Z      = RH_BASE_H + RH_EH_FRONT;  // = 2412, flat eave on all 4 walls
+G_EAVE_Z      = RH_BASE_H + RH_EH_FRONT;  // = 2212, flat eave on all 4 walls
 
 function is_gable_roof(cover) = cover == "skifer";
 

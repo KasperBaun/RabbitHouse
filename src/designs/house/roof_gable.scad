@@ -15,9 +15,9 @@ _GR_TRUSS_YS = G_TRUSS_YS;
 // Vindskedens overkant: lige under skiferen (−1 mm, så flader ikke falder
 // sammen), så den lukker lægte-enderne.
 _GR_ROOF_STACK = G_ROOF_STACK_T - 1;
-// Underbrættet er 150 som sternen og måles fra samme toplinje, så
-// underkanterne flugter i tagfodshjørnet.
-_GR_VS_H = 150;
+// Underbrættet er lige så højt som sternen og måles fra samme toplinje, så
+// underkanterne flugter i tagfodshjørnet (G_STERN_H = 200: dækker spærende +
+// sofitlamel). Overliggeren er 25×150 — den sidder forskudt op.
 // Løber RH_FASCIA_T forbi tagfodslinjen og dækker sternens endetræ; enden
 // kappes lodret ved sternens forside.
 _GR_VS_TIP = RH_FASCIA_T;
@@ -27,8 +27,8 @@ _GR_VS_OVER_TOP = G_ROOF_STACK_T + 8 + G_VS_OVER_RISE;
 
 // Ét vindskedebræt langs begge rake-flader; bruges to gange pr. gavl
 // (underbræt + overligger). `y_hi` = brættets indre Y-flade (ekstruderes
-// G_VS_T udad), `z_top` = overkantens løft over spærplanet.
-module _gable_vindskede(y_hi, z_top, palette) {
+// G_VS_T udad), `z_top` = overkantens løft over spærplanet, `h` = bræddehøjde.
+module _gable_vindskede(y_hi, z_top, h, palette) {
     x_el = -G_OH_EAVE;                  // eave line, left
     x_er = RH_HOUSE_LEN + G_OH_EAVE;    // eave line, right
     x_tl = x_el - _GR_VS_TIP;           // tip = stern front face, left
@@ -43,20 +43,46 @@ module _gable_vindskede(y_hi, z_top, palette) {
                     [G_RIDGE_X, g_rafter_top_z(G_RIDGE_X) + z_top],
                     [x_tr,      g_rafter_top_z(x_tr)      + z_top],
                     // plumb end cut at the stern front face...
-                    [x_tr,      g_rafter_top_z(x_er) + z_top - _GR_VS_H],
+                    [x_tr,      g_rafter_top_z(x_er) + z_top - h],
                     // ...level back to the eave line along the bottom line
-                    [x_er,      g_rafter_top_z(x_er) + z_top - _GR_VS_H],
+                    [x_er,      g_rafter_top_z(x_er) + z_top - h],
                     // bottom edge parallel to the roof plane
-                    [G_RIDGE_X, g_rafter_top_z(G_RIDGE_X) + z_top - _GR_VS_H],
-                    [x_el,      g_rafter_top_z(x_el) + z_top - _GR_VS_H],
+                    [G_RIDGE_X, g_rafter_top_z(G_RIDGE_X) + z_top - h],
+                    [x_el,      g_rafter_top_z(x_el) + z_top - h],
                     // level out to the tip + plumb cut closes the loop
-                    [x_tl,      g_rafter_top_z(x_el) + z_top - _GR_VS_H]
+                    [x_tl,      g_rafter_top_z(x_el) + z_top - h]
                 ]);
 }
 
 // Spær only — arbejdsplan trin 4 ("Rejs spær m. hanebånd").
 module RenderHouseGableSpaer(palette = DEFAULT_PALETTE) {
     for (y0 = _GR_TRUSS_YS) spaer_med_haneband(y0, palette);
+}
+
+// Klodser mellem gavlspær og udhængsspær. Firkantkappede 45×95-afkort — de
+// skal IKKE tilpasses tagfladen, så overkanten sættes efter den laveste af
+// klodsens to kanter; så stikker den aldrig op gennem spærplanet.
+module _gable_udh_klodser(y0_klods, palette) {
+    color(pal_post(palette))
+    for (side = [-1, +1])
+        for (s = G_UDH_KLODS_SS) {
+            x0 = side < 0
+                 ? -G_OH_EAVE + s * cos(G_PITCH_DEG)
+                 : RH_HOUSE_LEN + G_OH_EAVE - s * cos(G_PITCH_DEG) - RH_RAFTER_W;
+            z_top = min(g_rafter_top_z(x0), g_rafter_top_z(x0 + RH_RAFTER_W));
+            translate([x0, y0_klods, z_top - RH_RAFTER_H])
+                cube([RH_RAFTER_W, G_UDH_KLODS_L, RH_RAFTER_H]);
+        }
+}
+
+// Gavludhæng — arbejdsplan trin 1a. Ét udhængsspær pr. gavl (begge halvtage,
+// uden hanebånd) G_OH_RAKE_STRUCT ude forbi gavlspæret, holdt på plads af
+// klodser ind til gavlspæret. Det er dem der bærer undertaget og gavlsofitten
+// ud i udhænget; taglægterne ligger 28 mm højere og kan ikke.
+module RenderHouseGableUdhaeng(palette = DEFAULT_PALETTE) {
+    for (y0 = G_UDH_SPAER_YS) udhaengsspaer(y0, palette);
+    _gable_udh_klodser(-G_UDH_KLODS_L,   palette);   // forgavl,  Y = -100..0
+    _gable_udh_klodser(RH_HOUSE_DEPTH,        palette);   // baggavl,  Y = 3000..3100
 }
 
 // Dobbelt vindskede on both gable ends, mounted AFTER lægtning (arbejdsplan
@@ -66,10 +92,10 @@ module RenderHouseGableSpaer(palette = DEFAULT_PALETTE) {
 // G_VS_OVER_RISE above the slate surface. The slate stops against the
 // overligger's inner face.
 module RenderHouseGableVindskeder(palette = DEFAULT_PALETTE) {
-    // underbræt
-    _gable_vindskede(-(G_VS_OUTER - G_VS_T),                _GR_ROOF_STACK,   palette);  // V1 front
-    _gable_vindskede(RH_HOUSE_DEPTH + G_VS_OUTER,           _GR_ROOF_STACK,   palette);  // V2 back
-    // overligger
-    _gable_vindskede(-G_VS_OUTER,                           _GR_VS_OVER_TOP,  palette);  // V1 front
-    _gable_vindskede(RH_HOUSE_DEPTH + G_VS_OUTER + G_VS_T,  _GR_VS_OVER_TOP,  palette);  // V2 back
+    // underbræt 25×200 — sømmes på BÅDE lægte- og udhængsspær-enderne
+    _gable_vindskede(-G_OH_RAKE_STRUCT,                     _GR_ROOF_STACK,  G_STERN_H,   palette);  // V1 front
+    _gable_vindskede(RH_HOUSE_DEPTH + G_VS_OUTER,           _GR_ROOF_STACK,  G_STERN_H,   palette);  // V2 back
+    // overligger 25×150
+    _gable_vindskede(-G_VS_OUTER,                           _GR_VS_OVER_TOP, G_VS_OVER_H, palette);  // V1 front
+    _gable_vindskede(RH_HOUSE_DEPTH + G_VS_OUTER + G_VS_T,  _GR_VS_OVER_TOP, G_VS_OVER_H, palette);  // V2 back
 }

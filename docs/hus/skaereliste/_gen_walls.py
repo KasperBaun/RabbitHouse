@@ -11,7 +11,7 @@
 #
 # Mål stammer fra src/designs/config.scad + house/framing.scad:
 #   RH_HOUSE_LEN=2000, RH_HOUSE_DEPTH=3000, bundrem-top (RH_FLOOR_TOP)=167,
-#   stud=2200, toprem-top=2412. Studs/jambs/headers fra RenderHouseFraming.
+#   stud=2000, toprem-top=2212. Studs/jambs/headers fra RenderHouseFraming.
 import os
 
 OUT = os.path.dirname(os.path.abspath(__file__))

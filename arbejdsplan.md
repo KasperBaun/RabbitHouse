@@ -53,7 +53,8 @@ Klaplaget fra trin 1 brydes op og erstattes.
 ## 4. Tagkonstruktion
 
 - [x] Rejs spær m. hanebånd + fugleudskæring → [01-spaer.md](docs/arbejdsplan/skiffertag/01-spaer.md)
-- [ ] Sofit under tagskæg → [01b-sofit.md](docs/arbejdsplan/skiffertag/01b-sofit.md)
+- [ ] Udhængsspær + klodser ved begge gavle → [01a-udhaengsspaer.md](docs/arbejdsplan/skiffertag/01a-udhaengsspaer.md)
+- [ ] Sofit under tagskæg — **alle 4 sider**, ventilerede lameller → [01b-sofit.md](docs/arbejdsplan/skiffertag/01b-sofit.md)
 
 ## 5. Tagdækning (skifer) → **[BYGGEPLAN: nøglemål, lægteplan + indkøbsliste](docs/arbejdsplan/skiffertag/README.md)**
 
@@ -61,7 +62,9 @@ Klaplaget fra trin 1 brydes op og erstattes.
 > byggeplanen først — der er tre ting at måle inden der bestilles sten og søm.
 
 - [x] Undertag → [02-undertag.md](docs/arbejdsplan/skiffertag/02-undertag.md)
+  - [ ] forlæng banen ud over udhængsspærene i begge gavle (3290 mm bred)
 - [x] Afstandslister 25×50 over spær → [03-afstandslister.md](docs/arbejdsplan/skiffertag/03-afstandslister.md)
+  - [ ] eftermontér de 4 lister over udhængsspærene
 - [ ] Lægtning 38×73 efter lægteplan → [04-laegter.md](docs/arbejdsplan/skiffertag/04-laegter.md)
 - [ ] Sternbrædder ved begge tagfødder → [05-stern.md](docs/arbejdsplan/skiffertag/05-stern.md)
 - [ ] Fodblik + fuglegitter + opklodsningsliste → [06-fodblik.md](docs/arbejdsplan/skiffertag/06-fodblik.md)

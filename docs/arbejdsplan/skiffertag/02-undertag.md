@@ -7,7 +7,7 @@
 
 | Materiale | Dimension | Mængde |
 |---|---|---|
-| Undertag, diffusionsåbent (banevare) | — | ~9 m² brugt → 1 rulle |
+| Undertag, diffusionsåbent (banevare) | — | ~10 m² brugt (2 × 1500 × 3290) → 1 rulle |
 | Hæfteklammer / pappsøm | — | — |
 
 ## Fremgangsmåde
@@ -16,8 +16,11 @@
    mellem baner efter rullens anvisning (typisk 100–150 mm).
 2. Ved **tagfod**: før undertaget ud over spærenderne, så vand på undertaget
    ledes ud til drypkanten (fodblikket monteres i skridt 6 og tager over).
-3. Ved **gavlene**: undertaget stopper ved gavlspærene — det skal IKKE ud i
-   gavludhænget (dét bæres kun af lægterne).
+3. Ved **gavlene**: før undertaget **helt ud over udhængsspæret** og kap det i
+   flugt med dets yderside (145 mm forbi gavlspæret). Så drypper vand på banen
+   fri af vindskeden i stedet for at løbe ind bag gavlbeklædningen.
+   Det forudsætter at [udhængsspærene](01a-udhaengsspaer.md) er sat — uden dem
+   ligger der intet træ i spærplanet derude, og banen ville hænge frit.
 4. Ved **kip**: sidste bane føres hen over kippen til den anden side, så
    kippen er lukket.
 5. Hæft kun i spær-toppene (klammer/pappsøm) — afstandslisterne i næste
@@ -28,5 +31,7 @@
 ## Tjek
 
 - [ ] Overlæg vender rigtigt (øverste bane over nederste) hele vejen.
-- [ ] Ført ud over spærenderne ved begge tagfødder; lukket over kip.
+- [ ] Ført ud over spærenderne ved begge tagfødder; ført ud over
+      udhængsspærene ved begge gavle; lukket over kip.
+- [ ] Banens bredde måler **3290 mm** (3000 + 2 × 145) fra gavlkant til gavlkant.
 - [ ] Ingen huller/flænger — små skader tapes med undertagstape.

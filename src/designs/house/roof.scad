@@ -12,7 +12,12 @@ include <../config.scad>
 use <../../lib/primitives/beslag.scad>
 use <roof_gable.scad>
 
-SOFFIT_T = 18;
+SOFFIT_T = 18;   // legacy mono-pitch soffit: 18 mm krydsfiner (se _soffit_panel)
+
+// Sofittens inderkant ved gavlene = klink-beklædningens yderside; derude
+// stopper gavltrekantens beklædning netop i spærplanet, så lamellerne lapper
+// hen over dens overkant.
+_SOFFIT_CLAD_FACE = RH_HOUSEWRAP_T + RH_COUNTER_BATTEN_T + cs_thick(RH_CLAD);
 
 // fascia_top_offset_for() lives in config.scad — covers tagpap, eternit, polycarb.
 
@@ -140,16 +145,16 @@ module _render_fascia_house(eh_back, fascia_top_offset, palette) {
     }
 }
 
-// Sternbræt (fascia) on the rafter tails at BOTH eaves of the gable roof
+// Sternbræt (fascia) 25×200 on the rafter tails at BOTH eaves of the gable roof
 // (x = -G_OH_EAVE and x = RH_HOUSE_LEN + G_OH_EAVE). Runs Y between the
 // vindskede INNER faces — the vindskede tip runs past the eave line and
 // covers the stern's end grain (plumb + level end cut). Mounted AFTER
 // lægtning — the top edge is aligned flush with the lægte tops (just under
 // the slate, capping the undertag / liste / lægte ends at the eave).
 module _render_stern_gable(palette) {
-    stern_h = 150;   // 25×150 — same depth as the vindskede, flush corners
-    y0 = -(G_VS_OUTER - G_VS_T);
-    y1 = RH_HOUSE_DEPTH + (G_VS_OUTER - G_VS_T);
+    stern_h = G_STERN_H;   // 25×200 — same depth as the vindskede, flush corners
+    y0 = -G_OH_RAKE_STRUCT;
+    y1 = RH_HOUSE_DEPTH + G_OH_RAKE_STRUCT;
     for (x_face = [-G_OH_EAVE, RH_HOUSE_LEN + G_OH_EAVE]) {
         z_top = g_rafter_top_z(x_face) + G_ROOF_STACK_T - 1;
         x0 = x_face < G_RIDGE_X ? x_face - RH_FASCIA_T : x_face;
@@ -159,38 +164,91 @@ module _render_stern_gable(palette) {
     }
 }
 
-// Skråt tagskæg-sofit for the gable roof — closes the underside of the eave
-// overhang at BOTH tagfødder (the X=0 side and the X=RH_HOUSE_LEN side, where
-// the rafter tails overhang G_OH_EAVE past the wall). One board per eave,
-// nailed to the rafter undersides, following the 35° slope from the wall line
-// out to the sternbræt. Y-span matches _render_stern_gable (between the
-// vindskede inner faces), so the corners meet flush. Predator/bird barrier per
-// REQ-008 — the roof ventilation runs separately in the afstandsliste gap at
-// the fodblik (arbejdsplan trin 6), so the soffit itself is a solid closer.
+// ---- Sofit for the gable roof. Ventilerede lameller (høvlet forskalling
+// m/fas, høvlet mål G_SOFFIT_T × G_SOFFIT_W) skruet op under spærene,
+// PARALLELT med tagkanten, med jævnt fordelt luftspalte. Lukket hele vejen
+// rundt: begge tagfødder (spærenderne krager G_OH_EAVE ud) og begge gavle
+// (udhængsspærene krager G_OH_RAKE_STRUCT ud). Insektnet på lamellernes
+// overside lukker spalterne mod fugle og hvepse (REQ-008) — selve tagrummets
+// ventilation sker fortsat i afstandsliste-gabet ved fodblikket
+// (arbejdsplan trin 6); spalterne her lufter tagskæggets eget hulrum.
+//
+// Antal lameller over en bredde `span` (målt PÅ SKRÅFLADEN ved tagfoden, i Y
+// ved gavlen) — så mange der giver en spalte tættest på G_SOFFIT_GAP, dog
+// aldrig flere end der er plads til. Spalten fordeles derefter jævnt, så
+// yderste lamel flugter sternen/vindskeden og inderste flugter væggen.
+function _soffit_n(span) =
+    min(floor(span / G_SOFFIT_W),
+        max(1, round(span / (G_SOFFIT_W + G_SOFFIT_GAP))));
+function _soffit_gap(span) =
+    let (n = _soffit_n(span)) n > 1 ? (span - n * G_SOFFIT_W) / (n - 1) : 0;
+
+// Én lamel/plade i spærplanets underside mellem x_in og x_out (samme halvtag)
+// og y0..y1. Følger 35°-hældningen, tykkelsen måles lodret.
 module _soffit_slab_gable(x_in, x_out, y0, y1, palette) {
     z_in  = g_rafter_bottom_z(x_in);
     z_out = g_rafter_bottom_z(x_out);
     color(pal_soffit(palette))
     hull() {
-        translate([x_in,  y0, z_in  - SOFFIT_T]) cube([0.01, y1 - y0, SOFFIT_T]);
-        translate([x_out, y0, z_out - SOFFIT_T]) cube([0.01, y1 - y0, SOFFIT_T]);
+        translate([x_in,  y0, z_in  - G_SOFFIT_T]) cube([0.01, y1 - y0, G_SOFFIT_T]);
+        translate([x_out, y0, z_out - G_SOFFIT_T]) cube([0.01, y1 - y0, G_SOFFIT_T]);
+    }
+}
+
+// Tagfods-sofit: lameller langs Y (på tværs af spærene, så hver lamel har
+// fæste i hver eneste spærende), stablet op ad skråfladen fra sternen og ind
+// mod væggen. Stopper i Y ved gavlbeklædningens yderside — resten af hjørnet
+// hører til gavlsofitten, der løber ubrudt hen over det.
+module _render_soffit_eave(palette) {
+    y0   = -_SOFFIT_CLAD_FACE;
+    y1   = RH_HOUSE_DEPTH + _SOFFIT_CLAD_FACE;
+    span = G_OH_EAVE / cos(G_PITCH_DEG);        // skråmål væglinje -> spærende
+    n    = _soffit_n(span);
+    gap  = _soffit_gap(span);
+    for (i = [0 : n - 1]) {
+        s0 = i * (G_SOFFIT_W + gap);            // 0 = yderst, ved sternen
+        s1 = s0 + G_SOFFIT_W;
+        dx0 = s0 * cos(G_PITCH_DEG);
+        dx1 = s1 * cos(G_PITCH_DEG);
+        _soffit_slab_gable(-G_OH_EAVE + dx0, -G_OH_EAVE + dx1, y0, y1, palette);
+        _soffit_slab_gable(RH_HOUSE_LEN + G_OH_EAVE - dx1,
+                           RH_HOUSE_LEN + G_OH_EAVE - dx0, y0, y1, palette);
+    }
+}
+
+// Gavl-sofit: lameller langs X (op ad skråfladen, parallelt med vindskeden),
+// stablet i Y fra vindskedens inderside ind mod beklædningen. Yderste lamel
+// sidder under udhængsspæret, den inderste under klodserne. Kører hele vejen
+// fra spærende til spærende, så den lukker tagfodshjørnet.
+module _render_soffit_rake(palette) {
+    span = G_OH_RAKE_STRUCT - _SOFFIT_CLAD_FACE;
+    n    = _soffit_n(span);
+    gap  = _soffit_gap(span);
+    for (i = [0 : n - 1]) {
+        a0 = i * (G_SOFFIT_W + gap);            // 0 = yderst, ved vindskeden
+        a1 = a0 + G_SOFFIT_W;
+        for (yb = [[-G_OH_RAKE_STRUCT, +1],
+                   [RH_HOUSE_DEPTH + G_OH_RAKE_STRUCT, -1]]) {
+            y0 = yb[1] > 0 ? yb[0] + a0 : yb[0] - a1;
+            y1 = yb[1] > 0 ? yb[0] + a1 : yb[0] - a0;
+            _soffit_slab_gable(-G_OH_EAVE, G_RIDGE_X, y0, y1, palette);
+            _soffit_slab_gable(G_RIDGE_X, RH_HOUSE_LEN + G_OH_EAVE, y0, y1, palette);
+        }
     }
 }
 
 module _render_soffit_gable(palette) {
-    hl = RH_HOUSE_LEN;
-    y0 = -(G_VS_OUTER - G_VS_T);
-    y1 = RH_HOUSE_DEPTH + (G_VS_OUTER - G_VS_T);
-    // Left eave: wall line x=0 out to the eave tip x=-G_OH_EAVE.
-    _soffit_slab_gable(0,  -G_OH_EAVE,      y0, y1, palette);
-    // Right eave: wall line x=hl out to the eave tip x=hl+G_OH_EAVE.
-    _soffit_slab_gable(hl, hl + G_OH_EAVE,  y0, y1, palette);
+    _render_soffit_eave(palette);
+    _render_soffit_rake(palette);
 }
 
 // ---- Step-by-step entries for the gable/skifer roof — one per arbejdsplan
 // work step, so main.scad can toggle each build stage separately.
 module RenderHouseRoofSpaer(palette = DEFAULT_PALETTE) {
     RenderHouseGableSpaer(palette);
+}
+module RenderHouseRoofUdhaeng(palette = DEFAULT_PALETTE) {
+    RenderHouseGableUdhaeng(palette);
 }
 module RenderHouseRoofSofit(palette = DEFAULT_PALETTE) {
     _render_soffit_gable(palette);
@@ -205,6 +263,7 @@ module RenderHouseRoofVindskeder(palette = DEFAULT_PALETTE) {
 module RenderHouseRoof(roof_cover, palette = DEFAULT_PALETTE) {
     if (is_gable_roof(roof_cover)) {
         RenderHouseRoofSpaer(palette);
+        RenderHouseRoofUdhaeng(palette);
         RenderHouseRoofSofit(palette);
         RenderHouseRoofStern(palette);
         RenderHouseRoofVindskeder(palette);

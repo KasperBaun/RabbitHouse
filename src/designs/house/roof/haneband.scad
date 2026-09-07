@@ -71,3 +71,11 @@ module spaer_med_haneband(y0, palette = DEFAULT_PALETTE) {
     _sh_top_chord(G_RIDGE_X, x_right,   y0, palette);
     _sh_collar(y0, palette);
 }
+
+// Udhængsspær ved Y = y0 — samme to spærhalvdele af samme skabelon, men UDEN
+// hanebånd: det står frit ude i gavludhænget og bærer kun undertag + sofit.
+// Afstivningen kommer fra klodserne ind til gavlspæret og fra taglægterne.
+module udhaengsspaer(y0, palette = DEFAULT_PALETTE) {
+    _sh_top_chord(-G_OH_EAVE, G_RIDGE_X,               y0, palette);
+    _sh_top_chord(G_RIDGE_X,  RH_HOUSE_LEN + G_OH_EAVE, y0, palette);
+}

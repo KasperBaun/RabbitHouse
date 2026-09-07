@@ -24,8 +24,24 @@ z=120  ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒�
 ```
 
 `RH_YARD_EH_FRONT = RH_YARD_EH_BACK = 2100` → flad eave på alle 3 yard-vægge,
-mesh-låget hviler oven på topremmen. Yardens toprem-top ligger 192 mm under
-husets (2220 mod 2412) — dette niveau-skifte er synligt ved V4-partitionen.
+mesh-låget hviler oven på topremmen. Yardens toprem-top står i **2220** —
+altså 8 mm **over** husets vægtop (2212), ikke under.
+
+> ⚠ **Uløst konflikt med husets tagudhæng.** Da husets vægge blev sænket til
+> 2000 mm studs faldt `G_EAVE_Z` fra 2412 til 2212, og hele husets højre
+> tagskæg fulgte med ned. Ved X = 2229 (spærenden) ligger nu spærunderkant
+> 2051,7 — sofit 2030,7 — stern-underkant 2011,7, mens yardens vægge står til
+> 2220 og løber X = 2000..6000. Yardens V1/V2 gennemskærer derfor husets
+> tagudhæng på de første ~254 mm. Vælg én løsning før løbegården bygges:
+>
+> 1. **Hold yardens vægge tilbage til X ≥ 2260** — første fag står åbent under
+>    husets tagskæg, og vandet fra tagfoden drypper ned uden for yardens
+>    vægtop. Ændrer ikke højden, og er formentlig rigtigt uanset.
+> 2. **Sænk `RH_YARD_EH_*` til ~1880** så toprem-toppen kommer fri under
+>    sofitten. Koster 220 mm frihøjde og sprænger yard-dørens 1950 lysning.
+>
+> Modellen viser konflikten: fjern kommentarerne foran `// yard`-blokken i
+> `src/main.scad` og se V4-samlingen.
 
 ## Mål-oversigt
 

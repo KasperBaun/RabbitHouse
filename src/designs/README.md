@@ -48,7 +48,7 @@ as built, while structural timber (studs, spær, afstandslister, taglægter)
 stays natural and the front door leaf is bare plywood.
 
 With `house_roof_cover == "skifer"` the roof is rendered **step by step** — one
-call per arbejdsplan work step (`RenderHouseRoofSpaer` → `-Undertag`
-→ `-Afstandslister` → `-Laegter` → `-Stern` → `-Fodblik` → `-Skifer` →
-`-Vindskeder` → `-Rygning`).
+call per arbejdsplan work step (`RenderHouseRoofSpaer` → `-Udhaeng` → `-Sofit`
+→ `-Undertag` → `-Afstandslister` → `-Laegter` → `-Stern` → `-Fodblik` →
+`-Skifer` → `-Vindskeder` → `-Rygning`).
 Comment calls in/out to preview each build stage.

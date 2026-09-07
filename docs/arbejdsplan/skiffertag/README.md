@@ -10,9 +10,11 @@
 
 | # | Skridt | Status |
 |---|--------|--------|
-| 1 | [Spær](01-spaer.md) + [sofit](01b-sofit.md) | ✅ rejst (kontrollér selv at sofitten er lukket ved begge tagfødder) |
-| 2 | [Undertag](02-undertag.md) | ✅ lagt |
-| 3 | [Afstandslister](03-afstandslister.md) | ✅ sat |
+| 1 | [Spær](01-spaer.md) | ✅ rejst |
+| 1a | [**Udhængsspær + klodser**](01a-udhaengsspaer.md) | ⚠️ **ny — skal op før 1b/2** |
+| 1b | [Sofit](01b-sofit.md) | ⚠️ **omprojekteret: 4 sider, ventilerede lameller** |
+| 2 | [Undertag](02-undertag.md) | ⚠️ lagt, men skal **forlænges ud i gavludhænget** |
+| 3 | [Afstandslister](03-afstandslister.md) | ⚠️ sat, men mangler **2 lister over udhængsspærene** |
 | 4 | [**Lægter**](04-laegter.md) | ⬅️ **næste skridt — og det mest kritiske** |
 | 5 | [Sternbrædder](05-stern.md) | |
 | 6 | [Fodblik + fuglegitter](06-fodblik.md) | |
@@ -24,6 +26,16 @@
 Skridtene matcher 1:1 `Render*`-kaldene i `src/main.scad` — kommentér de
 efterfølgende kald ud for at se hvert byggetrin i 3D.
 
+> **Ændring (2026-09-07): gavludhænget bliver bygget færdigt.** Udhænget blev
+> båret alene af de udkragede lægter, og de ligger 28 mm over spærplanet. Derfor
+> kunne undertaget ikke føres ud, og tagskægget var kun lukket ved de to
+> tagfødder. Der kommer nu **ét udhængsspær pr. gavl i spærplanet**
+> ([1a](01a-udhaengsspaer.md)); så løber undertaget helt ud, sofitten lukker
+> **alle fire** tagskæg ([1b](01b-sofit.md)), og lægterne får anlæg i spidsen.
+> Samtidig går stern og vindskede-underbræt fra 25×150 til **25×200**, så de
+> dækker spærende + sofitlamel. Trin 1–3 står som bygget og skal
+> eftermonteres/forlænges — se de enkelte sider.
+
 ## Nøglemål (kontrolleret)
 
 | Mål | Værdi | Kommer af |
@@ -34,9 +46,14 @@ efterfølgende kald ud for at se hvert byggetrin i 3D.
 | Overlæg (sten *n* over *n−2*) | **150 mm** | 600 − 2 × 225 |
 | Rækker pr. tagflade | 7 = begynderrække + 5 synlige + toprække | |
 | Lægter pr. tagflade | **7** (L1–L7) | |
+| Gavludhæng, bærende | **145 mm** pr. side | udhængsspær + lægteudkragning |
+| Udhængsspær + undertag, bredde | **3290 mm** | 3000 + 2 × 145 |
 | Lægtelængde | **3290 mm** | 3000 + 2 × 145 udkragning |
 | Skiferfladens bredde | **3340 mm** | 3000 + 2 × 170 (til vindskedens yderside) |
 | Yderste tagkant | **3390 mm** | 3000 + 2 × 195 (overliggerens yderside) |
+| Sofit, tagfod | 280 mm skråmål | 229 vandret / cos 35° — 5 lameller |
+| Sofit, gavl | 97 mm | 145 udhæng − 48 mm beklædningstykkelse — 2 lameller |
+| Stern / vindskede-underbræt | **25×200** | 63 stak + 95 spær + 21 sofit = 179 skal dækkes |
 | Skiferforkant forbi spærenden | **60 mm** | drypkant fri af sternen |
 
 ### Hvorfor 225 mm og ikke leverandørens standard 255 mm
@@ -105,8 +122,9 @@ begge ender:
 - **Tagfod (indtag):** kanalen løber ud under L1 til tagkanten. Fodblikket
   lægges hen over L1's overside og bukkes ned over sternen, så de 25 mm
   under L1 forbliver åbne. **Fuglegitteret skal sidde her — i
-  afstandsliste-gabet under L1** — ikke under spærenderne: dér lukker
-  sofitten ([01b](01b-sofit.md)) helt tæt.
+  afstandsliste-gabet under L1.** Sofittens spalter
+  ([01b](01b-sofit.md)) sidder i et *andet* hulrum, under undertaget, og
+  erstatter ikke gitteret her.
 - **Kip (aftræk):** over L7 (overkant 1440) er der 60 mm op til kippen, hvor
   begge tagfladers kanaler mødes. De skal ud under rygningsbrædderne, der er
   klodset op på 15 mm lister — **lad rygningens ender være åbne** (eller brug
@@ -127,13 +145,17 @@ Ens på begge tagflader.
 
 | Lægte | Overkant | Bærer | Rækkens underkant |
 |---|---|---|---|
-| L1 | 0 | fodblik + opklodsningsliste | — |
+| L1 | **73** (*underkant* 0 = spærenden) | fodblik + opklodsningsliste | — |
 | L2 | 315 | begynderrække (375 mm, bagside op) | −60 |
 | L3 | 540 | synlig række 1 | −60 |
 | L4 | 765 | synlig række 2 | 165 |
 | L5 | 990 | synlig række 3 | 390 |
 | L6 | 1215 | synlig række 4 | 615 |
 | L7 | 1440 | synlig række 5 **+** toprække | 840 / 1065 |
+
+L1 er den eneste lægte der sættes efter underkanten: den skal ligge **inde
+på taget**, så fodblikket kan bukkes fra dens overside ud over sternens
+overkant. Alle øvrige lægter sættes efter overkanten, fordi den er sømlinjen.
 
 Kontrollen på planen: hver rækkes **overkant** flugter en lægtes overkant,
 så de to søm (25–40 mm under stenens overkant) altid rammer lægten. Toprækken
@@ -145,23 +167,29 @@ kippen.
 
 | Materiale | Dimension | Køb | Skridt |
 |---|---|---|---|
+| Konstruktionstræ C24, udhængsspær | 45×95 mm | **2 stk à 3,6 m** (4 × 1500; klodser af afkortet) | 1a |
+| Skruer, udhængsspær/klodser | 5,0×80 | 48 stk + 2 hulplader | 1a |
+| Høvlet forskalling m/fas, sofitlameller | 21×45 mm (jem & fix 25×50) | **22 stk à 2,4 m** (~45 m brugt) | 1b |
+| Insektnet, rustfrit/alu ≤ 2 mm | 300 / 100 mm bredt | ~7 m + ~6 m | 1b |
+| Afstandslister, ekstra over udhængsspær | 25×50 mm | 4 stk à 1,5 m (6 m) | 3 |
 | Taglægter T1 | 38×73 mm | **14 stk à 3,6 m** (14 × 3290 brugt) | 4 |
 | Søm til lægter | 100 mm | ~170 stk (2 pr. lægte × spær) | 4 |
-| Sternbrædder | 25×150 mm | 2 stk à 3,4 m | 5 |
+| Sternbrædder | 25×200 mm | 2 stk à 3,6 m | 5 |
 | Fodblik, zink | — | 7 m | 6 |
 | Fuglegitter, ventileret | — | 7 m | 6 |
 | Opklodsningsliste | 10×25 mm trykimp. | 7 m | 6 |
 | **Genbrugs-naturskifer** | 30×60 cm | **210 stk** (168 i taget + ~25 % genbrugsspild) | 7, 8 |
 | **Kobbersøm, riflet** | 2,8×40 mm (se tjek 2) | **500 stk ≈ 1,5 kg** (336 brugt) | 8 |
 | Kip-liste | 8×25 mm | 7 m | 8 |
-| Vindskedebrædder | 25×150 mm | 8 stk à ~1,9 m (16 m) | 9 |
+| Vindskede, underbræt | 25×200 mm | 4 stk à ~1,9 m (8 m) | 9 |
+| Vindskede, overligger | 25×150 mm | 4 stk à ~1,9 m (8 m) | 9 |
 | Rygningsbrædder | 25×150 mm | 2 stk à 3,4 m | 10 |
 | Opklodsningslister, rygning | 15 mm | rest-træ | 10 |
 | Zink-rygning | — | 3,5 m | 10 |
 | Skruer m. tætningsskive | — | 1 pak | 10 |
 
-25×150-brædderne (stern + vindskeder + rygning) er **30 m i alt** — køb dem
-samlet. Beregningen af de 168 sten: 3340 / 300 = 11,1 → 12 emner pr. række,
+Brædderne til randafslutningen: **25×200 ca. 15 m** (stern + vindskede-underbræt)
+og **25×150 ca. 15 m** (overligger + rygning) — køb hver dimension samlet. Beregningen af de 168 sten: 3340 / 300 = 11,1 → 12 emner pr. række,
 7 rækker pr. tagflade, 2 tagflader.
 
 **Køb ALDRIG galvaniserede søm til skiferen — kun kobber.** Et skifertag

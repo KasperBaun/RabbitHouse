@@ -59,6 +59,11 @@ rammer spærets underkant **407 mm fra kipsnittet målt langs underkanten**
 6. Fastgør hvert spær til topremmen med vinkelbeslag (+ skråsøm fra den
    anden side).
 
+## Næste
+
+Når fagene står: [1a — udhængsspær + klodser](01a-udhaengsspaer.md). De skal
+op **før** undertaget, ellers kan banen ikke føres ud i gavludhænget.
+
 ## Tjek
 
 - [ ] Alle 6 fag i lod og flugt — snor over kip-punkterne er en ret linje.

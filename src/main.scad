@@ -56,20 +56,21 @@ RenderHouseFloorDeck(PALETTE);
 //RenderHouseStairs(PALETTE);
 RenderHouseFraming(PALETTE);
 RenderHouseOpenings(PALETTE);
-//RenderHouseV4Doors(PALETTE);   // hus-dør mod løbegården — ikke bygget
+RenderHouseV4Doors(PALETTE);   // hus-dør mod løbegården — ikke bygget
 
 // tag, trin for trin (arbejdsplan trin 4-5) — kommentér ud nedefra
 if (house_roof_cover == "skifer") {
     RenderHouseRoofSpaer(PALETTE);           // spær m. hanebånd
-    RenderHouseRoofSofit(PALETTE);           // sofit
-    RenderHouseRoofUndertag();               // undertag
-    RenderHouseRoofAfstandslister(PALETTE);  // afstandslister 25×50
-    RenderHouseRoofLaegter(PALETTE);         // taglægter 38×73
-    RenderHouseRoofStern(PALETTE);           // stern
-    RenderHouseRoofFodblik();                // fodblik
-    RenderHouseRoofSkifer();                 // skifer 30×60
-    RenderHouseRoofVindskeder(PALETTE);      // vindskeder
-    RenderHouseRoofRygning();                // rygning
+    RenderHouseRoofUdhaeng(PALETTE);         // udhængsspær + klodser (gavl)
+    //RenderHouseRoofSofit(PALETTE);           // sofit
+    //RenderHouseRoofUndertag();               // undertag
+    //RenderHouseRoofAfstandslister(PALETTE);  // afstandslister 25×50
+    //RenderHouseRoofLaegter(PALETTE);         // taglægter 38×73
+    //RenderHouseRoofStern(PALETTE);           // stern
+    //RenderHouseRoofFodblik();                // fodblik
+    //RenderHouseRoofSkifer();                 // skifer 30×60
+    //RenderHouseRoofVindskeder(PALETTE);      // vindskeder
+    //RenderHouseRoofRygning();                // rygning
 } else {
     RenderHouseRoof(house_roof_cover, PALETTE);
     RenderHouseRoofPlates(house_roof_cover, palette = PALETTE);

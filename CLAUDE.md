@@ -16,7 +16,7 @@ Open `src/main.scad` in OpenSCAD — it is the top-level dispatcher, organised i
 - `yard_roof_cover` — `"mesh"` (default) | `"polycarb"` | `"tagpap"` | `"eternit"`
 - `cladding_type` — `"klink"` | `"board_on_board"`
 
-With `"skifer"` the house roof is rendered **step by step** — one `RenderHouseRoof*()` call per arbejdsplan work step, in real build order (spær → undertag → afstandslister → lægter → stern → fodblik → skifer → vindskeder → rygning). Comment calls in/out to inspect each build stage. Other covers render via the two composite calls in the `else` branch (scripts in `src/scripts/` override `house_roof_cover` with `-D` and rely on this).
+With `"skifer"` the house roof is rendered **step by step** — one `RenderHouseRoof*()` call per arbejdsplan work step, in real build order (spær → udhængsspær → sofit → undertag → afstandslister → lægter → stern → fodblik → skifer → vindskeder → rygning). Comment calls in/out to inspect each build stage. Other covers render via the two composite calls in the `else` branch (scripts in `src/scripts/` override `house_roof_cover` with `-D` and rely on this).
 
 The `// yard` render block is currently commented out — uncomment to see the run.
 
@@ -60,8 +60,9 @@ src/
       floor.scad                     # RenderHouseFloorJoists/-Hangers/-Deck (strøer-gulv)
       framing.scad                   # RenderHouseFraming — DPC + bundrem + studs + toprem, V1–V4
       openings.scad                  # RenderHouseOpenings — doors + windows
-      roof.scad                      # RenderHouseRoof dispatcher + stern; step entries
-                                     #   RenderHouseRoofSpaer/-Stern/-Vindskeder
+      roof.scad                      # RenderHouseRoof dispatcher + stern + sofit; step
+                                     #   entries RenderHouseRoofSpaer/-Udhaeng/-Sofit/
+                                     #   -Stern/-Vindskeder
       roof_gable.scad                # gavlspær + vindskede geometry
       roof/haneband.scad             # spær med hanebånd (som bygget; intet kipbræt)
       roof_plates.scad               # RenderHouseRoofPlates dispatcher; step entries
@@ -112,7 +113,7 @@ painted black; structural timber stays natural) and threads them into the
 
 ### Structural notes
 
-**House roof** is a gable (saddeltag): pitch 35° (`G_PITCH_DEG`), ridge along Y at X = 1000 (`G_RIDGE_X`), flat eave Z = 2412 on all four walls (`G_EAVE_Z`). Geometry via `g_rafter_top_z(x)` & friends in `designs/config.scad`. Each half-slope is exactly 1500 mm = 4 × gauge(225) + 600, sized for 30×60 cm slate in double coverage. Skifer build-up on the rafters (per `guide-naturskifertag.md`): undertag 3 mm → afstandslister 25×50 over each spær → taglægter 38×73 (gauge 225 on the slope) → genbrugs-naturskifer. The rake overhang (`G_OH_RAKE` ≈ 195) is carried by lægter cantilevering past the gable trusses; each gable gets a **dobbelt vindskede** (`G_VS_*` constants) — underbræt on the lægte ends plus an overligger rising `G_VS_OVER_RISE` above the slate surface, which the slate stops against. Sternbrædder (25×150, same depth as the underbræt so the corners meet flush) cap the rafter tails at both eaves with a zinc fodblik folded over them, and a zinc ridge cap covers the kip. Build details that are in the arbejdsplan but intentionally NOT modelled: begynderrække, opklodsnings-/kip-lister, cut top course. The mono-pitch helpers (`roof_oz*`, `RH_EH_*`) remain for the legacy tagpap/eternit house covers and the yard.
+**House roof** is a gable (saddeltag): pitch 35° (`G_PITCH_DEG`), ridge along Y at X = 1000 (`G_RIDGE_X`), flat eave Z = 2212 on all four walls (`G_EAVE_Z`). Geometry via `g_rafter_top_z(x)` & friends in `designs/config.scad`. Each half-slope is exactly 1500 mm = 4 × gauge(225) + 600, sized for 30×60 cm slate in double coverage. Skifer build-up on the rafters (per `guide-naturskifertag.md`): undertag 3 mm → afstandslister 25×50 over each spær → taglægter 38×73 (gauge 225 on the slope) → genbrugs-naturskifer. The rake overhang is carried by an **udhængsspær** per gable — a full extra rafter in the rafter plane, `G_OH_RAKE_STRUCT` (145) outboard of the gable truss, held by 45×95 klodser (`G_UDH_*`) — plus the lægter cantilevering onto its afstandsliste. That is what lets the undertag run out to the rake edge and the sofit close all four eaves. Each gable gets a **dobbelt vindskede** (`G_VS_*`) — underbræt 25×200 on the lægte + udhængsspær ends plus a 25×150 overligger rising `G_VS_OVER_RISE` above the slate, which the slate stops against. Sternbrædder (25×200 = `G_STERN_H`, same depth as the underbræt so the corners meet flush) cap the rafter tails at both eaves with a zinc fodblik folded over them, and a zinc ridge cap covers the kip. The **sofit** is ventilated lameller (`G_SOFFIT_*`, 21×45 høvlet forskalling with an evenly distributed slot) under all four tagskæg, with insect net behind. Build details that are in the arbejdsplan but intentionally NOT modelled: begynderrække, opklodsnings-/kip-lister, cut top course. The mono-pitch helpers (`roof_oz*`, `RH_EH_*`) remain for the legacy tagpap/eternit house covers and the yard.
 
 **House walls**: 2000 mm studs → wall top 2092 (`RH_EH_FRONT`); DPC 2 + bundrem 45 + stud + toprem 45. The 2000 mm door rough openings reuse the top plate as header.
 

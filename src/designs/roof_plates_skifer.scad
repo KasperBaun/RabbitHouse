@@ -2,7 +2,7 @@
 // 30×60 cm i dobbelt dækning (guide-naturskifertag.md). Stack from rafter
 // top upward:
 //   0..3   mm  diffusion-open underlay (banevare, OK from 25°; pitch is 35°)
-//   3..28  mm  25×50 afstandslister along each spær (drainage gap, §4.1B)
+//   3..28  mm  25×50 afstandslister along each spær incl. udhængsspær (§4.1B)
 //   28..66 mm  38×73 T1 taglægter parallel to the ridge
 //   66..74 mm  slate courses (~8 mm visual thickness)
 //
@@ -32,7 +32,13 @@ SK_PLATE_W      = 300;          // stone width along the ridge (Y)
 SK_SLOPE        = 1500;   // spærende -> kip = (G_RIDGE_X+G_OH_EAVE)/cos(35°)
 SK_GAUGE        = 225;    // lægteafstand på skråfladen = (600 - 150) / 2
 SK_EAVE_PROJ    = 60;     // skiferforkant forbi spærenden
-SK_LAEGTE_TOP   = [0, 315, 540, 765, 990, 1215, 1440];  // L1..L7 overkanter
+// L1..L7 OVERKANTER. NB på L1: det er tagfodslægten, og den er sat efter sin
+// UNDERKANT — den flugter spærenden (s = 0), så overkanten lander på
+// lægtebredden, 73. Sad L1's overkant på 0, ville lægtekroppen hænge 73 mm ned
+// FORBI spærenden og skære tværs gennem sternbrættet (25 mm ud fra spærenden),
+// og så kunne fodblikket ikke bukkes ud over sternens overkant. L2..L7 er sat
+// efter overkanten, fordi den er sømlinjen for stenrækkerne.
+SK_LAEGTE_TOP   = [SK_BATTEN_W, 315, 540, 765, 990, 1215, 1440];
 SK_COURSE_TAIL  = [-60, 165, 390, 615, 840, 1065];      // synlige rækkers underkant
 
 // Skråflade-position -> X på hvert halvtag.
@@ -81,16 +87,20 @@ module _sk_underlay(y_lo, y_hi) {
 }
 
 // Afstandslister — 25×50 trykimprægneret, on the underlay directly over each
-// spær, running the full slope of each half. They lift the taglægter off the
-// underlay so water on the membrane can drain to the eave (guide §4.1B).
+// spær (fag OG udhængsspær), running the full slope of each half. They lift
+// the taglægter off the underlay so water on the membrane can drain to the
+// eave (guide §4.1B). The two lister over the udhængsspær also give the
+// cantilevered lægter a bearing at the rake tip.
 module _sk_counter_battens(palette) {
-    for (y = G_TRUSS_YS) {
+    for (y = G_SPAER_YS) {
         y_mid = y + 45/2;   // centre the 50 mm list on the 45 mm truss
-        _sk_half_slab(-G_OH_EAVE, G_RIDGE_X,
-                      y_mid - SK_CBATTEN_W/2, y_mid + SK_CBATTEN_W/2,
+        // Listen over et udhængsspær kappes i flugt med spærets yderside, så
+        // den ikke stikker ud i vindskeden.
+        y_lo = max(y_mid - SK_CBATTEN_W/2, -G_OH_RAKE_STRUCT);
+        y_hi = min(y_mid + SK_CBATTEN_W/2, RH_HOUSE_DEPTH + G_OH_RAKE_STRUCT);
+        _sk_half_slab(-G_OH_EAVE, G_RIDGE_X, y_lo, y_hi,
                       SK_UNDERLAY_T - 0.5, SK_CBATTEN_T, pal_post(palette));
-        _sk_half_slab(G_RIDGE_X, RH_HOUSE_LEN + G_OH_EAVE,
-                      y_mid - SK_CBATTEN_W/2, y_mid + SK_CBATTEN_W/2,
+        _sk_half_slab(G_RIDGE_X, RH_HOUSE_LEN + G_OH_EAVE, y_lo, y_hi,
                       SK_UNDERLAY_T - 0.5, SK_CBATTEN_T, pal_post(palette));
     }
 }
@@ -204,9 +214,12 @@ module _sk_ridge_cap(y_lo, y_hi) {
 // so nothing z-fights; the slate is only the top SK_SLATE_T (the underlay +
 // lister + lægter are visible at the eave edge and from the underside).
 
-// Undertag — stops at the gable walls (does not run into the rake overhang).
+// Undertag — føres helt ud i gavludhænget og kappes i flugt med
+// udhængsspærets yderside, så vand på banen drypper fri af vindskeden i
+// stedet for at løbe ind bag gavlbeklædningen. Det kan lade sig gøre fordi
+// udhængsspæret ligger i spærplanet og bærer banen derude.
 module render_skifer_undertag() {
-    _sk_underlay(0, RH_HOUSE_DEPTH);
+    _sk_underlay(-G_OH_RAKE_STRUCT, RH_HOUSE_DEPTH + G_OH_RAKE_STRUCT);
 }
 
 // Klemme-/afstandslister 25×50 over hvert spær.
@@ -214,11 +227,11 @@ module render_skifer_afstandslister(palette = DEFAULT_PALETTE) {
     _sk_counter_battens(palette);
 }
 
-// Taglægter 38×73 — cantilever 200 mm past the gable trusses to carry the
-// rake overhang, ending at the vindskede inner face (vindskede caps the ends).
+// Taglægter 38×73 — cantilever G_OH_RAKE_STRUCT past the gable trusses,
+// ending at the vindskede inner face (vindskede caps the ends). They land on
+// the afstandsliste over the udhængsspær, so the rake tip is borne, not free.
 module render_skifer_laegter(palette = DEFAULT_PALETTE) {
-    _sk_battens(-(G_VS_OUTER - G_VS_T),
-                RH_HOUSE_DEPTH + (G_VS_OUTER - G_VS_T), palette);
+    _sk_battens(-G_OH_RAKE_STRUCT, RH_HOUSE_DEPTH + G_OH_RAKE_STRUCT, palette);
 }
 
 // Naturskifer — the two slate slabs plus course grooves and stone seams.
@@ -248,8 +261,8 @@ module render_skifer_sten() {
 // like the lægter. The stern must match this in height: stern top = stack
 // top, so the fold lands exactly on the stern's upper front edge.
 module render_skifer_fodblik() {
-    y0   = -(G_VS_OUTER - G_VS_T);
-    y1   = RH_HOUSE_DEPTH + (G_VS_OUTER - G_VS_T);
+    y0   = -G_OH_RAKE_STRUCT;
+    y1   = RH_HOUSE_DEPTH + G_OH_RAKE_STRUCT;
     drop = 45;    // visible fold-down over the stern face
     tuck = 20;    // how far the top leg reaches in under the slate
     t    = 2;
