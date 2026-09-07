@@ -13,7 +13,6 @@ Earlier iterations (v1: mono-pitch shed; v2: gabled house + polycarb run) are fr
 Open `src/main.scad` in OpenSCAD — it is the top-level dispatcher, organised into `// shared`, `// house`, and `// yard` sections. Toggles near the top:
 
 - `house_roof_cover` — `"skifer"` (default; gable roof) | `"tagpap"` | `"eternit"` (legacy mono-pitch)
-- `house_truss` — `"haneband"` (default) | `"gitterspaer"`
 - `yard_roof_cover` — `"mesh"` (default) | `"polycarb"` | `"tagpap"` | `"eternit"`
 - `cladding_type` — `"klink"` | `"board_on_board"`
 - `show_unbuilt` — `false` (default; as built — omits the V4 hus-dør leaf, whose
@@ -69,9 +68,8 @@ src/
       openings.scad                  # RenderHouseOpenings — doors + windows
       roof.scad                      # RenderHouseRoof dispatcher + stern; step entries
                                      #   RenderHouseRoofSpaer/-Stern/-Vindskeder
-      roof_gable.scad                # gable trusses dispatcher + vindskede geometry
-      roof/haneband.scad             # spær med hanebånd (default truss)
-      roof/gitterspaer.scad          # king-post truss + ridge board (alternative)
+      roof_gable.scad                # gavlspær + vindskede geometry
+      roof/haneband.scad             # spær med hanebånd (som bygget; intet kipbræt)
       roof_plates.scad               # RenderHouseRoofPlates dispatcher; step entries
                                      #   RenderHouseRoofUndertag/-Afstandslister/-Laegter/
                                      #   -Skifer/-Rygning

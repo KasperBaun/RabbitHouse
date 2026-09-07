@@ -189,8 +189,8 @@ module _render_soffit_gable(palette) {
 
 // ---- Step-by-step entries for the gable/skifer roof — one per arbejdsplan
 // work step, so main.scad can toggle each build stage separately.
-module RenderHouseRoofSpaer(truss = "haneband", palette = DEFAULT_PALETTE) {
-    RenderHouseGableSpaer(truss, palette);
+module RenderHouseRoofSpaer(palette = DEFAULT_PALETTE) {
+    RenderHouseGableSpaer(palette);
 }
 module RenderHouseRoofSofit(palette = DEFAULT_PALETTE) {
     _render_soffit_gable(palette);
@@ -202,9 +202,9 @@ module RenderHouseRoofVindskeder(palette = DEFAULT_PALETTE) {
     RenderHouseGableVindskeder(palette);
 }
 
-module RenderHouseRoof(roof_cover, truss = "haneband", palette = DEFAULT_PALETTE) {
+module RenderHouseRoof(roof_cover, palette = DEFAULT_PALETTE) {
     if (is_gable_roof(roof_cover)) {
-        RenderHouseRoofSpaer(truss, palette);
+        RenderHouseRoofSpaer(palette);
         RenderHouseRoofSofit(palette);
         RenderHouseRoofStern(palette);
         RenderHouseRoofVindskeder(palette);

@@ -1,13 +1,8 @@
-// HOUSE gable roof — dispatches to a truss variant. Both variants live
-// in the roof/ subfolder so they can be reused in other designs:
-//
-//   roof/haneband.scad     — spær med hanebånd (traditional, more loft
-//                            space, no ridge board, rafters meet at apex)
-//   roof/gitterspaer.scad  — engineered king-post truss (bottom chord +
-//                            king post + W-struts + ridge board)
-//
-// Default: hanebånd — appropriate for the 2 m span at 35° and gives
-// clear loft space.
+// HOUSE gable roof — gavlspær + vindskede geometry. The truss itself lives
+// in roof/haneband.scad: spær med hanebånd, as built — rafters meet
+// directly at the apex with a plumb butt joint (no ridge board) and a
+// collar tie at 2/3 rise, which suits the 2 m span at 35° and leaves the
+// loft clear.
 //
 // The gable trusses sit flush with V1 / V2; the slate cover
 // (designs/roof_plates_skifer.scad) overhangs the gables by G_OH_RAKE,
@@ -17,19 +12,12 @@
 include <../../lib/defaults.scad>
 include <../config.scad>
 use <roof/haneband.scad>
-use <roof/gitterspaer.scad>
-
-// Gable-truss thickness along Y (both variants are 45 mm reglar).
-_GR_MEMBER_T = 45;
 
 // Truss Y positions come from config (G_TRUSS_YS) — shared with the skifer
 // cover, whose afstandslister must sit directly over the spær. Each truss
-// extends +Y by _GR_MEMBER_T, so the two gable trusses sit flush INSIDE
-// their wall faces: V1 at Y=0..45 and V2 at (ww-45)..ww.
+// is 45 mm thick and extends +Y from its position, so the two gable trusses
+// sit flush INSIDE their wall faces: V1 at Y=0..45 and V2 at (ww-45)..ww.
 _GR_TRUSS_YS = G_TRUSS_YS;
-
-// Ridge-board Y span (gitterspær only) runs gable-to-gable.
-_GR_Y_SPAN = RH_HOUSE_DEPTH;
 
 // Roof stack above the rafter top (undertag 3 + afstandsliste 25 + taglægte
 // 38 = G_ROOF_STACK_T). The vindskede top reaches to just under the slate
@@ -81,13 +69,8 @@ module _gable_vindskede(y_hi, z_top, palette) {
 }
 
 // Spær only — arbejdsplan trin 4 ("Rejs spær m. hanebånd").
-module RenderHouseGableSpaer(truss = "haneband", palette = DEFAULT_PALETTE) {
-    if (truss == "haneband") {
-        for (y0 = _GR_TRUSS_YS) spaer_med_haneband(y0, palette);
-    } else if (truss == "gitterspaer") {
-        for (y0 = _GR_TRUSS_YS) gitterspaer(y0, palette);
-        gitterspaer_ridge_board(_GR_Y_SPAN, palette);
-    }
+module RenderHouseGableSpaer(palette = DEFAULT_PALETTE) {
+    for (y0 = _GR_TRUSS_YS) spaer_med_haneband(y0, palette);
 }
 
 // Dobbelt vindskede on both gable ends, mounted AFTER lægtning (arbejdsplan
@@ -103,10 +86,4 @@ module RenderHouseGableVindskeder(palette = DEFAULT_PALETTE) {
     // overligger
     _gable_vindskede(-G_VS_OUTER,                           _GR_VS_OVER_TOP,  palette);  // V1 front
     _gable_vindskede(RH_HOUSE_DEPTH + G_VS_OUTER + G_VS_T,  _GR_VS_OVER_TOP,  palette);  // V2 back
-}
-
-// Composite (back-compat) — spær + vindskeder.
-module RenderHouseGableRoof(truss = "haneband", palette = DEFAULT_PALETTE) {
-    RenderHouseGableSpaer(truss, palette);
-    RenderHouseGableVindskeder(palette);
 }

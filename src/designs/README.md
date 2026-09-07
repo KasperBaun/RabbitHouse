@@ -17,7 +17,7 @@ designs/
   roof_plates_mesh.scad      # cover: welded-wire lid (yard default)
   house/                     # HUS-zone (X=0..2000, Y=0..3000) — gable roof + kælder
     foundation.scad basement.scad floor.scad framing.scad openings.scad
-    roof.scad roof_gable.scad roof/haneband.scad roof/gitterspaer.scad
+    roof.scad roof_gable.scad roof/haneband.scad
     roof_plates.scad cladding/cladding.scad + variants
   yard/                      # YARD-zone (X=2000..6000, Y=1000..3000) — mesh-top run
     foundation.scad framing.scad openings.scad
@@ -38,7 +38,7 @@ designs/
 
 ## Toggles
 
-Top of `main.scad`: set `house_roof_cover`, `house_truss`, `yard_roof_cover`,
+Top of `main.scad`: set `house_roof_cover`, `yard_roof_cover`,
 `cladding_type`, `exterior_finish` and `show_unbuilt`.
 Comment/uncomment individual `Render*()` calls below to isolate a building system.
 

@@ -34,10 +34,6 @@ use <designs/yard/mesh.scad>
 // 'skifer', 'tagpap' or 'eternit'
 house_roof_cover = "skifer";
 
-// Gable-roof truss pattern.
-// 'haneband' or 'gitterspaer'
-house_truss      = "haneband";
-
 // Yard is an open-top run — welded-wire lid stretched across the rafters
 // (predator-proof, no weather barrier). Other options: "polycarb",
 // "tagpap", "eternit".
@@ -86,7 +82,7 @@ RenderHouseOpenings(PALETTE, show_unbuilt);
 // tagpap/eternit renderes samlet via else-grenen (så scripts der sætter
 // -D house_roof_cover=... stadig virker).
 if (house_roof_cover == "skifer") {
-    RenderHouseRoofSpaer(house_truss, PALETTE); // 4: rejs spær m. hanebånd
+    RenderHouseRoofSpaer(PALETTE);              // 4: rejs spær m. hanebånd
     RenderHouseRoofSofit(PALETTE);              // 4: skråt tagskæg-sofit ved begge tagfødder
     RenderHouseRoofUndertag();                  // 5: undertag (banevare)
     RenderHouseRoofAfstandslister(PALETTE);     // 5: klemme-/afstandslister 25×50 over spær
@@ -97,7 +93,7 @@ if (house_roof_cover == "skifer") {
     RenderHouseRoofVindskeder(PALETTE);         // 5: vindskeder på lægte-enderne
     RenderHouseRoofRygning();                   // 5: zink-rygning over kip (sidste trin)
 } else {
-    RenderHouseRoof(house_roof_cover, house_truss, PALETTE);
+    RenderHouseRoof(house_roof_cover, PALETTE);
     RenderHouseRoofPlates(house_roof_cover, palette = PALETTE);
 }
 RenderHouseCladding(cladding_type, PALETTE, show_unbuilt);
