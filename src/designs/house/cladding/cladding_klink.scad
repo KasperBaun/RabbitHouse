@@ -10,8 +10,12 @@ use <cladding_common.scad>
 
 // Gable triangle as a Y-extruded prism (X-Z cross-section: eave corners at
 // x=0 / x=RH_HOUSE_LEN and apex at the ridge). Used to clip the gable-end
-// klink to the roof line. Spans Y = y0..y1.
-module _gable_prism(y0, y1) {
+// klink to the roof line. Spans Y = y0..y1. `col` matters: in preview the
+// intersection's cut faces (the sloped board-ends along the rake) are drawn
+// in the clipping solid's color, so an uncolored prism paints the rake
+// OpenSCAD-default yellow.
+module _gable_prism(y0, y1, col) {
+    color(col)
     translate([0, y1, 0])
         rotate([90, 0, 0])
             linear_extrude(height = y1 - y0)
@@ -111,14 +115,14 @@ module render_cladding_klink(clad = RH_CLAD, palette = DEFAULT_PALETTE) {
             render_housewrap([0, -RH_HOUSEWRAP_T, G_EAVE_Z], hl, gh, "X");
             clad_wall_rect([0, -(s + ct), G_EAVE_Z], hl, gh, "X", palette, clad);
         }
-        _gable_prism(-(s + ct) - 5, 5);
+        _gable_prism(-(s + ct) - 5, 5, pal_panel1(palette));
     }
     intersection() {                                   // V2 back gable
         union() {
             render_housewrap([0, ww, G_EAVE_Z], hl, gh, "X");
             clad_wall_rect([0, ww + s, G_EAVE_Z], hl, gh, "X", palette, clad);
         }
-        _gable_prism(ww - 5, ww + s + ct + 5);
+        _gable_prism(ww - 5, ww + s + ct + 5, pal_panel1(palette));
     }
 
     // -- Corner trim posts.
