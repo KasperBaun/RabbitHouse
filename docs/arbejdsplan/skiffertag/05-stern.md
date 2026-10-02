@@ -1,5 +1,7 @@
 # 5. Sternbrædder
 
+> **Tegninger:** [05-stern-tegninger.html](05-stern-tegninger.html) — lav stern: snit før/nu, alle dele, rækkefølge.
+
 > Skridt 5 af 10 → [oversigt](README.md). Ét sternbræt **25×200** på
 > spærenderne ved hver tagfod. Monteres EFTER lægtningen, fordi overkanten
 > skal flugte med lægternes overside.

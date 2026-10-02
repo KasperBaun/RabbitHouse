@@ -3,7 +3,7 @@
 // top upward:
 //   0..3   mm  diffusion-open underlay (banevare, OK from 25°; pitch is 35°)
 //   3..28  mm  25×50 afstandslister along each spær incl. udhængsspær (§4.1B)
-//   28..66 mm  38×73 T1 taglægter parallel to the ridge
+//   28..66 mm  38×57 taglægter (lagt fladt) parallel to the ridge
 //   66..74 mm  slate courses (~8 mm visual thickness)
 //
 // Sten 30×60 i halv-forbandt. Lægter, rækkelinjer og skiferforkant følger
@@ -17,8 +17,8 @@ include <config.scad>
 SK_UNDERLAY_T   = 3;
 SK_CBATTEN_T    = 25;           // afstandsliste 25×50 (thickness above underlay)
 SK_CBATTEN_W    = 50;           // afstandsliste width along Y (over each spær)
-SK_BATTEN_T     = 38;           // taglægte T1 38×73
-SK_BATTEN_W     = 73;
+SK_BATTEN_T     = 38;           // taglægte 38×57, lagt fladt (spær c/c 600)
+SK_BATTEN_W     = 57;
 SK_PLATE_L      = 600;          // stone length up the slope
 SK_PLATE_W      = 300;          // stone width along the ridge (Y)
 // ---- Sætteplan. Én kilde til sandhed, identisk med tabellen i
@@ -34,10 +34,10 @@ SK_GAUGE        = 225;    // lægteafstand på skråfladen = (600 - 150) / 2
 SK_EAVE_PROJ    = 60;     // skiferforkant forbi spærenden
 // L1..L7 OVERKANTER. NB på L1: det er tagfodslægten, og den er sat efter sin
 // UNDERKANT — den flugter spærenden (s = 0), så overkanten lander på
-// lægtebredden, 73. Sad L1's overkant på 0, ville lægtekroppen hænge 73 mm ned
-// FORBI spærenden og skære tværs gennem sternbrættet (25 mm ud fra spærenden),
-// og så kunne fodblikket ikke bukkes ud over sternens overkant. L2..L7 er sat
-// efter overkanten, fordi den er sømlinjen for stenrækkerne.
+// lægtebredden, 57. Sad L1's overkant på 0, ville lægtekroppen hænge 57 mm ned
+// FORBI spærenden, ud over sternen, og lukke luftindtaget. Gabet under L1's
+// forkant er tagets luftindtag (fuglegitter). L2..L7 er sat efter
+// overkanten, fordi den er sømlinjen for stenrækkerne.
 SK_LAEGTE_TOP   = [SK_BATTEN_W, 315, 540, 765, 990, 1215, 1440];
 SK_COURSE_TAIL  = [-60, 165, 390, 615, 840, 1065];      // synlige rækkers underkant
 
@@ -218,8 +218,20 @@ module _sk_ridge_cap(y_lo, y_hi) {
 // udhængsspærets yderside, så vand på banen drypper fri af vindskeden i
 // stedet for at løbe ind bag gavlbeklædningen. Det kan lade sig gøre fordi
 // udhængsspæret ligger i spærplanet og bærer banen derude.
+//
+// Ved tagfoden føres banen ud over den LAVE stern og slutter ved dens
+// forkant, oven på tagfodsblikket — så vand på banen løber ud, ikke ind bag
+// sternen.
 module render_skifer_undertag() {
-    _sk_underlay(-G_OH_RAKE_STRUCT, RH_HOUSE_DEPTH + G_OH_RAKE_STRUCT);
+    y0 = -G_OH_RAKE_STRUCT;
+    y1 = RH_HOUSE_DEPTH + G_OH_RAKE_STRUCT;
+    _sk_underlay(y0, y1);
+    for (x_e = [-G_OH_EAVE, RH_HOUSE_LEN + G_OH_EAVE]) {
+        z_s = g_rafter_top_z(x_e) + G_STERN_TOP + SK_BLIK_T;
+        color(SK_UNDERLAY_COLOR)
+        translate([x_e < G_RIDGE_X ? x_e - RH_FASCIA_T : x_e, y0, z_s])
+            cube([RH_FASCIA_T, y1 - y0, SK_UNDERLAY_T / 2]);
+    }
 }
 
 // Klemme-/afstandslister 25×50 over hvert spær.
@@ -254,32 +266,55 @@ module render_skifer_sten() {
     _sk_plate_seams(y_lo, y_hi);
 }
 
-// Fodblik — zinc drip flashing at both eaves. A strip tucked in under the
-// slate edge, folded out over the stern's top edge and ~45 mm down its face,
-// so water off the undertag and the slate drips clear of the stern (no
-// gutter in this build). Runs between the vindskede inner faces,
-// like the lægter. The stern must match this in height: stern top = stack
-// top, so the fold lands exactly on the stern's upper front edge.
+// Tagfodsblik — drypkant ved begge tagfødder, monteret på den LAVE stern FØR
+// undertaget: et ben der ligger SK_BLIK_TUCK ind på spærenes overside (under
+// undertaget), over sternens top, ~40 mm ned ad sternens forside og en lille
+// drypnæse ud. Undertaget lægges oven på blikket, så vandet løber
+// undertag → blik → ud (senere ned i tagrenden). Løber mellem vindskedernes
+// inderside ligesom lægterne. Sort/antracit, så det forsvinder i sternen.
+SK_BLIK_T    = 1.5;
+SK_BLIK_TUCK = 80;     // ind på spærene, målt på skråfladen
+SK_BLIK_DROP = 40;     // ned ad sternens forside
+SK_BLIK_COLOR = [0.17, 0.18, 0.20];
 module render_skifer_fodblik() {
-    y0   = -G_OH_RAKE_STRUCT;
-    y1   = RH_HOUSE_DEPTH + G_OH_RAKE_STRUCT;
-    drop = 45;    // visible fold-down over the stern face
-    tuck = 20;    // how far the top leg reaches in under the slate
-    t    = 2;
-    for (side = [0, 1]) {
-        x_e  = side == 0 ? -G_OH_EAVE : RH_HOUSE_LEN + G_OH_EAVE;
-        z_hi = g_rafter_top_z(x_e) + G_ROOF_STACK_T;
-        x_lo = side == 0 ? x_e - RH_FASCIA_T - t : x_e - tuck;
-        color(SK_ZINC_COLOR) {
-            // top leg: from under the slate out over the stern top
-            translate([x_lo, y0, z_hi - t])
-                cube([tuck + RH_FASCIA_T + t, y1 - y0, t]);
-            // front leg: down over the stern face
-            translate([side == 0 ? x_e - RH_FASCIA_T - t : x_e + RH_FASCIA_T,
-                       y0, z_hi - drop])
-                cube([t, y1 - y0, drop]);
+    y0 = -G_OH_RAKE_STRUCT;
+    y1 = RH_HOUSE_DEPTH + G_OH_RAKE_STRUCT;
+    t  = SK_BLIK_T;
+    for (side = [-1, 1]) {
+        x_e = side < 0 ? -G_OH_EAVE : RH_HOUSE_LEN + G_OH_EAVE;
+        z_s = g_rafter_top_z(x_e) + G_STERN_TOP;
+        x_f = x_e + side * (RH_FASCIA_T + t);      // blikkets yderside
+        tuck = SK_BLIK_TUCK * cos(G_PITCH_DEG);
+        // ben ind på spærene, i tagfladen
+        _sk_half_slab(side < 0 ? x_e : x_e - tuck, side < 0 ? x_e + tuck : x_e,
+                      y0, y1, 0, t, SK_BLIK_COLOR);
+        color(SK_BLIK_COLOR) {
+            // over sternens top
+            translate([min(x_e, x_f), y0, z_s]) cube([RH_FASCIA_T + t, y1 - y0, t]);
+            // ned ad sternens forside
+            translate([side < 0 ? x_f : x_f - t, y0, z_s - SK_BLIK_DROP])
+                cube([t, y1 - y0, SK_BLIK_DROP + t]);
+            // drypnæse, 45° ud
+            hull() {
+                translate([side < 0 ? x_f : x_f - t, y0, z_s - SK_BLIK_DROP]) cube([t, y1 - y0, t]);
+                translate([(side < 0 ? x_f : x_f - t) + side * 8, y0, z_s - SK_BLIK_DROP - 8])
+                    cube([t, y1 - y0, t]);
+            }
         }
     }
+}
+
+// Fuglegitter — i det 25 mm høje afstandsliste-gab under L1's forkant, hele
+// tagfoden igennem på begge sider. Det er tagets luftindtag: fugle/hvepse
+// ude, luft ind. Sort.
+SK_GITTER_COLOR = [0.07, 0.07, 0.08];
+module render_skifer_fuglegitter() {
+    y0 = -G_OH_RAKE_STRUCT;
+    y1 = RH_HOUSE_DEPTH + G_OH_RAKE_STRUCT;
+    _sk_half_slab(_sk_xl(-3), _sk_xl(9), y0, y1,
+                  SK_UNDERLAY_T, SK_CBATTEN_T - 1, SK_GITTER_COLOR);
+    _sk_half_slab(_sk_xr(9), _sk_xr(-3), y0, y1,
+                  SK_UNDERLAY_T, SK_CBATTEN_T - 1, SK_GITTER_COLOR);
 }
 
 // Zink-rygning over kippen — runs between the vindskede-overliggere.
@@ -294,6 +329,7 @@ module render_roof_plates_skifer_gable(palette = DEFAULT_PALETTE) {
     render_skifer_afstandslister(palette);
     render_skifer_laegter(palette);
     render_skifer_fodblik();
+    render_skifer_fuglegitter();
     render_skifer_sten();
     render_skifer_rygning();
 }

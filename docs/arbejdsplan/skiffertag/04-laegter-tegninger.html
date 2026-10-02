@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lægter — snor og pinde</title>
+<style>
+  /* Fast lyst tema — tegningen skal ligne papir, også ved print. */
+  :root, :root[data-theme="dark"], :root[data-theme="light"] {
+    --paper: #ffffff;
+    --ink: #232a2c;
+    --muted: #5f6a66;
+    --dim: #2f6b9a;
+    --cut: #b3402e;
+    --wood: #efe3ca;
+    --wood-line: #a8905f;
+    --wood2: #e2cfa6;
+    --metal: #c9ced1;
+    --metal-line: #7d868b;
+    --faint: #ddd9d0;
+    --chip-bg: #f2f0ea;
+    --ok: #3d7a4a;
+    color-scheme: light;
+  }
+
+  html { background: var(--paper); }
+  body {
+    font-family: "Segoe UI", system-ui, sans-serif;
+    color: var(--ink);
+    line-height: 1.55;
+    margin: 0;
+    padding: 2.5rem 1rem 4rem;
+  }
+  main { max-width: 880px; margin: 0 auto; }
+
+  .eyebrow {
+    font-family: Bahnschrift, "Avenir Next Condensed", "Arial Narrow", sans-serif;
+    font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 0.4rem;
+  }
+  h1 {
+    font-family: Bahnschrift, "Avenir Next Condensed", "Arial Narrow", sans-serif;
+    font-weight: 600; font-size: clamp(1.7rem, 4vw, 2.4rem);
+    letter-spacing: 0.01em; margin: 0 0 0.5rem; text-wrap: balance;
+  }
+  .lede { color: var(--muted); max-width: 62ch; margin: 0 0 1.2rem; }
+  .lede code, footer code { font-family: "Cascadia Code", Consolas, ui-monospace, monospace; font-size: 0.9em; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 2.2rem; }
+  .chip {
+    font-family: "Cascadia Code", Consolas, ui-monospace, monospace;
+    font-variant-numeric: tabular-nums; font-size: 0.8rem;
+    background: var(--chip-bg); border: 1px solid var(--faint);
+    border-radius: 3px; padding: 0.22rem 0.6rem; white-space: nowrap;
+  }
+
+  section { margin: 0 0 2.8rem; }
+  h2 {
+    font-family: Bahnschrift, "Avenir Next Condensed", "Arial Narrow", sans-serif;
+    font-weight: 600; font-size: 1.15rem; letter-spacing: 0.03em;
+    border-bottom: 2px solid var(--ink); padding-bottom: 0.35rem; margin: 0 0 1rem;
+    display: flex; align-items: baseline; gap: 0.7rem;
+  }
+  h2 .fignum {
+    font-family: "Cascadia Code", Consolas, ui-monospace, monospace;
+    font-size: 0.85rem; color: var(--muted);
+  }
+  .figwrap { overflow-x: auto; }
+  .figwrap svg { display: block; width: 100%; height: auto; min-width: 560px; }
+  .figwrap.narrow svg { max-width: 640px; margin: 0 auto; }
+
+  .notes { margin: 0.9rem 0 0; padding: 0 0 0 1.2rem; max-width: 68ch; }
+  .notes li { margin: 0.3rem 0; }
+  .maal { color: var(--dim); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .snit { color: var(--cut); font-weight: 600; }
+
+  /* Indkøbskort */
+  .buy {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 0.75rem; margin: 0;
+  }
+  .card {
+    border: 1px solid var(--faint); border-top: 4px solid var(--wood-line);
+    background: var(--chip-bg); border-radius: 4px; padding: 0.8rem 0.9rem;
+  }
+  .card.metal { border-top-color: var(--metal-line); }
+  .card .qty {
+    font-family: Bahnschrift, "Avenir Next Condensed", "Arial Narrow", sans-serif;
+    font-size: 1.9rem; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums;
+  }
+  .card .what { font-weight: 600; margin: 0.15rem 0 0.3rem; }
+  .card .why { color: var(--muted); font-size: 0.88rem; line-height: 1.4; }
+  .tools { color: var(--muted); font-size: 0.92rem; margin: 0.9rem 0 0; }
+
+  /* Trin */
+  ol.steps { counter-reset: s; list-style: none; padding: 0; margin: 0; max-width: 70ch; }
+  ol.steps > li {
+    counter-increment: s; position: relative;
+    padding: 0.55rem 0 0.75rem 3rem; border-bottom: 1px solid var(--faint);
+  }
+  ol.steps > li::before {
+    content: counter(s); position: absolute; left: 0; top: 0.5rem;
+    width: 2rem; height: 2rem; border-radius: 50%;
+    background: var(--ink); color: var(--paper);
+    font-family: Bahnschrift, "Avenir Next Condensed", sans-serif; font-weight: 600;
+    display: grid; place-items: center;
+  }
+  .steps .t { font-weight: 600; }
+  .steps .time {
+    font-family: "Cascadia Code", Consolas, ui-monospace, monospace; font-size: 0.78rem;
+    color: var(--muted); background: var(--chip-bg); border: 1px solid var(--faint);
+    border-radius: 3px; padding: 0.05rem 0.4rem; margin-left: 0.4rem; white-space: nowrap;
+  }
+  .steps .d { color: var(--ink); margin-top: 0.15rem; }
+  .steps .fig { color: var(--dim); font-size: 0.88rem; }
+
+  ul.check { list-style: none; padding: 0; margin: 0; max-width: 70ch; }
+  ul.check li { padding: 0.35rem 0 0.35rem 2rem; position: relative; }
+  ul.check li::before {
+    content: ""; position: absolute; left: 0.2rem; top: 0.55rem;
+    width: 1rem; height: 1rem; border: 2px solid var(--ink); border-radius: 2px;
+  }
+
+  .callout {
+    border-left: 3px solid var(--cut); background: var(--chip-bg);
+    padding: 0.7rem 1rem; margin: 1.2rem 0 0; max-width: 66ch; font-size: 0.95rem;
+  }
+  .callout strong { font-family: Bahnschrift, "Avenir Next Condensed", sans-serif; letter-spacing: 0.02em; }
+
+  footer { margin-top: 2.5rem; color: var(--muted); font-size: 0.85rem; }
+
+  /* SVG classes */
+  .wood      { fill: var(--wood); stroke: var(--wood-line); }
+  .wood2     { fill: var(--wood2); stroke: var(--wood-line); }
+  .spare     { fill: var(--paper); stroke: var(--wood-line); }
+  .waste     { fill: var(--faint); stroke: var(--wood-line); }
+  .metal     { fill: var(--metal); stroke: var(--metal-line); }
+  .rule      { fill: #f7f7f4; stroke: var(--ink); }
+  .ink-line  { stroke: var(--ink); fill: none; }
+  .ref-line  { stroke: var(--muted); fill: none; }
+  .dim-line  { stroke: var(--dim); fill: none; }
+  .dim-fill  { fill: var(--dim); stroke: none; }
+  .cut-line  { stroke: var(--cut); fill: none; }
+  .cut-fill  { fill: var(--cut); stroke: none; }
+  .ok-line   { stroke: var(--ok); fill: none; }
+  svg text {
+    paint-order: stroke; stroke: var(--paper); stroke-width: 3.5px; stroke-linejoin: round;
+  }
+  .t-dim  { fill: var(--dim);  font-family: "Cascadia Code", Consolas, ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .t-cut  { fill: var(--cut);  font-family: "Cascadia Code", Consolas, ui-monospace, monospace; }
+  .t-ok   { fill: var(--ok);   font-family: "Segoe UI", system-ui, sans-serif; font-weight: 600; }
+  .t-lab  { fill: var(--ink);  font-family: Bahnschrift, "Avenir Next Condensed", "Arial Narrow", sans-serif; letter-spacing: 0.05em; }
+  .t-mut  { fill: var(--muted); font-family: "Segoe UI", system-ui, sans-serif; }
+
+  @media print {
+    body { padding: 0; }
+    section { break-inside: avoid; }
+  }
+
+  /* Lægter-tegninger */
+  :root { --string: #3d7a4a; --a-fill: #f6d9b0; --a-line: #b86e1f; --b-fill: #d3e3f0; --b-line: #2f6b9a; }
+  .lath    { fill: #d8c294; stroke: var(--wood-line); }
+  .lath-t  { fill: #d8c294; stroke: var(--wood-line); fill-opacity: 0.82; }
+  .liste   { fill: #c9b99a; stroke: var(--wood-line); }
+  .spA     { fill: var(--a-fill); stroke: var(--a-line); }
+  .spB     { fill: var(--b-fill); stroke: var(--b-line); }
+  .str     { stroke: var(--string); fill: none; }
+  .str-fill{ fill: var(--string); stroke: none; }
+  .nail    { fill: var(--ink); stroke: none; }
+  .t-a    { fill: var(--a-line); font-family: "Cascadia Code", Consolas, ui-monospace, monospace; font-weight: 600; }
+  .t-b    { fill: var(--b-line); font-family: "Cascadia Code", Consolas, ui-monospace, monospace; font-weight: 600; }
+  .t-str  { fill: var(--string); font-family: "Segoe UI", system-ui, sans-serif; font-weight: 600; }
+  .t-num  { fill: var(--paper); font-family: Bahnschrift, "Avenir Next Condensed", sans-serif; font-weight: 700; stroke: none; }
+
+  table.ctrl { border-collapse: collapse; font-variant-numeric: tabular-nums; margin: 0.4rem 0 0; }
+  table.ctrl th, table.ctrl td { padding: 0.35rem 0.9rem; border-bottom: 1px solid var(--faint); text-align: left; }
+  table.ctrl th { font-family: Bahnschrift, "Avenir Next Condensed", sans-serif; font-weight: 600; letter-spacing: 0.03em; border-bottom: 2px solid var(--ink); }
+  table.ctrl td.n { color: var(--dim); font-weight: 600; font-family: "Cascadia Code", Consolas, ui-monospace, monospace; }
+  .sw { display: inline-block; width: 0.9rem; height: 0.9rem; border-radius: 2px; vertical-align: -0.1rem; margin-right: 0.35rem; }
+  .sw.a { background: var(--a-fill); border: 1.5px solid var(--a-line); }
+  .sw.b { background: var(--b-fill); border: 1.5px solid var(--b-line); }
+  .sw.s { background: var(--string); }
+</style>
+</head>
+<body>
+<main>
+  <p class="eyebrow">Arbejdsplan · skiffertag · skridt 4</p>
+  <h1>Lægter — snor og afstandspinde</h1>
+  <p class="lede">Sådan sættes L1 lige, og L2–L7 på plads uden tommestok. Mål for
+     <strong>38×57-lægter</strong>, lagt fladt. Uddyber <code>04-laegter.md</code>.
+     Alle mål i millimeter. <span style="color:var(--string);font-weight:600">Grøn = snor</span>,
+     blå = mål, rød = skær/søm.</p>
+  <div class="chips">
+    <span class="chip">lægte 38×57</span>
+    <span class="chip">7 pr. tagflade</span>
+    <span class="chip">længde 3290</span>
+    <span class="chip">gauge 225</span>
+    <span class="chip">pind A 201</span>
+    <span class="chip">pind B 168</span>
+    <span class="chip">1,5–2 t pr. flade</span>
+  </div>
+
+  <div class="callout" style="margin:0 0 2.4rem"><strong>Først:</strong> udhængsspærene (1a) skal sidde, undertaget
+    være ført ud over dem, og de 4 ekstra afstandslister ligge oven på dem. Det er dem snoren spændes mellem.</div>
+
+  <section>
+    <h2><span class="fignum">FIG. 1</span> L1 følger snoren — ikke spærenderne</h2>
+    <div class="figwrap"><div id="figA"></div></div>
+    <ul class="notes">
+      <li><span class="sw s"></span>Spænd snoren stramt mellem de to <strong>udhængsspærs fødder</strong>.</li>
+      <li>Et spær der <strong>stikker mere end ~5 mm ud</strong> forbi snoren: sav eller høvl det tilbage.</li>
+      <li>Et spær der er <strong>for kort</strong>: gør ingenting — L1 bygger bro.</li>
+      <li>Læg L1 med <strong>underkanten på snoren</strong>. Søm i rækkefølgen
+          <strong>①</strong> den ene ende, <strong>②</strong> den anden ende, <strong>③</strong> midten — så resten.</li>
+      <li>Spærenderne er tegnet overdrevet skæve, så det kan ses.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="fignum">FIG. 2</span> Lægterne set fra siden — tagfladen lagt ned</h2>
+    <div class="figwrap"><div id="figB"></div></div>
+    <ul class="notes">
+      <li><span class="sw a"></span><strong>Pind A = 201</strong> — bruges kun én gang: mellem L1 og L2.</li>
+      <li><span class="sw b"></span><strong>Pind B = 168</strong> — alle de andre (225 gauge − 57 lægtebredde).</li>
+      <li>Tallene over lægterne er <strong>overkanten</strong>, målt fra snoren/spærenden.</li>
+      <li>Sternen kommer på senere (skridt 5) med overkanten i flugt med lægternes overside.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="fignum">FIG. 3</span> Afstandspindene — skær dem af et afkort</h2>
+    <div class="figwrap narrow"><div id="figD"></div></div>
+    <ul class="notes">
+      <li>Skær dem af et lægte-afkort og <strong>skriv A og B på dem</strong> med tusch.</li>
+      <li>Lav gerne 2 af hver — så kan du holde én i hver ende af lægten.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="fignum">FIG. 4</span> Tagfladen set oppefra — kontrolmål</h2>
+    <div class="figwrap"><div id="figC"></div></div>
+    <ul class="notes">
+      <li><strong>Efter L1:</strong> mål fra L1's overkant op til kippen ved begge gavle og på midten —
+          <strong>A, B og C skal være ens ±3 mm</strong>. Ellers ligger L1 skævt.</li>
+      <li><strong>Hver anden lægte:</strong> mål fra snoren op til lægtens overkant i begge gavle
+          (fx L4 = <span class="maal">765</span>). Så fanger du små fejl, før de hober sig op.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="fignum">5</span> Sådan gør du</h2>
+    <ol class="steps">
+      <li><div class="t">Spænd snoren<span class="time">10 min</span></div>
+          <div class="d">Mellem de to udhængsspærs fødder. Stram.</div>
+          <div class="fig">→ fig. 1</div></li>
+      <li><div class="t">Tjek hver spærende mod snoren<span class="time">15 min</span></div>
+          <div class="d">Stikker ud &gt; 5 mm → sav/høvl tilbage. For kort → lad være.</div>
+          <div class="fig">→ fig. 1</div></li>
+      <li><div class="t">Læg L1 med underkanten på snoren<span class="time">15 min</span></div>
+          <div class="d">Søm ① ende, ② anden ende, ③ midten — derefter hvert spær.
+            2 søm 100 mm (eller skruer 5×100) pr. spær.</div>
+          <div class="fig">→ fig. 1</div></li>
+      <li><div class="t">Tjek L1 mod kippen<span class="time">5 min</span></div>
+          <div class="d">A = B = C ±3 mm. Hvis ikke: løsn og ret, før du går videre.</div>
+          <div class="fig">→ fig. 4</div></li>
+      <li><div class="t">L2 med pind A<span class="time">10 min</span></div>
+          <div class="d">Pind A mellem L1 og L2 i begge ender og på midten. Søm enderne, så hvert spær.</div>
+          <div class="fig">→ fig. 2</div></li>
+      <li><div class="t">L3–L7 med pind B<span class="time">~1 t</span></div>
+          <div class="d">Samme greb. Efter L4 og L6: mål fra snoren til overkanten i begge gavle (tabellen).</div>
+          <div class="fig">→ fig. 2 + 4</div></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2><span class="fignum">6</span> Kontrolmål — overkant fra snoren</h2>
+    <table class="ctrl">
+      <thead><tr><th>Lægte</th><th>Overkant</th><th>Pind under</th><th>Bærer</th></tr></thead>
+      <tbody>
+        <tr><td>L1</td><td class="n">57</td><td>— (underkant på snoren)</td><td>fodblik + opklodsningsliste</td></tr>
+        <tr><td>L2</td><td class="n">315</td><td><span class="sw a"></span>A 201</td><td>begynderrække</td></tr>
+        <tr><td>L3</td><td class="n">540</td><td><span class="sw b"></span>B 168</td><td>række 1</td></tr>
+        <tr><td>L4</td><td class="n">765</td><td><span class="sw b"></span>B 168</td><td>række 2 · <strong>kontrolmål</strong></td></tr>
+        <tr><td>L5</td><td class="n">990</td><td><span class="sw b"></span>B 168</td><td>række 3</td></tr>
+        <tr><td>L6</td><td class="n">1215</td><td><span class="sw b"></span>B 168</td><td>række 4 · <strong>kontrolmål</strong></td></tr>
+        <tr><td>L7</td><td class="n">1440</td><td><span class="sw b"></span>B 168</td><td>række 5 + toprække</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2><span class="fignum">7</span> Færdig når</h2>
+    <ul class="check">
+      <li>L1's underkant ligger på snoren hele vejen, og A = B = C ±3 mm.</li>
+      <li>L4 = 765 og L7 = 1440 fra snoren — i begge gavle.</li>
+      <li>Retskinne 2 m på tværs af lægterne: højst 2 mm hul.</li>
+      <li>Alle lægter rager 145 ud i begge gavle og har søm i afstandslisten over udhængsspæret.</li>
+    </ul>
+  </section>
+
+  <footer>Lægteplan fra <code>04-laegter.md</code> (gauge 225, overkanter 315 … 1440). Kun L1 flytter sig
+    med 38×57: overkanten lander på 57 i stedet for 73. Opbygning: spær 95 · afstandsliste 25 · lægte 38.</footer>
+</main>
+
+<script>
+(function () {
+  var SIN = Math.sin(35 * Math.PI / 180); // 0.5736
+  var COS = Math.cos(35 * Math.PI / 180); // 0.8192
+  var TAN = Math.tan(35 * Math.PI / 180); // 0.7002
+  var NS = "http://www.w3.org/2000/svg";
+
+  function el(name, attrs, parent) {
+    var e = document.createElementNS(NS, name);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+
+  // Figure factory: world coords in mm, z up. k = px per mm (kz optional for
+  // an exaggerated vertical scale). Pads in px.
+  function fig(mountId, o) {
+    var kz = o.kz || o.k;
+    var W = (o.x1 - o.x0) * o.k + o.padL + o.padR;
+    var H = (o.z1 - o.z0) * kz + o.padT + o.padB;
+    var svg = el("svg", { viewBox: "0 0 " + W.toFixed(1) + " " + H.toFixed(1),
+                          role: "img", "aria-label": o.label || "" });
+    document.getElementById(mountId).appendChild(svg);
+    function P(x, z) { return [(x - o.x0) * o.k + o.padL, (o.z1 - z) * kz + o.padT]; }
+    return { svg: svg, P: P, W: W, H: H, k: o.k };
+  }
+
+  function pts(list) { return list.map(function (p) { return p[0].toFixed(1) + "," + p[1].toFixed(1); }).join(" "); }
+
+  function poly(f, worldPts, cls, opts) {
+    opts = opts || {};
+    var e = el("polygon", { points: pts(worldPts.map(function (p) { return f.P(p[0], p[1]); })),
+                            "class": cls, "stroke-width": opts.sw || 1.6 }, f.svg);
+    if (opts.dash) e.setAttribute("stroke-dasharray", opts.dash);
+    return e;
+  }
+  function seg(f, a, b, cls, opts) {
+    opts = opts || {};
+    var A = f.P(a[0], a[1]), B = f.P(b[0], b[1]);
+    var e = el("line", { x1: A[0], y1: A[1], x2: B[0], y2: B[1], "class": cls,
+                         "stroke-width": opts.sw || 1 }, f.svg);
+    if (opts.dash) e.setAttribute("stroke-dasharray", opts.dash);
+    return e;
+  }
+  function dot(f, p, r, cls) {
+    var A = f.P(p[0], p[1]);
+    el("circle", { cx: A[0], cy: A[1], r: r, "class": cls }, f.svg);
+  }
+  function txt(f, x, z, s, cls, opts) {
+    opts = opts || {};
+    var A = f.P(x, z);
+    var e = el("text", { x: A[0] + (opts.dx || 0), y: A[1] + (opts.dy || 0),
+                         "class": cls, "font-size": opts.fs || 13,
+                         "text-anchor": opts.anchor || "middle" }, f.svg);
+    if (opts.bold) e.setAttribute("font-weight", 600);
+    if (opts.rot) e.setAttribute("transform", "rotate(" + opts.rot + " " + (A[0] + (opts.dx || 0)) + " " + (A[1] + (opts.dy || 0)) + ")");
+    e.textContent = s;
+    return e;
+  }
+  function arrow(f, tipPx, dirPx, cls) {
+    var L = 9, Wd = 3.2;
+    var n = [-dirPx[1], dirPx[0]];
+    var p1 = [tipPx[0] + dirPx[0] * L + n[0] * Wd, tipPx[1] + dirPx[1] * L + n[1] * Wd];
+    var p2 = [tipPx[0] + dirPx[0] * L - n[0] * Wd, tipPx[1] + dirPx[1] * L - n[1] * Wd];
+    el("polygon", { points: pts([tipPx, p1, p2]), "class": cls }, f.svg);
+  }
+
+  // Aligned dimension between world points a,b; off = perpendicular offset in px
+  // (positive = screen-left of a->b).
+  function dim(f, a, b, off, label, opts) {
+    opts = opts || {};
+    var A = f.P(a[0], a[1]), B = f.P(b[0], b[1]);
+    var dx = B[0] - A[0], dy = B[1] - A[1];
+    var len = Math.hypot(dx, dy);
+    var e = [dx / len, dy / len];
+    var n = [e[1], -e[0]];
+    var A2 = [A[0] + n[0] * off, A[1] + n[1] * off];
+    var B2 = [B[0] + n[0] * off, B[1] + n[1] * off];
+    var ext = off >= 0 ? 1 : -1;
+    function extLine(S, S2) {
+      el("line", { x1: S[0] + n[0] * 3 * ext, y1: S[1] + n[1] * 3 * ext,
+                   x2: S2[0] + n[0] * 5 * ext, y2: S2[1] + n[1] * 5 * ext,
+                   "class": "dim-line", "stroke-width": 0.8 }, f.svg);
+    }
+    if (!opts.noExtA) extLine(A, A2);
+    if (!opts.noExtB) extLine(B, B2);
+    el("line", { x1: A2[0], y1: A2[1], x2: B2[0], y2: B2[1],
+                 "class": "dim-line", "stroke-width": 1 }, f.svg);
+    arrow(f, A2, e, "dim-fill");
+    arrow(f, B2, [-e[0], -e[1]], "dim-fill");
+    var mid = [(A2[0] + B2[0]) / 2 + (opts.dx || 0), (A2[1] + B2[1]) / 2 + (opts.dy === undefined ? -6 : opts.dy)];
+    var t = el("text", { x: mid[0], y: mid[1], "class": "t-dim",
+                         "font-size": opts.fs || 13.5,
+                         "text-anchor": "middle", "font-weight": 600 }, f.svg);
+    if (opts.rot) {
+      var ang = Math.atan2(dy, dx) * 180 / Math.PI;
+      if (ang > 90 || ang < -90) ang += 180;
+      t.setAttribute("transform", "rotate(" + ang.toFixed(1) + " " + mid[0] + " " + mid[1] + ")");
+    }
+    t.textContent = label;
+  }
+
+  function angleDim(f, vertex, d1, d2, r, label, opts) {
+    opts = opts || {};
+    var V = f.P(vertex[0], vertex[1]);
+    function toScreen(d) { var L = Math.hypot(d[0], d[1]); return [d[0] / L, -d[1] / L]; }
+    var s1 = toScreen(d1), s2 = toScreen(d2);
+    var P1 = [V[0] + s1[0] * r, V[1] + s1[1] * r];
+    var P2 = [V[0] + s2[0] * r, V[1] + s2[1] * r];
+    var cross = s1[0] * s2[1] - s1[1] * s2[0];
+    var sweep = cross > 0 ? 1 : 0;
+    el("path", { d: "M " + P1[0].toFixed(1) + " " + P1[1].toFixed(1) +
+                    " A " + r + " " + r + " 0 0 " + sweep + " " +
+                    P2[0].toFixed(1) + " " + P2[1].toFixed(1),
+                 "class": opts.cls || "cut-line", "stroke-width": 1.1 }, f.svg);
+    var bis = [(s1[0] + s2[0]) / 2, (s1[1] + s2[1]) / 2];
+    var bl = Math.hypot(bis[0], bis[1]) || 1;
+    var T = [V[0] + bis[0] / bl * (r + (opts.rlab || 15)), V[1] + bis[1] / bl * (r + (opts.rlab || 15))];
+    var t = el("text", { x: T[0], y: T[1] + 4, "class": opts.tcls || "t-cut",
+                         "font-size": opts.fs || 12.5, "text-anchor": "middle",
+                         "font-weight": 600 }, f.svg);
+    t.textContent = label;
+  }
+
+
+  var RAFTERS = [-145, 0, 600, 1200, 1800, 2400, 2955, 3100];   // nær flade, 45 brede
+  var TOPS = [57, 315, 540, 765, 990, 1215, 1440];              // lægte-overkanter
+  var LW = 57;                                                  // lægtebredde (fladt)
+
+  function circNum(f, x, z, n) {
+    var A = f.P(x, z);
+    el("circle", { cx: A[0], cy: A[1], r: 10, "class": "nail" }, f.svg);
+    var t = el("text", { x: A[0], y: A[1] + 4.5, "class": "t-num", "font-size": 13,
+                         "text-anchor": "middle" }, f.svg);
+    t.textContent = n;
+  }
+
+  /* ============================================================
+     FIG. 1 — tagfod set oppefra: snor, skæve spærender, L1
+     ============================================================ */
+  (function () {
+    var f = fig("figA", { x0: -420, x1: 3300, z0: -58, z1: 135,
+                          k: 0.208, kz: 1.45, padL: 10, padR: 10, padT: 24, padB: 34,
+                          label: "Tagfod set oppefra: snoren, spærender og L1" });
+    RAFTERS.forEach(function (r) {
+      var end = r === 1200 ? -18 : r === 2400 ? 14 : 0;
+      poly(f, [[r, end], [r + 45, end], [r + 45, 135], [r, 135]], "wood", { sw: 1.3 });
+    });
+    txt(f, -122, 135, "udhængsspær", "t-mut", { fs: 11, dy: -6 });
+    txt(f, 3122, 135, "udhængsspær", "t-mut", { fs: 11, dy: -6 });
+
+    // snor + pinde
+    seg(f, [-270, 0], [3270, 0], "str", { sw: 2.2 });
+    dot(f, [-270, 0], 4, "str-fill");
+    dot(f, [3270, 0], 4, "str-fill");
+    txt(f, -270, 0, "snor", "t-str", { fs: 13, anchor: "end", dx: -8, dy: 5 });
+
+    // L1
+    poly(f, [[-145, 0], [3145, 0], [3145, LW], [-145, LW]], "lath-t", { sw: 1.6 });
+    txt(f, 1050, LW / 2, "L1 — underkant på snoren", "t-lab", { fs: 13, dy: 5 });
+
+    // spær der stikker ud
+    var A = f.P(1200, -18), B = f.P(1245, 0);
+    el("rect", { x: A[0], y: B[1], width: B[0] - A[0], height: A[1] - B[1], "class": "cut-fill", opacity: 0.6 }, f.svg);
+    txt(f, 1222, -18, "stikker ud → sav/høvl til snoren", "t-cut", { fs: 12, dy: 18 });
+    // spær der er for kort (under L1)
+    seg(f, [2400, 14], [2445, 14], "cut-line", { sw: 1.6, dash: "3 2" });
+    txt(f, 2422, 0, "for kort → OK, L1 bygger bro", "t-mut", { fs: 12, dy: 20 });
+
+    circNum(f, -122.5, LW / 2, "1");
+    circNum(f, 3122.5, LW / 2, "2");
+    circNum(f, 1822.5, LW / 2, "3");
+
+    dim(f, [-145, 0], [3145, 0], -52, "3290", { dy: 16 });
+  })();
+
+  /* ============================================================
+     FIG. 2 — snit op ad tagfladen (fladen lagt vandret)
+     ============================================================ */
+  (function () {
+    var f = fig("figB", { x0: -230, x1: 1560, z0: -140, z1: 118,
+                          k: 0.44, padL: 10, padR: 118, padT: 34, padB: 34,
+                          label: "Lægterne set fra siden med afstandspinde" });
+
+    poly(f, [[0, -95], [1500, -95], [1500, 0], [0, 0]], "wood", { sw: 1.4 });
+    poly(f, [[0, 0], [1500, 0], [1500, 25], [0, 25]], "liste", { sw: 1.1 });
+    // stern (senere)
+    poly(f, [[-25, -137], [0, -137], [0, 63], [-25, 63]], "ref-line", { sw: 1, dash: "4 3" });
+    txt(f, -25, -60, "stern (skridt 5)", "t-mut", { fs: 11, dx: -6, anchor: "end" });
+
+    TOPS.forEach(function (t, i) {
+      poly(f, [[t - LW, 25], [t, 25], [t, 63], [t - LW, 63]], "lath", { sw: 1.4 });
+      seg(f, [t, 63], [t, 84], "dim-line", { sw: 1 });
+      txt(f, t, 84, String(t), "t-dim", { fs: 13, dy: -4, bold: true });
+      txt(f, t - LW / 2, 84, "L" + (i + 1), "t-lab", { fs: 13, dy: -22 });
+      if (i > 0) {
+        var a = TOPS[i - 1], b = t - LW;
+        poly(f, [[a, 27], [b, 27], [b, 61], [a, 61]], i === 1 ? "spA" : "spB", { sw: 1.3 });
+        txt(f, (a + b) / 2, 44, (i === 1 ? "A " : "B ") + (b - a), i === 1 ? "t-a" : "t-b", { fs: 12, dy: 4 });
+      }
+    });
+
+    // snor-punkt + 0
+    dot(f, [0, 25], 4.5, "str-fill");
+    txt(f, 0, -95, "0 = snor / spærende", "t-str", { fs: 11.5, dy: 16, dx: 6, anchor: "start" });
+
+    // kip
+    seg(f, [1500, -110], [1500, 110], "ref-line", { sw: 1, dash: "6 4" });
+    txt(f, 1500, 110, "kip", "t-mut", { fs: 12, dy: -4 });
+
+    txt(f, 1510, 44, "lægte 38", "t-mut", { fs: 11.5, anchor: "start", dx: 6, dy: 4 });
+    txt(f, 1510, 12, "afstandsliste 25", "t-mut", { fs: 11.5, anchor: "start", dx: 6, dy: 4 });
+    txt(f, 1510, -48, "spær 95", "t-mut", { fs: 11.5, anchor: "start", dx: 6, dy: 4 });
+  })();
+
+  /* ============================================================
+     FIG. 3 — afstandspindene
+     ============================================================ */
+  (function () {
+    var f = fig("figD", { x0: 0, x1: 470, z0: 0, z1: 57,
+                          k: 1.15, padL: 50, padR: 20, padT: 20, padB: 50,
+                          label: "Afstandspind A 201 og B 168" });
+    poly(f, [[0, 0], [201, 0], [201, 57], [0, 57]], "spA", { sw: 1.8 });
+    poly(f, [[290, 0], [458, 0], [458, 57], [290, 57]], "spB", { sw: 1.8 });
+    txt(f, 100.5, 28.5, "A", "t-a", { fs: 26, dy: 9 });
+    txt(f, 374, 28.5, "B", "t-b", { fs: 26, dy: 9 });
+    dim(f, [0, 0], [201, 0], -22, "201", { dy: 16 });
+    dim(f, [290, 0], [458, 0], -22, "168", { dy: 16 });
+    dim(f, [0, 0], [0, 57], 20, "57", { dx: -22, dy: 4 });
+  })();
+
+  /* ============================================================
+     FIG. 4 — tagfladen set oppefra, kontrolmål
+     ============================================================ */
+  (function () {
+    var f = fig("figC", { x0: -460, x1: 3460, z0: -40, z1: 1640,
+                          k: 0.19, padL: 10, padR: 10, padT: 10, padB: 16,
+                          label: "Tagfladen oppefra med kontrolmål A, B, C og L4" });
+    RAFTERS.forEach(function (r) {
+      poly(f, [[r, 0], [r + 45, 0], [r + 45, 1500], [r, 1500]], "wood", { sw: 1 });
+    });
+    TOPS.forEach(function (t, i) {
+      poly(f, [[-145, t - LW], [3145, t - LW], [3145, t], [-145, t]], i === 3 ? "lath" : "lath-t", { sw: i === 3 ? 1.8 : 1.1 });
+    });
+    txt(f, 900, 765 - LW / 2, "L4", "t-lab", { fs: 12, dy: 4 });
+    seg(f, [-300, 1500], [3300, 1500], "ref-line", { sw: 1.2, dash: "8 5" });
+    txt(f, 3300, 1500, "kip", "t-mut", { fs: 12.5, dy: -8, anchor: "end" });
+    seg(f, [-300, 0], [3300, 0], "str", { sw: 2 });
+    txt(f, 1500, 0, "snor", "t-str", { fs: 12, dy: 15 });
+
+    [[300, "A"], [1500, "B"], [2700, "C"]].forEach(function (p) {
+      dim(f, [p[0], TOPS[0]], [p[0], 1500], 0, p[1], { noExtA: true, noExtB: true, dx: 0, dy: 4, fs: 16 });
+    });
+    txt(f, 1500, 1600, "A = B = C  (±3 mm)", "t-dim", { fs: 14, bold: true });
+
+    dim(f, [-145, 0], [-145, 765], 34, "765", { dx: -22, dy: 4 });
+    dim(f, [3145, 0], [3145, 765], -34, "765", { dx: 22, dy: 4 });
+  })();
+})();
+</script>
+</body>
+</html>

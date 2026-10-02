@@ -15,11 +15,11 @@ _GR_TRUSS_YS = G_TRUSS_YS;
 // Vindskedens overkant: lige under skiferen (−1 mm, så flader ikke falder
 // sammen), så den lukker lægte-enderne.
 _GR_ROOF_STACK = G_ROOF_STACK_T - 1;
-// Underbrættet er lige så højt som sternen og måles fra samme toplinje, så
-// underkanterne flugter i tagfodshjørnet (G_STERN_H = 200: dækker spærende +
-// sofitlamel). Overliggeren er 25×150 — den sidder forskudt op.
-// Løber RH_FASCIA_T forbi tagfodslinjen og dækker sternens endetræ; enden
-// kappes lodret ved sternens forside.
+// Underbrættet er 25×200, overliggeren 25×150 (forskudt op). Begge løber
+// RH_FASCIA_T forbi tagfodslinjen til sternens forside og er HAKKET ned over
+// sternens top: vandret snit på sternens overkant fra spidsen ind til
+// sternens bagside, så lodret ned til brættets underkant. Sternen (lav, se
+// G_STERN_TOP) løber under hakket ud til overliggerens yderside.
 _GR_VS_TIP = RH_FASCIA_T;
 // Overliggerens overkant: tagopbygning + skifer (8) + rejsning over fladen.
 // Skiferen støder op mod den i stedet for at rage ud.
@@ -33,6 +33,11 @@ module _gable_vindskede(y_hi, z_top, h, palette) {
     x_er = RH_HOUSE_LEN + G_OH_EAVE;    // eave line, right
     x_tl = x_el - _GR_VS_TIP;           // tip = stern front face, left
     x_tr = x_er + _GR_VS_TIP;           // tip = stern front face, right
+    z_sl = g_rafter_top_z(x_el) + G_STERN_TOP;   // sternens overkant, venstre
+    z_sr = g_rafter_top_z(x_er) + G_STERN_TOP;   // sternens overkant, højre
+    // Underkanten ved tagfodslinjen — aldrig over sternens top (hakket).
+    z_bl = min(g_rafter_top_z(x_el) + z_top - h, z_sl);
+    z_br = min(g_rafter_top_z(x_er) + z_top - h, z_sr);
     color(pal_barge(palette))
     translate([0, y_hi, 0])
         rotate([90, 0, 0])
@@ -42,15 +47,18 @@ module _gable_vindskede(y_hi, z_top, h, palette) {
                     [x_tl,      g_rafter_top_z(x_tl)      + z_top],
                     [G_RIDGE_X, g_rafter_top_z(G_RIDGE_X) + z_top],
                     [x_tr,      g_rafter_top_z(x_tr)      + z_top],
-                    // plumb end cut at the stern front face...
-                    [x_tr,      g_rafter_top_z(x_er) + z_top - h],
-                    // ...level back to the eave line along the bottom line
-                    [x_er,      g_rafter_top_z(x_er) + z_top - h],
+                    // plumb end cut at the stern front face down to the
+                    // stern top, level notch back to the stern's back face...
+                    [x_tr,      z_sr],
+                    [x_er,      z_sr],
+                    // ...plumb down to the bottom line
+                    [x_er,      z_br],
                     // bottom edge parallel to the roof plane
                     [G_RIDGE_X, g_rafter_top_z(G_RIDGE_X) + z_top - h],
-                    [x_el,      g_rafter_top_z(x_el) + z_top - h],
-                    // level out to the tip + plumb cut closes the loop
-                    [x_tl,      g_rafter_top_z(x_el) + z_top - h]
+                    [x_el,      z_bl],
+                    // plumb up to the stern top, level notch out to the tip
+                    [x_el,      z_sl],
+                    [x_tl,      z_sl]
                 ]);
 }
 

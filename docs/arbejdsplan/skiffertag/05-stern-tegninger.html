@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stern i tagfoden</title>
+<style>
+  /* Fast lyst tema — tegningen skal ligne papir, også ved print. */
+  :root, :root[data-theme="dark"], :root[data-theme="light"] {
+    --paper: #ffffff;
+    --ink: #232a2c;
+    --muted: #5f6a66;
+    --dim: #2f6b9a;
+    --cut: #b3402e;
+    --wood: #efe3ca;
+    --wood-line: #a8905f;
+    --wood2: #e2cfa6;
+    --metal: #c9ced1;
+    --metal-line: #7d868b;
+    --faint: #ddd9d0;
+    --chip-bg: #f2f0ea;
+    --ok: #3d7a4a;
+    color-scheme: light;
+  }
+
+  html { background: var(--paper); }
+  body {
+    font-family: "Segoe UI", system-ui, sans-serif;
+    color: var(--ink);
+    line-height: 1.55;
+    margin: 0;
+    padding: 2.5rem 1rem 4rem;
+  }
+  main { max-width: 880px; margin: 0 auto; }
+
+  .eyebrow {
+    font-family: Bahnschrift, "Avenir Next Condensed", "Arial Narrow", sans-serif;
+    font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 0.4rem;
+  }
+  h1 {
+    font-family: Bahnschrift, "Avenir Next Condensed", "Arial Narrow", sans-serif;
+    font-weight: 600; font-size: clamp(1.7rem, 4vw, 2.4rem);
+    letter-spacing: 0.01em; margin: 0 0 0.5rem; text-wrap: balance;
+  }
+  .lede { color: var(--muted); max-width: 62ch; margin: 0 0 1.2rem; }
+  .lede code, footer code { font-family: "Cascadia Code", Consolas, ui-monospace, monospace; font-size: 0.9em; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 2.2rem; }
+  .chip {
+    font-family: "Cascadia Code", Consolas, ui-monospace, monospace;
+    font-variant-numeric: tabular-nums; font-size: 0.8rem;
+    background: var(--chip-bg); border: 1px solid var(--faint);
+    border-radius: 3px; padding: 0.22rem 0.6rem; white-space: nowrap;
+  }
+
+  section { margin: 0 0 2.8rem; }
+  h2 {
+    font-family: Bahnschrift, "Avenir Next Condensed", "Arial Narrow", sans-serif;
+    font-weight: 600; font-size: 1.15rem; letter-spacing: 0.03em;
+    border-bottom: 2px solid var(--ink); padding-bottom: 0.35rem; margin: 0 0 1rem;
+    display: flex; align-items: baseline; gap: 0.7rem;
+  }
+  h2 .fignum {
+    font-family: "Cascadia Code", Consolas, ui-monospace, monospace;
+    font-size: 0.85rem; color: var(--muted);
+  }
+  .figwrap { overflow-x: auto; }
+  .figwrap svg { display: block; width: 100%; height: auto; min-width: 560px; }
+  .figwrap.narrow svg { max-width: 640px; margin: 0 auto; }
+
+  .notes { margin: 0.9rem 0 0; padding: 0 0 0 1.2rem; max-width: 68ch; }
+  .notes li { margin: 0.3rem 0; }
+  .maal { color: var(--dim); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .snit { color: var(--cut); font-weight: 600; }
+
+  /* Indkøbskort */
+  .buy {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 0.75rem; margin: 0;
+  }
+  .card {
+    border: 1px solid var(--faint); border-top: 4px solid var(--wood-line);
+    background: var(--chip-bg); border-radius: 4px; padding: 0.8rem 0.9rem;
+  }
+  .card.metal { border-top-color: var(--metal-line); }
+  .card .qty {
+    font-family: Bahnschrift, "Avenir Next Condensed", "Arial Narrow", sans-serif;
+    font-size: 1.9rem; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums;
+  }
+  .card .what { font-weight: 600; margin: 0.15rem 0 0.3rem; }
+  .card .why { color: var(--muted); font-size: 0.88rem; line-height: 1.4; }
+  .tools { color: var(--muted); font-size: 0.92rem; margin: 0.9rem 0 0; }
+
+  /* Trin */
+  ol.steps { counter-reset: s; list-style: none; padding: 0; margin: 0; max-width: 70ch; }
+  ol.steps > li {
+    counter-increment: s; position: relative;
+    padding: 0.55rem 0 0.75rem 3rem; border-bottom: 1px solid var(--faint);
+  }
+  ol.steps > li::before {
+    content: counter(s); position: absolute; left: 0; top: 0.5rem;
+    width: 2rem; height: 2rem; border-radius: 50%;
+    background: var(--ink); color: var(--paper);
+    font-family: Bahnschrift, "Avenir Next Condensed", sans-serif; font-weight: 600;
+    display: grid; place-items: center;
+  }
+  .steps .t { font-weight: 600; }
+  .steps .time {
+    font-family: "Cascadia Code", Consolas, ui-monospace, monospace; font-size: 0.78rem;
+    color: var(--muted); background: var(--chip-bg); border: 1px solid var(--faint);
+    border-radius: 3px; padding: 0.05rem 0.4rem; margin-left: 0.4rem; white-space: nowrap;
+  }
+  .steps .d { color: var(--ink); margin-top: 0.15rem; }
+  .steps .fig { color: var(--dim); font-size: 0.88rem; }
+
+  ul.check { list-style: none; padding: 0; margin: 0; max-width: 70ch; }
+  ul.check li { padding: 0.35rem 0 0.35rem 2rem; position: relative; }
+  ul.check li::before {
+    content: ""; position: absolute; left: 0.2rem; top: 0.55rem;
+    width: 1rem; height: 1rem; border: 2px solid var(--ink); border-radius: 2px;
+  }
+
+  .callout {
+    border-left: 3px solid var(--cut); background: var(--chip-bg);
+    padding: 0.7rem 1rem; margin: 1.2rem 0 0; max-width: 66ch; font-size: 0.95rem;
+  }
+  .callout strong { font-family: Bahnschrift, "Avenir Next Condensed", sans-serif; letter-spacing: 0.02em; }
+
+  footer { margin-top: 2.5rem; color: var(--muted); font-size: 0.85rem; }
+
+  /* SVG classes */
+  .wood      { fill: var(--wood); stroke: var(--wood-line); }
+  .wood2     { fill: var(--wood2); stroke: var(--wood-line); }
+  .spare     { fill: var(--paper); stroke: var(--wood-line); }
+  .waste     { fill: var(--faint); stroke: var(--wood-line); }
+  .metal     { fill: var(--metal); stroke: var(--metal-line); }
+  .rule      { fill: #f7f7f4; stroke: var(--ink); }
+  .ink-line  { stroke: var(--ink); fill: none; }
+  .ref-line  { stroke: var(--muted); fill: none; }
+  .dim-line  { stroke: var(--dim); fill: none; }
+  .dim-fill  { fill: var(--dim); stroke: none; }
+  .cut-line  { stroke: var(--cut); fill: none; }
+  .cut-fill  { fill: var(--cut); stroke: none; }
+  .ok-line   { stroke: var(--ok); fill: none; }
+  svg text {
+    paint-order: stroke; stroke: var(--paper); stroke-width: 3.5px; stroke-linejoin: round;
+  }
+  .t-dim  { fill: var(--dim);  font-family: "Cascadia Code", Consolas, ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .t-cut  { fill: var(--cut);  font-family: "Cascadia Code", Consolas, ui-monospace, monospace; }
+  .t-ok   { fill: var(--ok);   font-family: "Segoe UI", system-ui, sans-serif; font-weight: 600; }
+  .t-lab  { fill: var(--ink);  font-family: Bahnschrift, "Avenir Next Condensed", "Arial Narrow", sans-serif; letter-spacing: 0.05em; }
+  .t-mut  { fill: var(--muted); font-family: "Segoe UI", system-ui, sans-serif; }
+
+  @media print {
+    body { padding: 0; }
+    section { break-inside: avoid; }
+  }
+
+  /* Lægter-tegninger */
+  :root { --string: #3d7a4a; --a-fill: #f6d9b0; --a-line: #b86e1f; --b-fill: #d3e3f0; --b-line: #2f6b9a; }
+  .lath    { fill: #d8c294; stroke: var(--wood-line); }
+  .lath-t  { fill: #d8c294; stroke: var(--wood-line); fill-opacity: 0.82; }
+  .liste   { fill: #c9b99a; stroke: var(--wood-line); }
+  .spA     { fill: var(--a-fill); stroke: var(--a-line); }
+  .spB     { fill: var(--b-fill); stroke: var(--b-line); }
+  .str     { stroke: var(--string); fill: none; }
+  .str-fill{ fill: var(--string); stroke: none; }
+  .nail    { fill: var(--ink); stroke: none; }
+  .t-a    { fill: var(--a-line); font-family: "Cascadia Code", Consolas, ui-monospace, monospace; font-weight: 600; }
+  .t-b    { fill: var(--b-line); font-family: "Cascadia Code", Consolas, ui-monospace, monospace; font-weight: 600; }
+  .t-str  { fill: var(--string); font-family: "Segoe UI", system-ui, sans-serif; font-weight: 600; }
+  .t-num  { fill: var(--paper); font-family: Bahnschrift, "Avenir Next Condensed", sans-serif; font-weight: 700; stroke: none; }
+
+  table.ctrl { border-collapse: collapse; font-variant-numeric: tabular-nums; margin: 0.4rem 0 0; }
+  table.ctrl th, table.ctrl td { padding: 0.35rem 0.9rem; border-bottom: 1px solid var(--faint); text-align: left; }
+  table.ctrl th { font-family: Bahnschrift, "Avenir Next Condensed", sans-serif; font-weight: 600; letter-spacing: 0.03em; border-bottom: 2px solid var(--ink); }
+  table.ctrl td.n { color: var(--dim); font-weight: 600; font-family: "Cascadia Code", Consolas, ui-monospace, monospace; }
+  .sw { display: inline-block; width: 0.9rem; height: 0.9rem; border-radius: 2px; vertical-align: -0.1rem; margin-right: 0.35rem; }
+  .sw.a { background: var(--a-fill); border: 1.5px solid var(--a-line); }
+  .sw.b { background: var(--b-fill); border: 1.5px solid var(--b-line); }
+  .sw.s { background: var(--string); }
+
+  /* Stern-tegninger */
+  :root { --water: #2f7fc1; --slate: #4d5963; --stern: #3a3f44; --wallc: #2b2e31; --blik: #8f989d; }
+  .slate   { fill: var(--slate); stroke: #2c343a; }
+  .sternp  { fill: var(--stern); stroke: #15181a; }
+  .wallp   { fill: var(--wallc); stroke: #15181a; }
+  .lamel   { fill: #3a3f44; stroke: #15181a; }
+  .listep  { fill: #e7dcc4; stroke: var(--wood-line); }
+  .blik    { stroke: var(--blik); fill: none; stroke-linejoin: round; stroke-linecap: round; }
+  .utag    { stroke: #111; fill: none; stroke-linejoin: round; }
+  .gitter  { fill: #b9d2b9; stroke: var(--string); }
+  .water   { stroke: var(--water); fill: none; }
+  .water-f { fill: var(--water); stroke: none; }
+  .air     { stroke: var(--string); fill: none; }
+  .air-f   { fill: var(--string); stroke: none; }
+  .bad     { stroke: var(--cut); fill: none; }
+  .t-water { fill: var(--water); font-family: "Segoe UI", system-ui, sans-serif; font-weight: 600; }
+  .t-bad   { fill: var(--cut); font-family: Bahnschrift, "Avenir Next Condensed", sans-serif; font-weight: 600; letter-spacing: 0.02em; }
+  .t-good  { fill: var(--string); font-family: Bahnschrift, "Avenir Next Condensed", sans-serif; font-weight: 600; letter-spacing: 0.02em; }
+
+  .pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+  .pair .figwrap svg, .stages .figwrap svg { min-width: 0; }
+  .pair h3, .stages h3 {
+    font-family: Bahnschrift, "Avenir Next Condensed", sans-serif; font-weight: 600;
+    font-size: 1rem; margin: 0 0 0.3rem; letter-spacing: 0.02em;
+  }
+  .pair .bad-h { color: var(--cut); }
+  .pair .good-h { color: var(--string); }
+  .pair p, .stages p { margin: 0.3rem 0 0; font-size: 0.92rem; color: var(--muted); }
+  .stages { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem 1.2rem; }
+  .stages .n {
+    display: inline-grid; place-items: center; width: 1.6rem; height: 1.6rem; border-radius: 50%;
+    background: var(--ink); color: var(--paper); font-size: 0.9rem; margin-right: 0.4rem;
+  }
+  .legend { display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; font-size: 0.88rem; color: var(--muted); margin: 0.2rem 0 1.4rem; }
+  .legend i { display: inline-block; width: 1.3rem; height: 0.8rem; border-radius: 2px; vertical-align: -0.05rem; margin-right: 0.35rem; }
+</style>
+</head>
+<body>
+<main>
+  <p class="eyebrow">Arbejdsplan · skiffertag · skridt 5 + 6</p>
+  <h1>Stern i tagfoden — lav stern</h1>
+  <p class="lede">Snit gennem tagfoden, set fra gavlen. Sternens overkant sættes i flugt med
+     <strong>spærets</strong> overkant — ikke med lægternes. Så kan undertaget løbe ud over sternen,
+     og luften kan komme ind under L1. Alle mål i millimeter.</p>
+  <div class="chips">
+    <span class="chip">stern 25×200</span>
+    <span class="chip">2 stk à 3,6 m</span>
+    <span class="chip">overkant = spærets overkant</span>
+    <span class="chip">tagfodsblik</span>
+    <span class="chip">fuglegitter under L1</span>
+  </div>
+
+  <div class="legend">
+    <span><i style="background:var(--wood);border:1px solid var(--wood-line)"></i>spær / lægter</span>
+    <span><i style="background:var(--stern)"></i>stern (sortmalet)</span>
+    <span><i style="background:var(--blik)"></i>tagfodsblik</span>
+    <span><i style="background:#111;height:3px;vertical-align:0.2rem"></i>undertag</span>
+    <span><i style="background:var(--slate)"></i>skifer</span>
+    <span><i style="background:var(--water)"></i>vand</span>
+    <span><i style="background:var(--string)"></i>luft</span>
+  </div>
+
+  <section>
+    <h2><span class="fignum">FIG. 1</span> Før og nu</h2>
+    <div class="pair">
+      <div>
+        <h3 class="bad-h">✗ Høj stern (planen indtil nu)</h3>
+        <div class="figwrap"><div id="figOld"></div></div>
+        <p>Sternen rager 80 mm op over spæret. Undertaget ligger <em>på</em> spæret og løber ind i
+           sternens bagside — vandet fanges, og luften kan ikke komme ind.</p>
+      </div>
+      <div>
+        <h3 class="good-h">✓ Lav stern (sådan gør du)</h3>
+        <div class="figwrap"><div id="figNew"></div></div>
+        <p>Sternens overkant flugter spærets overkant. Undertaget løber ud over blikket på
+           sternens top, og der er fri luftvej ind under L1.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="fignum">FIG. 1b</span> Set fra haven — øjenhøjde 1,6 m, 2,5 m ude</h2>
+    <div class="pair" style="grid-template-columns:1fr">
+      <div><h3>Uden tagrende (sådan ser det ud indtil renden kommer op)</h3>
+        <div class="figwrap"><div id="gardenA"></div></div></div>
+      <div><h3>Med tagrende</h3>
+        <div class="figwrap"><div id="gardenB"></div></div></div>
+    </div>
+    <ul class="notes">
+      <li>Nede fra ser du: <strong>sort stern og skiferens forkant</strong> — og en smal mørk stribe
+          mellem stern og skifer. Striben er fuglegitteret, og det sidder i skygge.</li>
+      <li>Køb <strong>fuglegitter i sort</strong> og <strong>tagfodsblik i sort/antracit</strong>, og
+          <strong>mal L1's forkant sort</strong> — så forsvinder det hele i den sorte stern.</li>
+      <li>Fra gavlen dækker vindskeden hele snittet; den står oven på sternens top.</li>
+      <li>Når tagrenden kommer op, skjuler den det meste af striben. Rodena-renden hos jem &amp; fix findes kun i grå —
+          vil du have sort, så se efter Plastmo i sort.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="fignum">FIG. 2</span> Den nye tagfod — alle dele</h2>
+    <div class="figwrap"><div id="figBig"></div></div>
+    <ul class="notes">
+      <li><strong>Stern:</strong> 25×200, skruet på den lodrette spærende. Overkanten i flugt med
+          spærets overkant — læg en retskinne på spæret, den skal lige netop røre sternens bagkant.</li>
+      <li><strong>Tagfodsblik:</strong> ligger ~80 mm ind på spærene, over sternens top og ~40 mm ned ad forsiden
+          med en lille drypnæse.</li>
+      <li><strong>Undertag:</strong> lægges <em>oven på</em> blikket og slutter ved sternens forkant. Vandet
+          løber undertag → blik → drypper ud (senere ned i tagrenden).</li>
+      <li><strong>Afstandslisterne</strong> ligger oven på spærene; luften går i gabet <em>mellem</em> dem
+          (ved siden af snittet) — derfor er listen tegnet stiplet.</li>
+      <li><strong>Fuglegitter</strong> i det 25 mm høje gab under L1's forkant: holder fugle og hvepse ude, men lader luften komme ind.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="fignum">FIG. 3</span> Rækkefølgen</h2>
+    <div class="stages">
+      <div><h3><span class="n">1</span>Stern</h3><div class="figwrap"><div id="st1"></div></div>
+        <p>Overkant i flugt med spærets overkant. 3 skruer 5×70 pr. spærende.</p></div>
+      <div><h3><span class="n">2</span>Tagfodsblik</h3><div class="figwrap"><div id="st2"></div></div>
+        <p>Hen over sternens top og ned ad forsiden. Søm/skru i spærenes overside.</p></div>
+      <div><h3><span class="n">3</span>Undertag ud over blikket</h3><div class="figwrap"><div id="st3"></div></div>
+        <p>Løft den flap der hænger ud, og læg den tilbage oven på blikket. Klæb/tape kanten til blikket.</p></div>
+      <div><h3><span class="n">4</span>Afstandslister + lægter</h3><div class="figwrap"><div id="st4"></div></div>
+        <p>Som på lægte-siden: L1 med underkanten ved spærenden, så L2 med pind A osv.</p></div>
+      <div><h3><span class="n">5</span>Fuglegitter + skifer</h3><div class="figwrap"><div id="st5"></div></div>
+        <p>Gitter i gabet under L1, opklodsningsliste på L1, så begynderrække og skifer.</p></div>
+    </div>
+  </section>
+
+  <footer>Geometri fra modellen: hældning 35°, spær 45×95 (lodret endeflade 116), afstandsliste 25, lægte 38×57,
+    skifer 60 mm forbi spærenden, sofitlameller 21×45. Afviger fra <code>05-stern.md</code> og <code>06-fodblik.md</code>,
+    som stadig beskriver den høje stern.</footer>
+</main>
+
+<script>
+(function () {
+  var SIN = Math.sin(35 * Math.PI / 180); // 0.5736
+  var COS = Math.cos(35 * Math.PI / 180); // 0.8192
+  var TAN = Math.tan(35 * Math.PI / 180); // 0.7002
+  var NS = "http://www.w3.org/2000/svg";
+
+  function el(name, attrs, parent) {
+    var e = document.createElementNS(NS, name);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+
+  // Figure factory: world coords in mm, z up. k = px per mm (kz optional for
+  // an exaggerated vertical scale). Pads in px.
+  function fig(mountId, o) {
+    var kz = o.kz || o.k;
+    var W = (o.x1 - o.x0) * o.k + o.padL + o.padR;
+    var H = (o.z1 - o.z0) * kz + o.padT + o.padB;
+    var svg = el("svg", { viewBox: "0 0 " + W.toFixed(1) + " " + H.toFixed(1),
+                          role: "img", "aria-label": o.label || "" });
+    document.getElementById(mountId).appendChild(svg);
+    function P(x, z) { return [(x - o.x0) * o.k + o.padL, (o.z1 - z) * kz + o.padT]; }
+    return { svg: svg, P: P, W: W, H: H, k: o.k };
+  }
+
+  function pts(list) { return list.map(function (p) { return p[0].toFixed(1) + "," + p[1].toFixed(1); }).join(" "); }
+
+  function poly(f, worldPts, cls, opts) {
+    opts = opts || {};
+    var e = el("polygon", { points: pts(worldPts.map(function (p) { return f.P(p[0], p[1]); })),
+                            "class": cls, "stroke-width": opts.sw || 1.6 }, f.svg);
+    if (opts.dash) e.setAttribute("stroke-dasharray", opts.dash);
+    return e;
+  }
+  function seg(f, a, b, cls, opts) {
+    opts = opts || {};
+    var A = f.P(a[0], a[1]), B = f.P(b[0], b[1]);
+    var e = el("line", { x1: A[0], y1: A[1], x2: B[0], y2: B[1], "class": cls,
+                         "stroke-width": opts.sw || 1 }, f.svg);
+    if (opts.dash) e.setAttribute("stroke-dasharray", opts.dash);
+    return e;
+  }
+  function dot(f, p, r, cls) {
+    var A = f.P(p[0], p[1]);
+    el("circle", { cx: A[0], cy: A[1], r: r, "class": cls }, f.svg);
+  }
+  function txt(f, x, z, s, cls, opts) {
+    opts = opts || {};
+    var A = f.P(x, z);
+    var e = el("text", { x: A[0] + (opts.dx || 0), y: A[1] + (opts.dy || 0),
+                         "class": cls, "font-size": opts.fs || 13,
+                         "text-anchor": opts.anchor || "middle" }, f.svg);
+    if (opts.bold) e.setAttribute("font-weight", 600);
+    if (opts.rot) e.setAttribute("transform", "rotate(" + opts.rot + " " + (A[0] + (opts.dx || 0)) + " " + (A[1] + (opts.dy || 0)) + ")");
+    e.textContent = s;
+    return e;
+  }
+  function arrow(f, tipPx, dirPx, cls) {
+    var L = 9, Wd = 3.2;
+    var n = [-dirPx[1], dirPx[0]];
+    var p1 = [tipPx[0] + dirPx[0] * L + n[0] * Wd, tipPx[1] + dirPx[1] * L + n[1] * Wd];
+    var p2 = [tipPx[0] + dirPx[0] * L - n[0] * Wd, tipPx[1] + dirPx[1] * L - n[1] * Wd];
+    el("polygon", { points: pts([tipPx, p1, p2]), "class": cls }, f.svg);
+  }
+
+  // Aligned dimension between world points a,b; off = perpendicular offset in px
+  // (positive = screen-left of a->b).
+  function dim(f, a, b, off, label, opts) {
+    opts = opts || {};
+    var A = f.P(a[0], a[1]), B = f.P(b[0], b[1]);
+    var dx = B[0] - A[0], dy = B[1] - A[1];
+    var len = Math.hypot(dx, dy);
+    var e = [dx / len, dy / len];
+    var n = [e[1], -e[0]];
+    var A2 = [A[0] + n[0] * off, A[1] + n[1] * off];
+    var B2 = [B[0] + n[0] * off, B[1] + n[1] * off];
+    var ext = off >= 0 ? 1 : -1;
+    function extLine(S, S2) {
+      el("line", { x1: S[0] + n[0] * 3 * ext, y1: S[1] + n[1] * 3 * ext,
+                   x2: S2[0] + n[0] * 5 * ext, y2: S2[1] + n[1] * 5 * ext,
+                   "class": "dim-line", "stroke-width": 0.8 }, f.svg);
+    }
+    if (!opts.noExtA) extLine(A, A2);
+    if (!opts.noExtB) extLine(B, B2);
+    el("line", { x1: A2[0], y1: A2[1], x2: B2[0], y2: B2[1],
+                 "class": "dim-line", "stroke-width": 1 }, f.svg);
+    arrow(f, A2, e, "dim-fill");
+    arrow(f, B2, [-e[0], -e[1]], "dim-fill");
+    var mid = [(A2[0] + B2[0]) / 2 + (opts.dx || 0), (A2[1] + B2[1]) / 2 + (opts.dy === undefined ? -6 : opts.dy)];
+    var t = el("text", { x: mid[0], y: mid[1], "class": "t-dim",
+                         "font-size": opts.fs || 13.5,
+                         "text-anchor": "middle", "font-weight": 600 }, f.svg);
+    if (opts.rot) {
+      var ang = Math.atan2(dy, dx) * 180 / Math.PI;
+      if (ang > 90 || ang < -90) ang += 180;
+      t.setAttribute("transform", "rotate(" + ang.toFixed(1) + " " + mid[0] + " " + mid[1] + ")");
+    }
+    t.textContent = label;
+  }
+
+  function angleDim(f, vertex, d1, d2, r, label, opts) {
+    opts = opts || {};
+    var V = f.P(vertex[0], vertex[1]);
+    function toScreen(d) { var L = Math.hypot(d[0], d[1]); return [d[0] / L, -d[1] / L]; }
+    var s1 = toScreen(d1), s2 = toScreen(d2);
+    var P1 = [V[0] + s1[0] * r, V[1] + s1[1] * r];
+    var P2 = [V[0] + s2[0] * r, V[1] + s2[1] * r];
+    var cross = s1[0] * s2[1] - s1[1] * s2[0];
+    var sweep = cross > 0 ? 1 : 0;
+    el("path", { d: "M " + P1[0].toFixed(1) + " " + P1[1].toFixed(1) +
+                    " A " + r + " " + r + " 0 0 " + sweep + " " +
+                    P2[0].toFixed(1) + " " + P2[1].toFixed(1),
+                 "class": opts.cls || "cut-line", "stroke-width": 1.1 }, f.svg);
+    var bis = [(s1[0] + s2[0]) / 2, (s1[1] + s2[1]) / 2];
+    var bl = Math.hypot(bis[0], bis[1]) || 1;
+    var T = [V[0] + bis[0] / bl * (r + (opts.rlab || 15)), V[1] + bis[1] / bl * (r + (opts.rlab || 15))];
+    var t = el("text", { x: T[0], y: T[1] + 4, "class": opts.tcls || "t-cut",
+                         "font-size": opts.fs || 12.5, "text-anchor": "middle",
+                         "font-weight": 600 }, f.svg);
+    t.textContent = label;
+  }
+
+
+
+  // Origo = spærendens øverste hjørne. x ud mod venstre = negativ, z op.
+  var T = TAN, C = COS, Sn = SIN;
+  var RH = 95 / C;                        // lodret endeflade 116
+  function S(s, h) { return [s * C - h * Sn, s * Sn + h * C]; }   // skråkoordinater → xz
+  function band(s0, s1, h0, h1) { return [S(s0, h0), S(s1, h0), S(s1, h1), S(s0, h1)]; }
+  function line(f, list, cls, sw, dash) {
+    var e = el("polyline", { points: pts(list.map(function (p) { return f.P(p[0], p[1]); })),
+                             "class": cls, "stroke-width": sw }, f.svg);
+    if (dash) e.setAttribute("stroke-dasharray", dash);
+    return e;
+  }
+  function arrowLine(f, list, cls, fcls, sw) {
+    line(f, list, cls, sw);
+    var a = f.P(list[list.length - 2][0], list[list.length - 2][1]);
+    var b = f.P(list[list.length - 1][0], list[list.length - 1][1]);
+    var L = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    arrow(f, b, [(a[0] - b[0]) / L, (a[1] - b[1]) / L], fcls);
+  }
+  function cross(f, p, r, cls) {
+    var A = f.P(p[0], p[1]);
+    el("line", { x1: A[0] - r, y1: A[1] - r, x2: A[0] + r, y2: A[1] + r, "class": cls, "stroke-width": 3 }, f.svg);
+    el("line", { x1: A[0] - r, y1: A[1] + r, x2: A[0] + r, y2: A[1] - r, "class": cls, "stroke-width": 3 }, f.svg);
+  }
+  function drop(f, p, r) {
+    var A = f.P(p[0], p[1]);
+    el("path", { d: "M " + A[0] + " " + (A[1] - r * 1.8) + " Q " + (A[0] + r) + " " + (A[1] - r * 0.2) + " " + A[0] + " " + (A[1] + r) +
+                    " Q " + (A[0] - r) + " " + (A[1] - r * 0.2) + " " + A[0] + " " + (A[1] - r * 1.8) + " Z", "class": "water-f" }, f.svg);
+  }
+  function lead(f, pt, at, text, cls, anchor) {
+    seg(f, pt, at, "ref-line", { sw: 0.8 });
+    dot(f, pt, 2.2, "nail");
+    txt(f, at[0], at[1], text, cls || "t-lab", { fs: 12.5, anchor: anchor || "end", dx: anchor === "start" ? 4 : -4, dy: 4 });
+  }
+
+  // Tegner tagfoden. o.old = høj stern; o.stage 1..5 (5 = alt); o.xm = højre kant.
+  function eave(f, o) {
+    var xm = o.xm, st = o.stage || 5;
+    // klip alt ved højre kant
+    var root = f.svg;
+    var defs = el("defs", {}, root);
+    var cid = "c" + Math.random().toString(36).slice(2, 8);
+    var cp = el("clipPath", { id: cid }, defs);
+    var R = f.P(xm, 0);
+    el("rect", { x: 0, y: 0, width: R[0], height: f.H }, cp);
+    f.svg = el("g", { "clip-path": "url(#" + cid + ")" }, root);
+
+    var X = xm + 60;
+    poly(f, [[229, -600], [X, -600], [X, X * T - RH - 25.6], [229, 229 * T - RH - 25.6]], "wallp", { sw: 1 });
+    for (var i = 0; i < 4; i++) {
+      var d = i * 58.5;
+      var B = [d * C, -RH + d * Sn], u = [45 * C, 45 * Sn], dn = [21 * Sn, -21 * C];
+      poly(f, [B, [B[0] + u[0], B[1] + u[1]], [B[0] + u[0] + dn[0], B[1] + u[1] + dn[1]], [B[0] + dn[0], B[1] + dn[1]]], "lamel", { sw: 0.8 });
+    }
+    poly(f, [[0, 0], [X, X * T], [X, X * T - RH], [0, -RH]], "wood", { sw: 1.4 });
+
+    // stern
+    if (o.old) poly(f, [[-25, -120], [0, -120], [0, 80], [-25, 80]], "sternp", { sw: 1.2 });
+    else poly(f, [[-25, -200], [0, -200], [0, 0], [-25, 0]], "sternp", { sw: 1.2 });
+
+    // tagfodsblik
+    if (!o.old && st >= 2)
+      line(f, [S(80, 1.6), [0, 1.6], [-27, 1.6], [-27, -38], [-35, -46]], "blik", 3.2);
+
+    // undertag
+    if (st >= 3) {
+      if (o.old) line(f, [S(900, 1.8), S(0, 1.8)], "utag", 2.4);
+      else line(f, [S(900, 3.6), S(0, 3.6), [-24, 3.8]], "utag", 2.4);
+    }
+
+    // afstandsliste + lægter
+    if (st >= 4) {
+      poly(f, band(0, 900, 3.5, 28.5), "listep", { sw: 1, dash: "5 3" });
+      var s0 = o.old ? 47 : 0;
+      poly(f, band(s0, s0 + 57, 28.5, 66.5), "wood", { sw: 1.3 });
+      poly(f, band(258, 315, 28.5, 66.5), "wood", { sw: 1.3 });
+      poly(f, band(483, 540, 28.5, 66.5), "wood", { sw: 1.3 });
+    }
+
+    // fuglegitter, opklodsning, skifer
+    if (st >= 5) {
+      if (!o.old) {
+        poly(f, band(-3, 9, 3.6, 28.5), "gitter", { sw: 1 });
+        for (var h = 7; h < 28; h += 4) seg(f, S(-3, h), S(9, h), "air", { sw: 0.7 });
+      }
+      var so = o.old ? 60 : 12;
+      poly(f, band(so, so + 25, 66.5, 76.5), "wood", { sw: 1 });
+      poly(f, band(-60, 330, 76.5, 82.5), "slate", { sw: 1 });
+      poly(f, band(-60, 900, 82.5, 88.5), "slate", { sw: 1 });
+    }
+    f.svg = root;
+
+    // luft og vand
+    if (o.flow) {
+      if (o.old) {
+        arrowLine(f, [[-110, 40], [-40, 40]], "air", "air-f", 2.4);
+        cross(f, [-60, 60], 8, "bad");
+        arrowLine(f, [S(330, 12), S(12, 12)], "water", "water-f", 2.4);
+        drop(f, [6, 12], 6);
+        cross(f, [30, -8], 8, "bad");
+      } else {
+        arrowLine(f, [[-120, 14], S(-10, 16), S(150, 16), S(Math.min(330, (xm - 20) / C), 16)], "air", "air-f", 2.4);
+        arrowLine(f, [S(Math.min(330, (xm - 20) / C), 11), S(40, 11), S(0, 9), [-20, 9]], "water", "water-f", 2.4);
+        drop(f, [-36, -60], 5.5);
+        drop(f, [-36, -84], 5.5);
+      }
+    }
+  }
+
+  function smallFig(id, o, xm) {
+    var f = fig(id, { x0: -135, x1: xm, z0: -225, z1: 250, k: o.k || 0.62,
+                      padL: 4, padR: 4, padT: 6, padB: 6, label: o.label || "" });
+    o.xm = xm;
+    eave(f, o);
+    return f;
+  }
+
+  // FIG. 1 — før / nu
+  (function () {
+    var f = smallFig("figOld", { old: true, flow: true, label: "Høj stern: vand og luft blokeret" }, 330);
+    txt(f, -60, 60, "luft blokeret", "t-bad", { fs: 13, dy: -18 });
+    txt(f, 30, -8, "vand fanges", "t-bad", { fs: 13, dy: 28, anchor: "start", dx: -20 });
+    var g = smallFig("figNew", { flow: true, label: "Lav stern: vand ud, luft ind" }, 330);
+    txt(g, -120, 14, "luft ind", "t-good", { fs: 13, dy: -10, anchor: "start" });
+    txt(g, -36, -84, "vand ud", "t-water", { fs: 13, dy: 26, anchor: "middle" });
+  })();
+
+  // FIG. 2 — stor detalje med navne
+  (function () {
+    var f = fig("figBig", { x0: -470, x1: 420, z0: -250, z1: 330, k: 0.98,
+                            padL: 6, padR: 6, padT: 10, padB: 30,
+                            label: "Tagfod med lav stern, alle dele navngivet" });
+    eave(f, { flow: true, xm: 420 });
+
+    var L = -175;
+    lead(f, S(260, 88.5), [L, 300], "skifer (begynderrække + række 1)");
+    lead(f, S(24, 76.5), [L, 250], "opklodsningsliste 10×25");
+    lead(f, S(40, 66.5), [L, 205], "L1 38×57");
+    lead(f, S(3, 26), [L, 160], "fuglegitter under L1", "t-good");
+    lead(f, S(170, 20), [L, 118], "afstandsliste 25 (stiplet)");
+    lead(f, S(110, 3.6), [L, 76], "undertag — oven på blikket");
+    lead(f, [-27, -15], [L, -15], "tagfodsblik m. drypnæse");
+    lead(f, [-12, -120], [L, -120], "stern 25×200");
+    txt(f, -120, 14, "luft ind", "t-good", { fs: 13, dy: -9, anchor: "start" });
+    txt(f, -44, -72, "vand ud", "t-water", { fs: 13, anchor: "end", dy: 4 });
+
+    var mid = S(300, -47.5);
+    txt(f, mid[0], mid[1], "SPÆR 45×95", "t-lab", { fs: 13, dy: 5, rot: -35 });
+    lead(f, [72, -78], [60, -236], "sofitlameller", "t-lab", "start");
+    txt(f, 330, -200, "væg", "t-lab", { fs: 13 }).setAttribute("style", "fill:#fff;stroke:none");
+
+    dim(f, [-25, -200], [-25, 0], 62, "200", { dx: -18, dy: 4 });
+    dim(f, [-25, -200], [0, -200], -14, "25", { dy: 14 });
+    // flugt-markering
+    seg(f, S(160, 0), [-8, -8 * T], "ok-line", { sw: 1.2, dash: "6 4" });
+    txt(f, S(160, 0)[0], S(160, 0)[1], "spærets overkant = sternens overkant", "t-ok", { fs: 11.5, anchor: "start", dx: 8, dy: 16, rot: -35 });
+  })();
+
+  // FIG. 3 — trin
+  [1, 2, 3, 4, 5].forEach(function (n) {
+    smallFig("st" + n, { stage: n, flow: n === 5, k: 0.55 }, 300);
+  });
+
+  /* ============================================================
+     FIG. 4 — set fra haven: perspektiv fra øjenhøjde 1,6 m, 2,5 m ude.
+     Samme origo som snittene; y langs tagfoden (0 = gavlspærets yderside).
+     ============================================================ */
+  (function () {
+    var EYE = { x: -2500, y: 600, z: -545 }, F = 800;
+    function pr(p) {
+      var d = p[0] - EYE.x;
+      return [F * (p[1] - EYE.y) / d, -F * (p[2] - EYE.z) / d];
+    }
+    // xz-punkt + y → 3D
+    function at(xz, y) { return [xz[0], y, xz[1]]; }
+    function strip(a, b, y0, y1) { return [at(a, y0), at(b, y0), at(b, y1), at(a, y1)]; }
+
+    function view(id, withGutter) {
+      var VB = [-320, -255, 720, 265];
+      var svg = el("svg", { viewBox: VB.join(" "), role: "img",
+                            "aria-label": withGutter ? "Tagfoden set fra haven med tagrende" : "Tagfoden set fra haven uden tagrende" });
+      document.getElementById(id).appendChild(svg);
+      el("rect", { x: VB[0], y: VB[1], width: VB[2], height: VB[3], fill: "#dfe8ef" }, svg);   // himmel
+      function face(list, fill, stroke) {
+        el("polygon", { points: pts(list.map(pr)), fill: fill, stroke: stroke || fill, "stroke-width": 0.6,
+                        "stroke-linejoin": "round" }, svg);
+      }
+      function ln(a, b, stroke, w) {
+        var A = pr(a), B = pr(b);
+        el("line", { x1: A[0], y1: A[1], x2: B[0], y2: B[1], stroke: stroke, "stroke-width": w || 0.6 }, svg);
+      }
+      var Y0 = -145, Y1 = 3145, YS0 = -195, YS1 = 3195;
+
+      // rum bag sofitten + væg med klink
+      face(strip([0, -RH - 26], [229, 229 * T - RH - 26], Y0, Y1), "#15171a");
+      face([[229, -48, -1400], [229, 3048, -1400], [229, 3048, 229 * T - RH - 26], [229, -48, 229 * T - RH - 26]], "#26292c");
+      for (var z = -1400; z < 0; z += 140) ln([229, -48, z], [229, 3048, z], "#3a3e42", 1);
+      // sofitlameller (undersiden)
+      for (var i = 0; i < 4; i++) {
+        var d = i * 58.5, B0 = [d * C + 21 * Sn, -RH + d * Sn - 21 * C];
+        var B1 = [B0[0] + 45 * C, B0[1] + 45 * Sn];
+        face(strip(B0, B1, Y0, Y1), "#33373b", "#1d2023");
+      }
+      // fuglegitter (kam) i gabet over sternen
+      face(strip(S(-3, 3.6), S(-3, 28.5), Y0, Y1), "#141516");
+      for (var y = Y0; y < Y1; y += 40) ln(at(S(-3, 3.6), y), at(S(-3, 28.5), y), "#2c2f31", 0.8);
+      // L1's forkant (malet sort) + skiferens underside i udhænget
+      face(strip(S(0, 28.5), S(0, 66.5), Y0, Y1), "#222528");
+      face(strip(S(-60, 76.5), S(14, 76.5), YS0 + 25, YS1 - 25), "#39434b");
+      // stern: underside + forside; blik
+      face(strip([-25, -200], [0, -200], YS0, YS1), "#111315");
+      face(strip([-25, -200], [-25, 0], YS0, YS1), "#1d2022", "#101213");
+      face(strip([-27.5, -38], [-27.5, 1.6], YS0, YS1), "#34393e");
+      face(strip([-27.5, -38], [-35, -46], YS0, YS1), "#2a2e32");
+      // skiferforkant: begynderrække + række 1, fuger forskudt 150
+      [[76.5, 82.5, 150], [82.5, 88.5, 0]].forEach(function (L) {
+        for (var y0 = YS0 + 25 - L[2]; y0 < YS1 - 25; y0 += 300) {
+          var a = Math.max(y0 + 2, YS0 + 25), b = Math.min(y0 + 298, YS1 - 25);
+          if (b > a) face(strip(S(-60, L[0]), S(-60, L[1]), a, b), L[2] ? "#46515a" : "#56626c", "#2b3238");
+        }
+      });
+      // vindskede (underbræt + overligger), hakket ned over sternens top
+      [[-195, -145]].forEach(function (Y) {
+        face([[-25, Y[1], 0], [229, Y[1], 229 * T - 135], [229, Y[1], 229 * T + 105], [-25, Y[1], -25 * T + 105]], "#1b1d1f");
+        face([[-25, Y[0], 0], [-25, Y[1], 0], [-25, Y[1], -25 * T + 105], [-25, Y[0], -25 * T + 105]], "#25282b", "#101213");
+      });
+
+      if (withGutter) {
+        // halvrund rende Ø100: bagkant ved sternen, forkant 15 under skiferens forkant
+        var back = [-32, -12], bot = [-82, -62], front = [-132, -14];
+        for (var j = 0; j < 7; j++) {                           // konsoller
+          var yy = 150 + j * 490;
+          face([at([-25, -10], yy), at([-25, -10], yy + 20), at([-82, -66], yy + 20), at([-82, -66], yy)], "#6f777d");
+        }
+        face(strip(back, bot, YS0 + 20, YS1 - 20), "#9aa1a6", "#7c8388");
+        face(strip(bot, front, YS0 + 20, YS1 - 20), "#b4bbbf", "#8a9296");
+        face(strip(front, [front[0] - 4, front[1] + 6], YS0 + 20, YS1 - 20), "#c6ccd0", "#8a9296");
+        // endebund + nedløb ved venstre ende
+        face([at(back, YS0 + 20), at(bot, YS0 + 20), at(front, YS0 + 20)], "#8e959a");
+        var yp = -60;
+        face([[-110, yp - 38, -80], [-110, yp + 38, -80], [-110, yp + 38, -1400], [-110, yp - 38, -1400]], "#a7aeb2", "#80878c");
+      }
+
+      // mærkater
+      function lab(p3, dx, dy, text, cls) {
+        var A = pr(p3);
+        el("line", { x1: A[0], y1: A[1], x2: A[0] + dx, y2: A[1] + dy, "class": "ref-line", "stroke-width": 0.8 }, svg);
+        var t = el("text", { x: A[0] + dx + (dx < 0 ? -4 : 4), y: A[1] + dy + 4, "class": cls || "t-lab",
+                             "font-size": 12.5, "text-anchor": dx < 0 ? "end" : "start" }, svg);
+        t.textContent = text;
+      }
+      lab(at(S(-60, 85), 350), 40, -38, "skiferens forkant", "t-lab");
+      lab(at(S(-3, 15), 1000), 40, -58, "fuglegitter (sort)", "t-good");
+      lab(at([-25, -100], 1250), 40, 34, "stern 25×200 (sort)", "t-lab");
+      if (withGutter) lab(at([-110, -40], 700), -30, 45, "tagrende", "t-lab");
+      else lab(at([-27.5, -20], 700), -30, 45, "blik (sort/antracit)", "t-lab");
+      lab([-25, -170, 60], 25, -45, "vindskede", "t-lab");
+    }
+    view("gardenA", false);
+    view("gardenB", true);
+  })();
+})();
+</script>
+</body>
+</html>

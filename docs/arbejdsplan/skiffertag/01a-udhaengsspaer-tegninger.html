@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Udhængsspær — skæremål</title>
+<style>
+  /* Fast lyst tema — tegningen skal ligne papir, også ved print. */
+  :root, :root[data-theme="dark"], :root[data-theme="light"] {
+    --paper: #ffffff;
+    --ink: #232a2c;
+    --muted: #5f6a66;
+    --dim: #2f6b9a;
+    --cut: #b3402e;
+    --wood: #efe3ca;
+    --wood-line: #a8905f;
+    --wood2: #e2cfa6;
+    --metal: #c9ced1;
+    --metal-line: #7d868b;
+    --faint: #ddd9d0;
+    --chip-bg: #f2f0ea;
+    --ok: #3d7a4a;
+    color-scheme: light;
+  }
+
+  html { background: var(--paper); }
+  body {
+    font-family: "Segoe UI", system-ui, sans-serif;
+    color: var(--ink);
+    line-height: 1.55;
+    margin: 0;
+    padding: 2.5rem 1rem 4rem;
+  }
+  main { max-width: 880px; margin: 0 auto; }
+
+  .eyebrow {
+    font-family: Bahnschrift, "Avenir Next Condensed", "Arial Narrow", sans-serif;
+    font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 0.4rem;
+  }
+  h1 {
+    font-family: Bahnschrift, "Avenir Next Condensed", "Arial Narrow", sans-serif;
+    font-weight: 600; font-size: clamp(1.7rem, 4vw, 2.4rem);
+    letter-spacing: 0.01em; margin: 0 0 0.5rem; text-wrap: balance;
+  }
+  .lede { color: var(--muted); max-width: 62ch; margin: 0 0 1.2rem; }
+  .lede code, footer code { font-family: "Cascadia Code", Consolas, ui-monospace, monospace; font-size: 0.9em; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 2.2rem; }
+  .chip {
+    font-family: "Cascadia Code", Consolas, ui-monospace, monospace;
+    font-variant-numeric: tabular-nums; font-size: 0.8rem;
+    background: var(--chip-bg); border: 1px solid var(--faint);
+    border-radius: 3px; padding: 0.22rem 0.6rem; white-space: nowrap;
+  }
+
+  section { margin: 0 0 2.8rem; }
+  h2 {
+    font-family: Bahnschrift, "Avenir Next Condensed", "Arial Narrow", sans-serif;
+    font-weight: 600; font-size: 1.15rem; letter-spacing: 0.03em;
+    border-bottom: 2px solid var(--ink); padding-bottom: 0.35rem; margin: 0 0 1rem;
+    display: flex; align-items: baseline; gap: 0.7rem;
+  }
+  h2 .fignum {
+    font-family: "Cascadia Code", Consolas, ui-monospace, monospace;
+    font-size: 0.85rem; color: var(--muted);
+  }
+  .figwrap { overflow-x: auto; }
+  .figwrap svg { display: block; width: 100%; height: auto; min-width: 560px; }
+  .figwrap.narrow svg { max-width: 640px; margin: 0 auto; }
+
+  .notes { margin: 0.9rem 0 0; padding: 0 0 0 1.2rem; max-width: 68ch; }
+  .notes li { margin: 0.3rem 0; }
+  .maal { color: var(--dim); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .snit { color: var(--cut); font-weight: 600; }
+
+  /* Indkøbskort */
+  .buy {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 0.75rem; margin: 0;
+  }
+  .card {
+    border: 1px solid var(--faint); border-top: 4px solid var(--wood-line);
+    background: var(--chip-bg); border-radius: 4px; padding: 0.8rem 0.9rem;
+  }
+  .card.metal { border-top-color: var(--metal-line); }
+  .card .qty {
+    font-family: Bahnschrift, "Avenir Next Condensed", "Arial Narrow", sans-serif;
+    font-size: 1.9rem; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums;
+  }
+  .card .what { font-weight: 600; margin: 0.15rem 0 0.3rem; }
+  .card .why { color: var(--muted); font-size: 0.88rem; line-height: 1.4; }
+  .tools { color: var(--muted); font-size: 0.92rem; margin: 0.9rem 0 0; }
+
+  /* Trin */
+  ol.steps { counter-reset: s; list-style: none; padding: 0; margin: 0; max-width: 70ch; }
+  ol.steps > li {
+    counter-increment: s; position: relative;
+    padding: 0.55rem 0 0.75rem 3rem; border-bottom: 1px solid var(--faint);
+  }
+  ol.steps > li::before {
+    content: counter(s); position: absolute; left: 0; top: 0.5rem;
+    width: 2rem; height: 2rem; border-radius: 50%;
+    background: var(--ink); color: var(--paper);
+    font-family: Bahnschrift, "Avenir Next Condensed", sans-serif; font-weight: 600;
+    display: grid; place-items: center;
+  }
+  .steps .t { font-weight: 600; }
+  .steps .time {
+    font-family: "Cascadia Code", Consolas, ui-monospace, monospace; font-size: 0.78rem;
+    color: var(--muted); background: var(--chip-bg); border: 1px solid var(--faint);
+    border-radius: 3px; padding: 0.05rem 0.4rem; margin-left: 0.4rem; white-space: nowrap;
+  }
+  .steps .d { color: var(--ink); margin-top: 0.15rem; }
+  .steps .fig { color: var(--dim); font-size: 0.88rem; }
+
+  ul.check { list-style: none; padding: 0; margin: 0; max-width: 70ch; }
+  ul.check li { padding: 0.35rem 0 0.35rem 2rem; position: relative; }
+  ul.check li::before {
+    content: ""; position: absolute; left: 0.2rem; top: 0.55rem;
+    width: 1rem; height: 1rem; border: 2px solid var(--ink); border-radius: 2px;
+  }
+
+  .callout {
+    border-left: 3px solid var(--cut); background: var(--chip-bg);
+    padding: 0.7rem 1rem; margin: 1.2rem 0 0; max-width: 66ch; font-size: 0.95rem;
+  }
+  .callout strong { font-family: Bahnschrift, "Avenir Next Condensed", sans-serif; letter-spacing: 0.02em; }
+
+  footer { margin-top: 2.5rem; color: var(--muted); font-size: 0.85rem; }
+
+  /* SVG classes */
+  .wood      { fill: var(--wood); stroke: var(--wood-line); }
+  .wood2     { fill: var(--wood2); stroke: var(--wood-line); }
+  .spare     { fill: var(--paper); stroke: var(--wood-line); }
+  .waste     { fill: var(--faint); stroke: var(--wood-line); }
+  .metal     { fill: var(--metal); stroke: var(--metal-line); }
+  .rule      { fill: #f7f7f4; stroke: var(--ink); }
+  .ink-line  { stroke: var(--ink); fill: none; }
+  .ref-line  { stroke: var(--muted); fill: none; }
+  .dim-line  { stroke: var(--dim); fill: none; }
+  .dim-fill  { fill: var(--dim); stroke: none; }
+  .cut-line  { stroke: var(--cut); fill: none; }
+  .cut-fill  { fill: var(--cut); stroke: none; }
+  .ok-line   { stroke: var(--ok); fill: none; }
+  svg text {
+    paint-order: stroke; stroke: var(--paper); stroke-width: 3.5px; stroke-linejoin: round;
+  }
+  .t-dim  { fill: var(--dim);  font-family: "Cascadia Code", Consolas, ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .t-cut  { fill: var(--cut);  font-family: "Cascadia Code", Consolas, ui-monospace, monospace; }
+  .t-ok   { fill: var(--ok);   font-family: "Segoe UI", system-ui, sans-serif; font-weight: 600; }
+  .t-lab  { fill: var(--ink);  font-family: Bahnschrift, "Avenir Next Condensed", "Arial Narrow", sans-serif; letter-spacing: 0.05em; }
+  .t-mut  { fill: var(--muted); font-family: "Segoe UI", system-ui, sans-serif; }
+
+  @media print {
+    body { padding: 0; }
+    section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <p class="eyebrow">Arbejdsplan · skiffertag · skridt 1a</p>
+  <h1>Udhængsspær + klodser</h1>
+  <p class="lede">Ét ekstra spær 145 mm ude foran hvert gavlspær, i nøjagtig samme plan.
+     Tegninger til indkøb, savearbejde og montage. Uddyber <code>01a-udhaengsspaer.md</code>.
+     Alle mål i millimeter. Blå = mål, rød = snit/skruer.</p>
+  <div class="chips">
+    <span class="chip">4 udhængsspær</span>
+    <span class="chip">12 klodser à 100</span>
+    <span class="chip">udhæng 145</span>
+    <span class="chip">C24 45×95</span>
+    <span class="chip">hældning 35°</span>
+    <span class="chip">~½ dag</span>
+  </div>
+
+  <section>
+    <h2><span class="fignum">1</span> Køb</h2>
+    <div class="buy">
+      <div class="card">
+        <div class="qty">2 stk</div>
+        <div class="what">45×95 C24, 4,2 m</div>
+        <div class="why">Samme træ som spærene. Hver længde giver 2 udhængsspær + 10 klodser (fig. 2).
+          Findes kun 3,6 m: køb <strong>3 stk</strong>.</div>
+      </div>
+      <div class="card metal">
+        <div class="qty">50 stk</div>
+        <div class="what">Konstruktionsskruer 5×100</div>
+        <div class="why">4 pr. klods × 12 = 48. Skruen går 45 gennem spæret og <strong>55</strong> ind i klodsen
+          (5×80 giver kun 35).</div>
+      </div>
+      <div class="card metal">
+        <div class="qty">2 stk</div>
+        <div class="what">Hulplade ~40×200</div>
+        <div class="why">Én pr. gavl, over stødet i kippen (fig. 4).</div>
+      </div>
+      <div class="card metal">
+        <div class="qty">16 stk</div>
+        <div class="what">Beslagskruer 5×40</div>
+        <div class="why">8 pr. hulplade.</div>
+      </div>
+    </div>
+    <p class="tools"><strong>Værktøj:</strong> geringssav (35°) · 2 skruetvinger · retskinne eller lige lægte, 2 m ·
+      tommestok · vinkel · blyant · skruemaskine · stige/stillads ved gavlene.</p>
+  </section>
+
+  <section>
+    <h2><span class="fignum">FIG. 2</span> Skæreplan — én 4,2 m-længde (× 2)</h2>
+    <div class="figwrap"><div id="figA"></div></div>
+    <ul class="notes">
+      <li>Læg de to udhængsspær <strong>ende mod ende</strong>, så de deler det midterste snit.
+          Alle tre skrå snit er <span class="snit">35°</span> og parallelle.</li>
+      <li>Resten af længden giver 10 klodser à <span class="maal">100</span>. Du skal bruge 6 pr. længde —
+          de 4 andre er reserve til fejlsnit.</li>
+      <li>Højden er tegnet overdrevet, så stykkerne kan ses. Den rigtige vinkel står på fig. 3.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="fignum">FIG. 3</span> Udhængsspær på saven — 4 stk., ens</h2>
+    <div class="figwrap"><div id="figB"></div></div>
+    <ul class="notes">
+      <li>Præcis <strong>samme emne som de 12 spær</strong>: parallelogram, <span class="maal">1500</span> langs
+          begge kanter, <span class="snit">35°</span> i begge ender — <strong>men uden fugleudskæring</strong>.</li>
+      <li>Alle 4 er ens. Til den anden tagflade vender du bare emnet om.</li>
+      <li><strong>Kap ét først</strong> og prøv det mod gavlspæret (fod og kip skal flugte), før du kapper de 3 andre.</li>
+      <li>Klodsernes placering (stiplet) er <strong>ikke kritisk</strong> — ±20 mm er fint.
+          Mål fra fodenden langs underkanten til klodsens nederste side.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="fignum">FIG. 4</span> Gavlen set udefra</h2>
+    <div class="figwrap"><div id="figC"></div></div>
+    <ul class="notes">
+      <li>Udhængsspæret dækker gavlspæret helt — klodserne sidder skjult bag det (stiplet).</li>
+      <li>Fodenden flugter gavlspærets fodende (sternen skal senere på begge).</li>
+      <li>I kippen mødes de to halvdele med lodret stødsnit. Der er intet hanebånd her,
+          så hulpladen holder dem sammen.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="fignum">FIG. 5</span> Snit på tværs ved en klods — det vigtigste mål</h2>
+    <div class="figwrap narrow"><div id="figD"></div></div>
+    <ul class="notes">
+      <li>Klodsen er <span class="maal">100</span> fordi 145 − 45 = 100. Kap alle 12 mod et stop, så de er helt ens —
+          så bliver udhænget automatisk <span class="maal">145</span>.</li>
+      <li>Klodsen <strong>vippes så den følger spæret</strong>: over- og underkant flugter med begge spær.
+          Så stikker den hverken op i undertaget eller ned i sofitten.</li>
+      <li>Skruerne går ind i klodsens endetræ fra hver sin side. Forskyd dem i højden, så de ikke rammer hinanden.</li>
+    </ul>
+    <div class="callout"><strong>Før du kapper klodser:</strong> se efter at gavlspærets yderside er fri —
+      at gavlbeklædningen ikke går op foran den. Klodsen skal ligge direkte på træet i spæret.
+      Hvis beklædningen er i vejen, så mål 145 fra spærets yderside og kap klodsen tilsvarende kortere.</div>
+  </section>
+
+  <section>
+    <h2><span class="fignum">6</span> Sådan gør du</h2>
+    <ol class="steps">
+      <li><div class="t">Tjek gavlspærene<span class="time">5 min</span></div>
+          <div class="d">Begge gavle: er ydersiden fri af beklædning? (se boksen ovenfor)</div></li>
+      <li><div class="t">Kap ét udhængsspær og prøv det<span class="time">20 min</span></div>
+          <div class="d">Hold det op mod gavlspæret: flugter fod, kip og overkant? Så kap de 3 andre.</div>
+          <div class="fig">→ fig. 2 + 3</div></li>
+      <li><div class="t">Kap 12 klodser à 100<span class="time">20 min</span></div>
+          <div class="d">Lige snit, mod et stop på saven.</div>
+          <div class="fig">→ fig. 5</div></li>
+      <li><div class="t">Skru klodserne på udhængsspærene — nede på jorden<span class="time">30 min</span></div>
+          <div class="d">Mærk 150 / 700 / 1250 fra fodenden. Stil klodsen så over- og underkant flugter med spæret.
+            2 skruer 5×100 udefra, gennem udhængsspæret ind i klodsen.</div>
+          <div class="fig">→ fig. 3 + 5</div></li>
+      <li><div class="t">Løft op, tving fast, tjek med retskinne<span class="time">15 min pr. stk.</span></div>
+          <div class="d">Klodserne ind mod gavlspæret. Læg retskinnen over begge spær — ingen spring i overkanten.
+            Fodenden flugter gavlspærets fodende.</div>
+          <div class="fig">→ fig. 4 + 5</div></li>
+      <li><div class="t">Skru fast indefra<span class="time">10 min pr. stk.</span></div>
+          <div class="d">Inde fra huset: 2 skruer 5×100 gennem gavlspæret ind i hver klods.</div></li>
+      <li><div class="t">Hulplade over kipstødet<span class="time">10 min</span></div>
+          <div class="d">Når begge halvdele sidder: plade over stødet på ydersiden, 8 beslagskruer.
+            Gentag trin 5–7 i den anden gavl.</div>
+          <div class="fig">→ fig. 4</div></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2><span class="fignum">7</span> Færdig når</h2>
+    <ul class="check">
+      <li>Retskinne fra gavlspær ud over udhængsspær: <strong>ingen spring</strong> — fra fod til kip, i begge gavle.</li>
+      <li>Udhængsspærets yderside står <span class="maal">145</span> fra gavlspærets yderside — mål ved fod, midt og kip.</li>
+      <li>Ingen klods stikker op over eller ned under spærene.</li>
+      <li>Hulplade over kipstødet i begge gavle.</li>
+    </ul>
+  </section>
+
+  <footer>Mål fra modellen: <code>G_OH_RAKE_STRUCT</code> = 145, <code>G_UDH_KLODS_L</code> = 100,
+    <code>G_UDH_KLODS_SS</code> = [150, 700, 1250]. Afviger fra <code>01a-udhaengsspaer.md</code> på tre punkter:
+    4,2 m-længder (2 × 3,6 m giver kun 10 klodser), skruer 5×100 i stedet for 5×80, og klodsen vippet
+    med spæret i stedet for lodret.</footer>
+</main>
+
+<script>
+(function () {
+  var SIN = Math.sin(35 * Math.PI / 180); // 0.5736
+  var COS = Math.cos(35 * Math.PI / 180); // 0.8192
+  var TAN = Math.tan(35 * Math.PI / 180); // 0.7002
+  var NS = "http://www.w3.org/2000/svg";
+
+  function el(name, attrs, parent) {
+    var e = document.createElementNS(NS, name);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+
+  // Figure factory: world coords in mm, z up. k = px per mm (kz optional for
+  // an exaggerated vertical scale). Pads in px.
+  function fig(mountId, o) {
+    var kz = o.kz || o.k;
+    var W = (o.x1 - o.x0) * o.k + o.padL + o.padR;
+    var H = (o.z1 - o.z0) * kz + o.padT + o.padB;
+    var svg = el("svg", { viewBox: "0 0 " + W.toFixed(1) + " " + H.toFixed(1),
+                          role: "img", "aria-label": o.label || "" });
+    document.getElementById(mountId).appendChild(svg);
+    function P(x, z) { return [(x - o.x0) * o.k + o.padL, (o.z1 - z) * kz + o.padT]; }
+    return { svg: svg, P: P, W: W, H: H, k: o.k };
+  }
+
+  function pts(list) { return list.map(function (p) { return p[0].toFixed(1) + "," + p[1].toFixed(1); }).join(" "); }
+
+  function poly(f, worldPts, cls, opts) {
+    opts = opts || {};
+    var e = el("polygon", { points: pts(worldPts.map(function (p) { return f.P(p[0], p[1]); })),
+                            "class": cls, "stroke-width": opts.sw || 1.6 }, f.svg);
+    if (opts.dash) e.setAttribute("stroke-dasharray", opts.dash);
+    return e;
+  }
+  function seg(f, a, b, cls, opts) {
+    opts = opts || {};
+    var A = f.P(a[0], a[1]), B = f.P(b[0], b[1]);
+    var e = el("line", { x1: A[0], y1: A[1], x2: B[0], y2: B[1], "class": cls,
+                         "stroke-width": opts.sw || 1 }, f.svg);
+    if (opts.dash) e.setAttribute("stroke-dasharray", opts.dash);
+    return e;
+  }
+  function dot(f, p, r, cls) {
+    var A = f.P(p[0], p[1]);
+    el("circle", { cx: A[0], cy: A[1], r: r, "class": cls }, f.svg);
+  }
+  function txt(f, x, z, s, cls, opts) {
+    opts = opts || {};
+    var A = f.P(x, z);
+    var e = el("text", { x: A[0] + (opts.dx || 0), y: A[1] + (opts.dy || 0),
+                         "class": cls, "font-size": opts.fs || 13,
+                         "text-anchor": opts.anchor || "middle" }, f.svg);
+    if (opts.bold) e.setAttribute("font-weight", 600);
+    if (opts.rot) e.setAttribute("transform", "rotate(" + opts.rot + " " + (A[0] + (opts.dx || 0)) + " " + (A[1] + (opts.dy || 0)) + ")");
+    e.textContent = s;
+    return e;
+  }
+  function arrow(f, tipPx, dirPx, cls) {
+    var L = 9, Wd = 3.2;
+    var n = [-dirPx[1], dirPx[0]];
+    var p1 = [tipPx[0] + dirPx[0] * L + n[0] * Wd, tipPx[1] + dirPx[1] * L + n[1] * Wd];
+    var p2 = [tipPx[0] + dirPx[0] * L - n[0] * Wd, tipPx[1] + dirPx[1] * L - n[1] * Wd];
+    el("polygon", { points: pts([tipPx, p1, p2]), "class": cls }, f.svg);
+  }
+
+  // Aligned dimension between world points a,b; off = perpendicular offset in px
+  // (positive = screen-left of a->b).
+  function dim(f, a, b, off, label, opts) {
+    opts = opts || {};
+    var A = f.P(a[0], a[1]), B = f.P(b[0], b[1]);
+    var dx = B[0] - A[0], dy = B[1] - A[1];
+    var len = Math.hypot(dx, dy);
+    var e = [dx / len, dy / len];
+    var n = [e[1], -e[0]];
+    var A2 = [A[0] + n[0] * off, A[1] + n[1] * off];
+    var B2 = [B[0] + n[0] * off, B[1] + n[1] * off];
+    var ext = off >= 0 ? 1 : -1;
+    function extLine(S, S2) {
+      el("line", { x1: S[0] + n[0] * 3 * ext, y1: S[1] + n[1] * 3 * ext,
+                   x2: S2[0] + n[0] * 5 * ext, y2: S2[1] + n[1] * 5 * ext,
+                   "class": "dim-line", "stroke-width": 0.8 }, f.svg);
+    }
+    if (!opts.noExtA) extLine(A, A2);
+    if (!opts.noExtB) extLine(B, B2);
+    el("line", { x1: A2[0], y1: A2[1], x2: B2[0], y2: B2[1],
+                 "class": "dim-line", "stroke-width": 1 }, f.svg);
+    arrow(f, A2, e, "dim-fill");
+    arrow(f, B2, [-e[0], -e[1]], "dim-fill");
+    var mid = [(A2[0] + B2[0]) / 2 + (opts.dx || 0), (A2[1] + B2[1]) / 2 + (opts.dy === undefined ? -6 : opts.dy)];
+    var t = el("text", { x: mid[0], y: mid[1], "class": "t-dim",
+                         "font-size": opts.fs || 13.5,
+                         "text-anchor": "middle", "font-weight": 600 }, f.svg);
+    if (opts.rot) {
+      var ang = Math.atan2(dy, dx) * 180 / Math.PI;
+      if (ang > 90 || ang < -90) ang += 180;
+      t.setAttribute("transform", "rotate(" + ang.toFixed(1) + " " + mid[0] + " " + mid[1] + ")");
+    }
+    t.textContent = label;
+  }
+
+  function angleDim(f, vertex, d1, d2, r, label, opts) {
+    opts = opts || {};
+    var V = f.P(vertex[0], vertex[1]);
+    function toScreen(d) { var L = Math.hypot(d[0], d[1]); return [d[0] / L, -d[1] / L]; }
+    var s1 = toScreen(d1), s2 = toScreen(d2);
+    var P1 = [V[0] + s1[0] * r, V[1] + s1[1] * r];
+    var P2 = [V[0] + s2[0] * r, V[1] + s2[1] * r];
+    var cross = s1[0] * s2[1] - s1[1] * s2[0];
+    var sweep = cross > 0 ? 1 : 0;
+    el("path", { d: "M " + P1[0].toFixed(1) + " " + P1[1].toFixed(1) +
+                    " A " + r + " " + r + " 0 0 " + sweep + " " +
+                    P2[0].toFixed(1) + " " + P2[1].toFixed(1),
+                 "class": opts.cls || "cut-line", "stroke-width": 1.1 }, f.svg);
+    var bis = [(s1[0] + s2[0]) / 2, (s1[1] + s2[1]) / 2];
+    var bl = Math.hypot(bis[0], bis[1]) || 1;
+    var T = [V[0] + bis[0] / bl * (r + (opts.rlab || 15)), V[1] + bis[1] / bl * (r + (opts.rlab || 15))];
+    var t = el("text", { x: T[0], y: T[1] + 4, "class": opts.tcls || "t-cut",
+                         "font-size": opts.fs || 12.5, "text-anchor": "middle",
+                         "font-weight": 600 }, f.svg);
+    t.textContent = label;
+  }
+
+  var OFF = 95 * TAN;   // 66.5 — forskydning af 35°-snittet over 95-fladen
+  var KERF = 3;
+  var KS = [150, 700, 1250];
+
+  /* ============================================================
+     FIG. 2 — skæreplan på en 4200-længde (højde overdrevet)
+     ============================================================ */
+  (function () {
+    var f = fig("figA", { x0: 0, x1: 4200, z0: 0, z1: 95,
+                          k: 0.19, kz: 0.62, padL: 14, padR: 14, padT: 62, padB: 96,
+                          label: "Skæreplan: 2 udhængsspær og 10 klodser af én 4,2 m-længde" });
+    var u2 = 1500 + KERF;               // start of piece 2 (bottom edge)
+    var sq = u2 + 1500 + OFF + KERF;    // first square cut after piece 2 = 3072.5
+
+    poly(f, [[0, 0], [0, 95], [OFF, 95]], "waste", { sw: 1 });
+    poly(f, [[0, 0], [1500, 0], [1500 + OFF, 95], [OFF, 95]], "wood", { sw: 1.6 });
+    poly(f, [[u2, 0], [u2 + 1500, 0], [u2 + 1500 + OFF, 95], [u2 + OFF, 95]], "wood", { sw: 1.6 });
+    poly(f, [[u2 + 1500, 0], [sq, 0], [sq, 95], [u2 + 1500 + OFF, 95]], "waste", { sw: 1 });
+    txt(f, 750 + OFF / 2, 47, "UDHÆNGSSPÆR", "t-lab", { fs: 13, dy: 5 });
+    txt(f, u2 + 750 + OFF / 2, 47, "UDHÆNGSSPÆR", "t-lab", { fs: 13, dy: 5 });
+
+    for (var i = 0; i < 10; i++) {
+      var x = sq + i * (100 + KERF);
+      poly(f, [[x, 0], [x + 100, 0], [x + 100, 95], [x, 95]], i < 6 ? "wood2" : "spare",
+           { sw: 1.1, dash: i < 6 ? null : "3 3" });
+    }
+    var kEnd = sq + 6 * 103 - KERF, rEnd = sq + 10 * 103 - KERF;
+    poly(f, [[rEnd, 0], [4200, 0], [4200, 95], [rEnd, 95]], "waste", { sw: 1 });
+
+    // snit
+    [[0, OFF], [1500, 1500 + OFF], [u2 + 1500, u2 + 1500 + OFF]].forEach(function (c) {
+      seg(f, [c[0], -6], [c[1], 101], "cut-line", { sw: 2 });
+    });
+    seg(f, [sq, -6], [sq, 101], "cut-line", { sw: 2 });
+    txt(f, 1500 + OFF / 2, 95, "fælles snit", "t-cut", { fs: 11.5, dy: -14 });
+    txt(f, OFF / 2, 95, "35°", "t-cut", { fs: 11.5, dy: -14 });
+    txt(f, u2 + 1500 + OFF / 2, 95, "35°", "t-cut", { fs: 11.5, dy: -14 });
+
+    dim(f, [0, 0], [1500, 0], -24, "1500", { dy: 16 });
+    dim(f, [u2, 0], [u2 + 1500, 0], -24, "1500", { dy: 16 });
+    dim(f, [sq, 0], [kEnd, 0], -24, "6 × 100", { dy: 16, fs: 12 });
+    txt(f, (kEnd + rEnd) / 2, 0, "4 reserve", "t-mut", { fs: 11.5, dy: 22 });
+    dim(f, [0, 0], [4200, 0], -62, "4200", { dy: 16 });
+  })();
+
+  /* ============================================================
+     FIG. 3 — udhængsspær fladt på saven + klodsmærker
+     ============================================================ */
+  (function () {
+    var f = fig("figB", { x0: 0, x1: 1500 + OFF, z0: 0, z1: 95,
+                          k: 0.435, padL: 70, padR: 90, padT: 70, padB: 190,
+                          label: "Udhængsspær fladt på saven — parallelogram uden fugleudskæring" });
+
+    poly(f, [[0, 0], [1500, 0], [1500 + OFF, 95], [OFF, 95]], "wood", { sw: 1.8 });
+    seg(f, [0, 0], [0, 95], "ref-line", { dash: "4 4", sw: 0.9 });
+    seg(f, [1500, 0], [1500, 95], "ref-line", { dash: "4 4", sw: 0.9 });
+
+    // klodser, stiplet
+    KS.forEach(function (s, i) {
+      poly(f, [[s, 0], [s + 45, 0], [s + 45, 95], [s, 95]], "wood2", { sw: 1.1, dash: "4 3" });
+      txt(f, s + 22.5, 47, "K" + (i + 1), "t-lab", { fs: 12, dy: 5 });
+    });
+
+    // ingen fugleudskæring
+    var M = [279.6, 0];
+    var H = [279.6 + 38.5 * SIN, 38.5 * COS];
+    var E = [H[0] + 55 * COS, H[1] - 55 * SIN];
+    seg(f, M, H, "cut-line", { dash: "3 3", sw: 1 });
+    seg(f, H, E, "cut-line", { dash: "3 3", sw: 1 });
+    var C = f.P(H[0], H[1] / 2);
+    el("line", { x1: C[0] - 14, y1: C[1] - 14, x2: C[0] + 14, y2: C[1] + 14, "class": "cut-line", "stroke-width": 2.2 }, f.svg);
+    el("line", { x1: C[0] - 14, y1: C[1] + 14, x2: C[0] + 14, y2: C[1] - 14, "class": "cut-line", "stroke-width": 2.2 }, f.svg);
+    txt(f, 420, 95, "INGEN fugleudskæring", "t-cut", { fs: 12.5, dy: -40, bold: true });
+
+    txt(f, 0, 47, "FOD", "t-lab", { fs: 13, anchor: "end", dx: -30, dy: 4 });
+    txt(f, 1500 + OFF, 47, "KIP", "t-lab", { fs: 13, anchor: "start", dx: 30, dy: 4 });
+
+    dim(f, [OFF, 95], [1500 + OFF, 95], 26, "1500", {});
+    dim(f, [0, 0], [1500, 0], -30, "1500", { dy: 17 });
+    dim(f, [0, 0], [KS[0], 0], -66, "150 → K1", { dy: 17, fs: 12.5 });
+    dim(f, [0, 0], [KS[1], 0], -100, "700 → K2", { dy: 17, fs: 12.5 });
+    dim(f, [0, 0], [KS[2], 0], -134, "1250 → K3", { dy: 17, fs: 12.5 });
+    seg(f, [1500 + OFF, 95], [1500 + OFF, -390], "dim-line", { sw: 0.8 });
+    dim(f, [0, 0], [1500 + OFF, 0], -168, "1567 spids til spids", { dy: 17, noExtB: true });
+
+    angleDim(f, [0, 0], [0, 1], [OFF, 95], 46, "35°", { rlab: 15 });
+    angleDim(f, [1500, 0], [0, 1], [OFF, 95], 46, "35°", { rlab: 15 });
+  })();
+
+  /* ============================================================
+     FIG. 4 — gavlen set udefra (højder fra topremmens overside)
+     ============================================================ */
+  (function () {
+    var f = fig("figC", { x0: -330, x1: 2330, z0: -300, z1: 900,
+                          k: 0.3, padL: 40, padR: 40, padT: 30, padB: 10,
+                          label: "Gavl set udefra: udhængsspær, klodser bag ved og hulplade i kip" });
+    var rise = 1000 * TAN, vgap = 95 / COS, ohDrop = 229 * TAN;
+    var F = [-229, -ohDrop];
+    var u = [COS, SIN], n = [-SIN, COS];
+    function at(s, h) { return [F[0] + s * u[0] + h * n[0], F[1] + s * u[1] + h * n[1]]; }
+    function mir(p) { return [2000 - p[0], p[1]]; }
+
+    // væg + toprem-reference
+    seg(f, [-300, 0], [2300, 0], "ref-line", { dash: "7 5", sw: 0.9 });
+    txt(f, 1000, 0, "overkant toprem", "t-mut", { fs: 11.5, dy: 14 });
+    seg(f, [0, 0], [0, -280], "ref-line", { sw: 1 });
+    seg(f, [2000, 0], [2000, -280], "ref-line", { sw: 1 });
+    txt(f, 1000, -230, "gavlvæg", "t-mut", { fs: 12 });
+
+    var L = [[-229, -ohDrop], [1000, rise], [1000, rise + vgap], [-229, -ohDrop + vgap]];
+    poly(f, L, "wood", { sw: 1.8 });
+    poly(f, L.map(mir), "wood", { sw: 1.8 });
+
+    KS.forEach(function (s) {
+      var q = [at(s, 0), at(s + 45, 0), at(s + 45, 95), at(s, 95)];
+      poly(f, q, "wood2", { sw: 1, dash: "4 3" });
+      poly(f, q.map(mir), "wood2", { sw: 1, dash: "4 3" });
+    });
+
+    // hulplade
+    poly(f, [[900, rise + 4], [1100, rise + 4], [1100, rise + 44], [900, rise + 44]], "metal", { sw: 1.3 });
+    [930, 960, 1040, 1070].forEach(function (x) { dot(f, [x, rise + 24], 3, "ink-line"); });
+    seg(f, [1000, rise + vgap + 8], [1000, rise + vgap + 60], "ref-line", { sw: 0.8 });
+    txt(f, 1000, rise + vgap + 60, "hulplade over kipstødet", "t-mut", { fs: 12, dy: -6 });
+
+    txt(f, -229, -ohDrop, "FOD", "t-lab", { fs: 12.5, anchor: "end", dx: -8, dy: 10 });
+    txt(f, 2229, -ohDrop, "FOD", "t-lab", { fs: 12.5, anchor: "start", dx: 8, dy: 10 });
+    var lab = at(560, 95);
+    txt(f, lab[0], lab[1], "udhængsspær (klodser bag ved)", "t-lab", { fs: 12.5, dy: -16, rot: -35 });
+    var labR = mir(at(930, 95));
+    txt(f, labR[0], labR[1], "spejlvendt — samme mål", "t-mut", { fs: 12, dy: -16, rot: 35 });
+
+    dim(f, F, at(KS[0], 0), -24, "150", { rot: true, dy: 15, fs: 12.5 });
+    dim(f, F, at(KS[1], 0), -54, "700", { rot: true, dy: 15, fs: 12.5 });
+    dim(f, F, at(KS[2], 0), -84, "1250", { rot: true, dy: 15, fs: 12.5 });
+  })();
+
+  /* ============================================================
+     FIG. 5 — snit på tværs ved en klods
+     ============================================================ */
+  (function () {
+    var f = fig("figD", { x0: -210, x1: 120, z0: 0, z1: 112,
+                          k: 1.8, padL: 10, padR: 10, padT: 44, padB: 118,
+                          label: "Snit: udhængsspær, klods og gavlspær side om side" });
+
+    poly(f, [[-145, 0], [-100, 0], [-100, 95], [-145, 95]], "wood", { sw: 1.8 });
+    poly(f, [[-100, 0], [0, 0], [0, 95], [-100, 95]], "wood2", { sw: 1.8 });
+    poly(f, [[0, 0], [45, 0], [45, 95], [0, 95]], "wood", { sw: 1.8 });
+
+    // retskinne
+    poly(f, [[-195, 96], [100, 96], [100, 108], [-195, 108]], "rule", { sw: 1.2 });
+    txt(f, -48, 108, "retskinne — skal ligge plant på begge spær", "t-ok", { fs: 12.5, dy: -8 });
+
+    // skruer: udefra (z 30, 65) og indefra (z 18, 77)
+    function screw(x0, x1, z) {
+      seg(f, [x0, z], [x1, z], "cut-line", { sw: 2 });
+      var A = f.P(x0, z);
+      el("line", { x1: A[0], y1: A[1] - 6, x2: A[0], y2: A[1] + 6, "class": "cut-line", "stroke-width": 3 }, f.svg);
+    }
+    screw(-145, -45, 32); screw(-145, -45, 63);
+    screw(45, -55, 18); screw(45, -55, 78);
+
+    txt(f, -175, 47, "UDE", "t-lab", { fs: 14, dy: 5 });
+    txt(f, 85, 47, "INDE", "t-lab", { fs: 14, dy: 5 });
+
+    txt(f, -122.5, 0, "udhængs-", "t-lab", { fs: 12, dy: 18 });
+    txt(f, -122.5, 0, "spær", "t-lab", { fs: 12, dy: 32 });
+    txt(f, -50, 0, "klods", "t-lab", { fs: 12, dy: 18 });
+    txt(f, 22.5, 0, "gavl-", "t-lab", { fs: 12, dy: 18 });
+    txt(f, 22.5, 0, "spær", "t-lab", { fs: 12, dy: 32 });
+
+    dim(f, [-145, 0], [-100, 0], -46, "45", { dy: 16 });
+    dim(f, [-100, 0], [0, 0], -46, "100", { dy: 16 });
+    dim(f, [0, 0], [45, 0], -46, "45", { dy: 16 });
+    dim(f, [-145, 0], [0, 0], -84, "145 = udhæng", { dy: 16 });
+
+    txt(f, -95, 47, "5×100 udefra", "t-cut", { fs: 11, anchor: "end", dx: -30, dy: -58 });
+    txt(f, 50, 47, "5×100 indefra", "t-cut", { fs: 11, anchor: "start", dx: 8, dy: -58 });
+  })();
+})();
+</script>
+</body>
+</html>

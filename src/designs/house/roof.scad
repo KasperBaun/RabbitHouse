@@ -146,17 +146,17 @@ module _render_fascia_house(eh_back, fascia_top_offset, palette) {
 }
 
 // Sternbræt (fascia) 25×200 on the rafter tails at BOTH eaves of the gable roof
-// (x = -G_OH_EAVE and x = RH_HOUSE_LEN + G_OH_EAVE). Runs Y between the
-// vindskede INNER faces — the vindskede tip runs past the eave line and
-// covers the stern's end grain (plumb + level end cut). Mounted AFTER
-// lægtning — the top edge is aligned flush with the lægte tops (just under
-// the slate, capping the undertag / liste / lægte ends at the eave).
+// (x = -G_OH_EAVE and x = RH_HOUSE_LEN + G_OH_EAVE). LAV STERN: overkanten
+// flugter spærets overkant ved spærenden (G_STERN_TOP), så undertaget kan
+// føres ud over den via tagfodsblikket. Monteres FØR undertag og lægter.
+// Løber helt ud til vindskede-overliggerens yderside (±G_OH_RAKE) — de to
+// vindskedebrædder er hakket ned over sternens top i hjørnet.
 module _render_stern_gable(palette) {
-    stern_h = G_STERN_H;   // 25×200 — same depth as the vindskede, flush corners
-    y0 = -G_OH_RAKE_STRUCT;
-    y1 = RH_HOUSE_DEPTH + G_OH_RAKE_STRUCT;
+    stern_h = G_STERN_H;   // 25×200
+    y0 = -G_OH_RAKE;
+    y1 = RH_HOUSE_DEPTH + G_OH_RAKE;
     for (x_face = [-G_OH_EAVE, RH_HOUSE_LEN + G_OH_EAVE]) {
-        z_top = g_rafter_top_z(x_face) + G_ROOF_STACK_T - 1;
+        z_top = g_rafter_top_z(x_face) + G_STERN_TOP;
         x0 = x_face < G_RIDGE_X ? x_face - RH_FASCIA_T : x_face;
         color(pal_trim(palette))
         translate([x0, y0, z_top - stern_h])

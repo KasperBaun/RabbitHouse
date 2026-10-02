@@ -1,5 +1,7 @@
 # 4. Lægter
 
+> **Tegninger:** [04-laegter-tegninger.html](04-laegter-tegninger.html) — snor, afstandspinde A/B og kontrolmål (38×57-lægter).
+
 > Skridt 4 af 10 → [oversigt](README.md). T1-taglægter 38×73 oven på
 > afstandslisterne, lægteafstand (gauge) **225 mm** på skråfladen.
 > **Dette er det skridt, hvor præcision betaler sig** — en fejl her kan

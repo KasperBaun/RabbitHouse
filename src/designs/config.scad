@@ -259,15 +259,22 @@ G_OH_RAKE      = G_VS_OUTER + G_VS_T;         // = 195
 // endetræ og fører kanten videre ud til G_VS_OUTER.
 G_OH_RAKE_STRUCT = G_VS_OUTER - G_VS_T;       // = 145
 
-// Sternbræt og vindskedens underbræt: 25×200. Med overkanten i flugt med
-// lægterne nåede et 150-bræt kun ned til 10 mm OVER spærets underkant, så
-// sofitten stod med synlig kant nedenunder. 200 dækker spærende + sofitlamel
-// med 19 mm i overskud. Overliggeren er stadig 25×150 (den sidder forskudt op).
+// Sternbræt og vindskedens underbræt: 25×200. Overliggeren er 25×150.
+//
+// LAV STERN (2026-09-26): sternens overkant flugter SPÆRETS overkant ved
+// spærenden (G_STERN_TOP = 0) — ikke lægternes. Kun sådan kan undertaget
+// løbe ud over sternens top (via tagfodsblikket) i stedet for at løbe ind i
+// sternens bagside, og kun sådan er afstandsliste-gabet under L1 åbent som
+// luftindtag (lukket med fuglegitter). 200 dækker den lodrette spærende
+// (95/cos35 = 116) + sofitlamellen med margin. Sternen løber helt ud til
+// vindskede-overliggerens yderside (G_OH_RAKE), og vindskederne er hakket ned
+// over sternens top i tagfodshjørnet.
 G_STERN_H     = 200;
+G_STERN_TOP   = 0;    // sternens overkant over spærets overkant ved spærenden
 G_VS_OVER_H   = 150;
 
 // Roof build-up above the rafter top (skifer cover): undertag 3 +
-// afstandsliste 25 (25×50 along each spær) + taglægte 38 (T1 38×73).
+// afstandsliste 25 (25×50 along each spær) + taglægte 38 (38×57, lagt fladt).
 // The slate itself sits on top of this stack.
 G_ROOF_STACK_T = 3 + 25 + 38;                 // = 66
 

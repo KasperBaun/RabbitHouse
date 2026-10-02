@@ -1,5 +1,7 @@
 # 1a. Udhængsspær + klodser (gavludhæng)
 
+> **Tegninger:** [01a-udhaengsspaer-tegninger.html](01a-udhaengsspaer-tegninger.html) — indkøb, skæreplan, klodsplacering, snit.
+
 > Hører til trin 1, umiddelbart efter [spærene](01-spaer.md) er rejst og loddet.
 > Ét ekstra spær pr. gavl — sat **145 mm ude forbi gavlspæret og i nøjagtig
 > samme plan** — holdt på plads af klodser ind til gavlspæret.

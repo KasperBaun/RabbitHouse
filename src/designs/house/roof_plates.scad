@@ -27,6 +27,9 @@ module RenderHouseRoofLaegter(palette = DEFAULT_PALETTE) {
 module RenderHouseRoofFodblik() {
     render_skifer_fodblik();
 }
+module RenderHouseRoofFuglegitter() {
+    render_skifer_fuglegitter();
+}
 module RenderHouseRoofSkifer() {
     render_skifer_sten();
 }
