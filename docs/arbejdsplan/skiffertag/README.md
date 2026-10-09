@@ -75,7 +75,7 @@ skriver "lægteafstand altid 255 mm".
 
 | Lægteafstand | Sømmet i forhold til pladen under | Overlæg | Plader i alt |
 |---|---|---|---|
-| **255 mm** (valgt) | 10 mm fri | **90 mm** | **154** |
+| **255 mm** (valgt) | 10 mm fri | **90 mm** | **132** |
 | 225 mm (den gamle plan) | 20 mm nede i pladen — umuligt | 150 mm | 168 |
 
 Prisen er margen: 90 mm overlæg er guidens minimum ved 35°, ikke mere. Den
@@ -156,7 +156,7 @@ fremgangsmåde: [04-laegter.md](04-laegter.md).
 | L4 | **805** | række 3 | række 4 (hel) |
 | L5 | **1060** | række 4 | række 5 (hel) |
 | L6 | **1315** | række 5 | række 6 (470 mm, skåret af toppen) |
-| L7 | 1453,5 (overkant 1490) | række 6 | række 7 (275 mm, nye huller) |
+| L7 | 1453,5 (overkant 1490) | række 6 | række 7 (~255 mm = resten fra række 1, nye huller) |
 
 Kontrollen på planen: hvert søm sidder 46,5 mm over lægtens underkant og
 10 mm over overkanten på pladen nedenunder.
@@ -177,7 +177,7 @@ Kontrollen på planen: hvert søm sidder 46,5 mm over lægtens underkant og
 | Fuglegitter, ventileret, sort | — | 7 m | 6 |
 | Tagrende m. rendejern, endebunde, nedløb | — | 2 × ~3,4 m | 6 |
 | Opklodsningsliste | 10×25 mm trykimp. | 7 m | 6 |
-| **Genbrugs-naturskifer** | 30×60 cm | **195 stk** (154 i taget + ~25 % genbrugsspild) | 7, 8 |
+| **Genbrugs-naturskifer** | 30×60 cm | **165 stk** (132 i taget + ~25 % genbrugsspild) | 7, 8 |
 | **Kobbersøm, riflet** | 2,8×40 mm (se tjek 2) | **500 stk ≈ 1,5 kg** (308 brugt) | 8 |
 | Kip-liste (kun hvis toprækken vipper) | 8×25 mm | 7 m | 8 |
 | Vindskede, underbræt | 25×200 mm | 4 stk à ~1,9 m (8 m) | 9 |
@@ -188,8 +188,9 @@ Kontrollen på planen: hvert søm sidder 46,5 mm over lægtens underkant og
 | Skruer m. tætningsskive | — | 1 pak | 10 |
 
 Brædderne til randafslutningen: **25×200 ca. 15 m** (stern + vindskede-underbræt)
-og **25×150 ca. 15 m** (overligger + rygning) — køb hver dimension samlet. Beregningen af de 154 plader: 11 pr. række (3340 mm inkl. fuger),
-7 rækker pr. tagflade, 2 tagflader.
+og **25×150 ca. 15 m** (overligger + rygning) — køb hver dimension samlet. Beregningen af de 132 plader: 11 pr. række (3340 mm inkl. fuger),
+7 rækker pr. tagflade, 2 tagflader = 154 stykker — men række 7 skæres af
+resterne fra række 1, så der går 6 × 11 × 2 plader til.
 
 **Køb ALDRIG galvaniserede søm til skiferen — kun kobber.** Et skifertag
 holder 100+ år; galvaniserede søm gør ikke.

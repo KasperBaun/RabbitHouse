@@ -84,7 +84,7 @@
       <li>Skær af <b>bunden</b>, så hullerne bliver. <b>Bagsiden opad.</b></li>
       <li>Forkant <span class="maal">5 cm</span> ud forbi L1 — midt i tagrenden.</li>
       <li><span class="red">Sømmene</span> rammer <b>L1</b>. Toppen ligger midt på L2.</li>
-      <li>Rækken bliver helt dækket af række 2 — brug de grimmeste plader.</li>
+      <li><b>Gem det afskårne stykke (25,5 cm) — det er række 7.</b> Vælg plader med en pæn nederste ende.</li>
     </ul>
   </section>
 
@@ -119,14 +119,14 @@
       <tr><td>4</td><td>60 cm (hel)</td><td>—</td><td>L4</td></tr>
       <tr><td>5</td><td>60 cm (hel)</td><td>—</td><td>L5</td></tr>
       <tr><td>6</td><td><b>47 cm</b></td><td>af toppen</td><td>L6</td></tr>
-      <tr><td>7</td><td><b>27,5 cm</b></td><td>nye huller 3,5 cm fra toppen</td><td>L7</td></tr>
+      <tr><td>7</td><td><b>25,5 cm</b></td><td>resten fra række 1 · nye huller 3 cm fra toppen</td><td>L7</td></tr>
     </table>
     <ul class="do">
       <li><b>Venstre:</b> undervejs — lægterne kan stadig ses. <b>Højre:</b> færdigt.</li>
       <li><span class="maal">11 plader</span> pr. række × <span class="maal">7 rækker</span> =
-          <span class="maal">77 plader</span> pr. tagflade. Række 1 ligger under række 2 — den ses som det lyse felt nederst til venstre.</li>
+          <span class="maal">77 stykker</span> = <span class="maal">66 plader</span> pr. tagflade (række 7 er resterne fra række 1). Række 1 ligger under række 2 — den ses som det lyse felt nederst til venstre.</li>
       <li><b>Række 6</b> skæres til <span class="maal">47 cm</span> — skær af <b>toppen</b>. Sømmes i L6.</li>
-      <li><b>Række 7</b> er kort, <span class="maal">27,5 cm</span>. Nye huller <b>3,5 cm fra toppen</b> — de rammer L7.</li>
+      <li><b>Række 7</b> er <b>resterne fra række 1</b>, <span class="maal">25,5 cm</span>, snitkanten opad. Nye huller <b>3 cm fra toppen</b> — de rammer L7.</li>
       <li>Slut aldrig en række med en strimmel under 15 cm.</li>
     </ul>
   </section>
@@ -167,7 +167,7 @@
   var MID = [295, 550, 805, 1060, 1315];                             // L2–L6 midte = pladernes overkant, 255 imellem
   var TOPS = [LW].concat(MID.map(function (m) { return m + LW / 2; }), [1490]);  // lægte-overkanter, L7 ved kippen
   var ROWS = [[-50, 295, 0], [-50, 550, 1], [205, 805, 0], [460, 1060, 1],       // [bund, top, forskudt ½ plade]
-              [715, 1315, 0], [970, 1440, 1], [1225, 1500, 0]];
+              [715, 1315, 0], [970, 1440, 1], [1225, 1480, 0]];
   var FULL_W = 3340, PER_ROW = 11;                                   // skiferfladens bredde = 11 plader à 30 cm + fuger
 
   function el(n, a, p, t) {

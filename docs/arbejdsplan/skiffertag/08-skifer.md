@@ -19,7 +19,7 @@
 
 | Materiale | Dimension | Mængde |
 |---|---|---|
-| Sorterede plader (skridt 7) | 30×60 cm | 77 pr. tagflade, 154 i alt |
+| Sorterede plader (skridt 7) | 30×60 cm | 66 pr. tagflade, 132 i alt (række 7 skæres af resterne fra række 1) |
 | Kobbersøm, riflet | 2,8×40 mm | ~310 brugt → 500 stk (1,5 kg) |
 
 Værktøj: skiferøkse + fladstål (tilskæring/lokning), kridtsnor.
@@ -37,13 +37,15 @@ så vandet lander i tagrenden.
 | 4 | 600 (hel) | — | 460 | 1060 (midt på L5) | L4 |
 | 5 | 600 (hel) | — | 715 | 1315 (midt på L6) | L5 |
 | 6 | **470 mm** | af **toppen** | 970 | 1440 (på L7) | L6 |
-| 7 | **275 mm** | nye huller 35 mm fra toppen | 1225 | 1500 (kip) | L7 |
+| 7 | **~255 mm** | **resten fra række 1** · nye huller 30 mm fra toppen | 1225 | 1480 (20 mm under kip) | L7 |
 
 ## Fremgangsmåde
 
 1. **Række 1:** plader skåret til 345 mm — skær af bunden, så de oprindelige
    huller bliver; de rammer L1. Læg dem med **bagsiden opad**. Rækken bliver
-   helt dækket af række 2, så brug frasorterede/B-plader. Den skal være der:
+   helt dækket af række 2. **Gem det afskårne stykke (~255 mm) — det er
+   række 7.** Vælg derfor plader, hvor den *nederste* ende er pæn; den øverste
+   ende må gerne være grim. Den skal være der:
    uden den løber vandet gennem fugerne i række 2. Den skal være skåret:
    række 2's søm sidder i L2, lige over række 1's overkant.
 2. **Opstregning:** kridtsnor for hver 3. plade — lodret (pladebredder,
@@ -55,9 +57,11 @@ så vandet lander i tagrenden.
    ikke være spændt op. Opspænding er den klassiske årsag til revnede plader.
 4. **Række 6:** skæres til 470 mm — skær af toppen, så hullerne stadig
    rammer L6. Overkanten ender på L7.
-5. **Række 7:** korte stykker på 275 mm. Lok nye huller 35 mm fra overkanten,
-   så de rammer L7 lige over række 6. Sømhovederne dækkes af rygningen
-   (skridt 10). Lad 1–2 cm luft i kippen mellem de to tagfladers toprækker.
+5. **Række 7:** resterne fra række 1 (~255 mm), med den originale kant
+   **nedad** og snitkanten opad. Underkanten ligger 255 mm over række 6's
+   underkant (1225), så toppen ender ~20 mm under kippen — det er luftspalten
+   i kippen. Lok nye huller **30 mm fra overkanten**, så de rammer L7 lige
+   over række 6. Sømhovederne dækkes af rygningen (skridt 10).
 
 ## Tre steder der kræver et ekstra hul eller et nip
 
@@ -71,10 +75,36 @@ så vandet lander i tagrenden.
 
 ## Tilskæring og lokning
 
-- **Hug med skiferøkse mod fladstål** (eller klip med skifersaks **fra
-  bagsiden**) — så kommer den affasede kant på forsiden. Vinkelsliber kun
-  til skjulte snit.
-- Nye sømhuller lokkes **fra bagsiden**, 25–40 mm fra sidekanten.
+Alle snit i denne plan ender skjult (under næste række, under rygningen eller
+mod vindskeden), så det nemmeste værktøj er fint.
+
+| Værktøj | Godt til | Bemærk |
+|---|---|---|
+| Vinkelsliber m. diamantskive | alle lige snit — det nemmeste | støver meget; glat, "savet" kant |
+| Skifersaks / skiferklipper | mange snit, pæn brudt kant | klip **fra bagsiden** |
+| Skiferøkse mod fladstål | klassisk, pæn affaset kant | kræver øvelse — regn med knækkede plader |
+| Ridse og knække | tynde, ensartede plader | upålideligt på genbrugsplader |
+
+**Med vinkelsliber:**
+1. Streg snittet op på bagsiden med blyant og vinkel.
+2. Læg pladen fladt på et bræt, så hele pladen er understøttet; kun det
+   stykke, der skal af, stikker ud.
+3. Skær i ét roligt træk uden at trykke.
+4. Udendørs, med støvmaske (P3) og briller — skiferstøv indeholder kvarts.
+   Lidt vand på snittet dæmper støvet.
+
+**Hvor snittet vender:**
+- Række 1: skær **bunden** af (345 mm tilbage). Resten er række 7.
+- Række 6: skær **toppen** af (470 mm tilbage). Snittet dækkes af række 7.
+- Række 7: snitkanten **opad**, under rygningen.
+- Halve plader: snitkanten ud mod vindskeden.
+
+**Nye sømhuller:**
+- Bor med 4–5 mm murbor/flisebor **uden slag**, fra bagsiden, med pladen
+  fladt på et stykke træ — eller slå hullet med skiferhammerens spids fra
+  bagsiden.
+- 25–40 mm fra sidekanten.
+- Prøv de første snit og huller på frasorterede plader.
 - En plade der ikke "falder til": flyt den til en anden række, eller hug
   et øverste hjørne af, så den lægger sig plant.
 - Rækken er 11 plader + fuger. Afslut aldrig med en strimmel under 150 mm —

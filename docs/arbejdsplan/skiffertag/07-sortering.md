@@ -7,7 +7,7 @@
 
 | Materiale | Dimension | Mængde |
 |---|---|---|
-| Genbrugs-naturskifer | 30×60 cm, glat 4–8 mm | ~154 i taget → køb **195 stk** |
+| Genbrugs-naturskifer | 30×60 cm, glat 4–8 mm | ~132 i taget → køb **165 stk** |
 
 Værktøj: skiferøkse (eller hammer til bankeprøve), 3 paller/stakke at
 sortere ud på.
