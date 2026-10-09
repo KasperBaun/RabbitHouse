@@ -222,10 +222,10 @@ function fascia_top_offset_for(cover) =
 // yard side). Eave Z is flat at the high wall-top so the front door
 // clearance is unchanged.
 G_PITCH_DEG   = 35;
-// Eave overhang tuned so each half-slope is exactly 5 courses of 30×60 cm
-// skifer in halv-forbandt: slope = (G_RIDGE_X + G_OH_EAVE) / cos(35°) =
-// 1500 mm = 4 × gauge(225 slope) + 600. Lap = 150 mm (well over the
-// 70 mm min for 35° pitch).
+// Eave overhang gives each half-slope 1500 mm on the slope =
+// (G_RIDGE_X + G_OH_EAVE) / cos(35°). Skiferen (30×60, hullet 245 mm fra
+// overkanten) ligger med lægteafstand 255 → overlæg 90 mm, 7 rækker pr.
+// halvtag. Sætteplanen står i roof_plates_skifer.scad.
 //
 // ⚠ ÅBENT PUNKT — husets højre tagskæg vs. løbegårdens vægge. Da husets
 // vægge blev sænket til 2000 mm studs faldt G_EAVE_Z fra 2412 til 2212, og
@@ -274,7 +274,7 @@ G_STERN_TOP   = 0;    // sternens overkant over spærets overkant ved spærenden
 G_VS_OVER_H   = 150;
 
 // Roof build-up above the rafter top (skifer cover): undertag 3 +
-// afstandsliste 25 (25×50 along each spær) + taglægte 38 (38×57, lagt fladt).
+// afstandsliste 25 (25×50 along each spær) + taglægte 38 (T1 38×73, lagt fladt).
 // The slate itself sits on top of this stack.
 G_ROOF_STACK_T = 3 + 25 + 38;                 // = 66
 

@@ -151,10 +151,10 @@
     return e;
   }
 
-  // wide = hele tagfladens bredde; ellers et udsnit på 5 plader. Alle figurer får X- og Y-akse i cm.
-  function fig(id, smax, nLath, nRows, cur, extra, wide) {
-    var K = wide ? 0.2 : 0.4, XW = wide ? FULL_W : 1500, P = wide ? FULL_W / PER_ROW : 300;
-    var X0 = -190 / K, X1 = XW + (wide ? 100 : 40) / K, SMIN = -50 - (wide ? 100 : 80) / K;
+  // Alle figurer viser hele tagfladens bredde med X- og Y-akse i cm. stair = trappe, så lægterne ses til venstre.
+  function fig(id, smax, nLath, nRows, cur, extra, stair) {
+    var K = 0.2, XW = FULL_W, P = FULL_W / PER_ROW;
+    var X0 = -190 / K, X1 = XW + 100 / K, SMIN = -50 - 112 / K;
     var W = (X1 - X0) * K, H = (smax - SMIN) * K + PAD * 2, T = 5.6 / K;
     var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img" }, document.getElementById(id));
     function px(x) { return (x - X0) * K; }
@@ -180,11 +180,11 @@
       }
     };
     for (var i = 0; i < nLath; i++) {
-      f.rect(wide ? 5 : 0, i ? TOPS[i] - LW : 0, wide ? XW - 5 : XW, TOPS[i], "l");
-      if (!wide) f.text(XW + 15, TOPS[i] - LW / 2, "L" + (i + 1), "", "start", 6);
+      f.rect(5, i ? TOPS[i] - LW : 0, XW - 5, TOPS[i], "l");
+      if (!stair) f.text(XW + 15, TOPS[i] - LW / 2, "L" + (i + 1), "", "start", 6);
     }
     for (var r = 0; r < nRows; r++) {
-      var row = ROWS[r], lo = wide ? r * P : 0;                       // wide: trappe, så lægter og række 1 ses til venstre
+      var row = ROWS[r], lo = stair ? r * P : 0;
       for (var x = -row[2] * P / 2; x < XW - 1; x += P) {
         if (x + P <= lo + 1) continue;
         f.rect(Math.max(lo, x) + 2, row[0], Math.min(XW, x + P) - 2, row[1], r === cur ? "sk cur" : r ? "sk" : "sk under");
@@ -202,47 +202,47 @@
       f.line(ax - tk, y, ax + tk, y, "ax");
       f.text(ax - 2 * tk, y, y / 10 + (y === top ? " cm" : ""), "ta", "end", 5);
     }
-    // X-akse: cm langs tagfoden (wide: én tak pr. plade, nummereret)
+    // X-akse: cm langs tagfoden, én tak pr. plade + pladenummer
     var as = -50 - 46 / K;
     f.line(0, as, XW, as, "ax");
-    for (var j = 0; j * P <= XW + 1; j++) {
+    for (var j = 0; j <= PER_ROW; j++) {
       f.line(j * P, as - tk, j * P, as + tk, "ax");
-      if (!wide) f.text(j * P, as, j * 30 + (j * P >= XW ? " cm" : ""), "ta", "middle", 20);
-      else if (j < PER_ROW) f.text((j + 0.5) * P, as, String(j + 1), "ta", "middle", 20);
+      f.text(j * P, as, j * P / 10 + (j === PER_ROW ? " cm" : ""), "ta", "middle", 20);
+      if (j < PER_ROW) f.text((j + 0.5) * P, as, String(j + 1), "tm", "middle", 40);
     }
-    if (wide) f.text(XW / 2, as, PER_ROW + " plader · " + FULL_W / 10 + " cm", "ta", "middle", 42);
+    f.text(XW / 2, as, PER_ROW + " plader pr. række", "tm", "middle", 60);
   }
 
   function kip(f) { f.line(-60, 1500, f.XW + 60, 1500, "kip"); f.text(f.XW / 2, 1500, "kip", "tm", "middle", -5); }
 
   fig("figL", 1520, 7, 0, -1, function (f) {
     kip(f);
-    f.vdim(-30, 0, TOPS[1], "33,2 cm");
-    for (var i = 1; i < 5; i++) f.vdim(-30, TOPS[i], TOPS[i + 1], "25,5 cm");
-    f.vdim(-30, TOPS[5], TOPS[6], "13,9 cm");
+    f.vdim(-12 / f.K, 0, TOPS[1], "33,2 cm");
+    for (var i = 1; i < 5; i++) f.vdim(-12 / f.K, TOPS[i], TOPS[i + 1], "25,5 cm");
+    f.vdim(-12 / f.K, TOPS[5], TOPS[6], "13,9 cm");
     f.text(0, -60, "↑ L1's underkant = spærenden", "tm", "start", 6);
-    [150, 720, 1290].forEach(function (x) {
-      for (var i = 0; i < 6; i++) f.rect(x, TOPS[i], x + 60, TOPS[i + 1] - LW, i === 0 ? "spA" : i === 5 ? "spC" : "spB");
-      f.text(x + 30, 166, "A", "", "middle", 6);
-      for (var j = 1; j < 5; j++) f.text(x + 30, TOPS[j] + 91, "B", "", "middle", 6);
-      f.text(x + 30, 1384, "C", "", "middle", 6);
+    [300, 1575, 2850].forEach(function (x) {
+      for (var i = 0; i < 6; i++) f.rect(x, TOPS[i], x + 150, TOPS[i + 1] - LW, i === 0 ? "spA" : i === 5 ? "spC" : "spB");
+      f.text(x + 75, 166, "A", "", "middle", 6);
+      for (var j = 1; j < 5; j++) f.text(x + 75, TOPS[j] + 91, "B", "", "middle", 6);
+      f.text(x + 75, 1384, "C", "", "middle", 6);
     });
   });
   fig("fig1", 850, 4, 1, 0, function (f) {
-    f.vdim(-30, -50, 295, "34,5 cm");
-    f.vdim(-190, -50, 0, "5 cm");
-    f.hdim(-75, 0, 300, "30 cm");
+    f.vdim(-12 / f.K, -50, 295, "34,5 cm");
+    f.vdim(-76 / f.K, -50, 0, "5 cm");
+    f.hdim(-50 - 10 / f.K, 0, 300, "30 cm");
   });
   fig("fig2", 850, 4, 2, 1, function (f) {
-    f.vdim(-30, -50, 550, "60 cm");
-    f.vdim(-190, -50, 0, "5 cm");
-    f.hdim(-75, 0, 150, "15");
-    f.hdim(-75, 150, 450, "30 cm");
+    f.vdim(-12 / f.K, -50, 550, "60 cm");
+    f.vdim(-76 / f.K, -50, 0, "5 cm");
+    f.hdim(-50 - 10 / f.K, 0, 150, "15");
+    f.hdim(-50 - 10 / f.K, 150, 450, "30 cm");
   });
   fig("fig3", 850, 4, 3, 2, function (f) {
-    f.vdim(-30, -50, 205, "25,5 cm");
-    f.vdim(-190, 205, 805, "60 cm");
-    f.hdim(-75, 0, 300, "30 cm");
+    f.vdim(-12 / f.K, -50, 205, "25,5 cm");
+    f.vdim(-76 / f.K, 205, 805, "60 cm");
+    f.hdim(-50 - 10 / f.K, 0, 300, "30 cm");
   });
   fig("fig4", 1520, 7, 7, -1, function (f) {
     kip(f);

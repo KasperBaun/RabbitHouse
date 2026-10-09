@@ -65,11 +65,11 @@ Klaplaget fra trin 1 brydes op og erstattes.
   - [ ] forlæng banen ud over udhængsspærene i begge gavle (3290 mm bred)
 - [x] Afstandslister 25×50 over spær → [03-afstandslister.md](docs/arbejdsplan/skiffertag/03-afstandslister.md)
   - [ ] eftermontér de 4 lister over udhængsspærene
-- [ ] Lægtning 38×73 efter lægteplan → [04-laegter.md](docs/arbejdsplan/skiffertag/04-laegter.md)
+- [ ] Lægtning 38×73, 255 mm (stern + tagfodsblik først, så L1) → [04-laegter.md](docs/arbejdsplan/skiffertag/04-laegter.md)
 - [ ] Sternbrædder ved begge tagfødder → [05-stern.md](docs/arbejdsplan/skiffertag/05-stern.md)
-- [ ] Fodblik + fuglegitter + opklodsningsliste → [06-fodblik.md](docs/arbejdsplan/skiffertag/06-fodblik.md)
+- [ ] Tagfodsblik + fuglegitter + opklodsningsliste + tagrende → [06-fodblik.md](docs/arbejdsplan/skiffertag/06-fodblik.md)
 - [ ] Sortér genbrugssten → [07-sortering.md](docs/arbejdsplan/skiffertag/07-sortering.md)
-- [ ] Læg skifer (begynder → toprække) → [08-skifer.md](docs/arbejdsplan/skiffertag/08-skifer.md)
+- [ ] Læg skifer (række 1 → 7) → [08-skifer.md](docs/arbejdsplan/skiffertag/08-skifer.md)
 - [ ] Dobbelt vindskede ved gavle → [09-vindskeder.md](docs/arbejdsplan/skiffertag/09-vindskeder.md)
 - [ ] Rygning → [10-rygning.md](docs/arbejdsplan/skiffertag/10-rygning.md)
 

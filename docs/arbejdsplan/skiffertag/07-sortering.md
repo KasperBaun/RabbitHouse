@@ -7,7 +7,7 @@
 
 | Materiale | Dimension | Mængde |
 |---|---|---|
-| Genbrugs-naturskifer | 30×60 cm, glat 4–8 mm | ~168 i taget → køb **210 stk** |
+| Genbrugs-naturskifer | 30×60 cm, glat 4–8 mm | ~154 i taget → køb **195 stk** |
 
 Værktøj: skiferøkse (eller hammer til bankeprøve), 3 paller/stakke at
 sortere ud på.
@@ -18,9 +18,9 @@ sortere ud på.
    knoen/øksenakken. Klar klang = OK. Dødt/"skrukt" lyd = kassér.
    Håndtér stenene kontant — skjulte revner skal afsløres NU, ikke på taget.
 2. Regn med **20–25 % spild** på genbrug. Frasorterede/B-sten gemmes —
-   de kan blive begynderrække og tilskæringer (skridt 8).
+   de kan blive række 1 (den skjulte bundrække) og tilskæringer (skridt 8).
 3. **Gamle sømhuller:** OK hvis hullet ender skjult under overlægget (de
-   øverste 150 mm af stenen). Huller i den synlige del → vend/omlok stenen,
+   øverste 90 mm af stenen). Huller i den synlige del → vend/omlok stenen,
    ellers kassér. Omlokning: nye huller lokkes **fra bagsiden**, 25–40 mm
    fra kant, to huller symmetrisk i stenens overdel.
 4. **Sortér i 3 tykkelser:** tykkeste sten skal nederst ved tagfod, mellem

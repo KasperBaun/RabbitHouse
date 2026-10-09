@@ -306,15 +306,14 @@
       <div><h3><span class="n">3</span>Undertag ud over blikket</h3><div class="figwrap"><div id="st3"></div></div>
         <p>Løft den flap der hænger ud, og læg den tilbage oven på blikket. Klæb/tape kanten til blikket.</p></div>
       <div><h3><span class="n">4</span>Afstandslister + lægter</h3><div class="figwrap"><div id="st4"></div></div>
-        <p>Som på lægte-siden: L1 med underkanten ved spærenden, så L2 med pind A osv.</p></div>
+        <p>Som på lægte-siden: L1 med underkanten ved spærenden, så L2 med klods A osv.</p></div>
       <div><h3><span class="n">5</span>Fuglegitter + skifer</h3><div class="figwrap"><div id="st5"></div></div>
-        <p>Gitter i gabet under L1, opklodsningsliste på L1, så begynderrække og skifer.</p></div>
+        <p>Gitter i gabet under L1, opklodsningsliste på L1, så række 1 og resten af skiferen.</p></div>
     </div>
   </section>
 
-  <footer>Geometri fra modellen: hældning 35°, spær 45×95 (lodret endeflade 116), afstandsliste 25, lægte 38×57,
-    skifer 60 mm forbi spærenden, sofitlameller 21×45. Afviger fra <code>05-stern.md</code> og <code>06-fodblik.md</code>,
-    som stadig beskriver den høje stern.</footer>
+  <footer>Geometri fra modellen: hældning 35°, spær 45×95 (lodret endeflade 116), afstandsliste 25, lægte 38×73,
+    skifer 50 mm forbi spærenden, sofitlameller 21×45. Samme løsning som <code>05-stern.md</code> og <code>06-fodblik.md</code>.</footer>
 </main>
 
 <script>
@@ -516,7 +515,7 @@
     if (st >= 4) {
       poly(f, band(0, 900, 3.5, 28.5), "listep", { sw: 1, dash: "5 3" });
       var s0 = o.old ? 47 : 0;
-      poly(f, band(s0, s0 + 57, 28.5, 66.5), "wood", { sw: 1.3 });
+      poly(f, band(s0, s0 + 73, 28.5, 66.5), "wood", { sw: 1.3 });
       poly(f, band(258, 315, 28.5, 66.5), "wood", { sw: 1.3 });
       poly(f, band(483, 540, 28.5, 66.5), "wood", { sw: 1.3 });
     }
@@ -529,8 +528,8 @@
       }
       var so = o.old ? 60 : 12;
       poly(f, band(so, so + 25, 66.5, 76.5), "wood", { sw: 1 });
-      poly(f, band(-60, 330, 76.5, 82.5), "slate", { sw: 1 });
-      poly(f, band(-60, 900, 82.5, 88.5), "slate", { sw: 1 });
+      poly(f, band(-50, 295, 76.5, 82.5), "slate", { sw: 1 });
+      poly(f, band(-50, 900, 82.5, 88.5), "slate", { sw: 1 });
     }
     f.svg = root;
 
@@ -577,9 +576,9 @@
     eave(f, { flow: true, xm: 420 });
 
     var L = -175;
-    lead(f, S(260, 88.5), [L, 300], "skifer (begynderrække + række 1)");
+    lead(f, S(260, 88.5), [L, 300], "skifer (række 1 + række 2)");
     lead(f, S(24, 76.5), [L, 250], "opklodsningsliste 10×25");
-    lead(f, S(40, 66.5), [L, 205], "L1 38×57");
+    lead(f, S(40, 66.5), [L, 205], "L1 38×73");
     lead(f, S(3, 26), [L, 160], "fuglegitter under L1", "t-good");
     lead(f, S(170, 20), [L, 118], "afstandsliste 25 (stiplet)");
     lead(f, S(110, 3.6), [L, 76], "undertag — oven på blikket");
@@ -650,7 +649,7 @@
       for (var y = Y0; y < Y1; y += 40) ln(at(S(-3, 3.6), y), at(S(-3, 28.5), y), "#2c2f31", 0.8);
       // L1's forkant (malet sort) + skiferens underside i udhænget
       face(strip(S(0, 28.5), S(0, 66.5), Y0, Y1), "#222528");
-      face(strip(S(-60, 76.5), S(14, 76.5), YS0 + 25, YS1 - 25), "#39434b");
+      face(strip(S(-50, 76.5), S(14, 76.5), YS0 + 25, YS1 - 25), "#39434b");
       // stern: underside + forside; blik
       face(strip([-25, -200], [0, -200], YS0, YS1), "#111315");
       face(strip([-25, -200], [-25, 0], YS0, YS1), "#1d2022", "#101213");
@@ -660,7 +659,7 @@
       [[76.5, 82.5, 150], [82.5, 88.5, 0]].forEach(function (L) {
         for (var y0 = YS0 + 25 - L[2]; y0 < YS1 - 25; y0 += 300) {
           var a = Math.max(y0 + 2, YS0 + 25), b = Math.min(y0 + 298, YS1 - 25);
-          if (b > a) face(strip(S(-60, L[0]), S(-60, L[1]), a, b), L[2] ? "#46515a" : "#56626c", "#2b3238");
+          if (b > a) face(strip(S(-50, L[0]), S(-50, L[1]), a, b), L[2] ? "#46515a" : "#56626c", "#2b3238");
         }
       });
       // vindskede (underbræt + overligger), hakket ned over sternens top
@@ -693,7 +692,7 @@
                              "font-size": 12.5, "text-anchor": dx < 0 ? "end" : "start" }, svg);
         t.textContent = text;
       }
-      lab(at(S(-60, 85), 350), 40, -38, "skiferens forkant", "t-lab");
+      lab(at(S(-50, 85), 350), 40, -38, "skiferens forkant", "t-lab");
       lab(at(S(-3, 15), 1000), 40, -58, "fuglegitter (sort)", "t-good");
       lab(at([-25, -100], 1250), 40, 34, "stern 25×200 (sort)", "t-lab");
       if (withGutter) lab(at([-110, -40], 700), -30, 45, "tagrende", "t-lab");

@@ -67,7 +67,7 @@ if (house_roof_cover == "skifer") {
     RenderHouseRoofFodblik();                // tagfodsblik over sternens top
     //RenderHouseRoofUndertag();               // undertag, ud over blikket
     //RenderHouseRoofAfstandslister(PALETTE);  // afstandslister 25×50
-    //RenderHouseRoofLaegter(PALETTE);         // taglægter 38×57
+    //RenderHouseRoofLaegter(PALETTE);         // taglægter 38×73
     //RenderHouseRoofFuglegitter();            // fuglegitter under L1
     //RenderHouseRoofSkifer();                 // skifer 30×60
     RenderHouseRoofVindskeder(PALETTE);      // vindskeder (hakket over sternen)

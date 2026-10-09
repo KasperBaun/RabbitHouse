@@ -3,13 +3,14 @@
 // top upward:
 //   0..3   mm  diffusion-open underlay (banevare, OK from 25°; pitch is 35°)
 //   3..28  mm  25×50 afstandslister along each spær incl. udhængsspær (§4.1B)
-//   28..66 mm  38×57 taglægter (lagt fladt) parallel to the ridge
+//   28..66 mm  T1 38×73 taglægter (lagt fladt) parallel to the ridge
 //   66..74 mm  slate courses (~8 mm visual thickness)
 //
 // Sten 30×60 i halv-forbandt. Lægter, rækkelinjer og skiferforkant følger
 // sætteplanen i docs/arbejdsplan/skiffertag/04-laegter.md (SK_LAEGTE_TOP /
 // SK_COURSE_TAIL nedenfor), så renderet kan bruges som kontrol af planen.
-// Begynderrækken er ikke modelleret — den er skjult i den færdige flade.
+// Række 1 (den skårne bundrække) er ikke modelleret — den ligger skjult under
+// række 2. Tagrenden er heller ikke modelleret.
 
 include <../lib/defaults.scad>
 include <config.scad>
@@ -17,29 +18,32 @@ include <config.scad>
 SK_UNDERLAY_T   = 3;
 SK_CBATTEN_T    = 25;           // afstandsliste 25×50 (thickness above underlay)
 SK_CBATTEN_W    = 50;           // afstandsliste width along Y (over each spær)
-SK_BATTEN_T     = 38;           // taglægte 38×57, lagt fladt (spær c/c 600)
-SK_BATTEN_W     = 57;
+SK_BATTEN_T     = 38;           // taglægte T1 38×73, lagt fladt (spær c/c 600)
+SK_BATTEN_W     = 73;
 SK_PLATE_L      = 600;          // stone length up the slope
 SK_PLATE_W      = 300;          // stone width along the ridge (Y)
 // ---- Sætteplan. Én kilde til sandhed, identisk med tabellen i
 // docs/arbejdsplan/skiffertag/04-laegter.md. Alle mål er PÅ SKRÅFLADEN,
 // målt fra spærenden (s = 0) op mod kip (s = SK_SLOPE). Skiferens forkant
-// stikker SK_EAVE_PROJ forbi spærenden, så vandet drypper fri af sternen.
+// stikker SK_EAVE_PROJ forbi spærenden, ned i tagrenden.
 //
 //   s = (x + G_OH_EAVE) / cos(35°) på venstre halvtag
-//   hver rækkes OVERKANT flugter en lægtes OVERKANT, så sømmene
-//   (25–40 mm under stenens overkant) altid rammer lægten.
+//   Pladerne er hullet 245 mm fra overkanten, så en plade sømmes i lægten
+//   UNDER den, dens overkant hviler på. Sømmet skal gå fri af pladen
+//   nedenunder → lægteafstand 255 (> 245). Pladens overkant ligger MIDT på
+//   lægten.
 SK_SLOPE        = 1500;   // spærende -> kip = (G_RIDGE_X+G_OH_EAVE)/cos(35°)
-SK_GAUGE        = 225;    // lægteafstand på skråfladen = (600 - 150) / 2
-SK_EAVE_PROJ    = 60;     // skiferforkant forbi spærenden
-// L1..L7 OVERKANTER. NB på L1: det er tagfodslægten, og den er sat efter sin
-// UNDERKANT — den flugter spærenden (s = 0), så overkanten lander på
-// lægtebredden, 57. Sad L1's overkant på 0, ville lægtekroppen hænge 57 mm ned
-// FORBI spærenden, ud over sternen, og lukke luftindtaget. Gabet under L1's
-// forkant er tagets luftindtag (fuglegitter). L2..L7 er sat efter
-// overkanten, fordi den er sømlinjen for stenrækkerne.
-SK_LAEGTE_TOP   = [SK_BATTEN_W, 315, 540, 765, 990, 1215, 1440];
-SK_COURSE_TAIL  = [-60, 165, 390, 615, 840, 1065];      // synlige rækkers underkant
+SK_GAUGE        = 255;    // lægteafstand på skråfladen; overlæg = 600 - 2*255 = 90
+SK_EAVE_PROJ    = 50;     // skiferforkant forbi spærenden (= forbi L1's underkant)
+SK_PER_ROW      = 11;     // plader pr. række (300 + fuge over skiferfladens bredde)
+// L1..L7 OVERKANTER. L1 er tagfodslægten og sat efter sin UNDERKANT — den
+// flugter spærenden (s = 0), så overkanten lander på lægtebredden. Gabet under
+// dens forkant er tagets luftindtag (fuglegitter). L2..L6: midten ligger på
+// 295 + n × 255 (pladens overkant), overkanten en halv lægtebredde højere.
+// L7 sidder 10 mm under kippen og bærer de to skårne toprækker.
+SK_LAEGTE_TOP   = [SK_BATTEN_W, 331.5, 586.5, 841.5, 1096.5, 1351.5, 1490];
+// Synlige rækkers underkant = række 2..7 (række 1 ligger skjult under række 2).
+SK_COURSE_TAIL  = [-50, 205, 460, 715, 970, 1225];
 
 // Skråflade-position -> X på hvert halvtag.
 function _sk_xl(s) = -G_OH_EAVE + s * cos(G_PITCH_DEG);
@@ -164,8 +168,11 @@ module _sk_plate_seams_one_half(side, y_lo, y_hi) {
         s_hi  = (i < n - 1) ? SK_COURSE_TAIL[i + 1] : SK_SLOPE;
         x_a   = (side < 0) ? _sk_xl(s_lo) : _sk_xr(s_lo);
         x_b   = (side < 0) ? _sk_xl(s_hi) : _sk_xr(s_hi);
-        y_off = (i % 2 == 0) ? 0 : SK_PLATE_W / 2;
-        for (y = [yd_lo + y_off : SK_PLATE_W : yd_hi])
+        // SK_PER_ROW plader fordelt over fladens bredde (300 + fuge). Række 2
+        // (i = 0) starter med en halv plade.
+        pitch = (yd_hi - yd_lo) / SK_PER_ROW;
+        y_off = (i % 2 == 0) ? pitch / 2 : 0;
+        for (y = [yd_lo + y_off : pitch : yd_hi])
             _sk_half_slab(min(x_a, x_b), max(x_a, x_b),
                           y - SK_SEAM_W/2, y + SK_SEAM_W/2,
                           SK_STACK_T - 0.2, SK_GROOVE_H, SK_SEAM_COLOR);

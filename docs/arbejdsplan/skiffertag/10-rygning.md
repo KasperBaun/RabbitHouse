@@ -17,7 +17,7 @@
 1. **Rygningsbrædder:** ét bræt pr. side langs kippen, opklodset på 15 mm
    lister pr. 500 mm (så der kan ventileres under, og brættet ikke ligger
    direkte på stenene). **Dette er tagets aftræk:** de 25 mm ventilations-
-   kanaler fra begge tagflader ender oppe over L7 og skal ud herigennem.
+   kanaler fra begge tagflader mødes i kippen mellem de to L7 og skal ud herigennem.
    **Lad rygningens ender ved gavlene være åbne** — luk dem ikke af med kit
    eller træ, ellers står luften stille i hele tagfladen.
 2. **Zink-rygningen** lægges over og skrues med tætningsskiver i
