@@ -130,6 +130,33 @@
       <li>Slut aldrig en række med en strimmel under 15 cm.</li>
     </ul>
   </section>
+
+  <section>
+    <h2><span class="num">?</span>Hvad betyder 9 cm overlæg</h2>
+    <div class="fig"><svg viewBox="0 0 640 200" role="img" aria-label="Snit: række 4 ligger 9 cm ind over række 2">
+      <rect x="284" y="62" width="40" height="70" fill="#f3c9c1"/>
+      <rect class="l" x="82" y="110" width="32" height="16"/><rect class="l" x="196" y="110" width="32" height="16"/>
+      <rect class="l" x="308" y="110" width="32" height="16"/><rect class="l" x="420" y="110" width="32" height="16"/>
+      <rect class="l" x="532" y="110" width="32" height="16"/>
+      <line x1="60" y1="101" x2="212" y2="107" stroke="#aab2b8" stroke-width="4"/>
+      <line x1="60" y1="95" x2="324" y2="107" stroke="#3c4650" stroke-width="4"/>
+      <line x1="172" y1="95" x2="436" y2="107" stroke="#6b7780" stroke-width="4"/>
+      <line x1="284" y1="95" x2="548" y2="107" stroke="#3c4650" stroke-width="4"/>
+      <text class="tn" x="304" y="54" text-anchor="middle">9 cm</text>
+      <text class="tm" x="304" y="150" text-anchor="middle">3 lag</text>
+      <text class="tm" x="60" y="84">række 2</text><text class="tm" x="172" y="84">række 3</text>
+      <text class="tm" x="340" y="84">række 4</text>
+      <path class="d" d="M60 170v-12M172 170v-12M60 164h112"/><text class="tn" x="116" y="190" text-anchor="middle">25,5</text>
+      <text class="tm" x="98" y="142" text-anchor="middle">L1</text><text class="tm" x="548" y="142" text-anchor="middle">L5</text>
+      <text class="tm" x="610" y="112" text-anchor="middle">kip →</text>
+    </svg></div>
+    <ul class="do">
+      <li>Taget set fra siden. Række 4 starter <span class="maal">9 cm</span> før række 2 slutter — i det røde bånd ligger der <b>3 lag</b>.</li>
+      <li>Alle andre steder ligger der <b>2 lag</b>. Vand der løber ned i en fuge, lander på pladen under.</li>
+      <li>Overlægget er, hvor langt vand skal presses <b>opad</b> for at komme ind. Mere overlæg = mere sikkerhed mod slagregn.</li>
+      <li>Regnestykket: 60 cm plade − 2 × 25,5 cm = <span class="maal">9 cm</span>.</li>
+    </ul>
+  </section>
 </main>
 
 <script>
@@ -141,7 +168,7 @@
   var TOPS = [LW].concat(MID.map(function (m) { return m + LW / 2; }), [1490]);  // lægte-overkanter, L7 ved kippen
   var ROWS = [[-50, 295, 0], [-50, 550, 1], [205, 805, 0], [460, 1060, 1],       // [bund, top, forskudt ½ plade]
               [715, 1315, 0], [970, 1440, 1], [1225, 1500, 0]];
-  var FULL_W = 3300, PER_ROW = 11;                                   // skiferfladens bredde = 11 plader à 30 cm
+  var FULL_W = 3340, PER_ROW = 11;                                   // skiferfladens bredde = 11 plader à 30 cm + fuger
 
   function el(n, a, p, t) {
     var e = document.createElementNS(NS, n);
@@ -180,7 +207,7 @@
       }
     };
     for (var i = 0; i < nLath; i++) {
-      f.rect(5, i ? TOPS[i] - LW : 0, XW - 5, TOPS[i], "l");
+      f.rect(25, i ? TOPS[i] - LW : 0, XW - 25, TOPS[i], "l");
       if (!stair) f.text(XW + 15, TOPS[i] - LW / 2, "L" + (i + 1), "", "start", 6);
     }
     for (var r = 0; r < nRows; r++) {
@@ -207,10 +234,10 @@
     f.line(0, as, XW, as, "ax");
     for (var j = 0; j <= PER_ROW; j++) {
       f.line(j * P, as - tk, j * P, as + tk, "ax");
-      f.text(j * P, as, j * P / 10 + (j === PER_ROW ? " cm" : ""), "ta", "middle", 20);
-      if (j < PER_ROW) f.text((j + 0.5) * P, as, String(j + 1), "tm", "middle", 40);
+      if (j === 0 || j === PER_ROW) f.text(j * P, as, j ? FULL_W / 10 + " cm" : "0", "ta", j ? "start" : "end", 5);
+      if (j < PER_ROW) f.text((j + 0.5) * P, as, String(j + 1), "ta", "middle", 22);
     }
-    f.text(XW / 2, as, PER_ROW + " plader pr. række", "tm", "middle", 60);
+    f.text(XW / 2, as, PER_ROW + " plader à 30 cm + fuger = " + FULL_W / 10 + " cm", "tm", "middle", 44);
   }
 
   function kip(f) { f.line(-60, 1500, f.XW + 60, 1500, "kip"); f.text(f.XW / 2, 1500, "kip", "tm", "middle", -5); }
